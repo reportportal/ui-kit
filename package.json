@@ -1,0 +1,8 @@
+{
+  "name": "@reportportal/ui-kit",
+  "version": "0.0.0",
+  "scripts": {
+    "start": "bit start",
+    "install": "bit install"
+  }
+}

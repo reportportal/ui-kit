@@ -1,5 +1,5 @@
 /**
- * this is the main configuration file of your bit workspace.
+ * this is the main configuration file of bit workspace.
  * for full documentation, please see: https://harmony-docs.bit.dev/workspace/configurations
  **/{
   "$schema": "https://static.bit.dev/teambit/schemas/schema.json",
@@ -18,16 +18,16 @@
     /**
      * default directory to place a component during `bit import` and `bit create`.
      * the following placeholders are available:
-     * name - component name includes namespace, e.g. 'ui/button'.
-     * scopeId - full scope-id includes the owner, e.g. 'teambit.compilation'.
-     * scope - scope name only, e.g. 'compilation'.
-     * owner - owner name in bit.dev, e.g. 'teambit'.
+     * name - component name includes namespace, e.g. 'inputs/inputCheckbox'.
+     * scopeId - full scope-id includes the owner, e.g. 'reportportal.main'.
+     * scope - scope name only, e.g. 'main'.
+     * owner - owner name in bit.dev, e.g. 'reportportal'.
      **/
-    "defaultDirectory": "{scope}/{name}",
+    "defaultDirectory": "src/{scope}/{name}",
     /**
      * default scope for all components in workspace.
      **/
-    "defaultScope": "reportportal.ui-kit"
+    "defaultScope": "amsterget.main"
   },
   /**
    * main configuration for component dependency resolution.
@@ -68,7 +68,7 @@
    **/
   "teambit.workspace/variants": {
     "{ui/**}, {figma/**}": {
-      "ui-kit/envs/my-react": {}
+      "src/envs/my-react": {}
     },
     "{envs/**}": {
       "teambit.harmony/aspect": {}
