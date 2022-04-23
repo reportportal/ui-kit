@@ -9,58 +9,41 @@
  */
 
 {
-    "buttons/plain-button": {
+    "buttons/button": {
         "scope": "",
         "version": "",
         "mainFile": "index.ts",
-        "rootDir": "src/main/buttons/plain-button",
+        "rootDir": "src/main-ui/buttons/button",
+        "config": {
+            "teambit.envs/envs": {
+                "env": "amsterget.base-ui/envs/react"
+            },
+            "amsterget.base-ui/envs/react": {}
+        }
+    },
+    "envs/react": {
+        "scope": "",
+        "version": "",
+        "defaultScope": "amsterget.base-ui",
+        "mainFile": "index.ts",
+        "rootDir": "src/base-ui/envs/react",
         "config": {
             "teambit.react/react": {},
             "teambit.envs/envs": {
-                "env": "teambit.react/react"
+                "env": "teambit.envs/env"
             }
         }
     },
-    "common/figma/figma-embed": {
+    "inputs/checkbox": {
         "scope": "",
         "version": "",
         "mainFile": "index.ts",
-        "rootDir": "src/main/common/figma/figma-embed",
+        "rootDir": "src/main-ui/inputs/checkbox",
         "config": {
-            "teambit.react/react": {},
             "teambit.envs/envs": {
-                "env": "teambit.react/react"
-            }
-        }
-    },
-    "common/heading": {
-        "scope": "",
-        "version": "",
-        "mainFile": "index.ts",
-        "rootDir": "src/main/common/heading",
-        "config": {
-            "teambit.react/react": {},
-            "teambit.envs/envs": {
-                "env": "teambit.react/react"
-            }
-        }
-    },
-    "envs/my-react": {
-        "scope": "",
-        "version": "",
-        "mainFile": "index.ts",
-        "rootDir": "src/envs/my-react"
-    },
-    "inputs/input-checkbox": {
-        "scope": "",
-        "version": "",
-        "mainFile": "index.ts",
-        "rootDir": "src/main/inputs/input-checkbox",
-        "config": {
-            "teambit.react/react": {},
-            "teambit.envs/envs": {
-                "env": "teambit.react/react"
-            }
+                "env": "amsterget.base-ui/envs/react"
+            },
+            "amsterget.base-ui/envs/react": {}
         }
     },
     "$schema-version": "14.9.0"

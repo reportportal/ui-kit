@@ -37,11 +37,34 @@ Bit [docs](https://bit.dev/docs/getting-started/composing/creating-components) r
 You can simply add the new dependency to the `workspace.jsonc` file in `dependencies` section. <br />
 Not necessary to separate some of them to the `devDependencies` as the Bit will automatically [recognize](https://bit.dev/docs/dependencies/dependency-policies#dev-dependencies) the development one.
 
+### Customizing workplace environment
+
+This workplace uses custom react environment based on [teambit/react](https://bit.cloud/teambit/react/react) environment, where you can see basic tools configuration provided by it.
+
+
+### Glossary
+
+**workspace**
+
+**scope**
+
+**namespace**
+
+**component**
+
+**env** - Component environment that configure how component should be build, developed and compiled (see [bit envs](https://bit.dev/docs/envs/envs-overview)). Changing the component env means that the component will be marked as `modified`.
+
+**variant** - Workspace configuration for specifying aspects (env, publish config, etc.) for components by patterns.
+
+**aspect** -
+
 ## What's included
 
 - **workspace.jsonc**
 
 This is the main configuration file of bit workspace. Here you can modify the workspace name and icon as well as default directory and scope. It is where dependencies are found when you install anything. It is also where you register aspects, bit extensions as well as apply the environments for your components. This workspace has been setup so that all components use the React env. However you can create other components and apply other envs to them such as node, html, angular and aspect envs.
+
+Use Variants as an efficient alternative to manually configuring each component's component.json.
 
 - **.bitmap**
 

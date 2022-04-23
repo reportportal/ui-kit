@@ -7,27 +7,21 @@
    * main configuration of the Bit workspace.
    **/
   "teambit.workspace/workspace": {
-    /**
-     * the name of the component workspace. used for development purposes.
-     **/
-    "name": "ui-kit",
-    /**
-     * set the icon to be shown on the Bit server.
-     **/
-    "icon": "https://static.bit.dev/bit-logo.svg",
+    "name": "reportportal-ui",
+    "icon": "https://avatars.githubusercontent.com/u/17636279?s=200&v=4",
     /**
      * default directory to place a component during `bit import` and `bit create`.
      * the following placeholders are available:
-     * name - component name includes namespace, e.g. 'inputs/inputCheckbox'.
-     * scopeId - full scope-id includes the owner, e.g. 'reportportal.main'.
-     * scope - scope name only, e.g. 'main'.
+     * name - component name includes namespace, e.g. 'inputs/input-checkbox'.
+     * scopeId - full scope-id includes the owner, e.g. 'reportportal.main-ui'.
+     * scope - scope name only, e.g. 'main-ui'.
      * owner - owner name in bit.dev, e.g. 'reportportal'.
      **/
     "defaultDirectory": "src/{scope}/{name}",
     /**
      * default scope for all components in workspace.
      **/
-    "defaultScope": "amsterget.main"
+    "defaultScope": "amsterget.main-ui"
   },
   /**
    * main configuration for component dependency resolution.
@@ -54,10 +48,11 @@
       },
       "peerDependencies": {
         "@testing-library/react": "12.1.3",
-        "react": "17.0.2",
-        "react-dom": "17.0.2"
+        "react": "^16.13.1",
+        "react-dom": "^16.13.1"
       }
-    }
+    },
+    "strictPeerDependencies": true,
   },
   /**
    * workspace variants allow to set different subsets of configuration for components in your
@@ -66,12 +61,25 @@
    * wrap the rule with curly brackets (e.g. `"{ui/*}": {}`)
    * see https://harmony-docs.bit.dev/aspects/variants for more info.
    **/
+   // TODO: Seems like this configuration not work for newly created components
   "teambit.workspace/variants": {
-    "{ui/**}, {figma/**}": {
-      "src/envs/my-react": {}
+    "{common/**}, {inputs/**}, {buttons/**}": {
+      "teambit.envs/envs": {
+        "env": "amsterget.base-ui/envs/react"
+      },
+      "amsterget.base-ui/envs/react": {},
+      "teambit.pkg/pkg": {
+        "packageManagerPublishArgs": [
+          "--access public"
+        ],
+        "packageJson": {
+          "files": ["dist"],
+          "private": false
+        }
+      }
     },
     "{envs/**}": {
       "teambit.harmony/aspect": {}
-    }
+    },
   }
 }
