@@ -8,7 +8,6 @@ export type ButtonProps = {
 };
 
 export function Button({ children }: ButtonProps) {
-  console.log('React version', React.version);
   return (
     <div>
       {children}
