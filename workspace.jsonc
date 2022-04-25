@@ -1,0 +1,85 @@
+/**
+ * this is the main configuration file of bit workspace.
+ * for full documentation, please see: https://harmony-docs.bit.dev/workspace/configurations
+ **/{
+  "$schema": "https://static.bit.dev/teambit/schemas/schema.json",
+  /**
+   * main configuration of the Bit workspace.
+   **/
+  "teambit.workspace/workspace": {
+    "name": "reportportal-ui",
+    "icon": "https://avatars.githubusercontent.com/u/17636279?s=200&v=4",
+    /**
+     * default directory to place a component during `bit import` and `bit create`.
+     * the following placeholders are available:
+     * name - component name includes namespace, e.g. 'inputs/input-checkbox'.
+     * scopeId - full scope-id includes the owner, e.g. 'reportportal.main-ui'.
+     * scope - scope name only, e.g. 'main-ui'.
+     * owner - owner name in bit.dev, e.g. 'reportportal'.
+     **/
+    "defaultDirectory": "src/{scope}/{name}",
+    /**
+     * default scope for all components in workspace.
+     **/
+    "defaultScope": "amsterget.main-ui"
+  },
+  /**
+   * main configuration for component dependency resolution.
+   **/
+  "teambit.dependencies/dependency-resolver": {
+    /**
+     * choose the package manager for Bit to use. you can choose between 'yarn', 'pnpm'
+     */
+    "packageManager": "teambit.dependencies/pnpm",
+    "policy": {
+      "dependencies": {
+        "@teambit/documenter.theme.theme-compositions": "4.1.4",
+        "@teambit/eslint-config-bit-react": "~0.0.367",
+        "@teambit/harmony": "0.2.11",
+        "@teambit/react.templates.themes.theme": "0.0.4",
+        "@typescript-eslint/eslint-plugin": "5.12.1",
+        "classnames": "2.3.1",
+        "eslint-config-prettier": "8.4.0",
+        "eslint-import-resolver-node": "0.3.6",
+        "eslint-plugin-import": "2.25.4",
+        "eslint-plugin-jest": "26.1.1",
+        "eslint-plugin-jsx-a11y": "6.5.1",
+        "eslint-plugin-mdx": "1.16.0",
+      },
+      "peerDependencies": {
+        "@testing-library/react": "12.1.3",
+        "react": "^16.13.1",
+        "react-dom": "^16.13.1"
+      }
+    },
+    "strictPeerDependencies": true,
+  },
+  /**
+   * workspace variants allow to set different subsets of configuration for components in your
+   * workspace. this is extremely useful for upgrading, aligning and building components with a new
+   * set of dependencies. a rule can be a directory or a component-id/namespace, in which case,
+   * wrap the rule with curly brackets (e.g. `"{ui/*}": {}`)
+   * see https://harmony-docs.bit.dev/aspects/variants for more info.
+   **/
+   // TODO: Seems like this configuration not work for newly created components
+  "teambit.workspace/variants": {
+    "{common/**}, {inputs/**}, {buttons/**}": {
+      "teambit.envs/envs": {
+        "env": "amsterget.base-ui/envs/react"
+      },
+      "amsterget.base-ui/envs/react": {},
+      "teambit.pkg/pkg": {
+        "packageManagerPublishArgs": [
+          "--access public"
+        ],
+        "packageJson": {
+          "files": ["dist"],
+          "private": false
+        }
+      }
+    },
+    "{envs/**}": {
+      "teambit.harmony/aspect": {}
+    },
+  }
+}

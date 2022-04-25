@@ -1,0 +1,31 @@
+---
+description: 'Embed your figma designs'
+labels: ['design', 'figma']
+---
+
+import { FigmaEmbed } from './figma-embed';
+
+iframe for embedding figma designs. This can then be used in your component docs.
+
+## By embedding our Figma design:
+
+- see if our design matches our component
+- see updated changes to design in real time
+- great developer experience
+
+### Component usage
+
+```js
+<FigmaEmbed src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FgjYQPbeyf4YsH3wZiVKoaj%2FRP-DS-6%3Fnode-id%3D798%253A1013" />
+```
+
+### Uses iframes default props
+
+```js live
+<FigmaEmbed
+  loading="eager"
+  width="600px"
+  height="300px"
+  src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FgjYQPbeyf4YsH3wZiVKoaj%2FRP-DS-6%3Fnode-id%3D798%253A1013"
+/>
+```

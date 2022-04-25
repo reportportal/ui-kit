@@ -1,0 +1,56 @@
+# Copyright 2022 EPAM Systems
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# This is a basic workflow to help you get started with Actions
+
+name: Release component with Bit
+
+on:
+  push:
+    branches: [main]
+
+# TODO: use tag option dynamically
+jobs:
+  bit-export:
+    runs-on: ubuntu-latest
+    if: "!contains(github.event.head_commit.message, 'skip-ci')"
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14
+      - name: Install Bit Version Manager
+        run: npm i -g @teambit/bvm
+      - name: Install latest Bit version
+        run: bvm install
+      - name: Add bvm bin folder to path
+        run: echo "$HOME/bin" >> $GITHUB_PATH
+      - name: Set up Bit config
+        run: |
+          bit config set analytics_reporting false
+          bit config set anonymous_reporting false
+          bit config set user.token ${{ secrets.BIT_TOKEN }}
+      - name: Install packages using Bit
+        run: bit install
+        # TODO: update this
+      - name: Hard-tag pending components
+        run: bit tag --persist
+      - name: Export components
+        run: bit export
+      - name: Commit changes made to .bitmap
+        run: |
+          git config --global user.name 'reportportal.io'
+          git config --global user.email 'support@reportportal.io'
+          git add .bitmap
+          git commit -m "Update .bitmap with new component versions (automated). --skip-ci"
+          git push
