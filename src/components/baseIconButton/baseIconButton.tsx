@@ -1,4 +1,4 @@
-import { FC, MouseEventHandler, ReactElement, ReactNode, HTMLAttributes } from 'react';
+import { FC, MouseEventHandler, ReactNode, HTMLAttributes } from 'react';
 import classNames from 'classnames/bind';
 import styles from './baseIconButton.module.scss';
 
@@ -18,16 +18,14 @@ export const BaseIconButton: FC<BaseIconButtonProps> = ({
   disabled = false,
   onClick,
   ...rest
-}): ReactElement => {
-  return (
-    <button
-      className={cx('base-icon-button', className, { disabled })}
-      type="button"
-      disabled={disabled}
-      onClick={onClick}
-      {...rest}
-    >
-      {children}
-    </button>
-  );
-};
+}) => (
+  <button
+    className={cx('base-icon-button', className, { disabled })}
+    type="button"
+    disabled={disabled}
+    onClick={onClick}
+    {...rest}
+  >
+    {children}
+  </button>
+);

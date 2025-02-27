@@ -11,9 +11,9 @@ import {
 } from 'react';
 import classNames from 'classnames/bind';
 import { ClearIcon } from '@components/icons';
-import styles from './fieldText.module.scss';
 import { SpinLoader } from '@components/spinLoader';
-import { isPositiveInteger } from '@common/utils';
+import { MaxValueDisplay } from '@components/maxValueDisplay';
+import styles from './fieldText.module.scss';
 
 const cx = classNames.bind(styles);
 
@@ -78,7 +78,6 @@ export const FieldText = forwardRef<HTMLInputElement, FieldTextProps>(
     const internalRef = useRef<HTMLInputElement>(null);
     const inputRef = ref || internalRef;
     const [focused, setFocused] = useState(false);
-    const hasMaxLengthDisplay = isPositiveInteger(maxLengthDisplay);
 
     const onFocusHandler = (event: FocusEvent<HTMLInputElement>) => {
       setFocused(true);
@@ -153,11 +152,11 @@ export const FieldText = forwardRef<HTMLInputElement, FieldTextProps>(
               </span>
             )}
           </span>
-          {hasMaxLengthDisplay && (
-            <span className={cx('max-length-display')}>
-              {value.length}/{maxLengthDisplay}
-            </span>
-          )}
+          <MaxValueDisplay
+            className={cx('max-length-display')}
+            value={value.length}
+            maxValue={maxLengthDisplay}
+          />
           {endIcon && (
             <span className={cx('icon-container-end')}>
               <span className={cx('icon')}>{endIcon}</span>

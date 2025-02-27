@@ -1,5 +1,5 @@
-@import 'src/assets/styles/variables/typography';
-@import 'src/assets/styles/mixins/font-scale';
+@import '@assets/styles/variables/typography';
+@import '@assets/styles/mixins/font-scale';
 
 @mixin additional-text($color) {
   @include font-scale('s-small');
@@ -39,6 +39,10 @@
   &::placeholder {
     color: var(--rp-ui-base-e-300);
   }
+
+  &:has(~ .max-length-display) {
+    padding-bottom: 24px;
+  }
 }
 
 .label {
@@ -57,6 +61,17 @@
   .help-text {
     @include additional-text(var(--rp-ui-base-e-300));
   }
+}
+
+.max-length-display {
+  @include font-scale(s-small);
+  position: relative;
+  top: -29px;
+  display: block;
+  padding-left: 12px;
+  font-family: var(--rp-ui-base-font-family);
+  font-weight: $fw-regular;
+  color: var(--rp-ui-base-e-300);
 }
 
 .disabled {

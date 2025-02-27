@@ -36,6 +36,7 @@ export const WithLabel: Story = {
 export const Disabled: Story = {
   args: { disabled: true },
 };
+
 export const DisabledWithLabel: Story = {
   args: { disabled: true, label: 'Disabled label' },
 };
@@ -54,6 +55,10 @@ export const WithHelpText: Story = {
 
 export const WithPlaceholder: Story = {
   args: { placeholder: 'Placeholder' },
+};
+
+export const WithMaxLengthDisplay: Story = {
+  args: { maxLengthDisplay: 60 },
 };
 
 export const FullyDescribed: Story = {
