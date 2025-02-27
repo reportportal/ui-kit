@@ -1,21 +1,7 @@
-import { ChangeEvent, ReactNode, useState } from 'react';
+import { ChangeEvent, useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 
 import { RadioGroup } from './radioGroup';
-import { ThemeProvider } from '../themeProvider';
-
-// TODO: Create Storybook decorator - https://storybook.js.org/docs/react/writing-stories/decorators
-const DarkWrapper = (props: { children: ReactNode }) => (
-  <div
-    style={{
-      marginTop: '20px',
-      backgroundColor: 'var(--rp-ui-base-dark-bg)',
-      padding: '10px',
-    }}
-  >
-    <ThemeProvider theme="dark">{props.children}</ThemeProvider>
-  </div>
-);
 
 const meta: Meta<typeof RadioGroup> = {
   title: 'Radio button',
@@ -45,14 +31,7 @@ export const Default: Story = {
       { value: '3', label: 'Option 3', disabled: false },
     ];
 
-    return (
-      <>
-        <RadioGroup {...args} options={options} value={value} onChange={handleChange} />
-        <DarkWrapper>
-          <RadioGroup {...args} options={options} value={value} onChange={handleChange} />
-        </DarkWrapper>
-      </>
-    );
+    return <RadioGroup {...args} options={options} value={value} onChange={handleChange} />;
   },
 };
 
@@ -70,13 +49,6 @@ export const Disabled: Story = {
       { value: '2', label: 'Option 2', disabled: true },
     ];
 
-    return (
-      <>
-        <RadioGroup {...args} options={options} value={value} onChange={handleChange} />
-        <DarkWrapper>
-          <RadioGroup {...args} options={options} value={value} onChange={handleChange} />
-        </DarkWrapper>
-      </>
-    );
+    return <RadioGroup {...args} options={options} value={value} onChange={handleChange} />;
   },
 };
