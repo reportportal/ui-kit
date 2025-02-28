@@ -1,4 +1,5 @@
 export { Button } from './button';
+export { BaseIconButton } from './baseIconButton';
 export { Checkbox } from './checkbox';
 export { SystemMessage } from './systemMessage';
 export { FieldText } from './fieldText';
@@ -17,7 +18,7 @@ export { Pagination } from './pagination';
 export { Table } from './table';
 export { DatePicker } from './datePicker';
 export { DatePicker1 } from './datePicker1';
-export { DatePicker2 } from './dataPicker2/dataPicker2';
 export { Date2 } from './date2';
+export { ReactDatePicker2 } from './reactDatePicker2';
 export { SystemAlert } from './systemAlert';
 export * from './icons';

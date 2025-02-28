@@ -1,4 +1,3 @@
-export { BaseIconButton } from './baseIconButton';
 export { default as ClearIcon } from './svg/clear.svg';
 export { default as CloseIcon } from './svg/close.svg';
 export { default as PlusIcon } from './svg/plus.svg';

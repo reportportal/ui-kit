@@ -21,6 +21,7 @@ interface FieldTextProps extends InputHTMLAttributes<HTMLInputElement> {
     hasDoubleMessage?: boolean;
     type?: string;
     displayError?: boolean;
+    maxLengthDisplay?: number;
     collapsible?: boolean;
     loading?: boolean;
 }
