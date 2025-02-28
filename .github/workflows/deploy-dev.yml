@@ -3,10 +3,9 @@ env:
   BUILD_DIR : "storybook-static/"
 
 on:
-  # TODO: enable auto-deploy once all quality gates are set
-  #  push:
-  #    branches:
-  #      - develop
+  push:
+    branches:
+      - develop
   workflow_dispatch:
 
 jobs:
