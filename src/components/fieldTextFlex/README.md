@@ -13,6 +13,7 @@ Width 100% from parent.
 - **readonly**: _bool_, optional, default = false
 - **touched**: _bool_, optional, default = false
 - **className**: _string_, optional, default = ""
+- **maxLengthDisplay**: _number_, optional
 - **error**: _string_, optional, default = ""
 
 ### Events:

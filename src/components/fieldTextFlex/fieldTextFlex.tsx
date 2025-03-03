@@ -1,5 +1,4 @@
 import classNames from 'classnames/bind';
-import styles from './fieldTextFlex.module.scss';
 import {
   ChangeEventHandler,
   ComponentPropsWithRef,
@@ -10,6 +9,8 @@ import {
   forwardRef,
   useId,
 } from 'react';
+import { MaxValueDisplay } from '@components/maxValueDisplay';
+import styles from './fieldTextFlex.module.scss';
 
 const cx = classNames.bind(styles);
 
@@ -23,6 +24,7 @@ export interface FieldTextFlexProps extends ComponentPropsWithRef<'textarea'> {
   touched?: boolean;
   label?: string;
   helpText?: string;
+  maxLengthDisplay?: number;
   onChange?: ChangeEventHandler<HTMLTextAreaElement>;
   onFocus?: FocusEventHandler<HTMLTextAreaElement>;
   onBlur?: FocusEventHandler<HTMLTextAreaElement>;
@@ -45,6 +47,7 @@ export const FieldTextFlex: FC<FieldTextFlexProps> = forwardRef(
       className = '',
       label = '',
       helpText = '',
+      maxLengthDisplay,
       onChange,
       onFocus,
       onBlur,
@@ -60,6 +63,7 @@ export const FieldTextFlex: FC<FieldTextFlexProps> = forwardRef(
       event.target.style.height = `${HEIGHT}px`;
       event.target.style.height = `${event.target.scrollHeight + BORDER}px`;
     };
+
     return (
       <>
         {label && (
@@ -88,6 +92,11 @@ export const FieldTextFlex: FC<FieldTextFlexProps> = forwardRef(
         >
           {value}
         </textarea>
+        <MaxValueDisplay
+          className={cx('max-length-display')}
+          value={value.length}
+          maxValue={maxLengthDisplay}
+        />
         {(hasError || helpText) && (
           <div className={cx('additional-content', { disabled })}>
             {hasError && <span className={cx('error-text')}>{error}</span>}

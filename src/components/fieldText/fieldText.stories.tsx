@@ -73,16 +73,14 @@ export const Disabled: Story = {
   },
 };
 
-export const MaxLengthDisplay: Story = {
-  args: {
-    maxLengthDisplay: 60,
-  },
-};
-
 export const NonDefaultWidth: Story = {
   args: {
     defaultWidth: false,
   },
+};
+
+export const WithMaxLengthDisplay: Story = {
+  args: { maxLengthDisplay: 60 },
 };
 
 export const FullyDescribed: Story = {
