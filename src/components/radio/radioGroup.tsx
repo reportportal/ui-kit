@@ -9,7 +9,7 @@ interface RadioGroupProps extends Omit<RadioProps, 'option'> {
 export const RadioGroup: FC<RadioGroupProps> = ({ options, value, ...rest }): ReactElement => (
   <div style={{ display: 'flex', flexDirection: 'column' }}>
     {options.map((option) => (
-      <Radio option={option} value={value} {...rest} />
+      <Radio key={option.value} option={option} value={value} {...rest} />
     ))}
   </div>
 );
