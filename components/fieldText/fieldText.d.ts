@@ -2,6 +2,7 @@ import { ChangeEventHandler, ReactNode, InputHTMLAttributes } from '../../../nod
 interface FieldTextProps extends InputHTMLAttributes<HTMLInputElement> {
     value?: string;
     className?: string;
+    classNameHelpText?: string;
     error?: string;
     placeholder?: string;
     disabled?: boolean;
