@@ -20,6 +20,7 @@ const cx = classNames.bind(styles);
 interface FieldTextProps extends InputHTMLAttributes<HTMLInputElement> {
   value?: string;
   className?: string;
+  classNameHelpText?: string;
   error?: string;
   placeholder?: string;
   disabled?: boolean;
@@ -49,6 +50,7 @@ export const FieldText = forwardRef<HTMLInputElement, FieldTextProps>(
     {
       value = '',
       className,
+      classNameHelpText,
       error,
       placeholder,
       disabled = false,
@@ -99,7 +101,9 @@ export const FieldText = forwardRef<HTMLInputElement, FieldTextProps>(
     };
 
     const showError = displayError && error && touched;
-    const helpTextElement = <span className={cx('text', 'help-text')}>{helpText}</span>;
+    const helpTextElement = (
+      <span className={cx('text', 'help-text', classNameHelpText)}>{helpText}</span>
+    );
 
     return (
       <>
