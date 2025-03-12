@@ -11,4 +11,5 @@ export interface SystemAlertProps {
     type?: SystemAlertType;
     duration?: number;
     className?: string;
+    dataAutomationId?: string;
 }
