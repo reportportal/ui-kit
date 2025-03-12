@@ -15,6 +15,7 @@ export const SystemAlert: FC<SystemAlertProps> = ({
   type = SystemAlertType.INFO,
   duration = DEFAULT_DURATION,
   className,
+  dataAutomationId,
 }): ReactElement => {
   const adjustedDuration = type === SystemAlertType.ERROR ? ERROR_DURATION : duration;
 
@@ -42,7 +43,9 @@ export const SystemAlert: FC<SystemAlertProps> = ({
     <div className={cx('system-alert', type, className)}>
       <div className={cx('icon-wrapper')}>{getIcon()}</div>
       <div className={cx('content-wrapper')}>
-        <h2 className={cx('title')}>{title}</h2>
+        <h2 className={cx('title')} data-automation-id={dataAutomationId}>
+          {title}
+        </h2>
       </div>
       <button className={cx('close-button')} onClick={onClose} aria-label="close system alert">
         <CloseIcon />
