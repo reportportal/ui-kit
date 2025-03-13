@@ -1,4 +1,4 @@
-import { FC, ReactElement, useEffect } from 'react';
+import { FC, ReactElement, useEffect, useRef, useState } from 'react';
 import { SystemAlertProps, SystemAlertType } from './types';
 import styles from './systemAlert.module.scss';
 import classNames from 'classnames/bind';
@@ -18,6 +18,16 @@ export const SystemAlert: FC<SystemAlertProps> = ({
   dataAutomationId,
 }): ReactElement => {
   const adjustedDuration = type === SystemAlertType.ERROR ? ERROR_DURATION : duration;
+  const [systemTitle, setSystemTitle] = useState('');
+  const refSystemAlert = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const { offsetHeight, scrollHeight } = refSystemAlert?.current as HTMLDivElement;
+
+    if (offsetHeight < scrollHeight) {
+      setSystemTitle(title);
+    }
+  }, [title]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -39,11 +49,12 @@ export const SystemAlert: FC<SystemAlertProps> = ({
         return icon;
     }
   };
+
   return (
-    <div className={cx('system-alert', type, className)}>
+    <div className={cx('system-alert', type, className)} title={systemTitle}>
       <div className={cx('icon-wrapper')}>{getIcon()}</div>
       <div className={cx('content-wrapper')}>
-        <h2 className={cx('title')} data-automation-id={dataAutomationId}>
+        <h2 ref={refSystemAlert} className={cx('title')} data-automation-id={dataAutomationId}>
           {title}
         </h2>
       </div>
