@@ -97,3 +97,9 @@ export const FullyDescribed: Story = {
     loading: true,
   },
 };
+
+export const WithPassword: Story = {
+  args: {
+    type: 'password',
+  },
+};

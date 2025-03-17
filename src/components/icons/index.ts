@@ -19,3 +19,5 @@ export { default as InfoIcon } from './svg/info.svg';
 export { default as SuccessIcon } from './svg/success.svg';
 export { default as ErrorIcon } from './svg/error.svg';
 export { default as ExportIcon } from './svg/export.svg';
+export { default as CloseEyeIcon } from './svg/closeEye.svg';
+export { default as OpenEyeIcon } from './svg/openEye.svg';
