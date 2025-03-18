@@ -121,6 +121,25 @@
 .input-container {
   position: relative;
   width: 100%;
+
+  &.type-password {
+    .input {
+      width: calc(100% - 30px);
+      text-overflow: unset;
+    }
+    .eye-icon {
+      position: absolute;
+      z-index: 2;
+      top: 4px;
+      right: -2px;
+      height: 16px;
+      width: 16px;
+
+      svg path {
+        fill: var(--rp-ui-color-field-icon);
+      }
+    }
+  }
 }
 
 .input {

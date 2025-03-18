@@ -8,14 +8,22 @@ import {
   InputHTMLAttributes,
   MutableRefObject,
   FocusEvent,
+  MouseEventHandler,
+  TouchEventHandler,
 } from 'react';
 import classNames from 'classnames/bind';
-import { ClearIcon } from '@components/icons';
+import { ClearIcon, CloseEyeIcon, OpenEyeIcon } from '@components/icons';
+import { Button } from '../button';
 import { SpinLoader } from '@components/spinLoader';
 import { MaxValueDisplay } from '@components/maxValueDisplay';
 import styles from './fieldText.module.scss';
 
 const cx = classNames.bind(styles);
+
+const enum InputType {
+  PASSWORD = 'password',
+  TEXT = 'text',
+}
 
 interface FieldTextProps extends InputHTMLAttributes<HTMLInputElement> {
   value?: string;
@@ -66,7 +74,7 @@ export const FieldText = forwardRef<HTMLInputElement, FieldTextProps>(
       onClear,
       isRequired = false,
       hasDoubleMessage = false,
-      type = 'text',
+      type = InputType.TEXT,
       displayError = true,
       collapsible = false,
       loading = false,
@@ -80,6 +88,7 @@ export const FieldText = forwardRef<HTMLInputElement, FieldTextProps>(
     const internalRef = useRef<HTMLInputElement>(null);
     const inputRef = ref || internalRef;
     const [focused, setFocused] = useState(false);
+    const [passwordVisible, setPasswordVisible] = useState(false);
 
     const onFocusHandler = (event: FocusEvent<HTMLInputElement>) => {
       setFocused(true);
@@ -103,6 +112,26 @@ export const FieldText = forwardRef<HTMLInputElement, FieldTextProps>(
     const helpTextElement = (
       <span className={cx('text', 'help-text', classNameHelpText)}>{helpText}</span>
     );
+
+    const getInputType = () => {
+      if (type !== InputType.PASSWORD) {
+        return type;
+      }
+
+      return passwordVisible ? InputType.TEXT : InputType.PASSWORD;
+    };
+
+    const showPassword: MouseEventHandler<HTMLButtonElement> &
+      TouchEventHandler<HTMLButtonElement> = (event) => {
+      event.preventDefault();
+      setPasswordVisible(true);
+    };
+
+    const hidePassword: MouseEventHandler<HTMLButtonElement> &
+      TouchEventHandler<HTMLButtonElement> = (event) => {
+      event.preventDefault();
+      setPasswordVisible(false);
+    };
 
     return (
       <>
@@ -137,10 +166,10 @@ export const FieldText = forwardRef<HTMLInputElement, FieldTextProps>(
               </span>
             )
           )}
-          <span className={cx('input-container')}>
+          <span className={cx('input-container', `type-${type}`)}>
             <input
               ref={inputRef}
-              type={type}
+              type={getInputType()}
               className={cx('input')}
               value={value}
               disabled={disabled}
@@ -149,6 +178,19 @@ export const FieldText = forwardRef<HTMLInputElement, FieldTextProps>(
               onBlur={onBlurHandler}
               {...rest}
             />
+            {type === InputType.PASSWORD && value && (
+              <Button
+                icon={passwordVisible ? <OpenEyeIcon /> : <CloseEyeIcon />}
+                variant={'text'}
+                className={cx('eye-icon')}
+                onMouseDown={showPassword}
+                onMouseLeave={hidePassword}
+                onMouseUp={hidePassword}
+                onTouchStart={showPassword}
+                onTouchEnd={hidePassword}
+                onTouchCancel={hidePassword}
+              />
+            )}
             {placeholder && !value && (
               <span className={cx('placeholder')}>
                 {placeholder}
