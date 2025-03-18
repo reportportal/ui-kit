@@ -13,6 +13,7 @@ import {
 } from 'react';
 import classNames from 'classnames/bind';
 import { ClearIcon, CloseEyeIcon, OpenEyeIcon } from '@components/icons';
+import { Button } from '../button';
 import { SpinLoader } from '@components/spinLoader';
 import { MaxValueDisplay } from '@components/maxValueDisplay';
 import styles from './fieldText.module.scss';
@@ -120,16 +121,14 @@ export const FieldText = forwardRef<HTMLInputElement, FieldTextProps>(
       return passwordVisible ? InputType.TEXT : InputType.PASSWORD;
     };
 
-    const showPassword: MouseEventHandler<HTMLDivElement> & TouchEventHandler<HTMLDivElement> = (
-      event,
-    ) => {
+    const showPassword: MouseEventHandler<HTMLButtonElement> &
+      TouchEventHandler<HTMLButtonElement> = (event) => {
       event.preventDefault();
       setPasswordVisible(true);
     };
 
-    const hidePassword: MouseEventHandler<HTMLDivElement> & TouchEventHandler<HTMLDivElement> = (
-      event,
-    ) => {
+    const hidePassword: MouseEventHandler<HTMLButtonElement> &
+      TouchEventHandler<HTMLButtonElement> = (event) => {
       event.preventDefault();
       setPasswordVisible(false);
     };
@@ -180,7 +179,9 @@ export const FieldText = forwardRef<HTMLInputElement, FieldTextProps>(
               {...rest}
             />
             {type === InputType.PASSWORD && value && (
-              <div
+              <Button
+                icon={passwordVisible ? <OpenEyeIcon /> : <CloseEyeIcon />}
+                variant={'text'}
                 className={cx('eye-icon')}
                 onMouseDown={showPassword}
                 onMouseLeave={hidePassword}
@@ -188,9 +189,7 @@ export const FieldText = forwardRef<HTMLInputElement, FieldTextProps>(
                 onTouchStart={showPassword}
                 onTouchEnd={hidePassword}
                 onTouchCancel={hidePassword}
-              >
-                {passwordVisible ? <OpenEyeIcon /> : <CloseEyeIcon />}
-              </div>
+              />
             )}
             {placeholder && !value && (
               <span className={cx('placeholder')}>
