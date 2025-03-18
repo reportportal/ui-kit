@@ -51,10 +51,14 @@ export const SystemAlert: FC<SystemAlertProps> = ({
   };
 
   return (
-    <div className={cx('system-alert', type, className)} title={systemTitle}>
+    <div
+      className={cx('system-alert', type, className)}
+      title={systemTitle}
+      data-automation-id={dataAutomationId}
+    >
       <div className={cx('icon-wrapper')}>{getIcon()}</div>
       <div className={cx('content-wrapper')}>
-        <h2 ref={refSystemAlert} className={cx('title')} data-automation-id={dataAutomationId}>
+        <h2 ref={refSystemAlert} className={cx('title')}>
           {title}
         </h2>
       </div>
