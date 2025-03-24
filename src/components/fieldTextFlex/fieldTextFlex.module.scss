@@ -36,6 +36,13 @@
     border: 1px solid var(--rp-ui-base-error);
   }
 
+  &:focus:not(.error.touched),
+  &.error.touched {
+    & + .max-length-display {
+      display: block;
+    }
+  }
+
   &::placeholder {
     color: var(--rp-ui-base-e-300);
   }
@@ -65,9 +72,9 @@
 
 .max-length-display {
   @include font-scale(s-small);
-  position: relative;
-  top: -29px;
-  display: block;
+  position: absolute;
+  margin-top: -29px;
+  display: none;
   padding-left: 12px;
   font-family: var(--rp-ui-base-font-family);
   font-weight: $fw-regular;

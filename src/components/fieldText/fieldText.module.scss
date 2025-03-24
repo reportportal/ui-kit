@@ -108,6 +108,13 @@
     border-color: var(--rp-ui-base-error);
   }
 
+  &:focus-within:not(.error.touched),
+  &.error.touched {
+    .max-length-display {
+      display: block;
+    }
+  }
+
   &.disabled {
     pointer-events: none;
     background-color: var(--rp-ui-base-bg-100);
@@ -238,6 +245,7 @@
 }
 
 .max-length-display {
+  display: none;
   margin-left: 15px;
   align-self: end;
   color: var(--rp-ui-base-e-300);
