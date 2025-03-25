@@ -5,7 +5,7 @@ export { default as BreadcrumbsTreeIcon } from './svg/breadcrumbsTree.svg';
 export { default as CalendarIcon } from './svg/calendar.svg';
 export { default as CalendarArrowIcon } from './svg/calendarArrow.svg';
 export { default as ChevronDownDropdownIcon } from './svg/chevronDownDropdown.svg';
-export { default as ChevronRightBreadcrumbsIcon } from './svg/chevronDownDropdown.svg';
+export { default as ChevronRightBreadcrumbsIcon } from './svg/chevronRightBreadcrumbs.svg';
 export { default as ClearIcon } from './svg/clear.svg';
 export { default as CloseIcon } from './svg/close.svg';
 export { default as CloseEyeIcon } from './svg/closeEye.svg';
