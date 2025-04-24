@@ -51,6 +51,7 @@ export default defineConfig(() => ({
       external: [
         ...Object.keys(packageJson.dependencies),
         ...Object.keys(packageJson.peerDependencies),
+        /^react-datepicker(\/.+)?$/,
         'react/jsx-runtime',
       ],
     },
