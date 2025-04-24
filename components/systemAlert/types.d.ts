@@ -1,4 +1,5 @@
 import { ReactElement } from '../../../node_modules/react';
+
 export declare enum SystemAlertType {
     INFO = "info",
     SUCCESS = "success",

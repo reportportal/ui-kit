@@ -1,5 +1,6 @@
 import { ReactNode, FC } from '../../../node_modules/react';
 import { DropdownVariant, RenderDropdownOption, DropdownOptionType, DropdownValue } from './types';
+
 export interface DropdownProps {
     options: DropdownOptionType[];
     value: DropdownValue | DropdownValue[];

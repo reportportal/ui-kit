@@ -1,1 +1,0 @@
-import{j as n}from"./bind-f351ec9c.js";const r=s=>typeof s=="number"&&Number.isFinite(s)&&Number.isInteger(s)&&s>0,t=({className:s,value:e,maxValue:i})=>r(i)?n.jsxs("span",{className:s,children:[e,"/",i]}):null;t.__docgenInfo={description:"",methods:[],displayName:"MaxValueDisplay",props:{className:{required:!1,tsType:{name:"string"},description:""}}};export{t as M};

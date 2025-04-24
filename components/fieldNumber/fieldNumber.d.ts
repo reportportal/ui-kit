@@ -1,4 +1,5 @@
 import { FC, HTMLAttributes, FocusEventHandler } from '../../../node_modules/react';
+
 type FieldNumberValue = number | string;
 interface FieldNumberProps extends Omit<HTMLAttributes<HTMLInputElement>, 'onChange' | 'onFocus'> {
     onChange: (value: number | string) => void;

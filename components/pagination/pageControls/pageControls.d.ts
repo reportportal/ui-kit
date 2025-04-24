@@ -1,5 +1,6 @@
 import { FC } from '../../../../node_modules/react';
 import { ChangePage } from '../types';
+
 type PageControlsCaptions = {
     page: string;
     goTo: string;

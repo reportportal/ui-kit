@@ -1,4 +1,5 @@
 import { FC } from '../../../node_modules/react';
+
 interface BubblesLoaderProps {
     color?: string;
     className?: string;

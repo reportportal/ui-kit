@@ -1,5 +1,6 @@
 import { FC, ReactNode } from '../../../node_modules/react';
 import { Placement } from '@floating-ui/react';
+
 interface TooltipProps {
     content: ReactNode;
     children: ReactNode;

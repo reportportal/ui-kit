@@ -1,5 +1,6 @@
 import { FC } from '../../../node_modules/react';
 import { ShapeWithClassName } from '../../common/types';
+
 export interface MaxValueDisplayProps {
     value: number;
     maxValue?: number;

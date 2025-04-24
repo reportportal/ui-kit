@@ -1,5 +1,6 @@
 import { FC } from '../../../../../../node_modules/react';
 import { ChangePage } from '../../../types';
+
 export interface BarProps {
     totalPages: number;
     activePage: number;

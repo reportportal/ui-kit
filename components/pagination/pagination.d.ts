@@ -1,5 +1,6 @@
 import { FC } from '../../../node_modules/react';
 import { ChangePageSize, ChangePage } from './types';
+
 type PaginationCaptions = {
     items?: string;
     of?: string;
