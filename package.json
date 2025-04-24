@@ -32,7 +32,7 @@
     "downshift": "^6.1.12",
     "framer-motion": "^10.15.2",
     "rc-scrollbars": "^1.1.6",
-    "react-datepicker": "^7.3.0"
+    "react-datepicker": "^7.6.0"
   },
   "devDependencies": {
     "@storybook/addon-essentials": "^8.2.9",

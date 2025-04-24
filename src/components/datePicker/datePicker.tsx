@@ -1,10 +1,13 @@
-import ReactDatePicker, { ReactDatePickerCustomHeaderProps } from 'react-datepicker';
+import * as ReactDatePickerExport from 'react-datepicker';
+import { ReactDatePickerCustomHeaderProps } from 'react-datepicker';
 import classNames from 'classnames/bind';
 import { FC, ReactNode, useRef, ReactElement } from 'react';
 import { FieldText } from '@components/fieldText';
 import { CalendarIcon } from '@components/icons';
 import { DatePickerHeader } from './header/datePickerHeader';
 import styles from './datePicker.module.scss';
+
+const ReactDatePicker = ReactDatePickerExport.default;
 
 const cx = classNames.bind(styles);
 
