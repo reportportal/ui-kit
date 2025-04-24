@@ -234,6 +234,9 @@ The CSS custom properties that come from DS are prefixed with `rp-ui-base` to av
 
 ### Testing
 
+Each new component/hook/utility **must be** covered by unit/component tests.
+All uncovered stuff will be tested gradually in the scope of tech-debt elimination activities.
+
 #### Testing Tools
 
 The project uses the following testing tools:
