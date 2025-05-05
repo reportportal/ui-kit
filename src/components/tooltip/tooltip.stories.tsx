@@ -20,7 +20,9 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { Tooltip } from './tooltip';
 
 const Hello: FC<ContentProps> = ({ isTooltipOpen }) => (
-  <span>Hello, tooltip is {isTooltipOpen ? 'opened' : 'closed'}</span>
+  <div style={{ width: '150px', height: '20px' }}>
+    Hello, tooltip is {isTooltipOpen ? 'opened' : 'closed'}
+  </div>
 );
 interface ContentProps {
   isTooltipOpen?: boolean;
@@ -40,11 +42,38 @@ export default meta;
 
 type Story = StoryObj<typeof Tooltip>;
 
+const div = document.createElement('div');
+div.id = 'tooltip-root';
+document.body.appendChild(div);
+
 export const Default: Story = {
   args: {},
   render: () => (
     <Tooltip content={<Content />}>
       <Hello />
     </Tooltip>
+  ),
+};
+
+export const WithDocumentId: Story = {
+  args: {},
+  render: () => (
+    <div
+      style={{
+        width: 120,
+        height: 200,
+        border: '1px solid gray',
+        overflow: 'hidden',
+      }}
+    >
+      <Tooltip
+        content={<Content />}
+        documentId="tooltip-root"
+        isFloating={false}
+        placement={'right'}
+      >
+        <Hello />
+      </Tooltip>
+    </div>
   ),
 };
