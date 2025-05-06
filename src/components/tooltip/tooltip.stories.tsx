@@ -66,12 +66,7 @@ export const WithDocumentId: Story = {
         overflow: 'hidden',
       }}
     >
-      <Tooltip
-        content={<Content />}
-        documentId="tooltip-root"
-        isFloating={false}
-        placement={'right'}
-      >
+      <Tooltip content={<Content />} portalRoot={div} isFloating={false} placement={'right'}>
         <Hello />
       </Tooltip>
     </div>

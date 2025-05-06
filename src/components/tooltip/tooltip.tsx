@@ -49,7 +49,7 @@ interface TooltipProps {
   safeZone?: number;
   zIndex?: number;
   mainAxis?: boolean;
-  documentId?: string;
+  portalRoot?: Element;
   isFloating?: boolean;
 }
 
@@ -67,7 +67,7 @@ export const Tooltip: FC<TooltipProps> = ({
   dataAutomationId,
   mainAxis = true,
   children,
-  documentId,
+  portalRoot,
   isFloating = true,
 }): ReactElement => {
   const [isOpened, setOpened] = useState(false);
@@ -150,10 +150,7 @@ export const Tooltip: FC<TooltipProps> = ({
       >
         {children}
       </div>
-      {isOpened &&
-        (documentId
-          ? createPortal(getContent(), document.getElementById(documentId) as HTMLElement)
-          : getContent())}
+      {isOpened && (portalRoot ? createPortal(getContent(), portalRoot) : getContent())}
     </>
   );
 };
