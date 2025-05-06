@@ -15,6 +15,7 @@
  */
 
 import { FC, ReactElement, useRef, useState, ReactNode } from 'react';
+import { createPortal } from 'react-dom';
 import classNames from 'classnames/bind';
 import {
   useFloating,
@@ -48,6 +49,8 @@ interface TooltipProps {
   safeZone?: number;
   zIndex?: number;
   mainAxis?: boolean;
+  portalRoot?: Element;
+  isFloating?: boolean;
 }
 
 export const Tooltip: FC<TooltipProps> = ({
@@ -64,6 +67,8 @@ export const Tooltip: FC<TooltipProps> = ({
   dataAutomationId,
   mainAxis = true,
   children,
+  portalRoot,
+  isFloating = true,
 }): ReactElement => {
   const [isOpened, setOpened] = useState(false);
   const arrowRef = useRef(null);
@@ -76,11 +81,12 @@ export const Tooltip: FC<TooltipProps> = ({
       offset({
         mainAxis: safeZone + TRIANGLE_HEIGHT,
       }),
-      flip({
-        mainAxis,
-        fallbackAxisSideDirection: 'start',
-        fallbackPlacements: placements,
-      }),
+      isFloating &&
+        flip({
+          mainAxis,
+          fallbackAxisSideDirection: 'start',
+          fallbackPlacements: placements,
+        }),
       arrow({
         element: arrowRef,
       }),
@@ -104,6 +110,35 @@ export const Tooltip: FC<TooltipProps> = ({
     timeoutId.current = setTimeout(() => setOpened(true), TOOLTIP_DELAY_MS);
   };
 
+  const getContent = () => (
+    <div
+      ref={refs.setFloating}
+      style={{
+        ...floatingStyles,
+        ...styleWidth,
+        minWidth,
+        zIndex,
+      }}
+      data-automation-id={dataAutomationId}
+    >
+      <FloatingArrow
+        ref={arrowRef}
+        context={context}
+        width={TRIANGLE_WIDTH}
+        height={TRIANGLE_HEIGHT}
+        fill={arrowColor}
+      />
+      <div
+        className={cx('tooltip-content', contentClassName)}
+        style={{
+          maxWidth: `${maxWidth}px`,
+        }}
+      >
+        {content}
+      </div>
+    </div>
+  );
+
   return (
     <>
       <div
@@ -115,34 +150,7 @@ export const Tooltip: FC<TooltipProps> = ({
       >
         {children}
       </div>
-      {isOpened && (
-        <div
-          ref={refs.setFloating}
-          style={{
-            ...floatingStyles,
-            ...styleWidth,
-            minWidth,
-            zIndex,
-          }}
-          data-automation-id={dataAutomationId}
-        >
-          <FloatingArrow
-            ref={arrowRef}
-            context={context}
-            width={TRIANGLE_WIDTH}
-            height={TRIANGLE_HEIGHT}
-            fill={arrowColor}
-          />
-          <div
-            className={cx('tooltip-content', contentClassName)}
-            style={{
-              maxWidth: `${maxWidth}px`,
-            }}
-          >
-            {content}
-          </div>
-        </div>
-      )}
+      {isOpened && (portalRoot ? createPortal(getContent(), portalRoot) : getContent())}
     </>
   );
 };
