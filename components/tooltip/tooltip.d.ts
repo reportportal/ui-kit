@@ -15,6 +15,8 @@ interface TooltipProps {
     safeZone?: number;
     zIndex?: number;
     mainAxis?: boolean;
+    portalRoot?: Element;
+    isFloating?: boolean;
 }
 export declare const Tooltip: FC<TooltipProps>;
 export {};
