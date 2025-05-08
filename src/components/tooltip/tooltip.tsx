@@ -39,6 +39,7 @@ interface TooltipProps {
   content: ReactNode;
   children: ReactNode;
   wrapperClassName?: string;
+  tooltipClassName?: string;
   contentClassName?: string;
   dynamicWidth?: boolean;
   width?: number;
@@ -56,6 +57,7 @@ interface TooltipProps {
 export const Tooltip: FC<TooltipProps> = ({
   content,
   wrapperClassName,
+  tooltipClassName,
   contentClassName,
   dynamicWidth,
   width,
@@ -120,6 +122,7 @@ export const Tooltip: FC<TooltipProps> = ({
         zIndex,
       }}
       data-automation-id={dataAutomationId}
+      className={cx(tooltipClassName)}
     >
       <FloatingArrow
         ref={arrowRef}
