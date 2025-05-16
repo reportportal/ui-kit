@@ -77,7 +77,10 @@
   border: 1px solid var(--rp-ui-color-field-border-3);
   border-radius: 3px;
   background-color: var(--rp-ui-color-field-bg-3);
-  transition: width 200ms, padding 200ms, border 100ms;
+  transition:
+    width 200ms,
+    padding 200ms,
+    border 100ms;
 
   &.default-width {
     width: 240px;
@@ -249,6 +252,7 @@
   margin-left: 15px;
   align-self: end;
   color: var(--rp-ui-base-e-300);
+  word-break: initial;
 }
 
 .error-text {
