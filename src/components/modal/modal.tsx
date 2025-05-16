@@ -58,6 +58,7 @@ export const Modal: FC<ModalProps> = ({
 }) => {
   const [isShown, setShown] = useState(false);
   const [modalHeight, setModalHeight] = useState(0);
+  const [isFocused, setIsFocused] = useState(false);
   const modalRef = useRef<HTMLDivElement | null>(null);
 
   const windowSize = useWindowResize();
@@ -91,6 +92,13 @@ export const Modal: FC<ModalProps> = ({
     }
   };
 
+  const onFocus = () => {
+    if (!isFocused) {
+      modalRef.current?.focus();
+      setIsFocused(true);
+    }
+  };
+
   useEffect(() => {
     if (modalRef && modalRef.current) {
       const { clientHeight } = modalRef.current;
@@ -121,7 +129,7 @@ export const Modal: FC<ModalProps> = ({
             animate={{ opacity: 1, marginTop: modalMargin }}
             exit={{ opacity: 0, marginTop: -modalMargin }}
             transition={{ duration: 0.3 }}
-            onAnimationStart={() => modalRef.current?.focus()}
+            onAnimationStart={onFocus}
           >
             <ModalHeader title={title} onClose={closeModal} withDescription={!!description} />
             {scrollable ? (
