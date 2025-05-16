@@ -58,7 +58,7 @@ export const Modal: FC<ModalProps> = ({
 }) => {
   const [isShown, setShown] = useState(false);
   const [modalHeight, setModalHeight] = useState(0);
-  const [isFocused, setIsFocused] = useState(false);
+  const [initiallyFocused, setInitiallyFocused] = useState(false);
   const modalRef = useRef<HTMLDivElement | null>(null);
 
   const windowSize = useWindowResize();
@@ -93,9 +93,9 @@ export const Modal: FC<ModalProps> = ({
   };
 
   const onFocus = () => {
-    if (!isFocused) {
+    if (!initiallyFocused) {
       modalRef.current?.focus();
-      setIsFocused(true);
+      setInitiallyFocused(true);
     }
   };
 
