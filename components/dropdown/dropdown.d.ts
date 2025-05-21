@@ -24,6 +24,8 @@ export interface DropdownProps {
     optionAll?: DropdownOptionType;
     isOptionAllVisible?: boolean;
     onSelectAll?: () => void;
+    customDisplayedValue?: string;
+    notScrollable?: boolean;
     footer?: ReactNode;
 }
 export declare const Dropdown: FC<DropdownProps>;
