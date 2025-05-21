@@ -39,6 +39,8 @@ export interface DropdownProps {
   optionAll?: DropdownOptionType;
   isOptionAllVisible?: boolean;
   onSelectAll?: () => void;
+  customDisplayedValue?: string;
+  notScrollable?: boolean;
   footer?: ReactNode;
 }
 
@@ -66,6 +68,8 @@ export const Dropdown: FC<DropdownProps> = ({
   optionAll = { value: 'all', label: 'All' },
   isOptionAllVisible = false,
   onSelectAll = () => {},
+  customDisplayedValue,
+  notScrollable = false,
   footer,
 }): ReactElement => {
   const [opened, setOpened] = useState(false);
@@ -283,7 +287,7 @@ export const Dropdown: FC<DropdownProps> = ({
             placeholder: !value || (Array.isArray(value) && !value.length),
           })}
         >
-          {getDisplayedValue()}
+          {customDisplayedValue || getDisplayedValue()}
         </span>
         <BaseIconButton className={cx('arrow')} tabIndex={-1}>
           <DropdownIcon />
@@ -298,9 +302,13 @@ export const Dropdown: FC<DropdownProps> = ({
             ref: refs.setFloating,
           })}
         >
-          <Scrollbars autoHeight autoHeightMax={216} hideTracksWhenNotNeeded>
-            {renderOptions()}
-          </Scrollbars>
+          {notScrollable ? (
+            renderOptions()
+          ) : (
+            <Scrollbars autoHeight autoHeightMax={216} hideTracksWhenNotNeeded>
+              {renderOptions()}
+            </Scrollbars>
+          )}
         </div>
       )}
     </div>
