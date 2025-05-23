@@ -29,7 +29,10 @@ const preview: Preview = {
       toolbar: {
         title: 'Theme',
         icon: 'circlehollow',
-        items: ['light', 'dark'],
+        items: [
+          { value: 'light', icon: 'circlehollow', title: 'Light' },
+          { value: 'dark', icon: 'circle', title: 'Dark' }
+        ],
         dynamicTitle: true,
       },
     },
@@ -44,6 +47,10 @@ const preview: Preview = {
         color: /(background|color)$/i,
         date: /Date$/,
       },
+      expanded: true,
+    },
+    docs: {
+      toc: true,
     },
   },
 };

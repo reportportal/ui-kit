@@ -16,16 +16,12 @@ import { ClearIcon, CloseEyeIcon, OpenEyeIcon } from '@components/icons';
 import { Button } from '../button';
 import { SpinLoader } from '@components/spinLoader';
 import { MaxValueDisplay } from '@components/maxValueDisplay';
+import { InputType } from './types';
 import styles from './fieldText.module.scss';
 
 const cx = classNames.bind(styles);
 
-const enum InputType {
-  PASSWORD = 'password',
-  TEXT = 'text',
-}
-
-interface FieldTextProps extends InputHTMLAttributes<HTMLInputElement> {
+export interface FieldTextProps extends InputHTMLAttributes<HTMLInputElement> {
   value?: string;
   className?: string;
   classNameHelpText?: string;
@@ -46,7 +42,7 @@ interface FieldTextProps extends InputHTMLAttributes<HTMLInputElement> {
   onClear?: (prevValue?: string) => void;
   isRequired?: boolean;
   hasDoubleMessage?: boolean;
-  type?: string;
+  type?: InputType;
   displayError?: boolean;
   maxLengthDisplay?: number;
   collapsible?: boolean;

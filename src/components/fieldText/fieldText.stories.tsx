@@ -1,30 +1,48 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { DeleteIcon } from '@components/icons';
-import { FieldText } from './fieldText';
-import { ChangeEvent, useRef, useState } from 'react';
+import { DeleteIcon, SearchIcon } from '@components/icons';
+import { FieldText, FieldTextProps } from './fieldText';
+import { InputType } from './types';
+import { ARG_TYPES } from './constants';
+import { ChangeEvent, useEffect, useRef, useState, FC } from 'react';
 
+const FieldTextWithHooks: FC<FieldTextProps> = (args) => {
+  const [value, setValue] = useState(args.value || '');
+  const ref = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (args.value) {
+      setValue(args.value);
+    }
+  }, [args.value]);
+
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const val = event.target.value;
+
+    setValue(val);
+
+    if (val === 'blur') {
+      ref?.current?.blur();
+    }
+  };
+
+  const handleClear = () => {
+    setValue('');
+  };
+
+  return (
+    <FieldText {...args} value={value} onChange={handleChange} onClear={handleClear} ref={ref} />
+  );
+};
+/** Reusable UI component for the text input */
 const meta: Meta<typeof FieldText> = {
   title: 'Field Text',
   component: FieldText,
   parameters: {
     layout: 'centered',
   },
+  argTypes: ARG_TYPES,
   tags: ['autodocs'],
-  render: (args) => {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    const [value, setValue] = useState('');
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    const ref = useRef<HTMLInputElement>(null);
-    const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-      const val = event.target.value;
-      setValue(val);
-      if (val === 'blur') {
-        ref?.current?.blur();
-      }
-    };
-
-    return <FieldText {...args} value={value} onChange={handleChange} ref={ref} />;
-  },
+  render: (args) => <FieldTextWithHooks {...args} />,
 };
 
 export default meta;
@@ -100,6 +118,20 @@ export const FullyDescribed: Story = {
 
 export const WithPassword: Story = {
   args: {
-    type: 'password',
+    type: InputType.PASSWORD,
   },
+};
+/** Collapsible text input by clicking on the icon */
+export const CollapsibleFieldText: Story = {
+  args: {
+    collapsible: true,
+    startIcon: <SearchIcon />,
+    maxLength: 256,
+    clearable: true,
+  },
+  render: (args) => (
+    <div style={{ backgroundColor: '#f7f7f8', padding: '10px' }}>
+      <FieldTextWithHooks {...args} />
+    </div>
+  ),
 };
