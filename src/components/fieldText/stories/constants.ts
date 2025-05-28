@@ -1,6 +1,6 @@
 import type { ArgTypes } from '@storybook/react';
 
-import { InputType } from './types';
+import { InputType } from '../types';
 
 export const ARG_TYPES: ArgTypes = {
   title: {

@@ -1,26 +1,26 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { DeleteIcon, SearchIcon } from '@components/icons';
-import { FieldText, FieldTextProps } from './fieldText';
-import { InputType } from './types';
+import { FieldText, FieldTextProps } from '../fieldText';
+import { InputType } from '../types';
 import { ARG_TYPES } from './constants';
 import { ChangeEvent, useEffect, useRef, useState, FC } from 'react';
 
-const FieldTextWithHooks: FC<FieldTextProps> = (args) => {
-  const [value, setValue] = useState(args.value || '');
+const FieldTextWithHooks: FC<FieldTextProps> = (props) => {
+  const [value, setValue] = useState(props.value || '');
   const ref = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (args.value) {
-      setValue(args.value);
+    if (props.value) {
+      setValue(props.value);
     }
-  }, [args.value]);
+  }, [props.value]);
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const val = event.target.value;
+    const { value: enteredValue } = event.target;
 
-    setValue(val);
+    setValue(enteredValue);
 
-    if (val === 'blur') {
+    if (enteredValue === 'blur') {
       ref?.current?.blur();
     }
   };
@@ -30,7 +30,7 @@ const FieldTextWithHooks: FC<FieldTextProps> = (args) => {
   };
 
   return (
-    <FieldText {...args} value={value} onChange={handleChange} onClear={handleClear} ref={ref} />
+    <FieldText {...props} value={value} onChange={handleChange} onClear={handleClear} ref={ref} />
   );
 };
 /** Reusable UI component for the text input */
