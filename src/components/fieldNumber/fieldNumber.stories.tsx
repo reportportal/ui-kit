@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { FieldNumber } from './fieldNumber';
 
 const meta: Meta<typeof FieldNumber> = {
-  title: 'Field Number',
+  title: 'Fields/Field Number',
   component: FieldNumber,
   parameters: {
     layout: 'centered',

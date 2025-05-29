@@ -35,7 +35,7 @@ const FieldTextWithHooks: FC<FieldTextProps> = (props) => {
 };
 /** Reusable UI component for the text input */
 const meta: Meta<typeof FieldText> = {
-  title: 'Field Text',
+  title: 'Fields/Field Text',
   component: FieldText,
   parameters: {
     layout: 'centered',

@@ -14,7 +14,7 @@ import { useEffect, useState } from 'react';
 import { sortTableData } from '@components/table/utils';
 
 const meta: Meta<typeof Table> = {
-  title: 'Table',
+  title: 'Tables & Lists/Table',
   component: Table,
   parameters: {
     layout: 'centered',

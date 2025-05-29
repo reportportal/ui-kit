@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Button } from '@components/button';
 
 const meta: Meta<typeof Modal> = {
-  title: 'Modal',
+  title: 'Modals & Notification/Modal',
   component: Modal,
   parameters: {
     layout: 'centered',

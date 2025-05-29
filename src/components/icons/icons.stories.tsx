@@ -6,7 +6,7 @@ import { CloseIcon, DeleteIcon, DropdownIcon, MinusIcon, PlusIcon, SearchIcon } 
 const icons = [CloseIcon, PlusIcon, MinusIcon, DeleteIcon, DropdownIcon, SearchIcon];
 
 const meta: Meta<typeof BaseIconButton> = {
-  title: 'Icons',
+  title: 'Icons/Icons',
   component: BaseIconButton,
   parameters: {
     layout: 'centered',

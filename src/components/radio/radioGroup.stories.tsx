@@ -4,7 +4,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { RadioGroup } from './radioGroup';
 
 const meta: Meta<typeof RadioGroup> = {
-  title: 'Radio button',
+  title: 'Controls/Radio button',
   component: RadioGroup,
   parameters: {
     layout: 'centered',
