@@ -1,6 +1,7 @@
 import { ChangeEventHandler, ReactNode, InputHTMLAttributes } from '../../../node_modules/react';
+import { InputType } from './types';
 
-interface FieldTextProps extends InputHTMLAttributes<HTMLInputElement> {
+export interface FieldTextProps extends InputHTMLAttributes<HTMLInputElement> {
     value?: string;
     className?: string;
     classNameHelpText?: string;
@@ -21,11 +22,10 @@ interface FieldTextProps extends InputHTMLAttributes<HTMLInputElement> {
     onClear?: (prevValue?: string) => void;
     isRequired?: boolean;
     hasDoubleMessage?: boolean;
-    type?: string;
+    type?: InputType;
     displayError?: boolean;
     maxLengthDisplay?: number;
     collapsible?: boolean;
     loading?: boolean;
 }
 export declare const FieldText: import('../../../node_modules/react').ForwardRefExoticComponent<FieldTextProps & import('../../../node_modules/react').RefAttributes<HTMLInputElement>>;
-export {};
