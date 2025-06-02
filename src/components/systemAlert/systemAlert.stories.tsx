@@ -3,7 +3,7 @@ import { SystemAlert } from './systemAlert';
 import { SystemAlertType } from '@components/systemAlert/types';
 
 const meta: Meta<typeof SystemAlert> = {
-  title: 'SystemAlert',
+  title: 'Modals & Notification/SystemAlert',
   component: SystemAlert,
   parameters: {
     layout: 'centered',

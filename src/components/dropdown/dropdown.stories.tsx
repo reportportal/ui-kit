@@ -6,7 +6,7 @@ import { Button } from '@components/button';
 import './stories.scss';
 
 const meta: Meta<typeof Dropdown> = {
-  title: 'Dropdown',
+  title: 'Controls/Dropdown',
   component: Dropdown,
   parameters: {
     layout: 'centered',

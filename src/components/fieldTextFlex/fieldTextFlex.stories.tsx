@@ -3,7 +3,7 @@ import { FieldTextFlex, FieldTextFlexProps } from './fieldTextFlex';
 import { ChangeEvent, useState } from 'react';
 
 const meta: Meta<FieldTextFlexProps> = {
-  title: 'Field Text Flex',
+  title: 'Fields/Field Text Flex',
   component: FieldTextFlex,
   parameters: {
     layout: 'centered',

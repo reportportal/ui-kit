@@ -30,7 +30,7 @@ interface ContentProps {
 const Content = () => <div style={{ width: '100px', height: '100px' }}>Hello!</div>;
 
 const meta: Meta<typeof Tooltip> = {
-  title: 'Tooltip',
+  title: 'Modals & Notification/Tooltip',
   component: Tooltip,
   parameters: {
     layout: 'centered',

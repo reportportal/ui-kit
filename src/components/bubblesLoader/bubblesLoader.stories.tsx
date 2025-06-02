@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { BubblesLoader } from './bubblesLoader';
 
 const meta: Meta<typeof BubblesLoader> = {
-  title: 'Bubbles Loader',
+  title: 'Data Display/Bubbles Loader',
   component: BubblesLoader,
   parameters: {
     layout: 'centered',

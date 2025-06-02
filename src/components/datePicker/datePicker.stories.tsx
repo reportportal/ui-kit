@@ -6,7 +6,7 @@ import { DatePicker } from './datePicker';
 import { registerDatePickerLocale } from './utils';
 
 const meta: Meta<typeof DatePicker> = {
-  title: 'DatePicker',
+  title: 'Controls/DatePicker',
   component: DatePicker,
   parameters: {
     layout: 'centered',
