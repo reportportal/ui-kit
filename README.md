@@ -45,7 +45,7 @@ const MyComponent = () => (
 
 ### Theming
 
-All components are provided with the `light'` theme by default.
+All components are provided with the `light` theme by default.
 To use the `dark` theme, you need to wrap your application with the `ThemeProvider` component and pass the `dark` theme as a prop:
 
 ```jsx
