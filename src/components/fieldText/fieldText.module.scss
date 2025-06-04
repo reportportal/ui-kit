@@ -1,5 +1,6 @@
 @import 'src/assets/styles/variables/typography';
 @import 'src/assets/styles/mixins/font-scale';
+@import 'src/assets/styles/mixins/field-asterisk';
 
 @mixin fill-svg($color) {
   svg {
@@ -17,12 +18,6 @@
       fill: $color;
     }
   }
-}
-
-@mixin asterisk() {
-  position: absolute;
-  top: -3px;
-  color: var(--rp-ui-base-e-300);
 }
 
 .icon-container {
@@ -46,25 +41,6 @@
 .icon-container-end {
   @extend .icon-container;
   margin-left: 4px;
-}
-
-.label {
-  display: block;
-  margin-bottom: 4px;
-  font-family: var(--rp-ui-base-font-family);
-  font-weight: $fw-medium;
-  @include font-scale();
-  color: var(--rp-ui-color-text);
-
-  .asterisk {
-    @include asterisk();
-    padding-left: 4px;
-  }
-
-  &.disabled {
-    pointer-events: none;
-    background-color: var(--rp-ui-base-bg-100);
-  }
 }
 
 .field {
@@ -188,13 +164,6 @@
   left: 0;
   pointer-events: none;
   white-space: nowrap;
-
-  .asterisk:after {
-    @include asterisk();
-    right: -7px;
-    content: '*';
-    color: var(--rp-ui-base-error-focused);
-  }
 }
 
 .icon {

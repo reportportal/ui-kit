@@ -7,6 +7,7 @@ import { useOnClickOutside } from '@common/hooks';
 import { KeyCodes } from '@common/constants/keyCodes';
 import { BaseIconButton } from '@components/baseIconButton';
 import { DropdownIcon } from '@components/icons';
+import { FieldLabel } from '@components/fieldLabel';
 import { DropdownOption } from './dropdownOption';
 import { DropdownVariant, RenderDropdownOption, DropdownOptionType, DropdownValue } from './types';
 import { OPEN_DROPDOWN_KEY_CODES, CLOSE_DROPDOWN_KEY_CODES, EventName } from './constants';
@@ -30,6 +31,7 @@ export interface DropdownProps {
   transparentBackground?: boolean;
   className?: string;
   toggleButtonClassName?: string;
+  label?: ReactNode;
   onChange: (value: DropdownValue | DropdownValue[]) => void;
   onFocus?: () => void;
   onBlur?: () => void;
@@ -60,6 +62,7 @@ export const Dropdown: FC<DropdownProps> = ({
   icon,
   variant,
   placeholder = '',
+  label = '',
   renderOption,
   transparentBackground = false,
   className,
@@ -129,6 +132,7 @@ export const Dropdown: FC<DropdownProps> = ({
 
   const {
     getToggleButtonProps,
+    getLabelProps,
     getMenuProps,
     getItemProps,
     setHighlightedIndex,
@@ -264,6 +268,7 @@ export const Dropdown: FC<DropdownProps> = ({
 
   return (
     <div ref={containerRef} className={cx('container', className)} title={title}>
+      {label && <FieldLabel {...getLabelProps()}>{label}</FieldLabel>}
       <button
         disabled={disabled}
         {...getToggleButtonProps({

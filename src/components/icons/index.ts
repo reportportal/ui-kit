@@ -1,4 +1,7 @@
 // TODO: ask UX team to provide path-only svg icons
+export { default as AddCsv } from './svg/addCsv.svg';
+export { default as AddImage } from './svg/addImage.svg';
+export { default as AddJar } from './svg/addJar.svg';
 export { default as ArrowDownIcon } from './svg/arrowDown.svg';
 export { default as ArrowUpIcon } from './svg/arrowUp.svg';
 export { default as BreadcrumbsTreeIcon } from './svg/breadcrumbsTree.svg';
@@ -11,7 +14,9 @@ export { default as CloseIcon } from './svg/close.svg';
 export { default as CloseEyeIcon } from './svg/closeEye.svg';
 export { default as CopyIcon } from './svg/copy.svg';
 export { default as DeleteIcon } from './svg/delete.svg';
+export { default as DragNDrop } from './svg/dragNDrop.svg';
 export { default as DropdownIcon } from './svg/dropdown.svg';
+export { default as DrugNDrop } from './svg/drugNDrop.svg';
 export { default as EditIcon } from './svg/edit.svg';
 export { default as ErrorIcon } from './svg/error.svg';
 export { default as ExportIcon } from './svg/export.svg';
