@@ -80,7 +80,10 @@ export const DatePickerHeader: FC<DatePickerHeaderProps> = ({
         <button
           aria-label="Previous Months"
           disabled={prevMonthButtonDisabled}
-          onClick={decreaseMonth}
+          onClick={(e) => {
+            e.stopPropagation();
+            decreaseMonth();
+          }}
           className={cx('button-prev', { disabled: prevMonthButtonDisabled })}
         >
           <CalendarArrowIcon />
@@ -106,7 +109,10 @@ export const DatePickerHeader: FC<DatePickerHeaderProps> = ({
         <button
           aria-label="Next Months"
           disabled={nextMonthButtonDisabled}
-          onClick={increaseMonth}
+          onClick={(e) => {
+            e.stopPropagation();
+            increaseMonth();
+          }}
           className={cx('button-next', { disabled: nextMonthButtonDisabled })}
         >
           <CalendarArrowIcon />
