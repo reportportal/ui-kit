@@ -172,13 +172,6 @@ export const Dropdown: FC<DropdownProps> = ({
   };
 
   const getDisplayedValue = () => {
-    if ((!value && value !== false && value !== 0) || (Array.isArray(value) && !value.length))
-      return placeholder;
-
-    if (multiSelect && Array.isArray(value) && options.length === value.length) {
-      return optionAll.label;
-    }
-
     const displayedValue = options.reduce<string[]>((labels, option) => {
       if ((Array.isArray(value) && value.includes(option.value)) || option.value === value) {
         labels.push(option.label);
@@ -186,8 +179,22 @@ export const Dropdown: FC<DropdownProps> = ({
       return labels;
     }, []);
 
-    return displayedValue.join(', ');
+    if (displayedValue.length > 0) {
+      return displayedValue.join(', ');
+    }
+
+    if ((!value && value !== false && value !== 0) || (Array.isArray(value) && !value.length)) {
+      return placeholder;
+    }
+
+    if (multiSelect && Array.isArray(value) && options.length === value.length) {
+      return optionAll.label;
+    }
   };
+
+  const isDisplayedValue = options.some(
+    (option) => (Array.isArray(value) && value.includes(option.value)) || option.value === value,
+  );
 
   const handleToggleButtonKeyDown: KeyboardEventHandler<HTMLButtonElement> = (event) => {
     const { keyCode } = event;
@@ -284,7 +291,7 @@ export const Dropdown: FC<DropdownProps> = ({
         {icon && <span className={cx('icon')}>{icon}</span>}
         <span
           className={cx('value', {
-            placeholder: !value || (Array.isArray(value) && !value.length),
+            placeholder: !isDisplayedValue || (Array.isArray(value) && !value.length),
           })}
         >
           {customDisplayedValue || getDisplayedValue()}
