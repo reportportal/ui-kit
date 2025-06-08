@@ -39,7 +39,7 @@ export interface DropdownProps {
   optionAll?: DropdownOptionType;
   isOptionAllVisible?: boolean;
   onSelectAll?: () => void;
-  customDisplayedValue?: string;
+  formatDisplayedValue?: (value: string | undefined) => string;
   notScrollable?: boolean;
   footer?: ReactNode;
 }
@@ -68,7 +68,7 @@ export const Dropdown: FC<DropdownProps> = ({
   optionAll = { value: 'all', label: 'All' },
   isOptionAllVisible = false,
   onSelectAll = () => {},
-  customDisplayedValue,
+  formatDisplayedValue,
   notScrollable = false,
   footer,
 }): ReactElement => {
@@ -192,9 +192,7 @@ export const Dropdown: FC<DropdownProps> = ({
     }
   };
 
-  const isDisplayedValue = options.some(
-    (option) => (Array.isArray(value) && value.includes(option.value)) || option.value === value,
-  );
+  const displayedValue = getDisplayedValue();
 
   const handleToggleButtonKeyDown: KeyboardEventHandler<HTMLButtonElement> = (event) => {
     const { keyCode } = event;
@@ -291,10 +289,10 @@ export const Dropdown: FC<DropdownProps> = ({
         {icon && <span className={cx('icon')}>{icon}</span>}
         <span
           className={cx('value', {
-            placeholder: !isDisplayedValue || (Array.isArray(value) && !value.length),
+            placeholder: displayedValue === placeholder,
           })}
         >
-          {customDisplayedValue || getDisplayedValue()}
+          {formatDisplayedValue ? formatDisplayedValue(displayedValue) : displayedValue}
         </span>
         <BaseIconButton className={cx('arrow')} tabIndex={-1}>
           <DropdownIcon />
