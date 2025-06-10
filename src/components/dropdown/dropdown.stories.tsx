@@ -82,6 +82,7 @@ export const MultiSelect: Story = {
     options: [
       { value: 1, label: 'One' },
       { value: 2, label: 'Two' },
+      { value: '', label: 'Nullable' },
       { value: 4, label: '4' },
       { value: 5, label: '5' },
       { value: 6, label: '6' },

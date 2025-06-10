@@ -39,7 +39,7 @@ export interface DropdownProps {
   optionAll?: DropdownOptionType;
   isOptionAllVisible?: boolean;
   onSelectAll?: () => void;
-  customDisplayedValue?: string;
+  formatDisplayedValue?: (value: string | undefined) => string;
   notScrollable?: boolean;
   footer?: ReactNode;
 }
@@ -68,7 +68,7 @@ export const Dropdown: FC<DropdownProps> = ({
   optionAll = { value: 'all', label: 'All' },
   isOptionAllVisible = false,
   onSelectAll = () => {},
-  customDisplayedValue,
+  formatDisplayedValue,
   notScrollable = false,
   footer,
 }): ReactElement => {
@@ -172,9 +172,6 @@ export const Dropdown: FC<DropdownProps> = ({
   };
 
   const getDisplayedValue = () => {
-    if ((!value && value !== false && value !== 0) || (Array.isArray(value) && !value.length))
-      return placeholder;
-
     if (multiSelect && Array.isArray(value) && options.length === value.length) {
       return optionAll.label;
     }
@@ -186,8 +183,16 @@ export const Dropdown: FC<DropdownProps> = ({
       return labels;
     }, []);
 
-    return displayedValue.join(', ');
+    if (displayedValue.length > 0) {
+      return displayedValue.join(', ');
+    }
+
+    if ((!value && value !== false && value !== 0) || (Array.isArray(value) && !value.length)) {
+      return placeholder;
+    }
   };
+
+  const displayedValue = getDisplayedValue();
 
   const handleToggleButtonKeyDown: KeyboardEventHandler<HTMLButtonElement> = (event) => {
     const { keyCode } = event;
@@ -284,10 +289,10 @@ export const Dropdown: FC<DropdownProps> = ({
         {icon && <span className={cx('icon')}>{icon}</span>}
         <span
           className={cx('value', {
-            placeholder: !value || (Array.isArray(value) && !value.length),
+            placeholder: displayedValue === placeholder,
           })}
         >
-          {customDisplayedValue || getDisplayedValue()}
+          {formatDisplayedValue ? formatDisplayedValue(displayedValue) : displayedValue}
         </span>
         <BaseIconButton className={cx('arrow')} tabIndex={-1}>
           <DropdownIcon />
