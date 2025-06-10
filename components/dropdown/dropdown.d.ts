@@ -24,7 +24,7 @@ export interface DropdownProps {
     optionAll?: DropdownOptionType;
     isOptionAllVisible?: boolean;
     onSelectAll?: () => void;
-    customDisplayedValue?: string;
+    formatDisplayedValue?: (value: string | undefined) => string;
     notScrollable?: boolean;
     footer?: ReactNode;
 }
