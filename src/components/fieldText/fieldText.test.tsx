@@ -110,11 +110,13 @@ describe('FieldText Component', () => {
   describe('Label', () => {
     it('renders with label', () => {
       render(<FieldText label="Field Label" onChange={() => {}} />);
-      const label = screen.getByText('Field Label');
+      const label: HTMLLabelElement = screen.getByText('Field Label');
+      const input = screen.getByRole('textbox');
 
       expect(label).toBeInTheDocument();
-      expect(label.tagName.toLowerCase()).toBe('span');
-      expect(label.className).toContain('_label_');
+      expect(label.tagName.toLowerCase()).toBe('label');
+      expect(label.className).toContain('field-label');
+      expect(input.id).toEqual(label.htmlFor);
     });
 
     it('renders label with required asterisk', () => {

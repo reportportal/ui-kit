@@ -1,0 +1,5 @@
+@mixin field-asterisk() {
+  position: absolute;
+  top: -3px;
+  color: var(--rp-ui-base-e-300);
+}

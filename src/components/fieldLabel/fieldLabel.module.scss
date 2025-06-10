@@ -1,0 +1,23 @@
+@import 'src/assets/styles/variables/typography';
+@import 'src/assets/styles/mixins/font-scale';
+@import 'src/assets/styles/mixins/field-asterisk';
+
+.field-label {
+  @include font-scale();
+
+  display: block;
+  position: relative;
+  margin-bottom: 4px;
+  font-family: var(--rp-ui-base-font-family);
+  font-weight: $fw-medium;
+  color: var(--rp-ui-color-text);
+
+  .asterisk {
+    @include field-asterisk();
+    padding-left: 4px;
+  }
+
+  &.disabled {
+    pointer-events: none;
+  }
+}

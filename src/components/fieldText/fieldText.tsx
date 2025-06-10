@@ -10,12 +10,14 @@ import {
   FocusEvent,
   MouseEventHandler,
   TouchEventHandler,
+  useId,
 } from 'react';
 import classNames from 'classnames/bind';
 import { ClearIcon, CloseEyeIcon, OpenEyeIcon } from '@components/icons';
 import { Button } from '../button';
 import { SpinLoader } from '@components/spinLoader';
 import { MaxValueDisplay } from '@components/maxValueDisplay';
+import { FieldLabel } from '@components/fieldLabel';
 import { InputType } from './types';
 import styles from './fieldText.module.scss';
 
@@ -83,6 +85,7 @@ export const FieldText = forwardRef<HTMLInputElement, FieldTextProps>(
   ): ReactElement => {
     const internalRef = useRef<HTMLInputElement>(null);
     const inputRef = ref || internalRef;
+    const inputId = useId();
     const [focused, setFocused] = useState(false);
     const [passwordVisible, setPasswordVisible] = useState(false);
 
@@ -132,10 +135,9 @@ export const FieldText = forwardRef<HTMLInputElement, FieldTextProps>(
     return (
       <>
         {label && (
-          <span className={cx('label', { disabled })}>
+          <FieldLabel isRequired={isRequired} htmlFor={inputId}>
             {label}
-            {isRequired && <span className={cx('asterisk')}>*</span>}
-          </span>
+          </FieldLabel>
         )}
         <div
           className={cx('field', className, {
@@ -169,6 +171,7 @@ export const FieldText = forwardRef<HTMLInputElement, FieldTextProps>(
               className={cx('input')}
               value={value}
               disabled={disabled}
+              id={inputId}
               onChange={onChange}
               onFocus={onFocusHandler}
               onBlur={onBlurHandler}
