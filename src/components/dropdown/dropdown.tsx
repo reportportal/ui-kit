@@ -172,6 +172,10 @@ export const Dropdown: FC<DropdownProps> = ({
   };
 
   const getDisplayedValue = () => {
+    if (multiSelect && Array.isArray(value) && options.length === value.length) {
+      return optionAll.label;
+    }
+
     const displayedValue = options.reduce<string[]>((labels, option) => {
       if ((Array.isArray(value) && value.includes(option.value)) || option.value === value) {
         labels.push(option.label);
@@ -185,10 +189,6 @@ export const Dropdown: FC<DropdownProps> = ({
 
     if ((!value && value !== false && value !== 0) || (Array.isArray(value) && !value.length)) {
       return placeholder;
-    }
-
-    if (multiSelect && Array.isArray(value) && options.length === value.length) {
-      return optionAll.label;
     }
   };
 
