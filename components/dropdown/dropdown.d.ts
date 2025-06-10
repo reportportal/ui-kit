@@ -15,6 +15,7 @@ export interface DropdownProps {
     transparentBackground?: boolean;
     className?: string;
     toggleButtonClassName?: string;
+    label?: ReactNode;
     onChange: (value: DropdownValue | DropdownValue[]) => void;
     onFocus?: () => void;
     onBlur?: () => void;
