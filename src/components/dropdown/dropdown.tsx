@@ -80,10 +80,11 @@ export const Dropdown: FC<DropdownProps> = ({
       ? options.filter((option) => value.includes(option.value))
       : null;
   const { refs, floatingStyles } = useFloating({
+    placement: 'bottom-start',
     middleware: [
       offset(5),
       flip({
-        fallbackPlacements: ['bottom', 'top'],
+        fallbackPlacements: ['bottom-start', 'top-start', 'bottom', 'top'],
       }),
     ],
   });
