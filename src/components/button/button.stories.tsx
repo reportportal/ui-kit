@@ -15,30 +15,30 @@ export default meta;
 
 type Story = StoryObj<typeof Button>;
 
-export const Primary: Story = {
+export const Primary = {
   args: {
     variant: 'primary',
+    children: 'Primary',
   },
-  render: (args) => <Button {...args}>Primary</Button>,
-};
+} satisfies Story;
 
-export const Ghost: Story = {
+export const Ghost = {
   args: {
     variant: 'ghost',
+    children: 'Ghost',
   },
-  render: (args) => <Button {...args}>Ghost</Button>,
-};
+} satisfies Story;
 
-export const Danger: Story = {
+export const Danger = {
   args: {
     variant: 'danger',
+    children: 'Danger',
   },
-  render: (args) => <Button {...args}>Danger</Button>,
-};
+} satisfies Story;
 
-export const Text: Story = {
+export const Text = {
   args: {
     variant: 'text',
+    children: 'Text',
   },
-  render: (args) => <Button {...args}>Text</Button>,
-};
+} satisfies Story;

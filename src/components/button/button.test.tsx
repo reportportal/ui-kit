@@ -148,6 +148,14 @@ describe('Button Component', () => {
       rerender(<Button adjustWidthOn="parent">Parent Width</Button>);
       button = screen.getByRole('button');
       expect(button.className).toContain('width-parent');
+
+      rerender(<Button adjustWidthOn="content">Content Width</Button>);
+      button = screen.getByRole('button');
+      expect(button.className).toContain('width-content');
+
+      rerender(<Button adjustWidthOn="min-width">Min Width</Button>);
+      button = screen.getByRole('button');
+      expect(button.className).toContain('width-min-width');
     });
 
     it('accepts and applies custom className', () => {
