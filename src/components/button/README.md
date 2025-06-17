@@ -1,28 +1,36 @@
 ## **Button**
 
-Min width - 120px. Max width - flexible.
+A flexible button component with multiple variants and width adjustments. Default minimum width is 120px.
 
 ### Props:
 
-- **type**: _string_, optional, default = "button"
-- **disabled**: _bool_, optional, default = false
-- **variant**: _string_, optional, default = "primary"
-- **wide**: _bool_, optional, default = false
-- **icon**: _string(imported svg icon)_, optional, default = ""
-- **iconPlace**: _string('start' | 'end')_, optional, default = ""
-- **children**: _node_, optional, default= ""
-- **customClassName**: _string_, optional, default= ""
-- **dataAutomationId**: _string_, optional, default = ''
+- **type**: _'submit' | 'reset' | 'button'_, optional, default = "button"
+- **disabled**: _boolean_, optional, default = false
+- **variant**: _'primary' | 'ghost' | 'danger' | 'text'_, optional, default = "primary"
+- **adjustWidthOn**: _'content' | 'wide-content' | 'parent' | 'min-width'_, optional, default = "min-width"
+- **icon**: _ReactNode_, optional - Any React element (not just SVG icons)
+- **iconPlace**: _'start' | 'end'_, optional, default = "start"
+- **children**: _ReactNode_, optional - Button content/text
+- **className**: _string_, optional - Custom CSS class name
+- **title**: _string_, optional - Title attribute for accessibility
+- **onClick**: _MouseEventHandler<HTMLButtonElement>_, optional - Click event handler
 
 ### Events:
 
-- **onClick**
+- **onClick**: Triggered when button is clicked (disabled buttons won't trigger this)
 
 ### Variants
 
-The Button comes with variants: _primary_ (default), _ghost_, _danger_ and _text_.  
+The Button comes with variants: _primary_ (default), _ghost_, _danger_ and _text_.
+
+### Width Adjustments
+
+- **content**: Natural content width
+- **min-width**: Minimum width of 120px (default)
+- **wide-content**: Extra padding for wider appearance
+- **parent**: Full width of parent container
 
 ### Icon
 
-Only text variant can be used with icon. You can pass imported svg icon via _icon_ prop.
-_iconPlace_ prop control displaying it on the left or right respectively.
+All variants can be used with icons (not limited to text variant). You can pass any React element via the _icon_ prop.
+The _iconPlace_ prop controls whether the icon appears at the 'start' (left) or 'end' (right) of the button text.

@@ -6,7 +6,6 @@
   justify-content: center;
   align-items: center;
   height: 36px;
-  min-width: 120px;
   padding: 7px 16px;
   margin: 0;
   outline: none;
@@ -113,6 +112,15 @@
 .disabled {
   opacity: var(--rp-ui-opacity-default);
   cursor: default;
+}
+
+.width-min-width {
+  min-width: 120px;
+}
+
+// Matches defaults, but defined here for CSS modules classname generation
+.width-content {
+  min-width: auto;
 }
 
 .width-wide-content {
