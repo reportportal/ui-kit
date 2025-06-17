@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { FC, ReactElement, useRef, useState, ReactNode } from 'react';
+import { FC, ReactElement, useRef, useState, ReactNode, useCallback } from 'react';
 import {
   offset,
   useFloating,
@@ -104,19 +104,22 @@ export const Popover: FC<PopoverProps> = ({
     }
   };
 
-  const getAlignment = (rects: ElementRects, currentPlacement: Placement) => {
-    if (isCentered)
-      return (
-        ((verticalPlacements.includes(currentPlacement)
-          ? rects.reference.height
-          : rects.reference.width) -
-          TRIANGLE_WIDTH) /
-          2 -
-        arrowOffset
-      );
+  const getAlignment = useCallback(
+    (rects: ElementRects, currentPlacement: Placement) => {
+      if (isCentered)
+        return (
+          ((verticalPlacements.includes(currentPlacement)
+            ? rects.reference.height
+            : rects.reference.width) -
+            TRIANGLE_WIDTH) /
+            2 -
+          arrowOffset
+        );
 
-    return -arrowOffset;
-  };
+      return -arrowOffset;
+    },
+    [arrowOffset, isCentered],
+  );
 
   const { placement, refs, floatingStyles, context } = useFloating({
     open: isPopoverOpen,
