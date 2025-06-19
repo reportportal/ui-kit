@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { FC, ReactElement, useRef, useState, ReactNode } from 'react';
+import { FC, ReactElement, useRef, useState, ReactNode, useCallback } from 'react';
 import {
   offset,
   useFloating,
@@ -28,6 +28,7 @@ import {
   useInteractions,
   FloatingFocusManager,
   Placement,
+  ElementRects,
 } from '@floating-ui/react';
 import classNames from 'classnames/bind';
 import styles from './popover.module.scss';
@@ -72,6 +73,7 @@ interface PopoverProps {
   dataAutomationId?: string;
   isOpened?: boolean;
   setIsOpened?: (isOpened: boolean) => void;
+  isCentered?: boolean;
 }
 
 export const Popover: FC<PopoverProps> = ({
@@ -87,6 +89,7 @@ export const Popover: FC<PopoverProps> = ({
   dataAutomationId,
   isOpened,
   setIsOpened,
+  isCentered = true,
 }): ReactElement => {
   const arrowRef = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
@@ -101,6 +104,23 @@ export const Popover: FC<PopoverProps> = ({
     }
   };
 
+  const getAlignment = useCallback(
+    (rects: ElementRects, currentPlacement: Placement) => {
+      if (isCentered)
+        return (
+          ((verticalPlacements.includes(currentPlacement)
+            ? rects.reference.height
+            : rects.reference.width) -
+            TRIANGLE_WIDTH) /
+            2 -
+          arrowOffset
+        );
+
+      return -arrowOffset;
+    },
+    [arrowOffset, isCentered],
+  );
+
   const { placement, refs, floatingStyles, context } = useFloating({
     open: isPopoverOpen,
     onOpenChange,
@@ -108,13 +128,7 @@ export const Popover: FC<PopoverProps> = ({
     middleware: [
       offset(({ rects, placement: currentPlacement }) => ({
         mainAxis: safeZone + TRIANGLE_HEIGHT,
-        alignmentAxis:
-          ((verticalPlacements.includes(currentPlacement)
-            ? rects.reference.height
-            : rects.reference.width) -
-            TRIANGLE_WIDTH) /
-            2 -
-          arrowOffset,
+        alignmentAxis: getAlignment(rects, currentPlacement),
       })),
       flip({
         fallbackAxisSideDirection: 'start',
