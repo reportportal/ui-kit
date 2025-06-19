@@ -8,6 +8,7 @@ import {
   RowData,
   SortConfig,
   SortDirection,
+  SortingDirection,
   TableComponentProps,
 } from './types';
 import { useEffect, useState } from 'react';
@@ -93,7 +94,7 @@ export const Default: Story = {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const [sortingColumn, setSortingColumn] = useState<Column>(primaryColumn);
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    const [sortingDirection, setSortingDirection] = useState<SortDirection>(SortDirection.ASC);
+    const [sortingDirection, setSortingDirection] = useState<SortingDirection>(SortDirection.ASC);
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const defaultSortedData = sortTableData(data, sortConfig);
     // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -118,7 +119,10 @@ export const Default: Story = {
           onChangeSorting={(sortConfigParam = sortConfig) => {
             let { direction } = sortConfigParam;
             const { key } = sortConfigParam;
-            direction = direction === SortDirection.ASC ? SortDirection.DESC : SortDirection.ASC;
+            direction =
+              direction.toLowerCase() === SortDirection.ASC
+                ? SortDirection.DESC
+                : SortDirection.ASC;
             const sortedData = sortTableData(tableData, { key, direction });
             setSortConfig({ key, direction });
             setTableData(sortedData);

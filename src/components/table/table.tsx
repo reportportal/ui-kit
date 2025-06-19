@@ -79,7 +79,11 @@ export const Table: FC<TableComponentProps> = ({
   const getSortIcon = (columnKey: string) => {
     if (!sortableColumns.includes(columnKey)) return;
     if (sortingColumn?.key === columnKey) {
-      return sortingDirection === SortDirection.ASC ? <ArrowUpIcon /> : <ArrowDownIcon />;
+      return sortingDirection.toLowerCase() === SortDirection.ASC ? (
+        <ArrowUpIcon />
+      ) : (
+        <ArrowDownIcon />
+      );
     }
     return <ArrowUpIcon />;
   };

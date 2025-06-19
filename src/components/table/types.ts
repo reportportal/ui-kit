@@ -31,9 +31,10 @@ export enum SortDirection {
   ASC = 'asc',
   DESC = 'desc',
 }
+export type SortingDirection = 'asc' | 'desc' | 'ASC' | 'DESC';
 export interface SortConfig {
   key: string;
-  direction: SortDirection;
+  direction: SortingDirection;
 }
 export interface TableComponentProps {
   data: RowData[];
@@ -45,7 +46,7 @@ export interface TableComponentProps {
   headerClassName?: string;
   rowClassName?: string;
   selectedRowIds?: (string | number)[];
-  sortingDirection?: SortDirection;
+  sortingDirection?: SortingDirection;
   sortingColumn?: Column;
   sortableColumns?: string[];
   onChangeSorting?: (sortConfig?: SortConfig) => void;

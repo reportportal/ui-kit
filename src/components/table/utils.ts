@@ -7,10 +7,10 @@ export const sortTableData = (tableData: RowData[], sortConfig?: SortConfig): Ro
       const contentB = b[sortConfig.key].content || b[sortConfig.key];
       console.log(contentA, contentB);
       if (contentA < contentB) {
-        return sortConfig.direction === SortDirection.ASC ? -1 : 1;
+        return sortConfig.direction.toLowerCase() === SortDirection.ASC ? -1 : 1;
       }
       if (contentA > contentB) {
-        return sortConfig.direction === SortDirection.ASC ? 1 : -1;
+        return sortConfig.direction.toLowerCase() === SortDirection.ASC ? 1 : -1;
       }
       return 0;
     });
