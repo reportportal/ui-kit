@@ -14,6 +14,7 @@ interface PopoverProps {
     dataAutomationId?: string;
     isOpened?: boolean;
     setIsOpened?: (isOpened: boolean) => void;
+    isCentered?: boolean;
 }
 export declare const Popover: FC<PopoverProps>;
 export {};
