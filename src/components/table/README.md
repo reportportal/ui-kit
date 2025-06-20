@@ -47,8 +47,8 @@ Additional CSS classes to be applied to the table.
 #### `selectedRowIds` ((string | number)[], optional)
 An array containing the IDs of the currently selected rows.
 
-#### `sortingDirection` (SortDirection, optional)
-Specifies the current sorting direction ('asc' or 'desc').
+#### `sortingDirection` (SortingDirection, optional)
+Specifies the current sorting direction ('asc' | 'desc' | 'ASC' | 'DESC').
 
 #### `sortingColumn` (Column, optional)
 Specifies the column by which the table is currently sorted.

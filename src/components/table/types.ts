@@ -1,4 +1,5 @@
 import { ReactNode } from 'react';
+import { ASC, DESC } from './constants';
 
 export interface Column {
   key: string;
@@ -27,11 +28,7 @@ export interface RowData {
   rowConfigs?: RowConfigs;
   metaData?: MetaData;
 }
-export enum SortDirection {
-  ASC = 'asc',
-  DESC = 'desc',
-}
-export type SortingDirection = 'asc' | 'desc' | 'ASC' | 'DESC';
+export type SortingDirection = typeof ASC | typeof DESC | Uppercase<typeof ASC | typeof DESC>;
 export interface SortConfig {
   key: string;
   direction: SortingDirection;

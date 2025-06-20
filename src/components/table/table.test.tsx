@@ -3,7 +3,8 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import DefaultExport, { Table as NamedExport } from './index';
 import { Table } from './table';
-import { SortDirection, RowData, FixedColumn } from './types';
+import { RowData, FixedColumn } from './types';
+import { ASC, DESC } from './constants';
 
 interface CheckboxMockProps {
   value: boolean;
@@ -220,7 +221,7 @@ describe('Table Component', () => {
           sortableColumns={['name']}
           onChangeSorting={onChangeSortingMock}
           sortingColumn={mockPrimaryColumn}
-          sortingDirection={SortDirection.ASC}
+          sortingDirection={ASC}
         />,
       );
 
@@ -230,7 +231,7 @@ describe('Table Component', () => {
       expect(onChangeSortingMock).toHaveBeenCalledTimes(1);
       expect(onChangeSortingMock).toHaveBeenCalledWith({
         key: 'name',
-        direction: SortDirection.ASC,
+        direction: ASC,
       });
     });
 
@@ -251,7 +252,7 @@ describe('Table Component', () => {
           {...defaultProps}
           sortableColumns={['name']}
           sortingColumn={mockPrimaryColumn}
-          sortingDirection={SortDirection.ASC}
+          sortingDirection={ASC}
         />,
       );
 
@@ -265,7 +266,7 @@ describe('Table Component', () => {
           {...defaultProps}
           sortableColumns={['name']}
           sortingColumn={mockPrimaryColumn}
-          sortingDirection={SortDirection.DESC}
+          sortingDirection={DESC}
         />,
       );
 

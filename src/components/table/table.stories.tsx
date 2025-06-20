@@ -7,12 +7,12 @@ import {
   FixedColumn,
   RowData,
   SortConfig,
-  SortDirection,
   SortingDirection,
   TableComponentProps,
 } from './types';
 import { useEffect, useState } from 'react';
-import { sortTableData } from '@components/table/utils';
+import { sortTableData, toggleDirection } from '@components/table/utils';
+import { ASC } from './constants';
 
 const meta: Meta<typeof Table> = {
   title: 'Tables & Lists/Table',
@@ -89,12 +89,12 @@ export const Default: Story = {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const [sortConfig, setSortConfig] = useState<SortConfig>({
       key: primaryColumn.key,
-      direction: SortDirection.ASC,
+      direction: ASC,
     });
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const [sortingColumn, setSortingColumn] = useState<Column>(primaryColumn);
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    const [sortingDirection, setSortingDirection] = useState<SortingDirection>(SortDirection.ASC);
+    const [sortingDirection, setSortingDirection] = useState<SortingDirection>(ASC);
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const defaultSortedData = sortTableData(data, sortConfig);
     // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -119,10 +119,7 @@ export const Default: Story = {
           onChangeSorting={(sortConfigParam = sortConfig) => {
             let { direction } = sortConfigParam;
             const { key } = sortConfigParam;
-            direction =
-              direction.toLowerCase() === SortDirection.ASC
-                ? SortDirection.DESC
-                : SortDirection.ASC;
+            direction = toggleDirection(direction);
             const sortedData = sortTableData(tableData, { key, direction });
             setSortConfig({ key, direction });
             setTableData(sortedData);
