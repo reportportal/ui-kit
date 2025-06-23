@@ -2,9 +2,10 @@ import { CSSProperties, useMemo, useState, FC } from 'react';
 import styles from './table.module.scss';
 import classNames from 'classnames/bind';
 import { ArrowDownIcon, ArrowUpIcon } from '@components/icons';
-import { FixedColumn, PrimaryColumn, RowData, TableComponentProps, SortDirection } from './types';
+import { FixedColumn, PrimaryColumn, RowData, TableComponentProps } from './types';
 import { Checkbox } from '@components/checkbox';
-import { getColumnsKeys } from './utils';
+import { getColumnsKeys, isAsc } from './utils';
+import { ASC } from './constants';
 
 const cx = classNames.bind(styles);
 
@@ -18,7 +19,7 @@ export const Table: FC<TableComponentProps> = ({
   headerClassName = '',
   selectable = false,
   selectedRowIds = [],
-  sortingDirection = SortDirection.ASC,
+  sortingDirection = ASC,
   sortingColumn = primaryColumn,
   sortableColumns = getColumnsKeys([primaryColumn, ...fixedColumns]),
   onChangeSorting = () => {},
@@ -79,7 +80,7 @@ export const Table: FC<TableComponentProps> = ({
   const getSortIcon = (columnKey: string) => {
     if (!sortableColumns.includes(columnKey)) return;
     if (sortingColumn?.key === columnKey) {
-      return sortingDirection === SortDirection.ASC ? <ArrowUpIcon /> : <ArrowDownIcon />;
+      return isAsc(sortingDirection) ? <ArrowUpIcon /> : <ArrowDownIcon />;
     }
     return <ArrowUpIcon />;
   };
