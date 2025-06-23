@@ -1,4 +1,5 @@
 import { ReactNode } from '../../../node_modules/react';
+import { ASC, DESC } from './constants';
 
 export interface Column {
     key: string;
@@ -27,13 +28,10 @@ export interface RowData {
     rowConfigs?: RowConfigs;
     metaData?: MetaData;
 }
-export declare enum SortDirection {
-    ASC = "asc",
-    DESC = "desc"
-}
+export type SortingDirection = typeof ASC | typeof DESC | Uppercase<typeof ASC | typeof DESC>;
 export interface SortConfig {
     key: string;
-    direction: SortDirection;
+    direction: SortingDirection;
 }
 export interface TableComponentProps {
     data: RowData[];
@@ -45,7 +43,7 @@ export interface TableComponentProps {
     headerClassName?: string;
     rowClassName?: string;
     selectedRowIds?: (string | number)[];
-    sortingDirection?: SortDirection;
+    sortingDirection?: SortingDirection;
     sortingColumn?: Column;
     sortableColumns?: string[];
     onChangeSorting?: (sortConfig?: SortConfig) => void;
