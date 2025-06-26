@@ -30,7 +30,7 @@ export const ModalFooter: FC<ModalFooterProps> = ({
           <div className={cx('button-container')}>
             <Button
               variant="ghost"
-              adjustWidthOn={size === 'small' ? 'parent' : 'content'}
+              adjustWidthOn={size === 'small' ? 'parent' : 'min-width'}
               onClick={closeHandler}
               {...cancelButton}
             />
@@ -38,7 +38,7 @@ export const ModalFooter: FC<ModalFooterProps> = ({
         )}
         {okButton && (
           <div className={cx('button-container')}>
-            <Button adjustWidthOn={size === 'small' ? 'parent' : 'content'} {...okButton} />
+            <Button adjustWidthOn={size === 'small' ? 'parent' : 'min-width'} {...okButton} />
           </div>
         )}
       </div>
