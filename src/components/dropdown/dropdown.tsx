@@ -2,13 +2,12 @@ import { useRef, useState, ReactNode, FC, ReactElement, KeyboardEventHandler } f
 import classNames from 'classnames/bind';
 import { useFloating, offset, flip } from '@floating-ui/react-dom';
 import { useSelect } from 'downshift';
-import { Scrollbars } from 'rc-scrollbars';
 import { useOnClickOutside } from '@common/hooks';
 import { KeyCodes } from '@common/constants/keyCodes';
 import { BaseIconButton } from '@components/baseIconButton';
 import { DropdownIcon } from '@components/icons';
 import { FieldLabel } from '@components/fieldLabel';
-import { DropdownOption } from './dropdownOption';
+import { OptionsList } from './shared/OptionsList';
 import { DropdownVariant, RenderDropdownOption, DropdownOptionType, DropdownValue } from './types';
 import { OPEN_DROPDOWN_KEY_CODES, CLOSE_DROPDOWN_KEY_CODES, EventName } from './constants';
 import { calculateDefaultIndex, calculateNextIndex, calculatePrevIndex } from './utils';
@@ -229,49 +228,6 @@ export const Dropdown: FC<DropdownProps> = ({
     }
   };
 
-  const renderOptions = () => (
-    <div className={cx('options-container')}>
-      {multiSelect && isOptionAllVisible && Array.isArray(value) && (
-        <>
-          <DropdownOption
-            option={optionAll}
-            selected={value.length === options.length}
-            onChange={handleSelectAll}
-            multiSelect={multiSelect}
-            isPartiallyChecked={!!value.length}
-          />
-          <div className={cx('divider')} />{' '}
-        </>
-      )}
-      {options.map((option, index) => (
-        <DropdownOption
-          key={option.value}
-          {...getItemProps({
-            item: option,
-            index,
-          })}
-          multiSelect={multiSelect}
-          selected={
-            multiSelect
-              ? multiSelectedItems?.some((item) => item.value === option.value)
-              : option.value === (selectedItem?.value ?? selectedItem)
-          }
-          option={{ title: option.label, ...option }}
-          highlightHovered={highlightedIndex === index && eventName !== EventName.ON_CLICK}
-          render={renderOption}
-          onChange={option.disabled ? null : () => handleChange(option)}
-          onMouseEnter={() => setHighlightedIndex(index)}
-        />
-      ))}
-      {footer && (
-        <>
-          <div className={cx('divider')} />
-          {footer}
-        </>
-      )}
-    </div>
-  );
-
   return (
     <div ref={containerRef} className={cx('container', className)} title={title}>
       {label && <FieldLabel {...getLabelProps()}>{label}</FieldLabel>}
@@ -313,13 +269,24 @@ export const Dropdown: FC<DropdownProps> = ({
             ref: refs.setFloating,
           })}
         >
-          {notScrollable ? (
-            renderOptions()
-          ) : (
-            <Scrollbars autoHeight autoHeightMax={216} hideTracksWhenNotNeeded>
-              {renderOptions()}
-            </Scrollbars>
-          )}
+          <OptionsList
+            options={options}
+            getItemProps={getItemProps}
+            selectedItem={selectedItem}
+            selectedItems={multiSelectedItems}
+            highlightedIndex={highlightedIndex}
+            eventName={eventName}
+            multiSelect={multiSelect}
+            renderOption={renderOption}
+            onChange={handleChange}
+            onMouseEnter={setHighlightedIndex}
+            footer={footer}
+            notScrollable={notScrollable}
+            optionAll={optionAll}
+            isOptionAllVisible={isOptionAllVisible}
+            onSelectAll={handleSelectAll}
+            value={value}
+          />
         </div>
       )}
     </div>
