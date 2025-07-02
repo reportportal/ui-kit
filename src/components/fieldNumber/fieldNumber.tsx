@@ -1,18 +1,18 @@
 import {
-  FC,
   HTMLAttributes,
   KeyboardEventHandler,
   MouseEventHandler,
   ChangeEventHandler,
   FocusEventHandler,
-  ReactElement,
   useMemo,
   useRef,
+  useId,
 } from 'react';
 import classNames from 'classnames/bind';
 import { KeyCodes } from '@common/constants/keyCodes';
 import { BaseIconButton } from '@components/baseIconButton';
 import { PlusIcon, MinusIcon } from '@components/icons';
+import { FieldLabel } from '@components/fieldLabel';
 import { DEFAULT_WIDTH_CH, ALLOWED_KEY_CODES, MAX_WIDTH_CH } from './constants.js';
 import styles from './fieldNumber.module.scss';
 
@@ -35,7 +35,7 @@ interface FieldNumberProps extends Omit<HTMLAttributes<HTMLInputElement>, 'onCha
   onFocus?: () => void | FocusEventHandler<HTMLInputElement>;
 }
 
-export const FieldNumber: FC<FieldNumberProps> = ({
+export const FieldNumber = ({
   value = '',
   placeholder = '0',
   disabled = false,
@@ -49,9 +49,11 @@ export const FieldNumber: FC<FieldNumberProps> = ({
   title,
   error,
   touched = false,
+  id,
   ...rest
-}): ReactElement => {
+}: FieldNumberProps) => {
   const inputRef = useRef<HTMLInputElement | null>(null);
+  const inputId = useId();
   const handleChange: ChangeEventHandler<HTMLInputElement> = (event) => {
     let newValue: FieldNumberValue = event.target.value.replace(/^0(?=\d+|^\d)/g, '');
     if (newValue === '') {
@@ -110,7 +112,7 @@ export const FieldNumber: FC<FieldNumberProps> = ({
 
   return (
     <div className={cx('field-number', { disabled })}>
-      {label && <span className={cx('label')}>{label}</span>}
+      {label && <FieldLabel htmlFor={id ?? inputId}>{label}</FieldLabel>}
       <div
         className={cx('input-container', {
           filled: !!value || value === 0,
@@ -129,6 +131,7 @@ export const FieldNumber: FC<FieldNumberProps> = ({
         </BaseIconButton>
         <span className={cx('input-field', { disabled })} onClick={handleInputFieldClick}>
           <input
+            id={id ?? inputId}
             ref={inputRef}
             className={cx('input')}
             type="number"
