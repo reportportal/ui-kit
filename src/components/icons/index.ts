@@ -41,4 +41,6 @@ export { default as PriorityMediumIcon } from './svg/priorityMedium.svg';
 export { default as PriorityUnspecifiedIcon } from './svg/priorityUnspecified.svg';
 export { default as SearchIcon } from './svg/search.svg';
 export { default as SortIcon } from './svg/sort.svg';
+export { default as StatusSuccessIcon } from './svg/statusSuccess.svg';
 export { default as SuccessIcon } from './svg/success.svg';
+export { default as WarningIcon } from './svg/warning.svg';
