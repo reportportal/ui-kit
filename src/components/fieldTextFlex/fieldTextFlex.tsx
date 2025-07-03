@@ -2,7 +2,6 @@ import classNames from 'classnames/bind';
 import {
   ChangeEventHandler,
   ComponentPropsWithRef,
-  FC,
   FocusEventHandler,
   ForwardedRef,
   KeyboardEventHandler,
@@ -10,6 +9,7 @@ import {
   useId,
 } from 'react';
 import { MaxValueDisplay } from '@components/maxValueDisplay';
+import { FieldLabel } from '@components/fieldLabel';
 import styles from './fieldTextFlex.module.scss';
 
 const cx = classNames.bind(styles);
@@ -35,7 +35,7 @@ export interface FieldTextFlexProps extends ComponentPropsWithRef<'textarea'> {
 // DS link - https://www.figma.com/file/gjYQPbeyf4YsH3wZiVKoaj/%F0%9F%9B%A0-RP-DS-6?type=design&node-id=13023-1859&mode=design&t=vL74fEo9Hq6GFAXW-0
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-export const FieldTextFlex: FC<FieldTextFlexProps> = forwardRef(
+export const FieldTextFlex = forwardRef(
   (
     {
       value = '',
@@ -53,7 +53,7 @@ export const FieldTextFlex: FC<FieldTextFlexProps> = forwardRef(
       onBlur,
       onKeyUp,
       ...rest
-    },
+    }: FieldTextFlexProps,
     ref: ForwardedRef<HTMLTextAreaElement>,
   ) => {
     const textAriaId = useId();
@@ -67,9 +67,9 @@ export const FieldTextFlex: FC<FieldTextFlexProps> = forwardRef(
     return (
       <>
         {label && (
-          <label htmlFor={textAriaId} className={cx('label', { disabled })}>
+          <FieldLabel htmlFor={textAriaId} className={cx({ disabled })}>
             {label}
-          </label>
+          </FieldLabel>
         )}
         <textarea
           id={textAriaId}

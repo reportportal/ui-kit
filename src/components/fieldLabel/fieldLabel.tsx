@@ -1,4 +1,4 @@
-import { DetailedHTMLProps, FC, LabelHTMLAttributes } from 'react';
+import { DetailedHTMLProps, LabelHTMLAttributes } from 'react';
 import classNames from 'classnames/bind';
 
 import styles from './fieldLabel.module.scss';
@@ -10,8 +10,13 @@ interface FieldLabelProps
   isRequired?: boolean;
 }
 
-export const FieldLabel: FC<FieldLabelProps> = ({ children, isRequired = false, ...rest }) => (
-  <label className={cx('field-label')} {...rest}>
+export const FieldLabel = ({
+  children,
+  isRequired = false,
+  className,
+  ...rest
+}: FieldLabelProps) => (
+  <label className={cx('field-label', className)} {...rest}>
     {children}
     {isRequired && <span className={cx('asterisk')}>*</span>}
   </label>

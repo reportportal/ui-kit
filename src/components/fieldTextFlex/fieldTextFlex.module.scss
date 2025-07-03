@@ -52,14 +52,6 @@
   }
 }
 
-.label {
-  @include font-scale();
-  font-family: var(--rp-ui-base-font-family);
-  font-weight: $fw-medium;
-  color: var(--rp-ui-base-almost-black);
-  margin-bottom: 4px;
-}
-
 .additional-content {
   .error-text {
     @include additional-text(var(--rp-ui-base-error));
