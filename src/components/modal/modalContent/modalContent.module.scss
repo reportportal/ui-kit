@@ -1,10 +1,9 @@
-@import 'src/assets/styles/variables/typography';
 @import 'src/assets/styles/mixins/font-scale';
 
 .modal-content {
   width: 100%;
   font-family: var(--rp-ui-base-font-family);
-  font-weight: $fw-regular;
+  font-weight: var(--rp-ui-base-fw-regular);
   @include font-scale();
   color: var(--rp-ui-color-text);
   white-space: pre-line;

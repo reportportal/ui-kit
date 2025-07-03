@@ -1,5 +1,3 @@
-@import 'src/assets/styles/variables/typography';
-
 @mixin arrowHoverState($arrow-color) {
   &:hover:not(.disabled) {
     cursor: pointer;
@@ -62,7 +60,7 @@
     .toggle-button > span {
       color: var(--rp-ui-base-topaz);
       font-family: var(--rp-ui-base-font-family);
-      font-weight: $fw-bold;
+      font-weight: var(--rp-ui-base-fw-bold);
     }
 
     .toggle-button:hover > span {

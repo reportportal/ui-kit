@@ -1,4 +1,3 @@
-@import 'src/assets/styles/variables/typography';
 @import 'src/assets/styles/mixins/font-scale';
 
 .field-number {
@@ -15,7 +14,7 @@
   display: block;
   margin-bottom: 4px;
   font-family: var(--rp-ui-base-font-family);
-  font-weight: $fw-medium;
+  font-weight: var(--rp-ui-base-fw-medium);
   @include font-scale();
   text-indent: 1px;
   color: var(--rp-ui-base-almost-black);

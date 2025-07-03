@@ -1,4 +1,3 @@
-@import 'src/assets/styles/variables/typography';
 @import 'src/assets/styles/mixins/font-scale';
 
 .bar {
@@ -53,12 +52,12 @@
   text-align: center;
 
   .tooltip-text {
-    font-weight: $fw-regular;
+    font-weight: var(--rp-ui-base-fw-regular);
     padding-bottom: 8px;
   }
 
   .page-number {
-    font-weight: $fw-bold;
+    font-weight: var(--rp-ui-base-fw-bold);
   }
 }
 

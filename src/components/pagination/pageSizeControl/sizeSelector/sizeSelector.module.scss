@@ -1,4 +1,3 @@
-@import 'src/assets/styles/variables/typography';
 @import 'src/assets/styles/mixins/font-scale';
 
 .size-selector {
@@ -15,7 +14,7 @@
   cursor: pointer;
 
   font-family: var(--rp-ui-base-font-family);
-  font-weight: $fw-regular;
+  font-weight: var(--rp-ui-base-fw-regular);
   @include font-scale();
   text-align: left;
   color: var(--rp-ui-base-almost-black);

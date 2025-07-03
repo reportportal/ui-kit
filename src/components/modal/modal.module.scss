@@ -1,4 +1,3 @@
-@import 'src/assets/styles/variables/typography';
 @import 'src/assets/styles/mixins/font-scale';
 
 $WIDTH-SMALL: 320px;
@@ -65,7 +64,7 @@ $WIDTH-LARGE: 720px;
   width: 100%;
   padding-bottom: 24px;
   font-family: var(--rp-ui-base-font-family);
-  font-weight: $fw-regular;
+  font-weight: var(--rp-ui-base-fw-regular);
   @include font-scale();
   color: var(--rp-ui-base-almost-black);
 

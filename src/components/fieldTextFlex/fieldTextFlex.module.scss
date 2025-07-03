@@ -1,11 +1,10 @@
-@import '@assets/styles/variables/typography';
 @import '@assets/styles/mixins/font-scale';
 
 @mixin additional-text($color) {
   @include font-scale('s-small');
   display: block;
   font-family: var(--rp-ui-base-font-family);
-  font-weight: $fw-regular;
+  font-weight: var(--rp-ui-base-fw-regular);
   color: $color;
 }
 
@@ -19,7 +18,7 @@
   border-radius: 3px;
   box-sizing: border-box;
   font-family: var(--rp-ui-base-font-family);
-  font-weight: $fw-regular;
+  font-weight: var(--rp-ui-base-fw-regular);
   color: var(--rp-ui-base-almost-black);
   resize: vertical;
 
@@ -69,7 +68,7 @@
   display: none;
   padding-left: 12px;
   font-family: var(--rp-ui-base-font-family);
-  font-weight: $fw-regular;
+  font-weight: var(--rp-ui-base-fw-regular);
   color: var(--rp-ui-base-e-300);
 }
 

@@ -1,4 +1,3 @@
-@import 'src/assets/styles/variables/typography';
 @import 'src/assets/styles/mixins/font-scale';
 
 @mixin checked-state($color) {
@@ -33,7 +32,7 @@
   padding-left: 24px;
   color: var(--rp-ui-color-text-2);
   font-family: var(--rp-ui-base-font-family);
-  font-weight: $fw-medium;
+  font-weight: var(--rp-ui-base-fw-medium);
   @include font-scale();
   .disabled {
     opacity: var(--rp-ui-opacity-default);
@@ -86,16 +85,16 @@
   &:focus + .control {
     border: 2px solid var(--rp-ui-color-primary-focused);
   }
-  
+
   &.partially-checked:not(:checked){
     & + .control {
       @include partially-checked-state(var(--rp-ui-color-field-border), var(--rp-ui-color-field-border-2));
     }
-    
+
     &:hover + .control {
       @include partially-checked-state(var(--rp-ui-color-field-border-2-hover), var(--rp-ui-color-primary-hover));
     }
-    
+
     &:active:not(:disabled) + .control {
       @include partially-checked-state(var(--rp-ui-color-primary-focused), var(--rp-ui-color-field-border-2));
     }

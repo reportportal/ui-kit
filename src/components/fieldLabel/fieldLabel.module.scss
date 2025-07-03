@@ -1,4 +1,3 @@
-@import 'src/assets/styles/variables/typography';
 @import 'src/assets/styles/mixins/font-scale';
 @import 'src/assets/styles/mixins/field-asterisk';
 
@@ -9,7 +8,7 @@
   position: relative;
   margin-bottom: 4px;
   font-family: var(--rp-ui-base-font-family);
-  font-weight: $fw-medium;
+  font-weight: var(--rp-ui-base-fw-medium);
   color: var(--rp-ui-color-text);
 
   .asterisk {
