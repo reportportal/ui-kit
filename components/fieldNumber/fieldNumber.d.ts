@@ -1,4 +1,4 @@
-import { FC, HTMLAttributes, FocusEventHandler } from '../../../node_modules/react';
+import { HTMLAttributes, FocusEventHandler } from '../../../node_modules/react';
 
 type FieldNumberValue = number | string;
 interface FieldNumberProps extends Omit<HTMLAttributes<HTMLInputElement>, 'onChange' | 'onFocus'> {
@@ -15,5 +15,5 @@ interface FieldNumberProps extends Omit<HTMLAttributes<HTMLInputElement>, 'onCha
     touched?: boolean;
     onFocus?: () => void | FocusEventHandler<HTMLInputElement>;
 }
-export declare const FieldNumber: FC<FieldNumberProps>;
+export declare const FieldNumber: ({ value, placeholder, disabled, onChange, onFocus, onBlur, label, postfix, min, max, title, error, touched, id, ...rest }: FieldNumberProps) => import("react/jsx-runtime").JSX.Element;
 export {};
