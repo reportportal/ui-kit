@@ -1,4 +1,3 @@
-@import 'src/assets/styles/variables/typography';
 @import 'src/assets/styles/mixins/font-scale';
 
 .button {
@@ -11,7 +10,7 @@
   outline: none;
   border-radius: 3px;
   font-family: var(--rp-ui-base-font-family);
-  font-weight: $fw-medium;
+  font-weight: var(--rp-ui-base-fw-medium);
   @include font-scale();
   cursor: pointer;
   box-sizing: border-box;

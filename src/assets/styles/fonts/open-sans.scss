@@ -20,9 +20,27 @@
 
 @font-face {
   font-family: OpenSans;
+  font-weight: $fw-medium;
+  font-display: swap;
+  font-style: normal;
+  src: local('Open Sans Medium'), local('OpenSans-Medium'),
+  url('./fonts/OpenSans/OpenSans-Medium.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: OpenSans;
   font-weight: $fw-semi-bold;
   font-display: swap;
   font-style: normal;
   src: local('Open Sans Semibold'), local('OpenSans-Semibold'),
   url('./fonts/OpenSans/OpenSans-Semibold.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: OpenSans;
+  font-weight: $fw-bold;
+  font-display: swap;
+  font-style: normal;
+  src: local('Open Sans Bold'), local('OpenSans-Bold'),
+  url('./fonts/OpenSans/OpenSans-Bold.ttf') format('truetype');
 }

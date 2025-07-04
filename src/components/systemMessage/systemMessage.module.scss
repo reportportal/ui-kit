@@ -1,11 +1,10 @@
-@import 'src/assets/styles/variables/typography';
 @import 'src/assets/styles/mixins/font-scale';
 
 // TODO: Discuss with UX team. There are no designs for the dark theme, so the theme-independent CSS properties are used
 
 @mixin message-headers($color) {
   @include font-scale(x2-medium);
-  font-weight: $fw-medium;
+  font-weight: var(--rp-ui-base-fw-medium);
   color: $color;
   text-transform: capitalize;
   margin-bottom: 8px;
@@ -68,7 +67,7 @@
     .children {
       text-indent: 1px;
       color: var(--rp-ui-color-text);
-      font-weight: $fw-bold;
+      font-weight: var(--rp-ui-base-fw-bold);
       @include font-scale();
     }
 
@@ -76,7 +75,7 @@
       margin-top: 4px;
       max-width: 780px;
       color: var(--rp-ui-base-e-400);
-      font-weight: $fw-regular;
+      font-weight: var(--rp-ui-base-fw-regular);
       @include font-scale(x-small);
     }
   }

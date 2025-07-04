@@ -1,4 +1,3 @@
-@import 'src/assets/styles/variables/typography';
 @import 'src/assets/styles/mixins/font-scale';
 
 $Z-INDEX-POPUP: 10;
@@ -31,7 +30,7 @@ $Z-INDEX-POPUP: 10;
 
 .title {
   font-family: var(--rp-ui-base-font-family-heading);
-  font-weight: $fw-bold;
+  font-weight: var(--rp-ui-base-fw-bold);
   @include font-scale();
   margin-bottom: 8px;
 }

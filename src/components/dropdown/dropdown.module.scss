@@ -1,5 +1,4 @@
 @import 'src/assets/styles/variables/breakpoints';
-@import 'src/assets/styles/variables/typography';
 @import 'src/assets/styles/mixins/font-scale';
 
 $Z-INDEX-POPUP: 10;
@@ -98,7 +97,7 @@ $Z-INDEX-POPUP: 10;
   .value {
     flex-grow: 1;
     font-family: var(--rp-ui-base-font-family);
-    font-weight: $fw-regular;
+    font-weight: var(--rp-ui-base-fw-regular);
     @include font-scale();
     color: var(--rp-ui-color-text-3);
     white-space: nowrap;

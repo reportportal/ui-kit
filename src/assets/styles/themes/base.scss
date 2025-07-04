@@ -1,5 +1,6 @@
 /* Common global CSS properties */
 
+@use "../variables/typography" as *;
 @use "../fonts/index";
 @import "light";
 
@@ -94,6 +95,13 @@
   /* fonts */
   --rp-ui-base-font-family: Roboto, Arial, Helvetica, sans-serif;
   --rp-ui-base-font-family-heading: OpenSans, Segoe UI, Tahoma, sans-serif;
+  --rp-ui-base-fw-thin: #{$fw-thin};
+  --rp-ui-base-fw-extra-light: #{$fw-extra-light};
+  --rp-ui-base-fw-light: #{$fw-light};
+  --rp-ui-base-fw-regular: #{$fw-regular};
+  --rp-ui-base-fw-medium: #{$fw-medium};
+  --rp-ui-base-fw-semi-bold: #{$fw-semi-bold};
+  --rp-ui-base-fw-bold: #{$fw-bold};
 
   // Default theme if the theme provider doesn't used
   @include light-theme;
