@@ -4,7 +4,6 @@ import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import DefaultExport, { FieldText as NamedExport } from './index';
 import { FieldText } from './fieldText';
-import { InputType } from './types';
 
 vi.mock('@components/icons', () => ({
   ClearIcon: () => <div data-testid="mock-clear-icon">×</div>,
@@ -64,7 +63,7 @@ describe('FieldText Component', () => {
     });
 
     it('renders with email type', () => {
-      render(<FieldText type={InputType.EMAIL} onChange={() => {}} />);
+      render(<FieldText type="email" onChange={() => {}} />);
       const inputField = screen.getByRole('textbox');
 
       expect(inputField).toHaveAttribute('type', 'email');

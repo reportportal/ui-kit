@@ -1,7 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { DeleteIcon, SearchIcon } from '@components/icons';
 import { FieldText, FieldTextProps } from '../fieldText';
-import { InputType } from '../types';
 import { ARG_TYPES } from './constants';
 import { ChangeEvent, useEffect, useRef, useState, FC } from 'react';
 
@@ -118,7 +117,7 @@ export const FullyDescribed: Story = {
 
 export const WithPassword: Story = {
   args: {
-    type: InputType.PASSWORD,
+    type: 'password',
   },
 };
 /** Collapsible text input by clicking on the icon */
