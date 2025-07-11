@@ -18,10 +18,11 @@ import { Button } from '../button';
 import { SpinLoader } from '@components/spinLoader';
 import { MaxValueDisplay } from '@components/maxValueDisplay';
 import { FieldLabel } from '@components/fieldLabel';
-import { FieldTextInputType, InputType } from './types';
 import styles from './fieldText.module.scss';
 
 const cx = classNames.bind(styles);
+
+type InputType = 'password' | 'text' | 'email';
 
 export interface FieldTextProps extends InputHTMLAttributes<HTMLInputElement> {
   value?: string;
@@ -44,7 +45,7 @@ export interface FieldTextProps extends InputHTMLAttributes<HTMLInputElement> {
   onClear?: (prevValue?: string) => void;
   isRequired?: boolean;
   hasDoubleMessage?: boolean;
-  type?: FieldTextInputType;
+  type?: InputType;
   displayError?: boolean;
   maxLengthDisplay?: number;
   collapsible?: boolean;
@@ -72,7 +73,7 @@ export const FieldText = forwardRef<HTMLInputElement, FieldTextProps>(
       onClear,
       isRequired = false,
       hasDoubleMessage = false,
-      type = InputType.TEXT,
+      type = 'text',
       displayError = true,
       collapsible = false,
       loading = false,
@@ -113,11 +114,11 @@ export const FieldText = forwardRef<HTMLInputElement, FieldTextProps>(
     );
 
     const getInputType = () => {
-      if (type !== InputType.PASSWORD) {
+      if (type !== 'password') {
         return type;
       }
 
-      return passwordVisible ? InputType.TEXT : InputType.PASSWORD;
+      return passwordVisible ? 'text' : 'password';
     };
 
     const showPassword: MouseEventHandler<HTMLButtonElement> &
@@ -177,7 +178,7 @@ export const FieldText = forwardRef<HTMLInputElement, FieldTextProps>(
               onBlur={onBlurHandler}
               {...rest}
             />
-            {type === InputType.PASSWORD && value && (
+            {type === 'password' && value && (
               <Button
                 icon={passwordVisible ? <OpenEyeIcon /> : <CloseEyeIcon />}
                 variant={'text'}

@@ -1,7 +1,5 @@
 import type { ArgTypes } from '@storybook/react';
 
-import { InputType } from '../types';
-
 export const ARG_TYPES: ArgTypes = {
   title: {
     control: 'text',
@@ -61,7 +59,7 @@ export const ARG_TYPES: ArgTypes = {
   },
   loading: { control: 'boolean', table: { type: { summary: 'boolean' } } },
   type: {
-    options: [InputType.TEXT, InputType.PASSWORD, InputType.EMAIL],
+    options: ['text', 'password', 'email'],
     control: 'radio',
     table: { type: { summary: 'string' } },
   },
