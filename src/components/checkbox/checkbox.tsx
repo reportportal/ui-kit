@@ -15,7 +15,7 @@ import styles from './checkbox.module.scss';
 const cx = classNames.bind(styles);
 
 interface CheckboxProps extends HTMLAttributes<HTMLInputElement> {
-  value: boolean;
+  value?: boolean;
   children?: ReactNode;
   disabled?: boolean;
   className?: string;

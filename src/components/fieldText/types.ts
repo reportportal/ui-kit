@@ -3,3 +3,5 @@ export const enum InputType {
   TEXT = 'text',
   EMAIL = 'email',
 }
+
+export type FieldTextInputType = `${InputType}`;

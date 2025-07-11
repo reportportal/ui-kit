@@ -18,7 +18,7 @@ import { Button } from '../button';
 import { SpinLoader } from '@components/spinLoader';
 import { MaxValueDisplay } from '@components/maxValueDisplay';
 import { FieldLabel } from '@components/fieldLabel';
-import { InputType } from './types';
+import { FieldTextInputType, InputType } from './types';
 import styles from './fieldText.module.scss';
 
 const cx = classNames.bind(styles);
@@ -44,7 +44,7 @@ export interface FieldTextProps extends InputHTMLAttributes<HTMLInputElement> {
   onClear?: (prevValue?: string) => void;
   isRequired?: boolean;
   hasDoubleMessage?: boolean;
-  type?: InputType;
+  type?: FieldTextInputType;
   displayError?: boolean;
   maxLengthDisplay?: number;
   collapsible?: boolean;

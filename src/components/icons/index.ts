@@ -6,6 +6,7 @@ export { default as ArrowDownIcon } from './svg/arrowDown.svg';
 export { default as ArrowUpIcon } from './svg/arrowUp.svg';
 export { default as BreadcrumbsTreeIcon } from './svg/breadcrumbsTree.svg';
 export { default as CalendarIcon } from './svg/calendar.svg';
+export { default as CheckmarkIcon } from './svg/checkmark.svg';
 export { default as CalendarArrowIcon } from './svg/calendarArrow.svg';
 export { default as ChevronDownDropdownIcon } from './svg/chevronDownDropdown.svg';
 export { default as ChevronRightBreadcrumbsIcon } from './svg/chevronRightBreadcrumbs.svg';
