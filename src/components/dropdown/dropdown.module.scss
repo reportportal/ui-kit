@@ -148,6 +148,7 @@ $Z-INDEX-POPUP: 10;
 .ghost {
   border-color: transparent;
   background: transparent;
+  padding: 9px 0 7px;
 
   &.disabled {
     background: transparent;
@@ -165,6 +166,11 @@ $Z-INDEX-POPUP: 10;
     .value {
       color: var(--rp-ui-color-primary-pressed);
     }
+  }
+
+  &:active,
+  &:focus-visible {
+    padding: 7px 0;
   }
 }
 
