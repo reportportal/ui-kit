@@ -149,6 +149,10 @@ $Z-INDEX-POPUP: 10;
   border-color: transparent;
   background: transparent;
 
+  &.disabled {
+    background: transparent;
+  }
+
   &:hover:not(:active):not(:focus-visible):not(.opened):not(.error) {
     border-color: transparent;
   }
