@@ -43,6 +43,7 @@ export { default as PriorityLowIcon } from './svg/priorityLow.svg';
 export { default as PriorityMediumIcon } from './svg/priorityMedium.svg';
 export { default as PriorityUnspecifiedIcon } from './svg/priorityUnspecified.svg';
 export { default as RerunIcon } from './svg/rerun.svg';
+export { default as RefreshIcon } from './svg/refresh.svg';
 export { default as SearchIcon } from './svg/search.svg';
 export { default as SortIcon } from './svg/sort.svg';
 export { default as StatusSuccessIcon } from './svg/statusSuccess.svg';
