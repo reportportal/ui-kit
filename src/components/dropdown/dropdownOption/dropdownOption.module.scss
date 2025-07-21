@@ -36,6 +36,11 @@
     border: none;
     padding: 9px 12px 7px;
   }
+
+  &.selected:not(.multi-select) {
+    background: var(--rp-ui-base-topaz-100);
+    color: var(--rp-ui-base-topaz);
+  }
 }
 
 .single-option {
