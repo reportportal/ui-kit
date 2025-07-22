@@ -210,7 +210,12 @@ export const FieldText = forwardRef<HTMLInputElement, FieldTextProps>(
           )}
           {clearable && value.length > 0 && (
             <span className={cx('icon-container-end')}>
-              <button type="button" className={cx('clear-icon', { disabled })} onClick={clearInput}>
+              <button
+                type="button"
+                className={cx('clear-icon', { disabled })}
+                onClick={clearInput}
+                onMouseDown={(e) => e.preventDefault()}
+              >
                 <ClearIcon />
               </button>
             </span>
