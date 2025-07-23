@@ -1,7 +1,7 @@
 import { FC, ReactNode } from '../../../node_modules/react';
 import { Placement } from '@floating-ui/react';
 
-interface PopoverProps {
+export interface PopoverProps {
     className?: string;
     content: ReactNode;
     children: ReactNode;
@@ -17,4 +17,3 @@ interface PopoverProps {
     isCentered?: boolean;
 }
 export declare const Popover: FC<PopoverProps>;
-export {};
