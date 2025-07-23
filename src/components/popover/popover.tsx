@@ -60,7 +60,7 @@ const allPlacements: Placement[] = [
   'left-end',
 ];
 
-interface PopoverProps {
+export interface PopoverProps {
   className?: string;
   content: ReactNode;
   children: ReactNode;
