@@ -1,15 +1,12 @@
 .buttons-block {
-  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  column-gap: 10px;
 }
 
 .button-container {
   display: inline-block;
   min-width: 70px;
-  margin-right: 10px;
-
-  &:last-child {
-    margin-right: 0;
-  }
 }
 
 .modal-footer {
