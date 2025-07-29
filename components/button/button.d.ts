@@ -1,7 +1,7 @@
 import { ReactNode, ComponentPropsWithRef, MouseEventHandler } from '../../../node_modules/react';
 
 type IconPlace = 'start' | 'end';
-type ButtonVariant = 'primary' | 'ghost' | 'danger' | 'text';
+type ButtonVariant = 'primary' | 'ghost' | 'danger' | 'text' | 'ghost-danger' | 'text-danger';
 type ButtonWidth = 'content' | 'wide-content' | 'parent' | 'min-width';
 export interface ButtonProps extends ComponentPropsWithRef<'button'> {
     children?: ReactNode;
