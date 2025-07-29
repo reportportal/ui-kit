@@ -6,7 +6,7 @@ A flexible button component with multiple variants and width adjustments. Defaul
 
 - **type**: _'submit' | 'reset' | 'button'_, optional, default = "button"
 - **disabled**: _boolean_, optional, default = false
-- **variant**: _'primary' | 'ghost' | 'danger' | 'text'_, optional, default = "primary"
+- **variant**: _'primary' | 'ghost' | 'danger' | 'text' | 'ghost-danger' | 'text-danger'_, optional, default = "primary"
 - **adjustWidthOn**: _'content' | 'wide-content' | 'parent' | 'min-width'_, optional, default = "min-width"
 - **icon**: _ReactNode_, optional - Any React element (not just SVG icons)
 - **iconPlace**: _'start' | 'end'_, optional, default = "start"
@@ -21,7 +21,14 @@ A flexible button component with multiple variants and width adjustments. Defaul
 
 ### Variants
 
-The Button comes with variants: _primary_ (default), _ghost_, _danger_ and _text_.
+The Button comes with variants: _primary_ (default), _ghost_, _danger_, _text_, _ghost-danger_, and _text-danger_.
+
+- **primary**: Solid background with primary color
+- **ghost**: Transparent background with primary color border and text
+- **danger**: Solid background with error/danger color
+- **text**: Text-only button with no background or border
+- **ghost-danger**: Transparent background with error/danger color border and text
+- **text-danger**: Text-only button with error/danger color
 
 ### Width Adjustments
 

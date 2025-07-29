@@ -5,7 +5,7 @@ import styles from './button.module.scss';
 const cx = classNames.bind(styles);
 
 type IconPlace = 'start' | 'end';
-type ButtonVariant = 'primary' | 'ghost' | 'danger' | 'text';
+type ButtonVariant = 'primary' | 'ghost' | 'danger' | 'text' | 'ghost-danger' | 'text-danger';
 type ButtonWidth = 'content' | 'wide-content' | 'parent' | 'min-width';
 
 export interface ButtonProps extends ComponentPropsWithRef<'button'> {
