@@ -81,7 +81,7 @@
   min-width: auto;
   height: auto;
   border: 0;
-  padding: 0;
+  padding: 2px 0px 0px;
   background: none;
   line-height: 22px;
   color: var(--rp-ui-color-primary-text);
@@ -98,6 +98,7 @@
     }
   }
   &:focus:not(.disabled, :active) {
+    border: 2px solid var(--rp-ui-color-primary-focused);
     color: var(--rp-ui-color-primary-focused);
     svg * {
       fill: var(--rp-ui-color-primary-focused);
@@ -105,6 +106,54 @@
   }
   svg * {
     fill: var(--rp-ui-color-primary-text);
+  }
+}
+
+.ghost-danger {
+  border: 1px solid var(--rp-ui-color-error);
+  background-color: transparent;
+  color: var(--rp-ui-color-error);
+  &:hover:not(.disabled) {
+    border: 1px solid var(--rp-ui-color-error-hover);
+    color: var(--rp-ui-color-error-hover);
+  }
+  &:active:not(.disabled) {
+    border: 1px solid var(--rp-ui-color-error-pressed);
+    color: var(--rp-ui-color-error-pressed);
+  }
+  &:focus:not(.disabled, :active) {
+    border: 2px solid var(--rp-ui-color-error-focused);
+  }
+  svg * {
+    fill: var(--rp-ui-color-error);
+  }
+}
+
+.text-danger {
+  min-width: auto;
+  height: auto;
+  border: 0;
+  padding: 2px 0px 0px;
+  background: none;
+  line-height: 22px;
+  color: var(--rp-ui-color-error);
+  &:hover:not(.disabled) {
+    color: var(--rp-ui-color-error-hover);
+    svg * {
+      fill: var(--rp-ui-color-error-hover);
+    }
+  }
+  &:active:not(.disabled) {
+    color: var(--rp-ui-color-error-pressed);
+    svg * {
+      fill: var(--rp-ui-color-error-pressed);
+    }
+  }
+  &:focus:not(.disabled, :active) {
+    border: 2px solid var(--rp-ui-color-error-focused);
+  }
+  svg * {
+    fill: var(--rp-ui-color-error);
   }
 }
 
