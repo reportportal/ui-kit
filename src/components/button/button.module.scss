@@ -99,10 +99,6 @@
   }
   &:focus:not(.disabled, :active) {
     border: 2px solid var(--rp-ui-color-primary-focused);
-    color: var(--rp-ui-color-primary-focused);
-    svg * {
-      fill: var(--rp-ui-color-primary-focused);
-    }
   }
   svg * {
     fill: var(--rp-ui-color-primary-text);
