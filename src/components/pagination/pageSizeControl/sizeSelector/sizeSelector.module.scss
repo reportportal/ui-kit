@@ -6,8 +6,8 @@
 }
 
 .size-option {
-  width: 88px;
-  padding: 8px 0;
+  width: 100%;
+  padding: 8px 16px;
   outline: none;
   border: none;
   background: none;
@@ -19,20 +19,11 @@
   text-align: left;
   color: var(--rp-ui-base-almost-black);
 
-  &:first-child {
-    padding-top: 0;
-  }
-  &:last-child {
-    padding-bottom: 0;
-  }
-
   &:hover {
-    color: var(--rp-ui-base-topaz-hover);
-  }
-  &:active {
-    color: var(--rp-ui-base-topaz-pressed);
+    background-color: var(--rp-ui-base-bg-200);
   }
   &.selected {
     color: var(--rp-ui-base-topaz);
+    background-color: var(--rp-ui-base-topaz-100);
   }
 }

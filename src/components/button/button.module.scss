@@ -81,9 +81,9 @@
   min-width: auto;
   height: auto;
   border: 0;
-  padding: 2px 0px 0px;
+  padding: 2px;
   background: none;
-  line-height: 22px;
+  line-height: 18px;
   color: var(--rp-ui-color-primary-text);
   &:hover:not(.disabled) {
     color: var(--rp-ui-color-primary-hover);
@@ -98,6 +98,7 @@
     }
   }
   &:focus:not(.disabled, :active) {
+    padding: 0;
     border: 2px solid var(--rp-ui-color-primary-focused);
   }
   svg * {
@@ -129,9 +130,9 @@
   min-width: auto;
   height: auto;
   border: 0;
-  padding: 2px 0px 0px;
+  padding: 2px;
   background: none;
-  line-height: 22px;
+  line-height: 18px;
   color: var(--rp-ui-color-error);
   &:hover:not(.disabled) {
     color: var(--rp-ui-color-error-hover);
@@ -146,6 +147,7 @@
     }
   }
   &:focus:not(.disabled, :active) {
+    padding: 0;
     border: 2px solid var(--rp-ui-color-error-focused);
   }
   svg * {

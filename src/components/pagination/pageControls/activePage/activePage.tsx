@@ -50,7 +50,7 @@ export const ActivePage: FC<ActivePageProps> = ({
         setIsOpened={setIsPageSelectorOpened}
         className={cx('page-selector')}
       >
-        <Button className={cx('page-selector-button')} variant="text">
+        <Button className={cx('page-selector-button')} variant="text" adjustWidthOn="content">
           {activePage}
         </Button>
       </Popover>

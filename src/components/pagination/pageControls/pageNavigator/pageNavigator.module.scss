@@ -1,6 +1,7 @@
 .page-navigator {
   display: flex;
   gap: 16px;
+  align-items: center;
 }
 
 .page-buttons {
@@ -12,10 +13,17 @@
   display: inline-flex;
   justify-content: center;
   align-items: center;
-  width: 16px;
-  height: 16px;
+  width: 20px;
+  height: 20px;
+  padding: 2px;
+  border-radius: 2px;
 
   &.next {
     transform: rotateY(180deg);
+  }
+
+  &:focus {
+    border: 2px solid var(--rp-ui-color-primary-focused);
+    padding: 0;
   }
 }

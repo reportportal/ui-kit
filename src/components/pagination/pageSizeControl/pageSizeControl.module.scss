@@ -5,6 +5,10 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+
+  .page-size-options {
+    padding: 8px 0;
+  }
 }
 
 .size-selector-button {
