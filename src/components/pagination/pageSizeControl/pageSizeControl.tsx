@@ -37,8 +37,9 @@ export const PageSizeControl: FC<PageSizeControlProps> = ({
         placement="top"
         isOpened={isSizeSelectorOpened}
         setIsOpened={setIsSizeSelectorOpened}
+        className={cx('page-size-options')}
       >
-        <Button className={cx('size-selector-button')} variant="text">
+        <Button className={cx('size-selector-button')} variant="text" adjustWidthOn="content">
           {size}
         </Button>
       </Popover>
