@@ -77,6 +77,7 @@ $HEIGHT-LARGE: 80px;
     height: 100%;
     padding-top: 16px;
     cursor: pointer;
+    align-items: start;
     flex-shrink: 0;
 
     & + .table-row-content {
@@ -119,6 +120,11 @@ $HEIGHT-LARGE: 80px;
 
   &.align-center {
     justify-content: center;
+  }
+
+  &.checkbox-cell {
+    align-items: center;
+    padding-top: 0;
   }
 }
 
