@@ -1,1 +1,1 @@
-export type ClearSelection = () => void;
+export type ClearSelection = VoidFunction;

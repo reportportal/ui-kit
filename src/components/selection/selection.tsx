@@ -16,10 +16,12 @@ export interface SelectionProps {
 
 const cx = classNames.bind(styles);
 
+const DEFAULT_CAPTIONS = { selected: 'selected', buttonCaption: 'Clear Selection' };
+
 export const Selection = ({
   selectedCount,
   onClearSelection,
-  captions = { selected: 'selected', buttonCaption: 'Clear Selection' },
+  captions = DEFAULT_CAPTIONS,
   icon = <CloseIcon />,
 }: SelectionProps) => {
   return (

@@ -80,7 +80,7 @@ $HEIGHT-LARGE: 80px;
     flex-shrink: 0;
 
     & + .table-row-content {
-      max-width: calc(100% - 48px);
+      max-width: calc(100% - 32px);
     }
   }
 
