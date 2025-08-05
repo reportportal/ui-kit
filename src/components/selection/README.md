@@ -1,0 +1,6 @@
+## **Selection**
+
+Decomposition:
+
+- Selection
+  ---SelectedCounter
