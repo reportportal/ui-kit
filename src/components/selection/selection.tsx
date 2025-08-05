@@ -2,7 +2,7 @@ import { CloseIcon } from '../icons';
 import { ClearSelection } from './types';
 import styles from './selection.module.scss';
 import classNames from 'classnames/bind';
-import { default as Button } from '../button';
+import Button from '../button';
 
 export interface SelectionProps {
   selectedCount: number;
@@ -37,6 +37,7 @@ export const Selection = ({
         iconPlace="start"
         variant="text"
         onClick={onClearSelection}
+        aria-label={`${selectedCount} ${captions.selected} ${captions.buttonCaption} `}
       >
         {captions.buttonCaption}
       </Button>
