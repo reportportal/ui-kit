@@ -37,7 +37,7 @@ export const Selection = ({
         iconPlace="start"
         variant="text"
         onClick={onClearSelection}
-        aria-label={`${selectedCount} ${captions.selected} ${captions.buttonCaption} `}
+        aria-label={`${captions.buttonCaption} - ${selectedCount} ${captions.selected}`}
       >
         {captions.buttonCaption}
       </Button>
