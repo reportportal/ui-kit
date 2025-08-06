@@ -15,6 +15,7 @@ export { Radio } from './radio';
 export { Tooltip } from './tooltip';
 export { Popover } from './popover';
 export { Pagination } from './pagination';
+export { Selection } from './selection';
 export { Table } from './table';
 export { DatePicker } from './datePicker';
 export { SystemAlert } from './systemAlert';
