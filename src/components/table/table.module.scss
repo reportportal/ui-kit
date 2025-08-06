@@ -25,7 +25,7 @@ $HEIGHT-LARGE: 80px;
   width: 100%;
   height: $HEIGHT-DEFAULT;
 
-   .table-row-content {
+  .table-row-content {
     display: flex;
     align-items: center;
     height: 100%;
@@ -52,7 +52,8 @@ $HEIGHT-LARGE: 80px;
   width: 100%;
 }
 
-.table-header-cell, .table-cell {
+.table-header-cell,
+.table-cell {
   font-family: var(--rp-ui-base-font-family);
   font-weight: var(--rp-ui-base-fw-regular);
   padding: 0 16px;
@@ -63,22 +64,24 @@ $HEIGHT-LARGE: 80px;
     flex-shrink: 0;
   }
 
-  &:not(.action-menu-cell){
+  &:not(.action-menu-cell) {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
 
-  &.checkbox-cell{
-    width: 48px;
+  &.checkbox-cell {
+    width: 32px;
     display: flex;
     justify-content: center;
     height: 100%;
+    padding-top: 16px;
     cursor: pointer;
+    align-items: start;
     flex-shrink: 0;
 
-    & + .table-row-content{
-      max-width: calc(100% - 48px);
+    & + .table-row-content {
+      max-width: calc(100% - 32px);
     }
   }
 
@@ -103,7 +106,7 @@ $HEIGHT-LARGE: 80px;
     align-items: center;
   }
 
-  &.sortable-cell > .label{
+  &.sortable-cell > .label {
     cursor: pointer;
   }
 
@@ -117,6 +120,11 @@ $HEIGHT-LARGE: 80px;
 
   &.align-center {
     justify-content: center;
+  }
+
+  &.checkbox-cell {
+    align-items: center;
+    padding-top: 0;
   }
 }
 

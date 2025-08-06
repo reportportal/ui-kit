@@ -1,0 +1,43 @@
+@import 'src/assets/styles/mixins/font-scale';
+
+.selection-wrapper {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+}
+
+.selected-count-text {
+  @include font-scale();
+  font-family: var(--rp-ui-base-font-family);
+  color: var(--rp-ui-base-almost-black);
+  margin-right: 8px;
+  font-weight: var(--rp-ui-base-fw-bold);
+}
+
+.selected-count-caption {
+  @include font-scale();
+  font-family: var(--rp-ui-base-font-family);
+  color: var(--rp-ui-base-almost-black);
+}
+
+.divider {
+  width: 1px;
+  height: 24px;
+  margin: 0 16px;
+  background-color: var(--rp-ui-base-e-100);
+}
+
+.button {
+  i {
+    width: 8px;
+    height: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 8px 12px 8px 4px;
+  }
+  svg {
+    width: 8px;
+    height: 8px;
+  }
+}
