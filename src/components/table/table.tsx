@@ -71,6 +71,7 @@ export const Table: FC<TableComponentProps> = ({
 
   const isAllChecked: boolean = data.every((item) => selectedRowIds.includes(item.id));
   const isAnyChecked: boolean = data.some((item) => selectedRowIds.includes(item.id));
+  const isAnyRowSelected = selectedRowIds?.length > 0;
 
   const getSizeClassName = (item: RowData): string => {
     const size = item.rowConfigs?.size ?? 'default';
@@ -90,7 +91,7 @@ export const Table: FC<TableComponentProps> = ({
       <div className={cx('table-header', headerClassName)}>
         {selectable && (
           <div className={cx('table-header-cell', 'checkbox-cell')}>
-            {selectedRowIds?.length > 0 && (
+            {isAnyRowSelected && (
               <Checkbox
                 value={isAllChecked}
                 partiallyChecked={isAnyChecked}
@@ -135,7 +136,7 @@ export const Table: FC<TableComponentProps> = ({
           >
             {selectable && (
               <div className={cx('table-cell', 'checkbox-cell')}>
-                {(selectedRowIds?.length > 0 || hoveredRow === index) && (
+                {(isAnyRowSelected || hoveredRow === index) && (
                   <Checkbox
                     value={selectedRowIds.includes(item.id)}
                     onChange={() => handleRowCheck(item.id)}
