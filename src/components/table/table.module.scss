@@ -75,19 +75,15 @@ $HEIGHT-LARGE: 80px;
   &.checkbox-cell {
     position: absolute;
     left: -32px;
-    top: 0;
     width: 32px;
     display: flex;
     justify-content: center;
-    height: 100%;
+    padding: 0;
     padding-top: 16px;
+    height: 100%;
     cursor: pointer;
     align-items: start;
     flex-shrink: 0;
-
-    & + .table-row-content {
-      max-width: calc(100% - 32px);
-    }
   }
 
   &.primary-cell {
