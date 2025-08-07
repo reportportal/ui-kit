@@ -90,7 +90,7 @@ export const Table: FC<TableComponentProps> = ({
       <div className={cx('table-header', headerClassName)}>
         {selectable && (
           <div className={cx('table-header-cell', 'checkbox-cell')}>
-            {isAnyChecked && (
+            {(isAnyChecked || selectedRowIds?.length > 0) && (
               <Checkbox
                 value={isAllChecked}
                 partiallyChecked={isAnyChecked}
@@ -135,7 +135,7 @@ export const Table: FC<TableComponentProps> = ({
           >
             {selectable && (
               <div className={cx('table-cell', 'checkbox-cell')}>
-                {(isAnyChecked || hoveredRow === index) && (
+                {(isAnyChecked || selectedRowIds?.length > 0 || hoveredRow === index) && (
                   <Checkbox
                     value={selectedRowIds.includes(item.id)}
                     onChange={() => handleRowCheck(item.id)}
