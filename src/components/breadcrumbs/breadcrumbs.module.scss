@@ -1,0 +1,66 @@
+@import 'src/assets/styles/mixins/font-scale';
+
+.breadcrumbs-container {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 740px;
+}
+
+.breadcrumbs {
+  display: inline-flex;
+  align-items: center;
+  height: 100%;
+
+  .breadcrumb-item {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    max-width: 100%;
+    @include font-scale();
+
+    &:not(:last-child) {
+      padding-right: 24px;
+
+      &::after {
+        position: absolute;
+        right: 0;
+        content: '';
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        margin: 0 4px;
+        background-image: url(../icons/svg/chevronRightBreadcrumbs.svg);
+      }
+    }
+
+    &.back-button {
+      &::before {
+        content: '';
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        margin-right: 4px;
+        background-image: url(../icons/svg/chevronRightBreadcrumbs.svg);
+        transform: rotate(180deg);
+      }
+    }
+  }
+
+  &.breadcrumbs-2 .breadcrumb-item {
+    max-width: 360px;
+  }
+
+  &.breadcrumbs-3 .breadcrumb-item {
+    max-width: 233px;
+  }
+
+  &.breadcrumbs-4 .breadcrumb-item {
+    max-width: 170px;
+  }
+
+  &.breadcrumbs-5 .breadcrumb-item,
+  &.breadcrumbs-6-plus .breadcrumb-item {
+    max-width: 132px;
+  }
+}

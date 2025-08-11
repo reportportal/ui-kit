@@ -1,0 +1,42 @@
+@import 'src/assets/styles/mixins/font-scale';
+
+.breadcrumb {
+  max-width: 100%;
+}
+
+.link {
+  text-decoration: none;
+  outline: none;
+}
+
+.breadcrumb-text {
+  @include font-scale();
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  color: var(--rp-ui-base-e-300);
+  text-decoration: none;
+  user-select: none;
+  -webkit-user-select: none;
+
+  .link & {
+    color: var(--rp-ui-base-e-400);
+
+    &:hover {
+      color: var(--rp-ui-base-topaz-hover);
+    }
+
+    &:active {
+      color: var(--rp-ui-base-topaz-pressed);
+    }
+  }
+
+  &.dark {
+    color: var(--rp-ui-base-almost-black);
+  }
+}
+
+.breadcrumb-text::before {
+  float: right;
+  content: attr(data-tail);
+}

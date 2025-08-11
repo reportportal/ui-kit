@@ -1,0 +1,42 @@
+.tree-button {
+  &.opened {
+    svg path {
+      fill: var(--rp-ui-base-topaz-pressed);
+    }
+  }
+
+  &:hover {
+    svg path {
+      fill: var(--rp-ui-base-topaz-hover);
+    }
+  }
+}
+
+.tree-menu-node,
+.tree-menu-children {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tree-menu-item {
+  position: relative;
+  max-width: 132px;
+
+  @for $i from 2 through 25 {
+    &.level-#{$i} {
+      display: inline-block;
+      margin-left: ($i - 2) * 16px;
+      padding-left: 20px;
+
+      &:before {
+        position: absolute;
+        left: 0;
+        content: '';
+        width: 16px;
+        height: 16px;
+        background: url(../../icons/svg/subLevel.svg);
+      }
+    }
+  }
+}
