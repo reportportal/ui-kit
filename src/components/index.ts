@@ -1,5 +1,6 @@
 export { Button } from './button';
 export { BaseIconButton } from './baseIconButton';
+export { Breadcrumbs } from './breadcrumbs';
 export { Checkbox } from './checkbox';
 export { SystemMessage } from './systemMessage';
 export { FieldText } from './fieldText';

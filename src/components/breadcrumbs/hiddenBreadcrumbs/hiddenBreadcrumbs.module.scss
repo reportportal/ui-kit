@@ -1,0 +1,36 @@
+.hidden-breadcrumbs-trigger {
+  display: inline-block;
+
+  svg {
+    vertical-align: middle;
+  }
+}
+
+.hidden-breadcrumbs-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: max-content;
+
+  .hidden-breadcrumb-item {
+    position: relative;
+    max-width: 132px;
+
+    @for $i from 2 through 25 {
+      &.level-#{$i} {
+        display: inline-block;
+        margin-left: ($i - 2) * 16px;
+        padding-left: 20px;
+
+        &:before {
+          position: absolute;
+          left: 0;
+          content: '';
+          width: 16px;
+          height: 16px;
+          background: url(../../icons/svg/subLevel.svg);
+        }
+      }
+    }
+  }
+}
