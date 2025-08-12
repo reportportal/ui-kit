@@ -18,16 +18,19 @@
   --rp-ui-color-text: var(--rp-ui-base-dark-e-50);
   --rp-ui-color-text-2: var(--rp-ui-base-dark-e-100);
   --rp-ui-color-text-3: var(--rp-ui-base-bg-000);
+  --rp-ui-color-text-secondary: var(--rp-ui-base-dark-e-150);
 
   --rp-ui-color-field-bg: var(--rp-ui-base-dark-e-400);
   --rp-ui-color-field-bg-2: var(--rp-ui-base-dark-e-400);
-  --rp-ui-color-field-bg-3: var(--rp-ui-base-dark-e-450);
+  --rp-ui-color-field-bg-3: var(--rp-ui-base-dark-bg-solid-96);
   --rp-ui-color-field-bg-3-hover: var(--rp-ui-base-dark-e-500);
   --rp-ui-color-field-border: var(--rp-ui-base-dark-e-400);
   --rp-ui-color-field-border-2: var(--rp-ui-base-dark-e-100);
   --rp-ui-color-field-border-2-hover: var(--rp-ui-base-dark-e-50);
-  --rp-ui-color-field-border-3: var(--rp-ui-base-dark-e-450);
-  --rp-ui-color-field-border-3-hover: var(--rp-ui-base-dark-e-500);
+  --rp-ui-color-field-border-2-disabled: var(--rp-ui-base-dark-e-100);
+  --rp-ui-color-field-border-3: var(--rp-ui-base-dark-e-200);
+  --rp-ui-color-field-border-3-hover: var(--rp-ui-base-dark-e-150);
+  --rp-ui-color-field-border-3-disabled: var(--rp-ui-base-dark-e-300);
   --rp-ui-color-field-hover: var(--rp-ui-base-e-200);
   --rp-ui-color-field-hover-2: var(--rp-ui-base-e-300);
   --rp-ui-color-field-opened: var(--rp-ui-base-e-200);
@@ -37,7 +40,7 @@
 
   --rp-ui-color-radio-checked: var(--rp-ui-base-dark-topaz-main);
 
-  --rp-ui-color-disabled: var(--rp-ui-base-dark-e-100);
+  --rp-ui-color-disabled: var(--rp-ui-base-dark-e-200);
 
   --rp-ui-opacity-default: 50%;
 }

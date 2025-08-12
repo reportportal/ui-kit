@@ -76,7 +76,7 @@
     @include checked-state(var(--rp-ui-color-primary-focused));
   }
   &:disabled + .control {
-    border-color: var(--rp-ui-color-disabled);
+    border-color: var(--rp-ui-color-field-border-2-disabled);
     cursor: not-allowed;
     pointer-events: auto;
   }

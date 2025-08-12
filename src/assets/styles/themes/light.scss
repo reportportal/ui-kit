@@ -17,6 +17,7 @@
   --rp-ui-color-text: var(--rp-ui-base-almost-black);
   --rp-ui-color-text-2: var(--rp-ui-base-almost-black);
   --rp-ui-color-text-3: var(--rp-ui-base-almost-black);
+  --rp-ui-color-text-secondary: var(--rp-ui-base-e-400);
 
   --rp-ui-color-field-bg: var(--rp-ui-base-bg-000);
   --rp-ui-color-field-bg-2: var(--rp-ui-base-bg-100);
@@ -25,8 +26,10 @@
   --rp-ui-color-field-border: var(--rp-ui-base-e-200);
   --rp-ui-color-field-border-2: var(--rp-ui-base-e-300);
   --rp-ui-color-field-border-2-hover: var(--rp-ui-base-e-400);
+  --rp-ui-color-field-border-2-disabled: var(--rp-ui-base-e-300);
   --rp-ui-color-field-border-3: var(--rp-ui-base-e-200);
   --rp-ui-color-field-border-3-hover: var(--rp-ui-base-e-300);
+  --rp-ui-color-field-border-3-disabled: var(--rp-ui-base-e-200);
   --rp-ui-color-field-hover: var(--rp-ui-base-e-300);
   --rp-ui-color-field-hover-2: var(--rp-ui-base-e-400);
   --rp-ui-color-field-opened: var(--rp-ui-base-topaz-pressed);

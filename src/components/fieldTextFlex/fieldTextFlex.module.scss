@@ -12,27 +12,28 @@
   @include font-scale();
   width: 100%;
   min-height: 72px;
-  padding: 9px 12px 7px;
+  padding: 7px 12px;
   outline: none;
-  border: 1px solid var(--rp-ui-base-e-200);
+  border: 1px solid var(--rp-ui-color-field-border-3);
   border-radius: 3px;
+  background-color: var(--rp-ui-color-field-bg-3);
   box-sizing: border-box;
   font-family: var(--rp-ui-base-font-family);
   font-weight: var(--rp-ui-base-fw-regular);
-  color: var(--rp-ui-base-almost-black);
+  color: var(--rp-ui-color-text-3);
   resize: vertical;
 
-  &:hover {
-    border-color: var(--rp-ui-base-e-300);
+  &:hover:not(.disabled) {
+    border-color: var(--rp-ui-color-field-border-3-hover);
   }
 
   &:focus:not(.error.touched) {
-    border: 1px solid var(--rp-ui-base-topaz-hover);
-    box-shadow: 0 0 0 1px var(--rp-ui-base-topaz-hover);
+    border: 1px solid var(--rp-ui-color-primary-focused);
+    box-shadow: 0 0 0 1px var(--rp-ui-color-primary-focused);
   }
 
   &.error.touched {
-    border: 1px solid var(--rp-ui-base-error);
+    border-color: var(--rp-ui-base-error);
   }
 
   &:focus:not(.error.touched),
@@ -43,11 +44,22 @@
   }
 
   &::placeholder {
-    color: var(--rp-ui-base-e-300);
+    color: var(--rp-ui-color-field-placeholder-3);
   }
 
   &:has(~ .max-length-display) {
     padding-bottom: 24px;
+  }
+
+  &.disabled {
+    pointer-events: none;
+    background-color: var(--rp-ui-color-field-bg-2);
+    border-color: var(--rp-ui-color-field-border-3-disabled);
+    color: var(--rp-ui-color-disabled);
+
+    &::placeholder {
+      color: var(--rp-ui-color-disabled);
+    }
   }
 }
 
@@ -57,22 +69,17 @@
   }
 
   .help-text {
-    @include additional-text(var(--rp-ui-base-e-300));
+    @include additional-text(var(--rp-ui-color-text-secondary));
   }
 }
 
 .max-length-display {
   @include font-scale(s-small);
   position: absolute;
-  margin-top: -29px;
+  margin-top: -24px;
   display: none;
   padding-left: 12px;
   font-family: var(--rp-ui-base-font-family);
   font-weight: var(--rp-ui-base-fw-regular);
-  color: var(--rp-ui-base-e-300);
-}
-
-.disabled {
-  opacity: 0.3;
-  pointer-events: none;
+  color: var(--rp-ui-color-field-placeholder-3);
 }
