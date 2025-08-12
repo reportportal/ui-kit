@@ -99,10 +99,11 @@
 
   &.disabled {
     pointer-events: none;
-    background-color: var(--rp-ui-base-bg-100);
+    background-color: var(--rp-ui-color-field-bg-2);
+    border-color: var(--rp-ui-color-field-border-3-disabled);
 
     .placeholder {
-      color: var(--rp-ui-base-e-300);
+      color: var(--rp-ui-color-disabled);
     }
   }
 }
@@ -149,7 +150,7 @@
   }
 
   &:disabled {
-    color: var(--rp-ui-base-e-300);
+    color: var(--rp-ui-color-disabled);
   }
 }
 
@@ -223,7 +224,7 @@
   display: none;
   margin-left: 15px;
   align-self: end;
-  color: var(--rp-ui-base-e-300);
+  color: var(--rp-ui-color-field-placeholder-3);
   word-break: initial;
 }
 
@@ -232,5 +233,5 @@
 }
 
 .help-text {
-  color: var(--rp-ui-base-dark-e-300);
+  color: var(--rp-ui-color-text-secondary);
 }
