@@ -20,25 +20,18 @@ export const Breadcrumbs = ({
   const firstDescriptor = shownDescriptors.shift();
 
   const getBreadcrumbsCountClass = (count: number): string => {
-    if (count === 2) return 'breadcrumbs-2';
-    if (count === 3) return 'breadcrumbs-3';
-    if (count === 4) return 'breadcrumbs-4';
-    if (count === 5) return 'breadcrumbs-5';
-    return 'breadcrumbs-6-plus';
+    const suffix = count > 5 ? '6-plus' : count;
+    return `breadcrumbs-${suffix}`;
   };
 
-  const titleTailNumChars = ((breadcrumbsCount) => {
-    if (breadcrumbsCount >= MAX_SHOWN_DESCRIPTORS) {
-      return 12;
-    } else if (breadcrumbsCount === 4) {
-      return 13;
-    } else if (breadcrumbsCount === 3) {
-      return 18;
-    } else if (breadcrumbsCount === 2) {
-      return 24;
-    } else {
-      return 55;
-    }
+  const titleTailNumChars = ((breadcrumbsCount: number) => {
+    const widths: Record<number, number> = {
+      1: 55,
+      2: 24,
+      3: 18,
+      4: 13,
+    };
+    return widths[breadcrumbsCount] ?? 12;
   })(descriptors.length);
 
   let hiddenDescriptors: BreadcrumbDescriptor[] = [];
@@ -80,7 +73,7 @@ export const Breadcrumbs = ({
                 </div>
               )}
               {hiddenDescriptors.length > 0 && (
-                <div className={cx('breadcrumb-item')}>
+                <div className={cx('breadcrumb-item', 'hidden-breadcrumbs')}>
                   <HiddenBreadcrumbs descriptors={hiddenDescriptors} />
                 </div>
               )}
