@@ -31,7 +31,6 @@ interface FieldNumberProps extends Omit<HTMLAttributes<HTMLInputElement>, 'onCha
   max?: number;
   title?: string;
   error?: string;
-  touched?: boolean;
   onFocus?: () => void | FocusEventHandler<HTMLInputElement>;
 }
 
@@ -48,7 +47,6 @@ export const FieldNumber = ({
   max = Number.MAX_SAFE_INTEGER,
   title,
   error,
-  touched = false,
   id,
   ...rest
 }: FieldNumberProps) => {
@@ -111,47 +109,56 @@ export const FieldNumber = ({
   };
 
   return (
-    <div className={cx('field-number', { disabled })}>
-      {label && <FieldLabel htmlFor={id ?? inputId}>{label}</FieldLabel>}
-      <div
-        className={cx('input-container', {
-          filled: !!value || value === 0,
-          error,
-          disabled,
-          touched,
-        })}
-        title={title}
-      >
-        <BaseIconButton
-          className={cx('sign', 'minus')}
-          disabled={disabled}
-          onClick={handleDecrease}
+    <>
+      <div className={cx('field-number', { disabled })}>
+        {label && <FieldLabel htmlFor={id ?? inputId}>{label}</FieldLabel>}
+        <div
+          className={cx('input-container', {
+            error,
+            disabled,
+          })}
+          title={title}
         >
-          <MinusIcon />
-        </BaseIconButton>
-        <span className={cx('input-field', { disabled })} onClick={handleInputFieldClick}>
-          <input
-            id={id ?? inputId}
-            ref={inputRef}
-            className={cx('input')}
-            type="number"
-            value={value}
-            placeholder={placeholderValue}
+          <BaseIconButton
+            className={cx('sign', 'minus')}
             disabled={disabled}
-            min={min}
-            max={max}
-            onKeyDown={disabled ? undefined : handleKeyDown}
-            onChange={disabled ? undefined : handleChange}
-            onFocus={disabled ? undefined : onFocus}
-            style={{ width: inputWidth }}
-            {...rest}
-          />
-          {!!postfix && (value === 0 || !!value) && <span>{postfix.slice(0, 1)}</span>}
-        </span>
-        <BaseIconButton className={cx('sign', 'plus')} disabled={disabled} onClick={handleIncrease}>
-          <PlusIcon />
-        </BaseIconButton>
+            onClick={handleDecrease}
+          >
+            <MinusIcon />
+          </BaseIconButton>
+          <span className={cx('input-field', { disabled })} onClick={handleInputFieldClick}>
+            <input
+              id={id ?? inputId}
+              ref={inputRef}
+              className={cx('input')}
+              type="number"
+              value={value}
+              placeholder={placeholderValue}
+              disabled={disabled}
+              min={min}
+              max={max}
+              onKeyDown={disabled ? undefined : handleKeyDown}
+              onChange={disabled ? undefined : handleChange}
+              onFocus={disabled ? undefined : onFocus}
+              style={{ width: inputWidth }}
+              {...rest}
+            />
+            {!!postfix && (value === 0 || !!value) && <span>{postfix.slice(0, 1)}</span>}
+          </span>
+          <BaseIconButton
+            className={cx('sign', 'plus')}
+            disabled={disabled}
+            onClick={handleIncrease}
+          >
+            <PlusIcon />
+          </BaseIconButton>
+        </div>
       </div>
-    </div>
+      {error && (
+        <div className={cx('additional-content')}>
+          <span className={cx('error-text')}>{error}</span>
+        </div>
+      )}
+    </>
   );
 };

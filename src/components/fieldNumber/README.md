@@ -13,7 +13,6 @@ Min width - 5 symbols. Max width - flexible
 - **max**: _number_, optional, default = Number.MAX_SAFE_INTEGER(9007199254740991)
 - **title**: _string_, optional, default = ""
 - **error**: _string_, optional, default = ""
-- **touched**: _bool_, optional, default = false
 
 ### Events:
 
