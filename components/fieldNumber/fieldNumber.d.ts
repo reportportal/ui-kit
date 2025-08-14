@@ -12,8 +12,7 @@ interface FieldNumberProps extends Omit<HTMLAttributes<HTMLInputElement>, 'onCha
     max?: number;
     title?: string;
     error?: string;
-    touched?: boolean;
     onFocus?: () => void | FocusEventHandler<HTMLInputElement>;
 }
-export declare const FieldNumber: ({ value, placeholder, disabled, onChange, onFocus, onBlur, label, postfix, min, max, title, error, touched, id, ...rest }: FieldNumberProps) => import("react/jsx-runtime").JSX.Element;
+export declare const FieldNumber: ({ value, placeholder, disabled, onChange, onFocus, onBlur, label, postfix, min, max, title, error, id, ...rest }: FieldNumberProps) => import("react/jsx-runtime").JSX.Element;
 export {};
