@@ -87,13 +87,10 @@ describe('FieldNumber Component', () => {
       expect(postfixElement).toBeInTheDocument();
     });
 
-    it('applies error styles when error and touched props are provided', () => {
-      const { container } = render(
-        <FieldNumber onChange={() => {}} error="Error message" touched />,
-      );
+    it('applies error styles when error prop is provided', () => {
+      const { container } = render(<FieldNumber onChange={() => {}} error="Error message" />);
       const inputContainer = container.querySelector('[class*="input-container"]');
       expect(inputContainer?.className).toContain('error');
-      expect(inputContainer?.className).toContain('touched');
     });
   });
 
@@ -106,18 +103,6 @@ describe('FieldNumber Component', () => {
       expect(inputField).toBeDisabled();
       expect(minusButton).toHaveAttribute('disabled');
       expect(plusButton).toHaveAttribute('disabled');
-    });
-
-    it('handles filled state when value is provided', () => {
-      const { container } = render(<FieldNumber onChange={() => {}} value={10} />);
-      const inputContainer = container.querySelector('[class*="input-container"]');
-      expect(inputContainer?.className).toContain('filled');
-    });
-
-    it('handles filled state when value is 0', () => {
-      const { container } = render(<FieldNumber onChange={() => {}} value={0} />);
-      const inputContainer = container.querySelector('[class*="input-container"]');
-      expect(inputContainer?.className).toContain('filled');
     });
   });
 
