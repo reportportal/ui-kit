@@ -3,7 +3,6 @@ import { ReactDatePickerCustomHeaderProps } from 'react-datepicker';
 import classNames from 'classnames/bind';
 import { FC, ReactNode, useRef, ReactElement } from 'react';
 import { FieldText } from '@components/fieldText';
-import { CalendarIcon } from '@components/icons';
 import { DatePickerHeader } from './header/datePickerHeader';
 import styles from './datePicker.module.scss';
 
@@ -78,14 +77,7 @@ export const DatePicker: FC<DatePickerProps> = ({
 
   return (
     <ReactDatePicker
-      customInput={
-        <FieldText
-          className={cx('input')}
-          defaultWidth={false}
-          endIcon={<CalendarIcon />}
-          ref={inputRef}
-        />
-      }
+      customInput={<FieldText className={cx('input')} defaultWidth={false} ref={inputRef} />}
       placeholderText={placeholder}
       selected={value}
       startDate={startDate}
