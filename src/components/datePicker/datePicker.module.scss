@@ -201,13 +201,14 @@ $POPOVER_Z_INDEX: 10;
     @include setHoverState(transparent);
   }
 
-  .end-date {
+  .end-date,
+  .end-date:hover {
     position: relative;
-    border-radius: 50% !important;
-    background-color: var(--rp-ui-base-topaz) !important;
+    border-radius: 50%;
+    background-color: var(--rp-ui-base-topaz);
     font-family: var(--rp-ui-base-font-family);
     font-weight: var(--rp-ui-base-fw-bold);
-    color: var(--rp-ui-base-bg-000) !important;
+    color: var(--rp-ui-base-bg-000);
   }
 
   .end-date::after {
