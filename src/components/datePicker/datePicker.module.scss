@@ -203,11 +203,11 @@ $POPOVER_Z_INDEX: 10;
 
   .end-date {
     position: relative;
-    border-radius: 50%;
-    background-color: var(--rp-ui-base-topaz);
+    border-radius: 50% !important;
+    background-color: var(--rp-ui-base-topaz) !important;
     font-family: var(--rp-ui-base-font-family);
     font-weight: var(--rp-ui-base-fw-bold);
-    color: var(--rp-ui-base-bg-000);
+    color: var(--rp-ui-base-bg-000) !important;
   }
 
   .end-date::after {
