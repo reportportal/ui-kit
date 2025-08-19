@@ -201,7 +201,8 @@ $POPOVER_Z_INDEX: 10;
     @include setHoverState(transparent);
   }
 
-  .end-date {
+  .end-date,
+  .end-date:hover {
     position: relative;
     border-radius: 50%;
     background-color: var(--rp-ui-base-topaz);
