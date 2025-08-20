@@ -78,6 +78,7 @@ export const DatePickerHeader: FC<DatePickerHeaderProps> = ({
       {headerNodes && <div className={cx(customClassName)}>{headerNodes}</div>}
       <div className={cx('header')}>
         <button
+          type="button"
           aria-label="Previous Months"
           disabled={prevMonthButtonDisabled}
           onClick={(e) => {
@@ -107,6 +108,7 @@ export const DatePickerHeader: FC<DatePickerHeaderProps> = ({
           />
         </div>
         <button
+          type="button"
           aria-label="Next Months"
           disabled={nextMonthButtonDisabled}
           onClick={(e) => {
