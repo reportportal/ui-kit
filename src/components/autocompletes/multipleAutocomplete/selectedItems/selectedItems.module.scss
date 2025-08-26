@@ -25,7 +25,7 @@
 }
 
 @mixin disabled {
-  color: $COLOR--e-300;
+  color: var(--rp-ui-color-field-hover);
   padding-right: 10px;
 }
 
@@ -35,25 +35,25 @@
   align-items: center;
   min-width: 0;
   padding: 3px 8px;
-  background-color: $COLOR--bg-200;
+  background-color: var(--rp-ui-color-bg);
   border-radius: 6px;
   border: 1px solid transparent;
-  font-family: $FONT-ROBOTO-MEDIUM;
+  font-family: 'Roboto Medium';
   font-size: 13px;
   line-height: 20px;
   text-indent: 1px;
-  color: $COLOR--almost-black;
+  color: var(--rp-ui-color-text);
   box-sizing: border-box;
   word-break: break-word;
   cursor: default;
 
   &.validation-error {
-    border-color: $COLOR--system-message-error-line-100;
-    color: $COLOR--red-failed-2;
+    border-color: var(--rp-ui-base-sm-error-line-100);
+    color: var(--rp-ui-color-error);
   }
 
   &.highlight-un-stored-item {
-    border-color: $COLOR--defect-type-AB;
+    border-color: var(--rp-ui-base-defect-type-AB);
   }
 
   &.disabled {
@@ -76,15 +76,15 @@
   cursor: pointer;
 
   &.validation-error {
-    @include fill-svg($COLOR--red-failed-2);
+    @include fill-svg(var(--rp-ui-color-error));
   }
 
   &:hover:not(.validation-error) {
-    @include fill-svg($COLOR--e-400);
+    @include fill-svg(var(--rp-ui-color-text-secondary));
   }
 
   &:active:not(.validation-error) {
-    @include fill-svg($COLOR--topaz-pressed);
+    @include fill-svg(var(--rp-ui-color-field-opened));
   }
 }
 
@@ -93,20 +93,21 @@
   padding: 0;
   margin-top: 2px;
   border: 0;
-  font-family: $FONT-ROBOTO-REGULAR;
+  font-family: 'Roboto Regular';
   font-size: 13px;
   line-height: 20px;
   text-indent: 1px;
-  color: $COLOR--almost-black;
+  color: var(--rp-ui-color-text);
   box-sizing: border-box;
   outline: none;
 }
 
 .dark {
-  background-color: $COLOR--darkmode-gray-350;
-  color: $COLOR--bg-000;
+  // TODO: Replace with themable color
+  background-color: #2d2d2d;
+  color: var(--rp-ui-color-bg);
 
   .cross-icon {
-    @include fill-svg($COLOR--darkmode-gray-100);
+    @include fill-svg(var(--rp-ui-base-dark-e-100));
   }
 }

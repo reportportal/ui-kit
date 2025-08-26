@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+$SCREEN_XS_MAX: 767px;
+
 @mixin container($borderColor, $backgroundColor) {
   display: flex;
   align-items: center;
@@ -53,16 +55,16 @@
 }
 
 .autocomplete {
-  @include container($COLOR--e-200, $COLOR--bg-000);
-  @include hover-state($COLOR--e-300);
-  @include focus-state($COLOR--topaz-focused);
+  @include container(var(--rp-ui-color-field-border), var(--rp-ui-color-bg));
+  @include hover-state(var(--rp-ui-color-field-hover));
+  @include focus-state(--rp-ui-color-primary-focused);
 
   &.disabled {
-    background-color: $COLOR--bg-100;
+    background-color: var(--rp-ui-color-bg-2);
   }
 
   &.error.touched {
-    @include error-state($COLOR--red-failed-2);
+    @include error-state(var(--rp-ui-color-error));
   }
 }
 
@@ -86,11 +88,11 @@
   padding: 0;
   margin-top: 2px;
   border: 0;
-  font-family: $FONT-ROBOTO-REGULAR;
+  font-family: 'Roboto Regular';
   font-size: 13px;
   line-height: 20px;
   text-indent: 1px;
-  color: $COLOR--almost-black;
+  color: var(--rp-ui-color-text);
   box-sizing: border-box;
   outline: none;
   background-color: transparent;
@@ -100,7 +102,7 @@
     font-size: inherit;
     line-height: inherit;
     text-indent: inherit;
-    color: $COLOR--e-300;
+    color: var(--rp-ui-color-field-hover);
   }
 
   &:-webkit-autofill {
@@ -115,7 +117,8 @@
 
   &.mobile-disabled {
     @media (max-width: $SCREEN_XS_MAX) {
-      background-color: $COLOR--gray-91;
+      // TODO: replace with themable color
+      background-color: #e9e9e9;
       pointer-events: none;
     }
   }
@@ -124,25 +127,25 @@
 .error-text {
   display: inline-block;
   margin-top: 4px;
-  font-family: $FONT-ROBOTO-REGULAR;
+  font-family: 'Roboto Regular';
   font-size: 11px;
   line-height: 16px;
-  color: $COLOR--red-failed-2;
+  color: var(--rp-ui-color-error);
 }
 
 .dark {
   &.autocomplete {
-    @include hover-state($COLOR--darkmode-gray-150);
-    @include focus-state($COLOR--darkmode-topaz-focused);
-    background-color: $COLOR--darkmode-bg-solid-96;
-    border-color: $COLOR--darkmode-gray-200;
+    @include hover-state(var(--rp-ui-base-dark-e-150));
+    @include focus-state(var(--rp-ui-base-dark-topaz-focused));
+    background-color: var(--rp-ui-base-dark-bg-solid-96);
+    border-color: var(--rp-ui-base-dark-e-200);
   }
 
   .input {
-    color: $COLOR--bg-000;
+    color: var(--rp-ui-color-bg);
   }
 
   &.error.touched {
-    @include error-state($COLOR--darkmode-error-default);
+    @include error-state(var(--rp-ui-base-dark-error));
   }
 }
