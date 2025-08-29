@@ -82,8 +82,6 @@ export const DatePicker: FC<DatePickerProps> = ({
       selected={value}
       startDate={startDate}
       endDate={endDate}
-      minDate={selects === 'end' ? startDate : undefined}
-      maxDate={selects === 'start' ? endDate : undefined}
       disabled={disabled}
       shouldCloseOnSelect={shouldCloseOnSelect}
       fixedHeight={fixedHeight}
