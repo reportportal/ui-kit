@@ -29,7 +29,7 @@ interface AutocompleteOptionsProps<T> {
   options: T[];
   loading: boolean;
   inputValue: string;
-  parseValueToString: <K>(value: K) => string;
+  parseValueToString: (value: T) => string;
   getItemProps: <K>(props: { item: K; index: number }) => any;
   renderOption?: (
     item: T,

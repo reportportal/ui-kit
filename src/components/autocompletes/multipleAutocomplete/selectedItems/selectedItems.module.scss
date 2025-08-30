@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+$SCREEN_XS_MAX: 767px;
+
 @mixin fill-svg($color) {
   svg {
     fill: $color;
@@ -38,7 +40,7 @@
   background-color: var(--rp-ui-color-bg);
   border-radius: 6px;
   border: 1px solid transparent;
-  font-family: 'Roboto Medium';
+  font-family: "Roboto Medium";
   font-size: 13px;
   line-height: 20px;
   text-indent: 1px;
@@ -93,7 +95,7 @@
   padding: 0;
   margin-top: 2px;
   border: 0;
-  font-family: 'Roboto Regular';
+  font-family: "Roboto Regular";
   font-size: 13px;
   line-height: 20px;
   text-indent: 1px;

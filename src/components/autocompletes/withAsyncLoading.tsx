@@ -15,11 +15,24 @@
  */
 
 import { Component } from 'react';
-import PropTypes from 'prop-types';
 import { debounce, fetch, ERROR_CANCELED } from 'common/utils';
 
-export const WithAsyncLoading = (AutocompleteComponent) =>
-  class WrappedAutocomplete extends Component {
+export interface WithAsyncLoadingProps<T> {
+  getURI: () => string;
+  getRequestParams: () => Record<string, string | number>;
+  makeOptions: (values: T) => T[];
+  filterOption: (value: string) => T[];
+  minLength: number;
+}
+
+export const WithAsyncLoading = <T,>(AutocompleteComponent: T) =>
+  class WrappedAutocomplete extends Component<WithAsyncLoadingProps<T>> {
+    getURI: cancelDebounce = null;
+    constructor(props: WithAsyncLoadingProps<T>) {
+      super
+      this = { ...props };
+    }
+
     static propTypes = {
       getURI: PropTypes.func,
       getRequestParams: PropTypes.func,
@@ -41,7 +54,7 @@ export const WithAsyncLoading = (AutocompleteComponent) =>
       loading: false,
     };
 
-    cancelToken = null;
+    cancelToken: (() => void) | null = null;
 
     componentWillUnmount() {
       this.cancelToken?.();
@@ -52,7 +65,7 @@ export const WithAsyncLoading = (AutocompleteComponent) =>
       const { getURI, getRequestParams, makeOptions, filterOption } = this.props;
 
       if (this.cancelToken) {
-        this.cancelToken();
+        this.cancelToken?.();
       }
 
       const value = (inputValue || '').trim();

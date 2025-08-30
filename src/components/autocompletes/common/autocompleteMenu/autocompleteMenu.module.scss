@@ -16,13 +16,14 @@
 $Z-INDEX-POPUP: 10;
 
 .menu {
+  width: max-content;
   position: absolute;
-  top: 100%;
+  top: 0;
+  left: 0;
   display: none;
-  width: 100%;
   border-radius: 3px;
   margin-top: 4px;
-  font-family: 'Roboto Medium';
+  font-family: "Roboto Medium";
   font-size: 13px;
   line-height: 20px;
   // TODO: REPLACE WITH THEMABLE COLOR

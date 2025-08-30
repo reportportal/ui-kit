@@ -14,43 +14,70 @@
  * limitations under the License.
  */
 
-import React, { useState } from 'react';
-import PropTypes from 'prop-types';
-import Downshift from 'downshift';
+import { ReactNode, useState } from 'react';
+import Downshift, {
+  ControllerStateAndHelpers,
+  DownshiftProps,
+  DownshiftState,
+  StateChangeOptions,
+} from 'downshift';
 import isEqual from 'fast-deep-equal';
 
-export const MultipleDownshift = ({
-  selectedItems,
+export interface DownshiftStore {
+  [key: string | number]: boolean;
+}
+
+export interface MultipleDownshiftProps<T> extends DownshiftProps<T> {
+  options: T[];
+  onChange: () => void;
+  children: (value: ControllerStateAndHelpers<T>) => ReactNode | ReactNode[];
+  selectedItems: T[];
+  handleUnStoredItemCb: ((args: any) => void) | null;
+  existingItemsMap: DownshiftStore;
+  customizeNewSelectedValue: (value: T) => T;
+}
+
+export const MultipleDownshift = <T,>({
+  options = [],
+  onChange = () => {},
+  selectedItems = [],
+  handleUnStoredItemCb = null,
+  existingItemsMap = {},
   children,
-  onChange,
-  handleUnStoredItemCb,
-  options,
-  existingItemsMap,
-  customizeNewSelectedValue,
+  customizeNewSelectedValue = (value) => value,
   ...props
-}) => {
+}: MultipleDownshiftProps<T>) => {
   const [storedItemsMap, setStoredItems] = useState(existingItemsMap);
 
-  const collectStoredItems = (newItemData, collectStoredItemsCb) => {
+  const collectStoredItems = (
+    newItemData: T[],
+    collectStoredItemsCb: (value: DownshiftStore) => void,
+  ) => {
     const newState = {
       ...storedItemsMap,
     };
     newItemData.forEach((item) => {
       if (options.includes(item)) {
-        newState[item] = true;
+        if (typeof item === 'string') newState[item] = true;
+        // else todo
       }
     });
     setStoredItems(newState);
     collectStoredItemsCb(newState);
   };
-  const filterStoredItems = (removedItem, filterStoredItemsCb) => {
-    if (removedItem in storedItemsMap) {
-      const newState = { ...storedItemsMap };
-      delete newState[removedItem];
-      setStoredItems(newState);
-      filterStoredItemsCb(newState);
-    } else {
-      filterStoredItemsCb(storedItemsMap);
+  const filterStoredItems = (
+    removedItem: T,
+    filterStoredItemsCb: (value: DownshiftStore) => void,
+  ) => {
+    if (typeof removedItem === 'string') {
+      if (removedItem in storedItemsMap) {
+        const newState = { ...storedItemsMap };
+        delete newState[removedItem];
+        setStoredItems(newState);
+        filterStoredItemsCb(newState);
+      } else {
+        filterStoredItemsCb(storedItemsMap);
+      }
     }
   };
   const addSelectedItem = (newItemData, downshift) => {
@@ -82,14 +109,17 @@ export const MultipleDownshift = ({
     if (!selectedItem) return;
     addSelectedItem(selectedItem, downshift);
   };
-  const getStateAndHelpers = (downshift) => ({
+  const getStateAndHelpers = (downshift: ControllerStateAndHelpers<T>) => ({
     removeItem,
     editItem,
     handleChange: onChange,
     storedItemsMap,
     ...downshift,
   });
-  const stateReducer = (state, changes) => {
+  const stateReducer: (
+    state: DownshiftState<T>,
+    changes: StateChangeOptions<T>,
+  ) => Partial<StateChangeOptions<T>> = (state, changes) => {
     switch (changes.type) {
       case Downshift.stateChangeTypes.keyDownEnter:
       case Downshift.stateChangeTypes.clickItem:
@@ -114,23 +144,23 @@ export const MultipleDownshift = ({
     </Downshift>
   );
 };
-MultipleDownshift.propTypes = {
-  options: PropTypes.array,
-  onChange: PropTypes.func,
-  children: PropTypes.func.isRequired,
-  selectedItems: PropTypes.array,
-  handleUnStoredItemCb: PropTypes.func,
-  existingItemsMap: PropTypes.shape({
-    value: PropTypes.bool,
-  }),
-  customizeNewSelectedValue: PropTypes.func,
-};
+// MultipleDownshift.propTypes = {
+//   options: PropTypes.array,
+//   onChange: PropTypes.func,
+//   children: PropTypes.func.isRequired,
+//   selectedItems: PropTypes.array,
+//   handleUnStoredItemCb: PropTypes.func,
+//   existingItemsMap: PropTypes.shape({
+//     value: PropTypes.bool,
+//   }),
+//   customizeNewSelectedValue: PropTypes.func,
+// };
 
-MultipleDownshift.defaultProps = {
-  options: [],
-  onChange: () => {},
-  selectedItems: [],
-  handleUnStoredItemCb: null,
-  existingItemsMap: {},
-  customizeNewSelectedValue: (value) => value,
-};
+// MultipleDownshift.defaultProps = {
+//   options: [],
+//   onChange: () => {},
+//   selectedItems: [],
+//   handleUnStoredItemCb: null,
+//   existingItemsMap: {},
+//   customizeNewSelectedValue: (value) => value,
+// };

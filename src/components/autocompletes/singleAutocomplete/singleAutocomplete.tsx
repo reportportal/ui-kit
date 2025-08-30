@@ -14,49 +14,53 @@
  * limitations under the License.
  */
 
-import React, { Component } from 'react';
-import Downshift from 'downshift';
+import React, { ChangeEvent, Component, ComponentProps, KeyboardEvent, Ref } from 'react';
+import Downshift, { DownshiftState, StateChangeOptions } from 'downshift';
 import PropTypes from 'prop-types';
 import { Manager, Reference, Popper } from 'react-popper';
-import { FieldText } from 'componentLibrary/fieldText';
-import { ENTER_KEY_CODE, TAB_KEY_CODE } from 'common/constants/keyCodes';
+// import { FieldText } from 'componentLibrary/fieldText';
 import { AutocompleteMenu } from '../common/autocompleteMenu';
 import { autocompleteVariantType, singleAutocompleteOptionVariantType } from '../common/propTypes';
+import FieldText from '@/components/fieldText';
+import { ENTER_KEY_NAME, TAB_KEY_NAME } from '../constants';
 
 const DEFAULT_OPTIONS_INDEX = 0;
 
-export class SingleAutocomplete extends Component {
-  static propTypes = {
-    options: PropTypes.array,
-    loading: PropTypes.bool,
-    onStateChange: PropTypes.func,
-    value: PropTypes.any,
-    placeholder: PropTypes.string,
-    onChange: PropTypes.func,
-    onFocus: PropTypes.func,
-    onBlur: PropTypes.func,
-    disabled: PropTypes.bool,
-    inputProps: PropTypes.object,
-    parseValueToString: PropTypes.func,
-    renderOption: PropTypes.func,
-    minLength: PropTypes.number,
-    maxLength: PropTypes.number,
-    async: PropTypes.bool,
-    optionVariant: singleAutocompleteOptionVariantType,
-    isRequired: PropTypes.bool,
-    error: PropTypes.string,
-    touched: PropTypes.bool,
-    setTouch: PropTypes.func,
-    createWithoutConfirmation: PropTypes.bool,
-    menuClassName: PropTypes.string,
-    icon: PropTypes.string,
-    isOptionUnique: PropTypes.func,
-    refFunction: PropTypes.func,
-    stateReducer: PropTypes.func,
-    variant: autocompleteVariantType,
-    useFixedPositioning: PropTypes.bool,
-  };
+export interface SingleAutocompleteProps<T, K> {
+  options: T[];
+  loading: boolean;
+  onStateChange: () => void;
+  value: T;
+  placeholder: string;
+  onChange: () => void;
+  onFocus: () => void;
+  onBlur: (e: ChangeEvent<HTMLInputElement>) => void;
+  disabled: boolean;
+  inputProps: ComponentProps<typeof FieldText>;
+  parseValueToString: (value: any) => string;
+  renderOption: (value: T) => React.ReactNode;
+  minLength: number;
+  maxLength: number;
+  async: boolean;
+  optionVariant: ComponentProps<typeof AutocompleteMenu>['optionVariant'];
+  isRequired: boolean;
+  error: string;
+  touched: boolean;
+  setTouch: (value: boolean) => void;
+  createWithoutConfirmation: boolean;
+  menuClassName: string;
+  icon: string;
+  isOptionUnique?: (value: boolean | null) => void;
+  refFunction: () => Ref<any>;
+  stateReducer: (
+    state: DownshiftState<T>,
+    changes: StateChangeOptions<T>,
+  ) => Partial<StateChangeOptions<T>>;
+  variant: ComponentProps<typeof AutocompleteMenu>['variant'];
+  useFixedPositioning: boolean;
+}
 
+export class SingleAutocomplete<T, K> extends Component<SingleAutocompleteProps<T, K>> {
   static defaultProps = {
     options: [],
     loading: false,
@@ -98,8 +102,11 @@ export class SingleAutocomplete extends Component {
         ...rest,
       });
 
-  handleKeyDown = (event, setHighlightedIndex) => {
-    if (event.keyCode === TAB_KEY_CODE) {
+  handleKeyDown = (
+    event: KeyboardEvent<HTMLInputElement>,
+    setHighlightedIndex: (value: number) => void,
+  ) => {
+    if (event.key === TAB_KEY_NAME) {
       event.preventDefault();
       setHighlightedIndex(this.props.options.length);
     }
@@ -165,7 +172,7 @@ export class SingleAutocomplete extends Component {
                         },
                         refFunction,
                         onKeyDown: (event) => {
-                          if (event.keyCode === ENTER_KEY_CODE) {
+                          if (event.key === ENTER_KEY_NAME) {
                             event.preventDefault();
                           }
 
@@ -174,7 +181,7 @@ export class SingleAutocomplete extends Component {
                           }
                         },
                         onBlur: (e) => {
-                          const newValue = (inputValue || '').trim();
+                          const newValue = (inputValue || '').trim() as T;
 
                           if (!createWithoutConfirmation && !newValue) {
                             selectItem(newValue);
