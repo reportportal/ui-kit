@@ -21,45 +21,56 @@ import Downshift, {
   DownshiftState,
   StateChangeOptions,
 } from 'downshift';
-import isEqual from 'fast-deep-equal';
+import { compareOptionWithItem, getUniqKey, isEqual } from '../utils';
 
-export interface DownshiftStore {
-  [key: string | number]: boolean;
-}
+export type DownshiftStore<T> =
+  | {
+      [key: string]: boolean;
+    }
+  | T[];
 
 export interface MultipleDownshiftProps<T> extends DownshiftProps<T> {
   options: T[];
-  onChange: () => void;
   children: (value: ControllerStateAndHelpers<T>) => ReactNode | ReactNode[];
   selectedItems: T[];
-  handleUnStoredItemCb: ((args: any) => void) | null;
-  existingItemsMap: DownshiftStore;
+  handleUnStoredItemCb:
+    | ((newSelectedItems: DownshiftStore<T>, prevSelectedItems: DownshiftStore<T>) => void)
+    | null;
+  existingItemsMap: { [key: string]: boolean };
   customizeNewSelectedValue: (value: T) => T;
+  getOptionUniqKey?: (option: T) => keyof T;
+  getOptionUniqKeyValue?: (option: T) => string;
 }
 
 export const MultipleDownshift = <T,>({
   options = [],
-  onChange = () => {},
+  onChange,
   selectedItems = [],
   handleUnStoredItemCb = null,
   existingItemsMap = {},
   children,
   customizeNewSelectedValue = (value) => value,
+  getOptionUniqKey,
+  getOptionUniqKeyValue,
   ...props
 }: MultipleDownshiftProps<T>) => {
   const [storedItemsMap, setStoredItems] = useState(existingItemsMap);
 
+  console.log({ selectedItems });
+
   const collectStoredItems = (
     newItemData: T[],
-    collectStoredItemsCb: (value: DownshiftStore) => void,
+    collectStoredItemsCb: (value: DownshiftStore<T>) => void,
   ) => {
     const newState = {
       ...storedItemsMap,
     };
+
+    const key = getUniqKey(options[0], getOptionUniqKey) as string;
+
     newItemData.forEach((item) => {
-      if (options.includes(item)) {
-        if (typeof item === 'string') newState[item] = true;
-        // else todo
+      if (options.find((option) => compareOptionWithItem(option, item, getOptionUniqKey))) {
+        newState[key] = true;
       }
     });
     setStoredItems(newState);
@@ -67,48 +78,54 @@ export const MultipleDownshift = <T,>({
   };
   const filterStoredItems = (
     removedItem: T,
-    filterStoredItemsCb: (value: DownshiftStore) => void,
+    filterStoredItemsCb: (value: DownshiftStore<T>) => void,
   ) => {
-    if (typeof removedItem === 'string') {
-      if (removedItem in storedItemsMap) {
-        const newState = { ...storedItemsMap };
-        delete newState[removedItem];
-        setStoredItems(newState);
-        filterStoredItemsCb(newState);
-      } else {
-        filterStoredItemsCb(storedItemsMap);
-      }
+    const removedItemKey = getUniqKey(removedItem, getOptionUniqKey) as string;
+
+    if (removedItemKey in storedItemsMap) {
+      const newState = { ...storedItemsMap };
+      delete newState[removedItemKey];
+      setStoredItems(newState);
+      filterStoredItemsCb(newState);
+    } else {
+      filterStoredItemsCb(storedItemsMap);
     }
   };
-  const addSelectedItem = (newItemData, downshift) => {
+
+  const addSelectedItem = (newItemData: T, downshift: ControllerStateAndHelpers<T>) => {
     const customizedNewItemData = customizeNewSelectedValue(newItemData);
     const newItem = Array.isArray(customizedNewItemData)
       ? customizedNewItemData
       : [customizedNewItemData];
     const filteredSelectedItems = selectedItems.filter((item) => newItem.indexOf(item) < 0);
     const newSelectedItems = [...filteredSelectedItems, ...newItem];
-    onChange(newSelectedItems, downshift);
-    const collectStoredItemsCb = (storedItems) =>
+    onChange?.(newSelectedItems as any, downshift);
+    const collectStoredItemsCb = (storedItems: DownshiftStore<T>) =>
       handleUnStoredItemCb?.(newSelectedItems, storedItems);
     collectStoredItems(newItem, collectStoredItemsCb);
   };
-  const editItem = (oldItem, newItem) => {
+
+  const editItem = (oldItem: T, newItem: T) => {
     const position = selectedItems.indexOf(oldItem);
     const newValue = [...selectedItems];
     newValue.splice(position, 1, newItem);
-    onChange(newValue);
+    onChange?.(newValue as any, null as any);
   };
-  const removeItem = (removedItem, downshift) => {
+
+  const removeItem = (removedItem: T, downshift: ControllerStateAndHelpers<T>) => {
     const newSelectedItems = selectedItems.filter((item) => !isEqual(item, removedItem));
-    onChange(newSelectedItems, downshift);
-    const filterStoredItemsCb = (storedItems) =>
+    onChange?.(newSelectedItems as any, downshift);
+    const filterStoredItemsCb = (storedItems: DownshiftStore<T>) =>
       handleUnStoredItemCb?.(newSelectedItems, storedItems);
     filterStoredItems(removedItem, filterStoredItemsCb);
   };
-  const handleSelection = (selectedItem, downshift) => {
+
+  const handleSelection = (selectedItem: T | null, downshift: ControllerStateAndHelpers<T>) => {
+    console.log({ selectedItem, downshift });
     if (!selectedItem) return;
     addSelectedItem(selectedItem, downshift);
   };
+
   const getStateAndHelpers = (downshift: ControllerStateAndHelpers<T>) => ({
     removeItem,
     editItem,
@@ -116,6 +133,7 @@ export const MultipleDownshift = <T,>({
     storedItemsMap,
     ...downshift,
   });
+
   const stateReducer: (
     state: DownshiftState<T>,
     changes: StateChangeOptions<T>,
@@ -144,23 +162,3 @@ export const MultipleDownshift = <T,>({
     </Downshift>
   );
 };
-// MultipleDownshift.propTypes = {
-//   options: PropTypes.array,
-//   onChange: PropTypes.func,
-//   children: PropTypes.func.isRequired,
-//   selectedItems: PropTypes.array,
-//   handleUnStoredItemCb: PropTypes.func,
-//   existingItemsMap: PropTypes.shape({
-//     value: PropTypes.bool,
-//   }),
-//   customizeNewSelectedValue: PropTypes.func,
-// };
-
-// MultipleDownshift.defaultProps = {
-//   options: [],
-//   onChange: () => {},
-//   selectedItems: [],
-//   handleUnStoredItemCb: null,
-//   existingItemsMap: {},
-//   customizeNewSelectedValue: (value) => value,
-// };

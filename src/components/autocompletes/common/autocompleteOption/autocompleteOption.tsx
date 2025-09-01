@@ -28,7 +28,7 @@ type AutocompleteOptionProps = {
   isNew?: boolean;
   children?: ReactNode;
   disabled?: boolean;
-  optionVariant?: string;
+  optionVariant?: 'key-variant' | 'value-variant' | '';
   variant?: 'light' | 'dark' | string;
 } & HTMLAttributes<HTMLLIElement | HTMLButtonElement>;
 

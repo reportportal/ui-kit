@@ -119,10 +119,10 @@ const SelectedItem = <T,>({
   );
 };
 
-type SelectedItemsProps<T, K> = ComponentProps<typeof SelectedItem> & {
+type SelectedItemsProps<T, K> = Omit<ComponentProps<typeof SelectedItem>, 'item'> & {
   items?: T[];
   onRemoveItem?: (item: T) => void;
-  parseValueToString?: (value: T) => string;
+  parseValueToString?: (value: T | null) => string;
   editItem?: (oldItem: T, newValue: T) => void;
   disabled?: boolean;
   mobileDisabled?: boolean;
@@ -143,20 +143,25 @@ export const SelectedItems = <T, K>({
   storedItemsMap = {},
   highlightUnStoredItem = false,
   ...props
-}: SelectedItemsProps<T, K>) =>
-  (items || []).map((item) => {
+}: SelectedItemsProps<T, K>) => {
+  console.log({ items });
+
+  return (items || []).map((item) => {
     let errorType = '';
     if (getItemValidationErrorType) {
       errorType = getItemValidationErrorType(item);
     }
+
     return (
       <SelectedItem
         key={parseValueToString(item)}
         parseValueToString={parseValueToString}
         error={errorType}
+        item={item}
         storedOption={!!storedItemsMap[parseValueToString(item)]}
         highlightUnStoredItem={highlightUnStoredItem}
         {...props}
       />
     );
   });
+};

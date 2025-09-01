@@ -14,58 +14,35 @@
  * limitations under the License.
  */
 
-import { Component } from 'react';
-import { debounce, fetch, ERROR_CANCELED } from 'common/utils';
+import { Component, useEffect, useState } from 'react';
 
 export interface WithAsyncLoadingProps<T> {
+  fetch: () => Promise<any>;
   getURI: () => string;
   getRequestParams: () => Record<string, string | number>;
-  makeOptions: (values: T) => T[];
+  makeOptions: <K>(padyload: K) => T[];
   filterOption: (value: string) => T[];
   minLength: number;
 }
 
-export const WithAsyncLoading = <T,>(AutocompleteComponent: T) =>
-  class WrappedAutocomplete extends Component<WithAsyncLoadingProps<T>> {
-    getURI: cancelDebounce = null;
-    constructor(props: WithAsyncLoadingProps<T>) {
-      super
-      this = { ...props };
-    }
+export const WithAsyncLoading = <T,>(AutocompleteComponent: T) => {
+  const WrapperAutoComplete = (props: WithAsyncLoadingProps<T>) => {
+    const {
+      getURI = () => '',
+      getRequestParams = () => ({}),
+      makeOptions = (values) => values,
+      filterOption = () => true,
+      minLength = 1,
+    } = props;
+    const [options, setOptions] = useState([]);
+    const [loading, setLoading] = useState(false);
 
-    static propTypes = {
-      getURI: PropTypes.func,
-      getRequestParams: PropTypes.func,
-      makeOptions: PropTypes.func,
-      filterOption: PropTypes.func,
-      minLength: PropTypes.number,
-    };
+    let cancelToken: (() => void) | null = null;
+    let cancelDebounce: (() => void) | null = null;
 
-    static defaultProps = {
-      getURI: () => '',
-      getRequestParams: () => ({}),
-      makeOptions: (values) => values,
-      filterOption: () => true,
-      minLength: 1,
-    };
-
-    state = {
-      options: [],
-      loading: false,
-    };
-
-    cancelToken: (() => void) | null = null;
-
-    componentWillUnmount() {
-      this.cancelToken?.();
-      this.cancelDebounce?.();
-    }
-
-    debouncedFetch = debounce((inputValue) => {
-      const { getURI, getRequestParams, makeOptions, filterOption } = this.props;
-
-      if (this.cancelToken) {
-        this.cancelToken?.();
+    const debouncedFetch = debounce((inputValue) => {
+      if (cancelToken) {
+        cancelToken?.();
       }
 
       const value = (inputValue || '').trim();
@@ -74,54 +51,57 @@ export const WithAsyncLoading = <T,>(AutocompleteComponent: T) =>
 
       fetch(uri, {
         abort: (cancelToken) => {
-          this.cancelToken = cancelToken;
+          cancelToken = cancelToken;
         },
         ...requestParams,
       })
         .then((response) => {
-          this.cancelToken = null;
-          this.setState({
-            options: makeOptions(response).filter(filterOption),
-            loading: false,
-          });
+          cancelToken = null;
+          setOptions(makeOptions(response).filter(filterOption));
+          setLoading(false);
         })
         .catch((error) => {
           if (error.message !== ERROR_CANCELED) {
-            this.setState({
-              options: [],
-              loading: false,
-            });
+            setLoading(false);
+            setOptions([]);
           }
-          this.cancelToken = null;
+          cancelToken = null;
         });
     }, 200);
 
-    loadOptions = (inputValue) => {
-      this.setState({ loading: true });
-      this.cancelDebounce = this.debouncedFetch(inputValue);
+    const loadOptions = (inputValue) => {
+      setLoading(true);
+      cancelDebounce = debouncedFetch(inputValue);
     };
 
-    handleStateChange = (changes, { isOpen, inputValue }) => {
+    const handleStateChange = (changes, { isOpen, inputValue }) => {
       if (!isOpen) return;
 
       if (
-        ('isOpen' in changes && !this.props.minLength) ||
-        ('inputValue' in changes && (inputValue || '').trim().length >= this.props.minLength)
+        ('isOpen' in changes && !minLength) ||
+        ('inputValue' in changes && (inputValue || '').trim().length >= minLength)
       ) {
-        this.loadOptions(inputValue || '');
+        loadOptions(inputValue || '');
       }
     };
 
-    render() {
-      const { options, loading } = this.state;
-      return (
-        <AutocompleteComponent
-          options={options}
-          loading={loading}
-          onStateChange={this.handleStateChange}
-          async
-          {...this.props}
-        />
-      );
-    }
+    useEffect(() => {
+      return () => {
+        cancelToken?.();
+        cancelDebounce?.();
+      };
+    });
+
+    return (
+      <AutocompleteComponent
+        options={options}
+        loading={loading}
+        onStateChange={handleStateChange}
+        async
+        {...props}
+      />
+    );
   };
+
+  return WrapperAutoComplete;
+};

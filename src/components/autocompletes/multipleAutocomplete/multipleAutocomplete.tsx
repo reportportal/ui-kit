@@ -15,15 +15,16 @@
  */
 
 import { ComponentProps, KeyboardEvent, useEffect, useRef } from 'react';
-import isEqual from 'fast-deep-equal';
 import classNames from 'classnames/bind';
 // import { Manager, Reference, Popper } from 'react-popper';
 import { AutocompleteMenu } from '../common/autocompleteMenu';
 import { SelectedItems } from './selectedItems';
-import { MultipleDownshift } from './multipleDownshift';
+import { DownshiftStore, MultipleDownshift } from './multipleDownshift';
 import styles from './multipleAutocomplete.module.scss';
 import FieldText from '@/components/fieldText';
 import { autoPlacement, computePosition, useFloating } from '@floating-ui/react';
+import { Actions, ControllerStateAndHelpers, DownshiftState, PropGetters } from 'downshift';
+import { isEqual } from '../utils';
 
 const cx = classNames.bind(styles);
 
@@ -51,56 +52,62 @@ export interface MultipleAutocompleteProps<T> {
   createWithoutConfirmation: boolean;
   getItemValidationErrorType: (() => any | null) | null; // string | null
   clearItemsError: () => void;
-  getAdditionalCreationCondition: (value: T) => boolean;
+  getAdditionalCreationCondition: (value: string) => boolean;
   highlightUnStoredItem: boolean;
   parseInputValueFn: ((value: string) => T[]) | null;
-  handleUnStoredItemCb: ((value: T) => void) | null;
+  handleUnStoredItemCb:
+    | ((newSelectedItems: DownshiftStore<T>, prevSelectedItems: DownshiftStore<T>) => void)
+    | null;
   dataAutomationId: string;
   existingItemsMap: { [key: string | number]: boolean };
   variant: ComponentProps<typeof AutocompleteMenu>['variant'];
+  optionVariant: ComponentProps<typeof AutocompleteMenu>['optionVariant'];
   customizeNewSelectedValue: (value: T) => T;
 }
 
-export const MultipleAutocomplete = <T,>({
-  options = [],
-  loading = false,
-  onStateChange = () => {},
-  value = [],
-  placeholder = '',
-  error = '',
-  touched = false,
-  creatable = false,
-  editable = false,
-  onChange = () => {},
-  onFocus = () => {},
-  onBlur = () => {},
-  disabled = false,
-  mobileDisabled = false,
-  inputProps = {},
-  parseValueToString = ((value: any) => value || '') as any,
-  minLength = 1,
-  maxLength = null,
-  async = false,
-  customClass = '',
-  createWithoutConfirmation = false,
-  getItemValidationErrorType = null,
-  clearItemsError = () => {},
-  getAdditionalCreationCondition = () => true,
-  highlightUnStoredItem = false,
-  parseInputValueFn = null,
-  handleUnStoredItemCb = null,
-  dataAutomationId = '',
-  existingItemsMap = {},
-  variant = 'light',
-  customizeNewSelectedValue = (value) => value,
-  ...props
-}: MultipleAutocompleteProps<T>) => {
+export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompleteProps<T>) => {
+  const {
+    options = [],
+    loading = false,
+    onStateChange = () => {},
+    value = [],
+    placeholder = '',
+    error = '',
+    touched = false,
+    creatable = false,
+    editable = false,
+    onChange = () => {},
+    onFocus = () => {},
+    onBlur = () => {},
+    disabled = false,
+    mobileDisabled = false,
+    inputProps = {},
+    parseValueToString = ((value: any) => value || '') as any,
+    minLength = 1,
+    maxLength = null,
+    async = false,
+    customClass = '',
+    createWithoutConfirmation = false,
+    getItemValidationErrorType = null,
+    clearItemsError = () => {},
+    getAdditionalCreationCondition = () => true,
+    highlightUnStoredItem = false,
+    parseInputValueFn = null,
+    handleUnStoredItemCb = null,
+    dataAutomationId = '',
+    existingItemsMap = {},
+    variant = 'light',
+    customizeNewSelectedValue = (value) => value,
+    ...props
+  } = componentsProps;
+
   const { refs, floatingStyles } = useFloating({
     placement: 'bottom-start',
     middleware: [autoPlacement({ allowedPlacements: ['bottom-start', 'top-start'] })],
   });
 
   let updatePosition: () => void;
+
   const placeholderIfEmptyField = value.length === 0 && !disabled ? placeholder : '';
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -110,10 +117,10 @@ export const MultipleAutocomplete = <T,>({
 
   const handleChange = (...args: any) => {
     updatePosition?.();
-    onChange(...args);
+    onChange(...(args as any));
   };
   const getOptionProps =
-    (getItemProps: any, highlightedIndex: number, selectedItems: any) =>
+    (getItemProps: any, highlightedIndex: number | null, selectedItems: any) =>
     ({ item, index, ...rest }: any) =>
       getItemProps({
         item,
@@ -140,7 +147,7 @@ export const MultipleAutocomplete = <T,>({
   };
 
   const onRemoveItem =
-    (cb: (item: any) => void): ((item: any) => void) =>
+    (cb: DownshiftState<T> & PropGetters<T> & Actions<T>): ((item: any) => void) =>
     (item) => {
       cb(item);
 
@@ -154,7 +161,7 @@ export const MultipleAutocomplete = <T,>({
   );
 
   return (
-    <MultipleDownshift
+    <MultipleDownshift<T>
       onChange={handleChange}
       itemToString={parseValueToString}
       selectedItems={value}
@@ -176,7 +183,7 @@ export const MultipleAutocomplete = <T,>({
         selectItem,
         clearSelection,
         storedItemsMap,
-      }: any) => (
+      }: ControllerStateAndHelpers<T>) => (
         <div>
           <>
             <div
@@ -193,7 +200,7 @@ export const MultipleAutocomplete = <T,>({
                   'mobile-disabled': mobileDisabled,
                 })}
               >
-                <SelectedItems<T>
+                <SelectedItems<T, any>
                   items={value}
                   onRemoveItem={onRemoveItem(removeItem)}
                   disabled={disabled}
@@ -255,8 +262,9 @@ export const MultipleAutocomplete = <T,>({
           </>
           <AutocompleteMenu
             isOpen={isOpen}
+            loading={loading}
+            async={async}
             ref={refs.setFloating}
-            // placement={placement}
             style={floatingStyles}
             inputValue={(inputValue || '').trim()}
             getItemProps={getOptionProps(getItemProps, highlightedIndex, value)}
@@ -266,11 +274,6 @@ export const MultipleAutocomplete = <T,>({
             variant={variant}
             {...props}
           />
-          {/* );
-              }}
-            </Popper>
-          
-        )} */}
         </div>
       )}
     </MultipleDownshift>
