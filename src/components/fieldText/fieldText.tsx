@@ -14,7 +14,7 @@ import {
 } from 'react';
 import classNames from 'classnames/bind';
 import { ClearIcon, CloseEyeIcon, OpenEyeIcon } from '@components/icons';
-import { Button } from '../button';
+import { BaseIconButton } from '../baseIconButton';
 import { SpinLoader } from '@components/spinLoader';
 import { MaxValueDisplay } from '@components/maxValueDisplay';
 import { FieldLabel } from '@components/fieldLabel';
@@ -179,9 +179,7 @@ export const FieldText = forwardRef<HTMLInputElement, FieldTextProps>(
               {...rest}
             />
             {type === 'password' && value && (
-              <Button
-                icon={passwordVisible ? <OpenEyeIcon /> : <CloseEyeIcon />}
-                variant={'text'}
+              <BaseIconButton
                 className={cx('eye-icon')}
                 onMouseDown={showPassword}
                 onMouseLeave={hidePassword}
@@ -189,7 +187,9 @@ export const FieldText = forwardRef<HTMLInputElement, FieldTextProps>(
                 onTouchStart={showPassword}
                 onTouchEnd={hidePassword}
                 onTouchCancel={hidePassword}
-              />
+              >
+                {passwordVisible ? <OpenEyeIcon /> : <CloseEyeIcon />}
+              </BaseIconButton>
             )}
             {placeholder && !value && (
               <span className={cx('placeholder')}>
