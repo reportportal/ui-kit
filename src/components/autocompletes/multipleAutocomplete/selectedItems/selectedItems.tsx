@@ -119,20 +119,19 @@ const SelectedItem = <T,>({
   );
 };
 
-type SelectedItemsProps<T, K> = Omit<ComponentProps<typeof SelectedItem>, 'item'> & {
+type SelectedItemsProps<T, K> = Omit<SelectedItemProps<T>, 'item'> & {
   items?: T[];
   onRemoveItem?: (item: T) => void;
   parseValueToString?: (value: T | null) => string;
   editItem?: (oldItem: T, newValue: T) => void;
   disabled?: boolean;
   mobileDisabled?: boolean;
-  getItemValidationErrorType?: (item: T) => string;
   options?: K[];
   storedItemsMap?: Record<string, boolean>;
   highlightUnStoredItem?: boolean;
   editable?: boolean;
-  getAdditionalCreationCondition?: (value: T) => boolean;
   variant?: VariantType;
+  getItemValidationErrorType?: ((item: T) => string) | null;
 };
 
 export const SelectedItems = <T, K>({

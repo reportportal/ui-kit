@@ -29,7 +29,7 @@ interface AutocompleteOptionsProps<T> {
   options: T[];
   loading: boolean;
   inputValue: string;
-  parseValueToString: (value: T) => string;
+  parseValueToString: (value: T | null) => string;
   getItemProps: <K>(props: { item: K; index: number }) => any;
   renderOption?: (
     item: T,
@@ -99,14 +99,14 @@ export class AutocompleteOptions<T> extends Component<AutocompleteOptionsProps<T
     return (
       <div className={cx({ container: !options.length })}>
         <AutocompleteOption
-          key={parseValueToString(inputValue)}
+          key={parseValueToString(inputValue as T)}
           optionVariant={optionVariant}
           {...getItemProps({ item: inputValue, index })}
           isNew={isNew}
           variant={variant}
           getItemName={getItemName}
         >
-          {parseValueToString(inputValue)}
+          {parseValueToString(inputValue as T)}
         </AutocompleteOption>
       </div>
     );

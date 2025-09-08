@@ -19,7 +19,7 @@ import classNames from 'classnames/bind';
 // import { Manager, Reference, Popper } from 'react-popper';
 import { AutocompleteMenu } from '../common/autocompleteMenu';
 import { SelectedItems } from './selectedItems';
-import { DownshiftStore, MultipleDownshift } from './multipleDownshift';
+import { DownshiftStore, GetStateAndHelpersT, MultipleDownshift } from './multipleDownshift';
 import styles from './multipleAutocomplete.module.scss';
 import FieldText from '@/components/fieldText';
 import { autoPlacement, computePosition, useFloating } from '@floating-ui/react';
@@ -38,21 +38,21 @@ export interface MultipleAutocompleteProps<T> {
   touched: boolean;
   creatable: boolean;
   editable: boolean;
-  onChange: (args: any) => void;
+  onChange: (selectedItems: T | T[] | null, downshift: ControllerStateAndHelpers<T>) => void;
   onFocus: () => void;
   onBlur: () => void;
   disabled: boolean;
   mobileDisabled: boolean;
   inputProps: ComponentProps<typeof FieldText>;
-  parseValueToString: (value: T | null) => string;
+  parseValueToString?: (value: T | null) => string;
   minLength: number | null;
   maxLength: number | null;
   async: boolean;
   customClass: string;
   createWithoutConfirmation: boolean;
-  getItemValidationErrorType: (() => any | null) | null; // string | null
+  getItemValidationErrorType?: (item: T) => string;
   clearItemsError: () => void;
-  getAdditionalCreationCondition: (value: string) => boolean;
+  getAdditionalCreationCondition: (value: T) => boolean;
   highlightUnStoredItem: boolean;
   parseInputValueFn: ((value: string) => T[]) | null;
   handleUnStoredItemCb:
@@ -82,7 +82,7 @@ export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompletePr
     disabled = false,
     mobileDisabled = false,
     inputProps = {},
-    parseValueToString = ((value: any) => value || '') as any,
+    parseValueToString = ((v: T) => v || '') as MultipleAutocompleteProps<T>['parseValueToString'],
     minLength = 1,
     maxLength = null,
     async = false,
@@ -90,14 +90,15 @@ export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompletePr
     createWithoutConfirmation = false,
     getItemValidationErrorType = null,
     clearItemsError = () => {},
-    getAdditionalCreationCondition = () => true,
+    getAdditionalCreationCondition = (() =>
+      true) as MultipleAutocompleteProps<T>['getAdditionalCreationCondition'],
     highlightUnStoredItem = false,
     parseInputValueFn = null,
     handleUnStoredItemCb = null,
     dataAutomationId = '',
     existingItemsMap = {},
     variant = 'light',
-    customizeNewSelectedValue = (value) => value,
+    customizeNewSelectedValue = (v) => v,
     ...props
   } = componentsProps;
 
@@ -106,7 +107,7 @@ export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompletePr
     middleware: [autoPlacement({ allowedPlacements: ['bottom-start', 'top-start'] })],
   });
 
-  let updatePosition: () => void;
+  // let updatePosition: () => void;
 
   const placeholderIfEmptyField = value.length === 0 && !disabled ? placeholder : '';
   const inputRef = useRef<HTMLInputElement>(null);
@@ -115,9 +116,9 @@ export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompletePr
     clearItemsError();
   }, [value]);
 
-  const handleChange = (...args: any) => {
-    updatePosition?.();
-    onChange(...(args as any));
+  const handleChange = (selectedItems: T | T[] | null, downshift: ControllerStateAndHelpers<T>) => {
+    // updatePosition?.();
+    onChange(selectedItems, downshift);
   };
   const getOptionProps =
     (getItemProps: any, highlightedIndex: number | null, selectedItems: any) =>
@@ -146,15 +147,13 @@ export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompletePr
     }
   };
 
-  const onRemoveItem =
-    (cb: DownshiftState<T> & PropGetters<T> & Actions<T>): ((item: any) => void) =>
-    (item) => {
-      cb(item);
+  const onRemoveItem = (cb: (item: T) => void) => (item: T) => {
+    cb(item);
 
-      if (inputRef.current) {
-        inputRef.current.focus();
-      }
-    };
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  };
 
   const filteredOptions = options.filter((option: any) =>
     value.every((val: any) => !isEqual(val, option)),
@@ -183,7 +182,7 @@ export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompletePr
         selectItem,
         clearSelection,
         storedItemsMap,
-      }: ControllerStateAndHelpers<T>) => (
+      }: any): any => (
         <div>
           <>
             <div
@@ -260,7 +259,7 @@ export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompletePr
             </div>
             {error && touched && <span className={cx('error-text')}>{error}</span>}
           </>
-          <AutocompleteMenu
+          <AutocompleteMenu<T>
             isOpen={isOpen}
             loading={loading}
             async={async}

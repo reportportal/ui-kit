@@ -17,24 +17,24 @@
 import classNames from 'classnames/bind';
 import { AutocompleteOptions } from '../autocompleteOptions';
 import styles from './autocompleteMenu.module.scss';
-import { ComponentProps, forwardRef } from 'react';
+import { ComponentProps, ForwardedRef, forwardRef } from 'react';
 
 const cx = classNames.bind(styles);
 
 const isReadyForSearch = (minLength: number, inputValue: string) =>
   !minLength || minLength <= inputValue.trim().length;
 
-type AutocompleteMenuProps = {
+type AutocompleteMenuProps<T> = {
   isOpen?: boolean;
   // placement?: string;
   style?: React.CSSProperties;
   minLength?: number;
   inputValue?: string;
   className?: string;
-} & ComponentProps<typeof AutocompleteOptions>;
+} & ComponentProps<typeof AutocompleteOptions<T>>;
 
-export const AutocompleteMenu = forwardRef<HTMLUListElement, AutocompleteMenuProps>(
-  (
+export const AutocompleteMenu = forwardRef(
+  <T,>(
     {
       isOpen = false,
       // placement = 'bottom-start',
@@ -44,8 +44,8 @@ export const AutocompleteMenu = forwardRef<HTMLUListElement, AutocompleteMenuPro
       className = '',
       variant = 'light',
       ...props
-    },
-    ref,
+    }: AutocompleteMenuProps<T>,
+    ref: ForwardedRef<HTMLUListElement>,
   ) => {
     return (
       <ul

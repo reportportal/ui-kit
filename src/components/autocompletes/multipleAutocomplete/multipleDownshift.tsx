@@ -29,7 +29,7 @@ export type DownshiftStore<T> =
     }
   | T[];
 
-export interface MultipleDownshiftProps<T> extends DownshiftProps<T> {
+export interface MultipleDownshiftProps<T> extends Partial<DownshiftProps<T>> {
   options: T[];
   children: (value: ControllerStateAndHelpers<T>) => ReactNode | ReactNode[];
   selectedItems: T[];
@@ -40,7 +40,15 @@ export interface MultipleDownshiftProps<T> extends DownshiftProps<T> {
   customizeNewSelectedValue: (value: T) => T;
   getOptionUniqKey?: (option: T) => keyof T;
   getOptionUniqKeyValue?: (option: T) => string;
+  onChange: (selectedItems: T | T[] | null, downshift: ControllerStateAndHelpers<T>) => void;
 }
+
+export type GetStateAndHelpersT<T> = ControllerStateAndHelpers<T> & {
+  removeItem: (removedItem: T, downshift: ControllerStateAndHelpers<T>) => void;
+  editItem: (oldItem: T, newItem: T) => void;
+  handleChange: MultipleDownshiftProps<T>['onChange'];
+  storedItemsMap: MultipleDownshiftProps<T>['existingItemsMap'];
+};
 
 export const MultipleDownshift = <T,>({
   options = [],
@@ -126,7 +134,7 @@ export const MultipleDownshift = <T,>({
     addSelectedItem(selectedItem, downshift);
   };
 
-  const getStateAndHelpers = (downshift: ControllerStateAndHelpers<T>) => ({
+  const getStateAndHelpers = (downshift: ControllerStateAndHelpers<T>): GetStateAndHelpersT<T> => ({
     removeItem,
     editItem,
     handleChange: onChange,
