@@ -47,6 +47,7 @@ export type GetStateAndHelpersT<T> = ControllerStateAndHelpers<T> & {
   removeItem: (removedItem: T, downshift: ControllerStateAndHelpers<T>) => void;
   editItem: (oldItem: T, newItem: T) => void;
   handleChange: MultipleDownshiftProps<T>['onChange'];
+  getOptionUniqKeyValue?: (option: T) => string;
   storedItemsMap: MultipleDownshiftProps<T>['existingItemsMap'];
 };
 
@@ -63,8 +64,6 @@ export const MultipleDownshift = <T,>({
   ...props
 }: MultipleDownshiftProps<T>) => {
   const [storedItemsMap, setStoredItems] = useState(existingItemsMap);
-
-  console.log({ selectedItems });
 
   const collectStoredItems = (
     newItemData: T[],
@@ -129,7 +128,6 @@ export const MultipleDownshift = <T,>({
   };
 
   const handleSelection = (selectedItem: T | null, downshift: ControllerStateAndHelpers<T>) => {
-    console.log({ selectedItem, downshift });
     if (!selectedItem) return;
     addSelectedItem(selectedItem, downshift);
   };
@@ -138,6 +136,7 @@ export const MultipleDownshift = <T,>({
     removeItem,
     editItem,
     handleChange: onChange,
+    getOptionUniqKeyValue,
     storedItemsMap,
     ...downshift,
   });

@@ -143,8 +143,6 @@ export const SelectedItems = <T, K>({
   highlightUnStoredItem = false,
   ...props
 }: SelectedItemsProps<T, K>) => {
-  console.log({ items });
-
   return (items || []).map((item) => {
     let errorType = '';
     if (getItemValidationErrorType) {

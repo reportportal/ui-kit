@@ -44,7 +44,7 @@ export interface MultipleAutocompleteProps<T> {
   disabled: boolean;
   mobileDisabled: boolean;
   inputProps: ComponentProps<typeof FieldText>;
-  parseValueToString?: (value: T | null) => string;
+  parseValueToString: (value: T | null) => string;
   minLength: number | null;
   maxLength: number | null;
   async: boolean;
@@ -155,9 +155,9 @@ export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompletePr
     }
   };
 
-  const filteredOptions = options.filter((option: any) =>
-    value.every((val: any) => !isEqual(val, option)),
-  );
+  const filteredOptions = options.filter((option: T) => {
+    return value.every((val: any) => !isEqual(val, option));
+  });
 
   return (
     <MultipleDownshift<T>

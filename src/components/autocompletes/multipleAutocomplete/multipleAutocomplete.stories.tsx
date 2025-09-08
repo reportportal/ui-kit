@@ -29,9 +29,12 @@ const TEST_DATA = {
   existingItemsMap: {
     'Demo Api Tests': true,
   },
-  parseValueToString: (value: (typeof TEST_DATA)['options']) => value.id,
+  parseValueToString: (value: (typeof OPTIONS_OBJECTS)[number]) => {
+    console.log(value);
+    return value?.id;
+  },
   highlightUnStoredItem: true,
-  value: OPTIONS_OBJECTS[0],
+  value: [OPTIONS_OBJECTS[0]],
   error: '',
   active: true,
   name: 'launchNames',
@@ -84,8 +87,6 @@ export const Default: Story = {
           return changes;
       }
     };
-
-    console.log({ state });
 
     const x = (newState) => {
       setState(newState);

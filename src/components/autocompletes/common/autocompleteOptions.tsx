@@ -25,7 +25,6 @@ import BubblesLoader from '@/components/bubblesLoader';
 const cx = classNames.bind(styles);
 
 interface AutocompleteOptionsProps<T> {
-  children?: (props: any) => ReactNode;
   options: T[];
   loading: boolean;
   inputValue: string;
@@ -47,12 +46,15 @@ interface AutocompleteOptionsProps<T> {
 export class AutocompleteOptions<T> extends Component<AutocompleteOptionsProps<T>> {
   filterStaticOptions = () => {
     const { options, inputValue, parseValueToString } = this.props;
-    return (options || []).filter(
-      (option) =>
+    return (options || []).filter((option) => {
+      console.log({ option });
+      console.log({ FILTER_OPTIONS: parseValueToString(option) });
+      return (
         parseValueToString(option)
           .toUpperCase()
-          .indexOf((inputValue.toUpperCase() || '').trim()) > -1,
-    );
+          .indexOf((inputValue.toUpperCase() || '').trim()) > -1
+      );
+    });
   };
 
   getPrompt = (options: T[]) => {
@@ -72,6 +74,8 @@ export class AutocompleteOptions<T> extends Component<AutocompleteOptionsProps<T
 
   renderItem = (item: T, index: number, isNew = false) => {
     const { getItemProps, renderOption, optionVariant, variant } = this.props;
+
+    console.log({ renderOption: this.props.parseValueToString(item) });
     return renderOption ? (
       renderOption(item, index, isNew, getItemProps)
     ) : (
@@ -94,6 +98,7 @@ export class AutocompleteOptions<T> extends Component<AutocompleteOptionsProps<T
   renderNewItem = (options: T[]) => {
     const { inputValue, getItemProps, getItemName, parseValueToString, optionVariant, variant } =
       this.props;
+
     const index = options.length;
     const isNew = true;
     return (

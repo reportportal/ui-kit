@@ -14,11 +14,10 @@ export const isEqual = <T>(option: T, item: T): boolean => {
   }
 
   const bothAreObjects = option && item && typeof option === 'object' && typeof item === 'object';
-
   return Boolean(
     bothAreObjects &&
       Object.keys(option).length === Object.keys(item).length &&
-      Object.entries(option).every(([k, v]) => isEqual(v, item[k as keyof T])),
+      Object.entries(option)?.every(([k, v]) => isEqual(v, item[k as keyof T])),
   );
 };
 
