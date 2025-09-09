@@ -1,0 +1,1 @@
+export { useFileDropArea } from './useFileDropArea';
