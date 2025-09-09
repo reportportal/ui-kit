@@ -1,0 +1,188 @@
+/*
+ * Copyright 2025 EPAM Systems
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@import '@assets/styles/mixins/font-scale';
+
+@mixin disabled-state() {
+  .attached-file__name-text {
+    color: var(--rp-ui-base-e-400);
+  }
+
+  .attached-file__icon path {
+    fill: var(--rp-ui-base-e-400);
+  }
+}
+
+.attached-file {
+  font-family: var(--rp-ui-base-font-family);
+  display: flex;
+  align-items: center;
+  padding: 16px;
+  background-color: var(--rp-ui-base-bg-000);
+  box-shadow: var(--rp-ui-base-shadow);
+  border-radius: 4px;
+  gap: 12px;
+  cursor: pointer;
+  position: relative;
+
+  &:hover {
+    .attached-file__file-name {
+      color: var(--rp-ui-base-topaz-hover);
+    }
+  }
+
+  &--failed {
+    @include disabled-state();
+
+    border: 1px solid var(--rp-ui-base-error);
+  }
+
+  &--uploading {
+    @include disabled-state();
+
+    opacity: 0.8;
+  }
+
+  &--full-width {
+    max-width: 100%;
+  }
+
+  &__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  &__file-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    svg {
+      width: 32px;
+      height: 32px;
+
+      path {
+        fill: var(--rp-ui-base-almost-black);
+      }
+    }
+  }
+
+  &__info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__file-name {
+    @include font-scale();
+
+    font-family: var(--rp-ui-base-font-family), sans-serif;
+    color: var(--rp-ui-base-almost-black);
+    font-weight: var(--rp-ui-base-fw-medium);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    min-width: 0;
+    flex: 1;
+    border: none;
+    background-color: transparent;
+    padding: 0;
+
+    &:hover {
+      color: var(--rp-ui-base-topaz-hover);
+
+      .attached-file__download-icon {
+        opacity: 1;
+      }
+    }
+  }
+
+  &__name-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+  }
+
+  &__download-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+
+    svg {
+      width: 16px;
+      height: 16px;
+    }
+  }
+
+  &__file-details {
+    @include font-scale('s-small');
+
+    color: var(--rp-ui-base-e-400);
+  }
+
+  &__error-message {
+    @include font-scale(s-small);
+
+    color: var(--rp-ui-base-error);
+  }
+
+  &__upload-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background-color: var(--rp-ui-base-e-100);
+    overflow: hidden;
+  }
+
+  &__upload-progress-bar {
+    height: 100%;
+    background-color: var(--rp-ui-base-topaz);
+  }
+
+  &__remove-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+
+    svg {
+      width: 16px;
+      height: 16px;
+
+      path {
+        fill: var(--rp-ui-base-e-300);
+      }
+    }
+
+    &:hover {
+      svg path {
+        fill: var(--rp-ui-base-topaz-hover);
+      }
+    }
+  }
+}
