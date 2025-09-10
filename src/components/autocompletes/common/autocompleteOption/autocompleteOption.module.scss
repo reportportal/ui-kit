@@ -28,7 +28,7 @@
 }
 
 @mixin draw-button-border($displayValue, $width) {
-  content: '';
+  content: "";
   display: block;
   position: absolute;
   width: $width;
@@ -59,7 +59,7 @@
   display: inline-flex;
   align-items: center;
   width: 100%;
-  font-family: 'Roboto Medium';
+  font-family: var(--rp-ui-base-font-family);
   font-size: 13px;
 }
 

@@ -16,14 +16,13 @@
 
 import { ComponentProps, KeyboardEvent, useEffect, useRef } from 'react';
 import classNames from 'classnames/bind';
-// import { Manager, Reference, Popper } from 'react-popper';
 import { AutocompleteMenu } from '../common/autocompleteMenu';
 import { SelectedItems } from './selectedItems';
-import { DownshiftStore, GetStateAndHelpersT, MultipleDownshift } from './multipleDownshift';
+import { DownshiftStore, MultipleDownshift } from './multipleDownshift';
 import styles from './multipleAutocomplete.module.scss';
-import FieldText from '@/components/fieldText';
-import { autoPlacement, computePosition, useFloating } from '@floating-ui/react';
-import { Actions, ControllerStateAndHelpers, DownshiftState, PropGetters } from 'downshift';
+import { default as FieldText } from '@/components/fieldText';
+import { autoPlacement, useFloating } from '@floating-ui/react';
+import { ControllerStateAndHelpers } from 'downshift';
 import { isEqual } from '../utils';
 
 const cx = classNames.bind(styles);
@@ -34,7 +33,7 @@ export interface MultipleAutocompleteProps<T> {
   onStateChange: () => void;
   value: T[];
   placeholder: string;
-  error: any; // string | boolean
+  error: string | boolean; // string | boolean
   touched: boolean;
   creatable: boolean;
   editable: boolean;

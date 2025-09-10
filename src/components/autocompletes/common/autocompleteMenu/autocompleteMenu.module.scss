@@ -23,7 +23,7 @@ $Z-INDEX-POPUP: 10;
   display: none;
   border-radius: 3px;
   margin-top: 4px;
-  font-family: "Roboto Medium";
+  font-family: var(--rp-ui-base-font-family);
   font-size: 13px;
   line-height: 20px;
   // TODO: REPLACE WITH THEMABLE COLOR

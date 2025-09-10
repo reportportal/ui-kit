@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-shadow */
 /* eslint-disable react-hooks/rules-of-hooks */
 import type { Meta, StoryObj } from '@storybook/react';
 
@@ -19,7 +20,7 @@ const OPTIONS_STRINGS = [
   'Demo Api Tests 3',
 ];
 
-const TEST_DATA = {
+const TEST_DATA_OBJECTS = {
   options: OPTIONS_OBJECTS,
   loading: false,
   async: true,
@@ -27,10 +28,9 @@ const TEST_DATA = {
   creatable: false,
   editable: true,
   existingItemsMap: {
-    'Demo Api Tests': true,
+    [OPTIONS_OBJECTS[0].id]: true,
   },
   parseValueToString: (value: (typeof OPTIONS_OBJECTS)[number]) => {
-    console.log(value);
     return value?.id;
   },
   highlightUnStoredItem: true,
@@ -41,7 +41,40 @@ const TEST_DATA = {
   touched: true,
   asyncValidating: false,
   minLength: 1,
-  placeholder: '',
+  placeholder: 'Test placeholder',
+  disabled: false,
+  mobileDisabled: false,
+  inputProps: {},
+  maxLength: null,
+  customClass: '',
+  getItemValidationErrorType: null,
+  parseInputValueFn: null,
+  dataAutomationId: '',
+  variant: 'light',
+};
+
+const TEST_DATA_STRINGS = {
+  options: OPTIONS_STRINGS,
+  loading: false,
+  async: true,
+  createWithoutConfirmation: true,
+  creatable: false,
+  editable: true,
+  existingItemsMap: {
+    'Demo Api Tests': true,
+  },
+  parseValueToString: (value: string) => {
+    return value;
+  },
+  highlightUnStoredItem: true,
+  value: [OPTIONS_OBJECTS[0]],
+  error: '',
+  active: true,
+  name: 'launchNames',
+  touched: true,
+  asyncValidating: false,
+  minLength: 1,
+  placeholder: 'Test placeholder',
   disabled: false,
   mobileDisabled: false,
   inputProps: {},
@@ -57,7 +90,7 @@ const meta: Meta<typeof MultipleAutocomplete> = {
   title: 'Controls/Autocompletes/MultipleAutocomplete',
   component: MultipleAutocomplete,
   parameters: {
-    ...TEST_DATA,
+    ...TEST_DATA_OBJECTS,
   },
   tags: ['autodocs'],
 };
@@ -66,9 +99,9 @@ export default meta;
 
 type Story = StoryObj<typeof MultipleAutocomplete>;
 
-export const Default: Story = {
+export const Objects: Story = {
   args: {
-    ...TEST_DATA,
+    ...TEST_DATA_OBJECTS,
   } as any,
   render: (args: any) => {
     const [state, setState] = useState(args.value || []);
@@ -105,9 +138,9 @@ export const Default: Story = {
   },
 };
 
-export const WithChildren: Story = {
+export const Strings: Story = {
   args: {
-    ...TEST_DATA,
+    ...TEST_DATA_STRINGS,
   } as any,
   render: (args: any) => {
     const [state, setState] = useState(args.value || []);

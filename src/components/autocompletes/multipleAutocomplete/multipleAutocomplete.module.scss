@@ -57,7 +57,7 @@ $SCREEN_XS_MAX: 767px;
 .autocomplete {
   @include container(var(--rp-ui-color-field-border), var(--rp-ui-color-bg));
   @include hover-state(var(--rp-ui-color-field-hover));
-  @include focus-state(--rp-ui-color-primary-focused);
+  @include focus-state(var(--rp-ui-color-primary-focused));
 
   &.disabled {
     background-color: var(--rp-ui-color-bg-2);
@@ -88,7 +88,7 @@ $SCREEN_XS_MAX: 767px;
   padding: 0;
   margin-top: 2px;
   border: 0;
-  font-family: 'Roboto Regular';
+  font-family: var(--rp-ui-base-font-family);
   font-size: 13px;
   line-height: 20px;
   text-indent: 1px;
@@ -127,7 +127,7 @@ $SCREEN_XS_MAX: 767px;
 .error-text {
   display: inline-block;
   margin-top: 4px;
-  font-family: 'Roboto Regular';
+  font-family: var(--rp-ui-base-font-family);
   font-size: 11px;
   line-height: 16px;
   color: var(--rp-ui-color-error);
