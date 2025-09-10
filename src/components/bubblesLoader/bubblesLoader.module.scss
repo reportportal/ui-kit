@@ -1,13 +1,23 @@
 .bubbles-loader {
-  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 1px;
 
   &.color-topaz .bubble {
     background-color: var(--rp-ui-base-dark-topaz-main);
   }
+
+  &.bubbles-large {
+    gap: 2px;
+
+    .bubble {
+      width: 13.5px;
+      height: 13.5px;
+    }
+  }
 }
 
 .bubble {
-  position: absolute;
   width: 6px;
   height: 6px;
   border-radius: 50%;
@@ -17,37 +27,30 @@
 }
 
 .bubble:nth-child(1) {
-  left: 0;
   animation-delay: 0.1s;
 }
 
 .bubble:nth-child(2) {
-  left: 7px;
   animation-delay: 0.3s;
 }
 
 .bubble:nth-child(3) {
-  left: 14px;
   animation-delay: 0.5s;
 }
 
 .bubble:nth-child(4) {
-  left: 21px;
   animation-delay: 0.7s;
 }
 
 .bubble:nth-child(5) {
-  left: 28px;
   animation-delay: 0.9s;
 }
 
 .bubble:nth-child(6) {
-  left: 35px;
   animation-delay: 1.1s;
 }
 
 .bubble:nth-child(7) {
-  left: 42px;
   animation-delay: 1.3s;
 }
 
