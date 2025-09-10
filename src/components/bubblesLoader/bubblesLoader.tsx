@@ -9,13 +9,20 @@ const BUBBLES_COUNT = 7;
 interface BubblesLoaderProps {
   color?: string;
   className?: string;
+  variant?: 'standard' | 'large';
 }
 
 export const BubblesLoader: FC<BubblesLoaderProps> = ({
   color = 'topaz',
   className,
+  variant = 'standard',
 }): ReactElement => (
-  <div className={cx('bubbles-loader', className, { [`color-${color}`]: color })}>
+  <div
+    className={cx('bubbles-loader', className, {
+      [`color-${color}`]: color,
+      [`bubbles-${variant}`]: variant,
+    })}
+  >
     {Array(BUBBLES_COUNT)
       .fill(undefined)
       .map((_, index) => (
