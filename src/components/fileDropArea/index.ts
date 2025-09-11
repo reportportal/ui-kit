@@ -14,5 +14,10 @@
  * limitations under the License.
  */
 
-export { FileDropArea } from './fileDropArea';
-export { MIME_TYPES } from './types';
+import { FileDropArea } from './fileDropArea';
+import { MIME_TYPES } from './types';
+import type { FileWithValidation } from './types';
+
+export { FileDropArea };
+export { MIME_TYPES };
+export type { FileWithValidation };
