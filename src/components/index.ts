@@ -10,7 +10,7 @@ export { FieldLabel } from './fieldLabel';
 export { FieldNumber } from './fieldNumber';
 export { FieldText } from './fieldText';
 export { FieldTextFlex } from './fieldTextFlex';
-export { FileDropArea } from './fileDropArea';
+export { FileDropArea, MIME_TYPES } from './fileDropArea';
 export { Modal } from './modal';
 export { Pagination } from './pagination';
 export { Popover } from './popover';
