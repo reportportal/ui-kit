@@ -6,6 +6,7 @@ export { Button } from './button';
 export { Checkbox } from './checkbox';
 export { DatePicker } from './datePicker';
 export { Dropdown } from './dropdown';
+export { FieldLabel } from './fieldLabel';
 export { FieldNumber } from './fieldNumber';
 export { FieldText } from './fieldText';
 export { FieldTextFlex } from './fieldTextFlex';
