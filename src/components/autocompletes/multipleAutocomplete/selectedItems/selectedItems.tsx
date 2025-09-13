@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { useState, ChangeEvent, KeyboardEvent, FocusEvent, ComponentProps } from 'react';
+import { useState, ChangeEvent, KeyboardEvent, FocusEvent, ComponentProps, ReactNode } from 'react';
 import classNames from 'classnames/bind';
 import CrossIcon from 'src/assets/img/cross-rounded-icon-inline.svg';
 import styles from './selectedItems.module.scss';
@@ -132,6 +132,7 @@ type SelectedItemsProps<T, K> = Omit<SelectedItemProps<T>, 'item'> & {
   editable?: boolean;
   variant?: VariantType;
   getItemValidationErrorType?: ((item: T) => string) | null;
+  renderCustomSelecetedItem?: (item: T) => ReactNode;
 };
 
 export const SelectedItems = <T, K>({
@@ -141,6 +142,7 @@ export const SelectedItems = <T, K>({
   options,
   storedItemsMap = {},
   highlightUnStoredItem = false,
+  renderCustomSelecetedItem,
   ...props
 }: SelectedItemsProps<T, K>) => {
   return (items || []).map((item) => {
@@ -149,7 +151,9 @@ export const SelectedItems = <T, K>({
       errorType = getItemValidationErrorType(item);
     }
 
-    return (
+    return renderCustomSelecetedItem ? (
+      renderCustomSelecetedItem(item)
+    ) : (
       <SelectedItem
         key={parseValueToString(item)}
         parseValueToString={parseValueToString}

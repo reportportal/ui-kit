@@ -67,7 +67,7 @@
   display: block;
   height: 1px;
   margin: 0 12px;
-  background: var(--rp-ui-base-e-100);
+  background: var(--rp-ui-autocompelete-divider-bg);
 }
 
 .new-item {
@@ -86,10 +86,12 @@
   padding: 4px 12px;
   cursor: pointer;
   box-sizing: border-box;
+  color: var(--rp-ui-color-text-2);
 
   &.active,
   &:hover {
-    background-color: var(--rp-ui-color-bg-2);
+    color: var(--rp-ui-color-primary-text);
+    background-color: var(--rp-ui-color-bg-3);
   }
 
   &.active:not(:hover) {
@@ -114,7 +116,7 @@
 }
 
 .key-variant {
-  @include option-state(var(--rp-ui-base-tag-key-text), var(--rp-ui-base-tag-key-background));
+  @include option-state(var(--rp-ui-tag-key-text), var(--rp-ui-tag-key-bg));
 
   &.active:hover {
     background-color: var(--rp-ui-color-bg-3);
@@ -126,7 +128,7 @@
 }
 
 .value-variant {
-  @include option-state(var(--rp-ui-base-tag-value-text), var(--rp-ui-base-tag-value-background));
+  @include option-state(var(--rp-ui-tag-value-text), var(--rp-ui-tag-value-background));
 
   &.active:hover {
     background-color: var(--rp-ui-color-bg-3);
@@ -134,30 +136,5 @@
 
   &:not(:hover) {
     @include button-active-state(88px);
-  }
-}
-
-.dark {
-  &.item,
-  &.new-item {
-    background-color: transparent;
-    color: var(--rp-ui-base-dark-e-100);
-
-    &.active,
-    &:hover {
-      background-color: var(--rp-ui-base-dark-bg-solid-98);
-    }
-
-    &.active {
-      color: var(--rp-ui-base-dark-topaz-text);
-    }
-
-    &:hover {
-      color: var(--rp-ui-color-field-bg);
-    }
-  }
-
-  &.divider {
-    background-color: var(--rp-ui-base-dark-e-200);
   }
 }

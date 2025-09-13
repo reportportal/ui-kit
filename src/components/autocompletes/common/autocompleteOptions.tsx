@@ -75,7 +75,6 @@ export class AutocompleteOptions<T> extends Component<AutocompleteOptionsProps<T
   renderItem = (item: T, index: number, isNew = false) => {
     const { getItemProps, renderOption, optionVariant, variant } = this.props;
 
-    console.log({ renderOption: this.props.parseValueToString(item) });
     return renderOption ? (
       renderOption(item, index, isNew, getItemProps)
     ) : (

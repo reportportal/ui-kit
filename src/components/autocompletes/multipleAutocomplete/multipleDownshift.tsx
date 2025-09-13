@@ -40,7 +40,7 @@ export interface MultipleDownshiftProps<T> extends Partial<DownshiftProps<T>> {
   customizeNewSelectedValue: (value: T) => T;
   getOptionUniqKey?: (option: T) => keyof T;
   getOptionUniqKeyValue?: (option: T) => string;
-  onChange: (selectedItems: T | T[] | null, downshift: ControllerStateAndHelpers<T>) => void;
+  onChange: (selectedItems: T | T[] | null, downshift: ControllerStateAndHelpers<T> | null) => void;
 }
 
 export type GetStateAndHelpersT<T> = ControllerStateAndHelpers<T> & {
@@ -106,7 +106,7 @@ export const MultipleDownshift = <T,>({
       : [customizedNewItemData];
     const filteredSelectedItems = selectedItems.filter((item) => newItem.indexOf(item) < 0);
     const newSelectedItems = [...filteredSelectedItems, ...newItem];
-    onChange?.(newSelectedItems as any, downshift);
+    onChange?.(newSelectedItems, downshift);
     const collectStoredItemsCb = (storedItems: DownshiftStore<T>) =>
       handleUnStoredItemCb?.(newSelectedItems, storedItems);
     collectStoredItems(newItem, collectStoredItemsCb);
@@ -116,12 +116,12 @@ export const MultipleDownshift = <T,>({
     const position = selectedItems.indexOf(oldItem);
     const newValue = [...selectedItems];
     newValue.splice(position, 1, newItem);
-    onChange?.(newValue as any, null as any);
+    onChange?.(newValue, null);
   };
 
   const removeItem = (removedItem: T, downshift: ControllerStateAndHelpers<T>) => {
     const newSelectedItems = selectedItems.filter((item) => !isEqual(item, removedItem));
-    onChange?.(newSelectedItems as any, downshift);
+    onChange?.(newSelectedItems, downshift);
     const filterStoredItemsCb = (storedItems: DownshiftStore<T>) =>
       handleUnStoredItemCb?.(newSelectedItems, storedItems);
     filterStoredItems(removedItem, filterStoredItemsCb);

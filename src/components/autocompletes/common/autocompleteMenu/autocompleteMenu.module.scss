@@ -18,6 +18,7 @@ $Z-INDEX-POPUP: 10;
 .menu {
   width: max-content;
   position: absolute;
+  padding: 0;
   top: 0;
   left: 0;
   display: none;
@@ -26,11 +27,10 @@ $Z-INDEX-POPUP: 10;
   font-family: var(--rp-ui-base-font-family);
   font-size: 13px;
   line-height: 20px;
-  // TODO: REPLACE WITH THEMABLE COLOR
-  color: #464547;
+  color: var(--rp-ui-menu-text-color);
   background-color: var(--rp-ui-color-field-bg);
   box-sizing: border-box;
-  box-shadow: var(--rp-ui-base-shadow-secondary);
+  box-shadow: var(--rp-ui-box-shadow);
   z-index: $Z-INDEX-POPUP;
   &.opened {
     display: block;

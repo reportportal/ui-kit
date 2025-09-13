@@ -43,4 +43,17 @@
   --rp-ui-color-disabled: var(--rp-ui-base-dark-e-200);
 
   --rp-ui-opacity-default: 50%;
+
+  /* New Autocomplete themable colors */
+  --rp-ui-divider-bg: var(--rp-ui-base-dark-e-200);
+  --rp-ui-box-shadow: var(--rp-ui-base-shadow-secondary);
+  --rp-ui-tag-key-text: var(--rp-ui-base-tag-key-text);
+  --rp-ui-tag-key-bg: var(--rp-ui-base-tag-key-background);
+
+  --rp-ui-tag-value-text: var(--rp-ui-base-tag-value-text);
+  --rp-ui-tag-value-bg: var(--rp-ui-base-tag-value-background);
+
+  --rp-validation-error-border: var(--rp-ui-base-sm-error-line-100);
+
+  --rp-ui-highlight-unstored-item: var(--rp-ui-base-defect-type-AB);
 }

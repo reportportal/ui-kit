@@ -68,6 +68,13 @@ $SCREEN_XS_MAX: 767px;
   }
 }
 
+.clear-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
 .autocomplete-input {
   display: inline-flex;
   flex-wrap: wrap;
@@ -118,7 +125,7 @@ $SCREEN_XS_MAX: 767px;
   &.mobile-disabled {
     @media (max-width: $SCREEN_XS_MAX) {
       // TODO: replace with themable color
-      background-color: #e9e9e9;
+      background-color: var(--rp-ui-base-e-91);
       pointer-events: none;
     }
   }
@@ -131,21 +138,4 @@ $SCREEN_XS_MAX: 767px;
   font-size: 11px;
   line-height: 16px;
   color: var(--rp-ui-color-error);
-}
-
-.dark {
-  &.autocomplete {
-    @include hover-state(var(--rp-ui-base-dark-e-150));
-    @include focus-state(var(--rp-ui-base-dark-topaz-focused));
-    background-color: var(--rp-ui-base-dark-bg-solid-96);
-    border-color: var(--rp-ui-base-dark-e-200);
-  }
-
-  .input {
-    color: var(--rp-ui-color-bg);
-  }
-
-  &.error.touched {
-    @include error-state(var(--rp-ui-base-dark-error));
-  }
 }

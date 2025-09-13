@@ -19,12 +19,8 @@
   justify-content: center;
   align-items: center;
   height: 36px;
-  background-color: var(--rp-ui-color-field-bg);
+  background-color: var(--rp-ui-autocomplete-prompt-bg);
   border-radius: 3px;
   padding-right: 42px;
   box-sizing: border-box;
-
-  &.dark {
-    background-color: transparent;
-  }
 }

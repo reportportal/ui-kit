@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { ComponentProps, KeyboardEvent, useEffect, useRef } from 'react';
+import { ComponentProps, KeyboardEvent, ReactNode, useEffect, useRef } from 'react';
 import classNames from 'classnames/bind';
 import { AutocompleteMenu } from '../common/autocompleteMenu';
 import { SelectedItems } from './selectedItems';
@@ -24,6 +24,7 @@ import { default as FieldText } from '@/components/fieldText';
 import { autoPlacement, useFloating } from '@floating-ui/react';
 import { ControllerStateAndHelpers } from 'downshift';
 import { isEqual } from '../utils';
+import { ClearIcon } from '@/components/icons';
 
 const cx = classNames.bind(styles);
 
@@ -37,7 +38,7 @@ export interface MultipleAutocompleteProps<T> {
   touched: boolean;
   creatable: boolean;
   editable: boolean;
-  onChange: (selectedItems: T | T[] | null, downshift: ControllerStateAndHelpers<T>) => void;
+  onChange: (selectedItems: T | T[] | null, downshift: ControllerStateAndHelpers<T> | null) => void;
   onFocus: () => void;
   onBlur: () => void;
   disabled: boolean;
@@ -61,7 +62,9 @@ export interface MultipleAutocompleteProps<T> {
   existingItemsMap: { [key: string | number]: boolean };
   variant: ComponentProps<typeof AutocompleteMenu>['variant'];
   optionVariant: ComponentProps<typeof AutocompleteMenu>['optionVariant'];
+  isClearAvailable?: boolean;
   customizeNewSelectedValue: (value: T) => T;
+  renderCustomSelecetedItem?: (item: T) => ReactNode;
 }
 
 export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompleteProps<T>) => {
@@ -98,12 +101,13 @@ export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompletePr
     existingItemsMap = {},
     variant = 'light',
     customizeNewSelectedValue = (v) => v,
+    renderCustomSelecetedItem,
+    isClearAvailable = true,
     ...props
   } = componentsProps;
 
   const { refs, floatingStyles } = useFloating({
     placement: 'bottom-start',
-    middleware: [autoPlacement({ allowedPlacements: ['bottom-start', 'top-start'] })],
   });
 
   // let updatePosition: () => void;
@@ -115,7 +119,10 @@ export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompletePr
     clearItemsError();
   }, [value]);
 
-  const handleChange = (selectedItems: T | T[] | null, downshift: ControllerStateAndHelpers<T>) => {
+  const handleChange = (
+    selectedItems: T | T[] | null,
+    downshift: ControllerStateAndHelpers<T> | null,
+  ) => {
     // updatePosition?.();
     onChange(selectedItems, downshift);
   };
@@ -205,6 +212,7 @@ export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompletePr
                   mobileDisabled={mobileDisabled}
                   parseValueToString={parseValueToString}
                   getItemValidationErrorType={getItemValidationErrorType}
+                  renderCustomSelecetedItem={renderCustomSelecetedItem}
                   editItem={editItem}
                   editable={editable}
                   getAdditionalCreationCondition={getAdditionalCreationCondition}
@@ -212,6 +220,7 @@ export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompletePr
                   highlightUnStoredItem={highlightUnStoredItem}
                   variant={variant}
                 />
+
                 <input
                   {...getInputProps({
                     ref: inputRef,
@@ -255,6 +264,11 @@ export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompletePr
                   data-automation-id={dataAutomationId}
                 />
               </div>
+              {inputProps?.clearable && value?.length > 0 && (
+                <div className={cx('clear-icon')} onClick={() => inputProps?.onClear?.()}>
+                  <ClearIcon />
+                </div>
+              )}
             </div>
             {error && touched && <span className={cx('error-text')}>{error}</span>}
           </>

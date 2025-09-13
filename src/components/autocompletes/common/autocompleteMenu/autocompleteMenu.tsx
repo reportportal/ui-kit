@@ -17,7 +17,7 @@
 import classNames from 'classnames/bind';
 import { AutocompleteOptions } from '../autocompleteOptions';
 import styles from './autocompleteMenu.module.scss';
-import { ComponentProps, ForwardedRef, forwardRef } from 'react';
+import { ComponentProps, ForwardedRef, forwardRef, ReactNode } from 'react';
 
 const cx = classNames.bind(styles);
 
@@ -26,7 +26,6 @@ const isReadyForSearch = (minLength: number, inputValue: string) =>
 
 type AutocompleteMenuProps<T> = {
   isOpen?: boolean;
-  // placement?: string;
   style?: React.CSSProperties;
   minLength?: number;
   inputValue?: string;
@@ -56,9 +55,6 @@ export const AutocompleteMenu = forwardRef(
           { opened: isOpen && isReadyForSearch(minLength, inputValue) },
           className,
         )}
-        // placement used by Popper
-        /* eslint-disable-next-line react/no-unknown-property */
-        // placement={placement}
         style={style}
       >
         <AutocompleteOptions inputValue={inputValue} variant={variant} {...props} />

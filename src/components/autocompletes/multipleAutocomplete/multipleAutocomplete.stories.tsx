@@ -44,7 +44,9 @@ const TEST_DATA_OBJECTS = {
   placeholder: 'Test placeholder',
   disabled: false,
   mobileDisabled: false,
-  inputProps: {},
+  inputProps: {
+    clearable: true,
+  },
   maxLength: null,
   customClass: '',
   getItemValidationErrorType: null,
@@ -67,17 +69,19 @@ const TEST_DATA_STRINGS = {
     return value;
   },
   highlightUnStoredItem: true,
-  value: [OPTIONS_OBJECTS[0]],
+  value: [OPTIONS_STRINGS[0]],
   error: '',
   active: true,
   name: 'launchNames',
   touched: true,
   asyncValidating: false,
+  inputProps: {
+    clearable: true,
+  },
   minLength: 1,
   placeholder: 'Test placeholder',
   disabled: false,
   mobileDisabled: false,
-  inputProps: {},
   maxLength: null,
   customClass: '',
   getItemValidationErrorType: null,
@@ -106,6 +110,11 @@ export const Objects: Story = {
   render: (args: any) => {
     const [state, setState] = useState(args.value || []);
 
+    const modifiedArgs = {
+      ...args,
+      inputProps: { ...args.inputProps, onClear: () => setState([]) },
+    };
+
     const handleStateChange = (state, changes) => {
       console.log({ storestate: state, changes });
       switch (changes.type) {
@@ -128,7 +137,7 @@ export const Objects: Story = {
     return (
       <div style={{ width: '600px', height: '400px', display: 'flex', alignItems: 'center' }}>
         <MultipleAutocomplete
-          {...args}
+          {...modifiedArgs}
           onChange={x}
           stateReducer={handleStateChange}
           value={state}
@@ -145,6 +154,11 @@ export const Strings: Story = {
   render: (args: any) => {
     const [state, setState] = useState(args.value || []);
 
+    const modifiedArgs = {
+      ...args,
+      inputProps: { ...args.inputProps, onClear: () => setState([]) },
+    };
+
     const stateReducer = (state, changes) => {
       console.log({ changes });
       switch (changes.type) {
@@ -160,13 +174,18 @@ export const Strings: Story = {
       }
     };
 
-    const x = (...args) => {
-      console.log({ xargs: args });
+    const x = (newState) => {
+      setState(newState);
     };
 
     return (
       <div style={{ width: '600px', height: '400px', display: 'flex', alignItems: 'center' }}>
-        <MultipleAutocomplete {...args} stateReducer={stateReducer} onChange={x} value={state} />
+        <MultipleAutocomplete
+          {...modifiedArgs}
+          stateReducer={stateReducer}
+          onChange={x}
+          value={state}
+        />
       </div>
     );
   },

@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { ChangeEvent, ComponentProps, KeyboardEvent, Ref } from 'react';
-import Downshift, { DownshiftState, StateChangeOptions } from 'downshift';
+import { ChangeEvent, ComponentProps, KeyboardEvent, ReactNode, Ref } from 'react';
+import Downshift, { DownshiftState, GetItemPropsOptions, StateChangeOptions } from 'downshift';
 import { AutocompleteMenu } from '../common/autocompleteMenu';
 import FieldText from '@/components/fieldText';
 import { ENTER_KEY_NAME, TAB_KEY_NAME } from '../constants';
@@ -37,7 +37,7 @@ export interface SingleAutocompleteProps<T, K> {
   parseValueToString: (value: any) => string;
   renderOption: (value: T) => React.ReactNode;
   minLength: number;
-  maxLength: number;
+  maxLength: number | null;
   async: boolean;
   optionVariant: ComponentProps<typeof AutocompleteMenu>['optionVariant'];
   isRequired: boolean;
@@ -67,8 +67,7 @@ export const SingleAutocomplete = <T, K>(componentProps: SingleAutocompleteProps
     onBlur = () => {},
     disabled = false,
     inputProps = {},
-    parseValueToString = (value) => value || '',
-    renderOption = null,
+    parseValueToString = (v) => v || '',
     minLength = 1,
     maxLength = null,
     optionVariant = '',
@@ -93,7 +92,11 @@ export const SingleAutocomplete = <T, K>(componentProps: SingleAutocompleteProps
   });
 
   const getOptionProps =
-    (getItemProps, highlightedIndex, selectedItem) =>
+    (
+      getItemProps: (item: GetItemPropsOptions<T>) => any,
+      highlightedIndex: number | null,
+      selectedItem: T,
+    ) =>
     ({ item, index, ...rest }) =>
       getItemProps({
         item,
@@ -129,14 +132,16 @@ export const SingleAutocomplete = <T, K>(componentProps: SingleAutocompleteProps
         isOpen,
         inputValue,
         highlightedIndex,
+        getRootProps,
         selectItem,
       }) => (
         <>
           <div ref={refs.setReference}>
             <FieldText
+              {...getRootProps()}
               {...getInputProps({
                 placeholder: !disabled ? placeholder : '',
-                maxLength,
+                maxLength: maxLength || undefined,
                 onFocus: () => {
                   onFocus();
                 },
@@ -170,13 +175,11 @@ export const SingleAutocomplete = <T, K>(componentProps: SingleAutocompleteProps
                 isRequired,
                 touched,
                 error,
-                endIcon: icon,
                 variant,
                 ...inputProps,
               })}
             />
           </div>
-
           <AutocompleteMenu
             isOpen={isOpen}
             style={floatingStyles}

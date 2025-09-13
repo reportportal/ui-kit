@@ -50,12 +50,12 @@ $SCREEN_XS_MAX: 767px;
   cursor: default;
 
   &.validation-error {
-    border-color: var(--rp-ui-base-sm-error-line-100);
+    border-color: var(--rp-ui-validation-error-border);
     color: var(--rp-ui-color-error);
   }
 
   &.highlight-un-stored-item {
-    border-color: var(--rp-ui-base-defect-type-AB);
+    border-color: var(--rp-ui-highlight-unstored-item);
   }
 
   &.disabled {
@@ -102,14 +102,4 @@ $SCREEN_XS_MAX: 767px;
   color: var(--rp-ui-color-text);
   box-sizing: border-box;
   outline: none;
-}
-
-.dark {
-  // TODO: Replace with themable color
-  background-color: #2d2d2d;
-  color: var(--rp-ui-color-bg);
-
-  .cross-icon {
-    @include fill-svg(var(--rp-ui-base-dark-e-100));
-  }
 }
