@@ -17,7 +17,7 @@
 import classNames from 'classnames/bind';
 import { AutocompleteOptions } from '../autocompleteOptions';
 import styles from './autocompleteMenu.module.scss';
-import { ComponentProps, ForwardedRef, forwardRef, ReactNode } from 'react';
+import { ComponentProps, ForwardedRef, forwardRef } from 'react';
 
 const cx = classNames.bind(styles);
 

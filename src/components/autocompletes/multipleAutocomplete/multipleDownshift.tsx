@@ -73,10 +73,9 @@ export const MultipleDownshift = <T,>({
       ...storedItemsMap,
     };
 
-    const key = getUniqKey(options[0], getOptionUniqKey) as string;
-
     newItemData.forEach((item) => {
       if (options.find((option) => compareOptionWithItem(option, item, getOptionUniqKey))) {
+        const key = getUniqKey(item, getOptionUniqKey) as string;
         newState[key] = true;
       }
     });

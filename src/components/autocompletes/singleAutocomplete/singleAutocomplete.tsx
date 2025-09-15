@@ -49,7 +49,7 @@ export interface SingleAutocompleteProps<T> {
   menuClassName: string;
   icon: string;
   isOptionUnique?: (value: boolean | null) => void;
-  refFunction: () => Ref<HTMLInputElement>;
+  refFunction: Ref<HTMLInputElement>;
   stateReducer: (
     state: DownshiftState<T>,
     changes: StateChangeOptions<T>,
@@ -179,6 +179,7 @@ export const SingleAutocomplete = <T,>(componentProps: SingleAutocompleteProps<T
                 touched,
                 error,
                 variant,
+                endIcon: icon,
                 ...inputProps,
               })}
             />

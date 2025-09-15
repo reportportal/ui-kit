@@ -1,10 +1,10 @@
 import { GetOptionUniqKeyT } from './types';
 
-export const getUniqKey = <T>(option: T, getOptionUniqKey?: GetOptionUniqKeyT<T>) => {
+export const getUniqKey = <T>(option: T, getOptionUniqKey?: GetOptionUniqKeyT<T>): string => {
   return typeof option === 'string'
     ? option
     : getOptionUniqKey
-      ? option[getOptionUniqKey(option)]
+      ? String(option[getOptionUniqKey(option)])
       : '';
 };
 
@@ -25,10 +25,16 @@ export const compareOptionWithItem = <T>(
   option: T,
   item: T,
   getUniqKeyCb?: GetOptionUniqKeyT<T>,
-) => {
+): boolean => {
   return typeof option === 'string'
-    ? option === item
+    ? (option as unknown as string) === (item as unknown as string)
     : getUniqKeyCb
-      ? getUniqKeyCb(option) === getUniqKeyCb(item)
+      ? (() => {
+          const key = getUniqKeyCb(option) as keyof T;
+          return (
+            (option as Record<string, unknown>)[key as string] ===
+            (item as Record<string, unknown>)[key as string]
+          );
+        })()
       : false;
 };

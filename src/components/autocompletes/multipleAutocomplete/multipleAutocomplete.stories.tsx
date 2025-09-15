@@ -115,7 +115,7 @@ export const Objects: Story = {
       inputProps: { ...args.inputProps, onClear: () => setState([]) },
     };
 
-    const handleStateChange = (state, changes) => {
+    const handleStateChange = (state: any, changes: any) => {
       switch (changes.type) {
         case Downshift.stateChangeTypes.keyDownEnter:
         case Downshift.stateChangeTypes.clickItem:
@@ -129,7 +129,7 @@ export const Objects: Story = {
       }
     };
 
-    const x = (newState) => {
+    const x = (newState: any) => {
       setState(newState);
     };
 
@@ -158,7 +158,7 @@ export const Strings: Story = {
       inputProps: { ...args.inputProps, onClear: () => setState([]) },
     };
 
-    const stateReducer = (state, changes) => {
+    const stateReducer = (state: any, changes: any) => {
       switch (changes.type) {
         case Downshift.stateChangeTypes.keyDownEnter:
         case Downshift.stateChangeTypes.clickItem:
@@ -172,7 +172,7 @@ export const Strings: Story = {
       }
     };
 
-    const x = (newState) => {
+    const x = (newState: any) => {
       setState(newState);
     };
 
