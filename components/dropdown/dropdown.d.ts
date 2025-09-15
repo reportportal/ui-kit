@@ -15,6 +15,7 @@ export interface DropdownProps {
     transparentBackground?: boolean;
     className?: string;
     toggleButtonClassName?: string;
+    selectListClassName?: string;
     label?: ReactNode;
     onChange: (value: DropdownValue | DropdownValue[]) => void;
     onFocus?: () => void;
@@ -27,6 +28,6 @@ export interface DropdownProps {
     onSelectAll?: () => void;
     formatDisplayedValue?: (value: string | undefined) => string;
     notScrollable?: boolean;
-    footer?: ReactNode;
+    footer?: ReactNode | ((closeHandler: () => void) => ReactNode);
 }
 export declare const Dropdown: FC<DropdownProps>;
