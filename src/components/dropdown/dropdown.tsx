@@ -109,10 +109,14 @@ export const Dropdown: FC<DropdownProps> = ({
     }
   };
 
+  const closeHandler = useCallback(() => {
+    setOpened(false);
+    onBlur?.();
+  }, [onBlur]);
+
   const handleClickOutside = () => {
     if (opened) {
-      setOpened(false);
-      onBlur?.();
+      closeHandler();
     }
   };
   useOnClickOutside(containerRef, handleClickOutside);
@@ -226,23 +230,16 @@ export const Dropdown: FC<DropdownProps> = ({
       const option = options[highlightedIndex];
       handleChange(option);
       if (!multiSelect) {
-        setOpened(false);
-        onBlur?.();
+        closeHandler();
       }
       return;
     }
 
     if (CLOSE_DROPDOWN_KEY_CODES.includes(keyCode)) {
       event.stopPropagation();
-      setOpened(false);
-      onBlur?.();
+      closeHandler();
     }
   };
-
-  const closeHandler = useCallback(() => {
-    setOpened(false);
-    onBlur?.();
-  }, [onBlur]);
 
   const renderOptions = () => (
     <div className={cx('options-container')}>
