@@ -18,11 +18,11 @@ import { ComponentProps, KeyboardEvent, ReactNode, useEffect, useRef } from 'rea
 import classNames from 'classnames/bind';
 import { AutocompleteMenu } from '../common/autocompleteMenu';
 import { SelectedItems } from './selectedItems';
-import { DownshiftStore, MultipleDownshift } from './multipleDownshift';
+import { DownshiftStore, GetStateAndHelpersT, MultipleDownshift } from './multipleDownshift';
 import styles from './multipleAutocomplete.module.scss';
 import { default as FieldText } from '@/components/fieldText';
-import { autoPlacement, useFloating } from '@floating-ui/react';
-import { ControllerStateAndHelpers } from 'downshift';
+import { useFloating } from '@floating-ui/react';
+import { ControllerStateAndHelpers, PropGetters } from 'downshift';
 import { isEqual } from '../utils';
 import { ClearIcon } from '@/components/icons';
 
@@ -123,17 +123,20 @@ export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompletePr
     selectedItems: T | T[] | null,
     downshift: ControllerStateAndHelpers<T> | null,
   ) => {
-    // updatePosition?.();
     onChange(selectedItems, downshift);
   };
   const getOptionProps =
-    (getItemProps: any, highlightedIndex: number | null, selectedItems: any) =>
-    ({ item, index, ...rest }: any) =>
+    (
+      getItemProps: PropGetters<T>['getItemProps'],
+      highlightedIndex: number | null,
+      selectedItems: T[],
+    ) =>
+    ({ item, index, ...rest }: { item: T; index: number } & any) =>
       getItemProps({
         item,
         index,
         isActive: highlightedIndex === index,
-        isSelected: selectedItems.some((selectedItem: any) => isEqual(selectedItem, item)),
+        isSelected: selectedItems.some((selectedItem: T) => isEqual(selectedItem, item)),
         ...rest,
       });
   const removeItemByBackspace = ({ event, removeItem, inputValue }: any) => {
@@ -153,16 +156,17 @@ export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompletePr
     }
   };
 
-  const onRemoveItem = (cb: (item: T) => void) => (item: T) => {
-    cb(item);
+  const onRemoveItem =
+    (cb: (removedItem: T, downshift: ControllerStateAndHelpers<T> | null) => void) => (item: T) => {
+      cb(item, null);
 
-    if (inputRef.current) {
-      inputRef.current.focus();
-    }
-  };
+      if (inputRef.current) {
+        inputRef.current.focus();
+      }
+    };
 
   const filteredOptions = options.filter((option: T) => {
-    return value.every((val: any) => !isEqual(val, option));
+    return value.every((val: T) => !isEqual(val, option));
   });
 
   return (
@@ -176,118 +180,122 @@ export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompletePr
       handleUnStoredItemCb={handleUnStoredItemCb}
       customizeNewSelectedValue={customizeNewSelectedValue}
     >
-      {({
-        getInputProps,
-        getItemProps,
-        isOpen,
-        inputValue,
-        highlightedIndex,
-        removeItem,
-        editItem,
-        openMenu,
-        selectItem,
-        clearSelection,
-        storedItemsMap,
-      }: any): any => (
-        <div>
-          <>
-            <div
-              ref={refs.setReference}
-              className={cx('autocomplete', customClass, variant, {
-                'mobile-disabled': mobileDisabled,
-                error,
-                touched,
-                disabled,
-              })}
-            >
+      {
+        (({
+          getInputProps,
+          getItemProps,
+          isOpen,
+          inputValue,
+          highlightedIndex,
+          removeItem,
+          editItem,
+          openMenu,
+          selectItem,
+          clearSelection,
+          storedItemsMap,
+        }: GetStateAndHelpersT<T>): ReactNode | ReactNode[] => (
+          <div>
+            <>
               <div
-                className={cx('autocomplete-input', {
+                ref={refs.setReference}
+                className={cx('autocomplete', customClass, variant, {
                   'mobile-disabled': mobileDisabled,
+                  error,
+                  touched,
+                  disabled,
                 })}
               >
-                <SelectedItems<T, any>
-                  items={value}
-                  onRemoveItem={onRemoveItem(removeItem)}
-                  disabled={disabled}
-                  mobileDisabled={mobileDisabled}
-                  parseValueToString={parseValueToString}
-                  getItemValidationErrorType={getItemValidationErrorType}
-                  renderCustomSelecetedItem={renderCustomSelecetedItem}
-                  editItem={editItem}
-                  editable={editable}
-                  getAdditionalCreationCondition={getAdditionalCreationCondition}
-                  storedItemsMap={storedItemsMap}
-                  highlightUnStoredItem={highlightUnStoredItem}
-                  variant={variant}
-                />
-
-                <input
-                  {...getInputProps({
-                    ref: inputRef,
-                    placeholder: placeholderIfEmptyField,
-                    maxLength,
-                    onFocus: () => {
-                      openMenu();
-                      onFocus();
-                    },
-                    onKeyDown: (event: KeyboardEvent<HTMLInputElement>) => {
-                      const creationCondition =
-                        event.key === 'Enter' &&
-                        inputValue &&
-                        creatable &&
-                        getAdditionalCreationCondition(inputValue);
-                      if (creationCondition) {
-                        createNewItem({
-                          inputValue,
-                          selectItem,
-                          clearSelection,
-                        });
-                      }
-                      removeItemByBackspace({ event, removeItem, inputValue });
-                    },
-                    onBlur: () => {
-                      onBlur();
-                      const creationCondition =
-                        inputValue && creatable && getAdditionalCreationCondition(inputValue);
-                      if (creationCondition) {
-                        createNewItem({
-                          inputValue,
-                          selectItem,
-                          clearSelection,
-                        });
-                      }
-                    },
-                    disabled,
-                    ...inputProps,
+                <div
+                  className={cx('autocomplete-input', {
+                    'mobile-disabled': mobileDisabled,
                   })}
-                  className={cx('input', { disabled })}
-                  data-automation-id={dataAutomationId}
-                />
-              </div>
-              {inputProps?.clearable && value?.length > 0 && (
-                <div className={cx('clear-icon')} onClick={() => inputProps?.onClear?.()}>
-                  <ClearIcon />
+                >
+                  <SelectedItems<T>
+                    items={value}
+                    onRemoveItem={onRemoveItem(removeItem)}
+                    disabled={disabled}
+                    mobileDisabled={mobileDisabled}
+                    parseValueToString={parseValueToString}
+                    getItemValidationErrorType={getItemValidationErrorType}
+                    renderCustomSelecetedItem={renderCustomSelecetedItem}
+                    editItem={editItem}
+                    editable={editable}
+                    getAdditionalCreationCondition={getAdditionalCreationCondition}
+                    storedItemsMap={storedItemsMap}
+                    highlightUnStoredItem={highlightUnStoredItem}
+                    variant={variant}
+                  />
+
+                  <input
+                    {...getInputProps({
+                      ref: inputRef,
+                      placeholder: placeholderIfEmptyField,
+                      maxLength,
+                      onFocus: () => {
+                        openMenu();
+                        onFocus();
+                      },
+                      onKeyDown: (event: KeyboardEvent<HTMLInputElement>) => {
+                        const creationCondition =
+                          event.key === 'Enter' &&
+                          inputValue &&
+                          creatable &&
+                          getAdditionalCreationCondition(inputValue as T);
+                        if (creationCondition) {
+                          createNewItem({
+                            inputValue,
+                            selectItem,
+                            clearSelection,
+                          });
+                        }
+                        removeItemByBackspace({ event, removeItem, inputValue });
+                      },
+                      onBlur: () => {
+                        onBlur();
+                        const creationCondition =
+                          inputValue &&
+                          creatable &&
+                          getAdditionalCreationCondition(inputValue as T);
+                        if (creationCondition) {
+                          createNewItem({
+                            inputValue,
+                            selectItem,
+                            clearSelection,
+                          });
+                        }
+                      },
+                      disabled,
+                      ...inputProps,
+                    })}
+                    className={cx('input', { disabled })}
+                    data-automation-id={dataAutomationId}
+                  />
                 </div>
-              )}
-            </div>
-            {error && touched && <span className={cx('error-text')}>{error}</span>}
-          </>
-          <AutocompleteMenu<T>
-            isOpen={isOpen}
-            loading={loading}
-            async={async}
-            ref={refs.setFloating}
-            style={floatingStyles}
-            inputValue={(inputValue || '').trim()}
-            getItemProps={getOptionProps(getItemProps, highlightedIndex, value)}
-            parseValueToString={parseValueToString}
-            createWithoutConfirmation={createWithoutConfirmation}
-            options={filteredOptions}
-            variant={variant}
-            {...props}
-          />
-        </div>
-      )}
+                {inputProps?.clearable && value?.length > 0 && (
+                  <div className={cx('clear-icon')} onClick={() => inputProps?.onClear?.()}>
+                    <ClearIcon />
+                  </div>
+                )}
+              </div>
+              {error && touched && <span className={cx('error-text')}>{error}</span>}
+            </>
+            <AutocompleteMenu<T>
+              isOpen={isOpen}
+              loading={loading}
+              async={async}
+              ref={refs.setFloating}
+              style={floatingStyles}
+              inputValue={(inputValue || '').trim()}
+              getItemProps={getOptionProps(getItemProps, highlightedIndex, value)}
+              parseValueToString={parseValueToString}
+              createWithoutConfirmation={createWithoutConfirmation}
+              options={filteredOptions}
+              variant={variant}
+              {...props}
+            />
+          </div>
+        )) as any
+      }
     </MultipleDownshift>
   );
 };

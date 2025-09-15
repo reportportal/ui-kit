@@ -44,7 +44,7 @@ export interface MultipleDownshiftProps<T> extends Partial<DownshiftProps<T>> {
 }
 
 export type GetStateAndHelpersT<T> = ControllerStateAndHelpers<T> & {
-  removeItem: (removedItem: T, downshift: ControllerStateAndHelpers<T>) => void;
+  removeItem: (removedItem: T, downshift: ControllerStateAndHelpers<T> | null) => void;
   editItem: (oldItem: T, newItem: T) => void;
   handleChange: MultipleDownshiftProps<T>['onChange'];
   getOptionUniqKeyValue?: (option: T) => string;
@@ -119,7 +119,7 @@ export const MultipleDownshift = <T,>({
     onChange?.(newValue, null);
   };
 
-  const removeItem = (removedItem: T, downshift: ControllerStateAndHelpers<T>) => {
+  const removeItem = (removedItem: T, downshift: ControllerStateAndHelpers<T> | null) => {
     const newSelectedItems = selectedItems.filter((item) => !isEqual(item, removedItem));
     onChange?.(newSelectedItems, downshift);
     const filterStoredItemsCb = (storedItems: DownshiftStore<T>) =>

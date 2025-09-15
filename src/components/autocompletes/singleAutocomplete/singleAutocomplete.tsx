@@ -14,16 +14,17 @@
  * limitations under the License.
  */
 
-import { ChangeEvent, ComponentProps, KeyboardEvent, ReactNode, Ref } from 'react';
+import { ChangeEvent, ComponentProps, KeyboardEvent, Ref } from 'react';
 import Downshift, { DownshiftState, GetItemPropsOptions, StateChangeOptions } from 'downshift';
 import { AutocompleteMenu } from '../common/autocompleteMenu';
-import FieldText from '@/components/fieldText';
+import { default as FieldText } from '@/components/fieldText';
 import { ENTER_KEY_NAME, TAB_KEY_NAME } from '../constants';
 import { useFloating } from '@floating-ui/react';
+import { AdditionalDownshiftFields } from '../types';
 
 const DEFAULT_OPTIONS_INDEX = 0;
 
-export interface SingleAutocompleteProps<T, K> {
+export interface SingleAutocompleteProps<T> {
   options: T[];
   loading: boolean;
   onStateChange: () => void;
@@ -34,7 +35,7 @@ export interface SingleAutocompleteProps<T, K> {
   onBlur: (e: ChangeEvent<HTMLInputElement>) => void;
   disabled: boolean;
   inputProps: ComponentProps<typeof FieldText>;
-  parseValueToString: (value: any) => string;
+  parseValueToString: (value: T | null) => string;
   renderOption: (value: T) => React.ReactNode;
   minLength: number;
   maxLength: number | null;
@@ -48,7 +49,7 @@ export interface SingleAutocompleteProps<T, K> {
   menuClassName: string;
   icon: string;
   isOptionUnique?: (value: boolean | null) => void;
-  refFunction: () => Ref<any>;
+  refFunction: () => Ref<HTMLInputElement>;
   stateReducer: (
     state: DownshiftState<T>,
     changes: StateChangeOptions<T>,
@@ -57,7 +58,7 @@ export interface SingleAutocompleteProps<T, K> {
   useFixedPositioning: boolean;
 }
 
-export const SingleAutocomplete = <T, K>(componentProps: SingleAutocompleteProps<T, K>) => {
+export const SingleAutocomplete = <T,>(componentProps: SingleAutocompleteProps<T>) => {
   const {
     options = [],
     value,
@@ -67,7 +68,7 @@ export const SingleAutocomplete = <T, K>(componentProps: SingleAutocompleteProps
     onBlur = () => {},
     disabled = false,
     inputProps = {},
-    parseValueToString = (v) => v || '',
+    parseValueToString = ((v) => v || '') as (item: T | null) => string,
     minLength = 1,
     maxLength = null,
     optionVariant = '',
@@ -93,17 +94,19 @@ export const SingleAutocomplete = <T, K>(componentProps: SingleAutocompleteProps
 
   const getOptionProps =
     (
-      getItemProps: (item: GetItemPropsOptions<T>) => any,
+      getItemProps: (
+        args: GetItemPropsOptions<T> & AdditionalDownshiftFields,
+      ) => GetItemPropsOptions<T> & AdditionalDownshiftFields,
       highlightedIndex: number | null,
       selectedItem: T,
     ) =>
-    ({ item, index, ...rest }) =>
+    ({ item, index, ...rest }: GetItemPropsOptions<T> & AdditionalDownshiftFields) =>
       getItemProps({
         item,
         index,
-        isActive: highlightedIndex === index,
         isSelected: selectedItem === item,
         ...rest,
+        isActive: highlightedIndex === index,
       });
 
   const handleKeyDown = (

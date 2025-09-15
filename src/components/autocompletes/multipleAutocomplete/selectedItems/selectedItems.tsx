@@ -27,7 +27,7 @@ interface SelectedItemProps<T> {
   item: T;
   onRemoveItem: (item: T) => void;
   parseValueToString?: (value: T) => string;
-  editItem: (oldItem: T, newValue: string) => void;
+  editItem: (oldItem: T, newValue: T) => void;
   disabled?: boolean;
   mobileDisabled?: boolean;
   error?: string | boolean;
@@ -70,7 +70,7 @@ const SelectedItem = <T,>({
   const onKeyDownHandler = (e: KeyboardEvent<HTMLInputElement>) => {
     const creationCondition = getAdditionalCreationCondition(value as T);
     if (e.key === 'Enter' && creationCondition) {
-      editItem(item, value);
+      editItem(item, value as T);
       setEditMode(false);
       setValue('');
     }
@@ -119,14 +119,14 @@ const SelectedItem = <T,>({
   );
 };
 
-type SelectedItemsProps<T, K> = Omit<SelectedItemProps<T>, 'item'> & {
+type SelectedItemsProps<T> = Omit<SelectedItemProps<T>, 'item'> & {
   items?: T[];
   onRemoveItem?: (item: T) => void;
   parseValueToString?: (value: T | null) => string;
   editItem?: (oldItem: T, newValue: T) => void;
   disabled?: boolean;
   mobileDisabled?: boolean;
-  options?: K[];
+  options?: T[];
   storedItemsMap?: Record<string, boolean>;
   highlightUnStoredItem?: boolean;
   editable?: boolean;
@@ -135,7 +135,7 @@ type SelectedItemsProps<T, K> = Omit<SelectedItemProps<T>, 'item'> & {
   renderCustomSelecetedItem?: (item: T) => ReactNode;
 };
 
-export const SelectedItems = <T, K>({
+export const SelectedItems = <T,>({
   items = [],
   parseValueToString = () => '',
   getItemValidationErrorType,
@@ -144,7 +144,7 @@ export const SelectedItems = <T, K>({
   highlightUnStoredItem = false,
   renderCustomSelecetedItem,
   ...props
-}: SelectedItemsProps<T, K>) => {
+}: SelectedItemsProps<T>) => {
   return (items || []).map((item) => {
     let errorType = '';
     if (getItemValidationErrorType) {

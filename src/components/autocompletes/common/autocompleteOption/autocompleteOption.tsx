@@ -22,7 +22,7 @@ import { Button } from '@/components/button';
 
 const cx = classNames.bind(styles);
 
-type AutocompleteOptionProps = {
+type AutocompleteOptionProps<T> = {
   isActive?: boolean;
   isSelected?: boolean;
   isNew?: boolean;
@@ -32,7 +32,7 @@ type AutocompleteOptionProps = {
   variant?: 'light' | 'dark' | string;
 } & HTMLAttributes<HTMLLIElement | HTMLButtonElement>;
 
-export const AutocompleteOption = ({
+export const AutocompleteOption = <T,>({
   isActive = false,
   isSelected = false,
   isNew = false,
@@ -41,7 +41,7 @@ export const AutocompleteOption = ({
   optionVariant = '',
   variant = 'light',
   ...props
-}: AutocompleteOptionProps) => {
+}: AutocompleteOptionProps<T>) => {
   return isNew ? (
     <>
       <div className={cx('divider', variant)} />

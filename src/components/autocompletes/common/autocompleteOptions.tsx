@@ -21,6 +21,8 @@ import { AutocompletePrompt } from './autocompletePrompt';
 import { AutocompleteOption } from './autocompleteOption';
 import styles from './autocompleteOptions.module.scss';
 import BubblesLoader from '@/components/bubblesLoader';
+import { GetItemPropsOptions } from 'downshift';
+import { AdditionalDownshiftFields } from '../types';
 
 const cx = classNames.bind(styles);
 
@@ -29,15 +31,19 @@ interface AutocompleteOptionsProps<T> {
   loading: boolean;
   inputValue: string;
   parseValueToString: (value: T | null) => string;
-  getItemProps: <K>(props: { item: K; index: number }) => any;
+  getItemProps: (
+    args: GetItemPropsOptions<T> & AdditionalDownshiftFields,
+  ) => GetItemPropsOptions<T> & AdditionalDownshiftFields;
   renderOption?: (
     item: T,
     index: number,
     isNew: boolean,
-    getItemProps: (props: { item: T; index: number }) => any,
+    getItemProps: (
+      args: GetItemPropsOptions<T> & AdditionalDownshiftFields,
+    ) => GetItemPropsOptions<T> & AdditionalDownshiftFields,
   ) => ReactNode;
   async: boolean;
-  optionVariant: string;
+  optionVariant: 'key-variant' | 'value-variant' | '';
   createWithoutConfirmation: boolean;
   variant: ComponentProps<typeof AutocompletePrompt>['variant'];
   getItemName?: (item: T) => string;
@@ -105,10 +111,9 @@ export class AutocompleteOptions<T> extends Component<AutocompleteOptionsProps<T
         <AutocompleteOption
           key={parseValueToString(inputValue as T)}
           optionVariant={optionVariant}
-          {...getItemProps({ item: inputValue, index })}
+          {...getItemProps({ item: inputValue as T, index })}
           isNew={isNew}
           variant={variant}
-          getItemName={getItemName}
         >
           {parseValueToString(inputValue as T)}
         </AutocompleteOption>
