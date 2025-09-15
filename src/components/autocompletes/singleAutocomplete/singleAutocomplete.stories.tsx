@@ -129,14 +129,13 @@ export const SingleSelectObjects: Story = {
       inputProps: { ...args.inputProps, onClear: () => setState({}) },
     };
 
-    const handleStateChange = (state, changes) => {
-      console.log({ storestate: state, changes });
+    const handleStateChange = (prevState: any, changes: any) => {
       switch (changes.type) {
         case Downshift.stateChangeTypes.keyDownEnter:
         case Downshift.stateChangeTypes.clickItem:
           return {
             ...changes,
-            highlightedIndex: state.highlightedIndex,
+            highlightedIndex: prevState.highlightedIndex,
             inputValue: '',
           };
         default:
@@ -144,7 +143,7 @@ export const SingleSelectObjects: Story = {
       }
     };
 
-    const x = (newState) => {
+    const x = (newState: any) => {
       setState(newState);
     };
 
@@ -174,14 +173,13 @@ export const SingleSelectStrings: Story = {
       inputProps: { ...args.inputProps, onClear: () => setState('') },
     };
 
-    const handleStateChange = (state, changes) => {
-      console.log({ storestate: state, changes });
+    const handleStateChange = (prevState: any, changes: any) => {
       switch (changes.type) {
         case Downshift.stateChangeTypes.keyDownEnter:
         case Downshift.stateChangeTypes.clickItem:
           return {
             ...changes,
-            highlightedIndex: state.highlightedIndex,
+            highlightedIndex: prevState.highlightedIndex,
             inputValue: '',
           };
         default:
@@ -189,7 +187,7 @@ export const SingleSelectStrings: Story = {
       }
     };
 
-    const x = (newState) => {
+    const x = (newState: any) => {
       setState(newState);
     };
 

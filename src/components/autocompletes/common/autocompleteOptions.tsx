@@ -53,8 +53,6 @@ export class AutocompleteOptions<T> extends Component<AutocompleteOptionsProps<T
   filterStaticOptions = () => {
     const { options, inputValue, parseValueToString } = this.props;
     return (options || []).filter((option) => {
-      console.log({ option });
-      console.log({ FILTER_OPTIONS: parseValueToString(option) });
       return (
         parseValueToString(option)
           .toUpperCase()

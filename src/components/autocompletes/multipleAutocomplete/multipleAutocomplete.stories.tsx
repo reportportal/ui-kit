@@ -116,7 +116,6 @@ export const Objects: Story = {
     };
 
     const handleStateChange = (state, changes) => {
-      console.log({ storestate: state, changes });
       switch (changes.type) {
         case Downshift.stateChangeTypes.keyDownEnter:
         case Downshift.stateChangeTypes.clickItem:
@@ -160,7 +159,6 @@ export const Strings: Story = {
     };
 
     const stateReducer = (state, changes) => {
-      console.log({ changes });
       switch (changes.type) {
         case Downshift.stateChangeTypes.keyDownEnter:
         case Downshift.stateChangeTypes.clickItem:

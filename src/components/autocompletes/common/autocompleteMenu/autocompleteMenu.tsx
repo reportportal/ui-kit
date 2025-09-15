@@ -36,7 +36,6 @@ export const AutocompleteMenu = forwardRef(
   <T,>(
     {
       isOpen = false,
-      // placement = 'bottom-start',
       style = {},
       minLength = 1,
       inputValue = '',
