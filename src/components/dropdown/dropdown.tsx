@@ -1,4 +1,12 @@
-import { useRef, useState, ReactNode, FC, ReactElement, KeyboardEventHandler } from 'react';
+import {
+  useRef,
+  useState,
+  ReactNode,
+  FC,
+  ReactElement,
+  KeyboardEventHandler,
+  useCallback,
+} from 'react';
 import classNames from 'classnames/bind';
 import { useFloating, offset, flip } from '@floating-ui/react-dom';
 import { useSelect } from 'downshift';
@@ -231,6 +239,11 @@ export const Dropdown: FC<DropdownProps> = ({
     }
   };
 
+  const closeHandler = useCallback(() => {
+    setOpened(false);
+    onBlur?.();
+  }, [onBlur]);
+
   const renderOptions = () => (
     <div className={cx('options-container')}>
       {multiSelect && isOptionAllVisible && Array.isArray(value) && (
@@ -268,7 +281,7 @@ export const Dropdown: FC<DropdownProps> = ({
       {footer && (
         <>
           <div className={cx('divider')} />
-          {typeof footer === 'function' ? footer(() => setOpened(false)) : footer}
+          {typeof footer === 'function' ? footer(closeHandler) : footer}
         </>
       )}
     </div>
