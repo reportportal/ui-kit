@@ -20,7 +20,7 @@ import { Scrollbars } from 'rc-scrollbars';
 import { AutocompletePrompt } from './autocompletePrompt';
 import { AutocompleteOption } from './autocompleteOption';
 import styles from './autocompleteOptions.module.scss';
-import BubblesLoader from '@/components/bubblesLoader';
+import { default as BubblesLoader } from '@/components/bubblesLoader';
 import { GetItemPropsOptions } from 'downshift';
 import { AdditionalDownshiftFields } from '../types';
 
@@ -46,7 +46,6 @@ interface AutocompleteOptionsProps<T> {
   optionVariant: 'key-variant' | 'value-variant' | '';
   createWithoutConfirmation: boolean;
   variant: ComponentProps<typeof AutocompletePrompt>['variant'];
-  getItemName?: (item: T) => string;
 }
 
 export class AutocompleteOptions<T> extends Component<AutocompleteOptionsProps<T>> {
@@ -99,8 +98,7 @@ export class AutocompleteOptions<T> extends Component<AutocompleteOptionsProps<T
   };
 
   renderNewItem = (options: T[]) => {
-    const { inputValue, getItemProps, getItemName, parseValueToString, optionVariant, variant } =
-      this.props;
+    const { inputValue, getItemProps, parseValueToString, optionVariant, variant } = this.props;
 
     const index = options.length;
     const isNew = true;

@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 
 import { SingleAutocomplete } from './singleAutocomplete';
 import Downshift from 'downshift';
-import { useState } from 'react';
+import { ComponentProps, useState } from 'react';
 
 const OPTIONS_OBJECTS = [
   { id: 'Demo Api Tests', name: 'Demo Api Tests' },
@@ -11,96 +11,65 @@ const OPTIONS_OBJECTS = [
   { id: 'Demo Api Tests 3', name: 'Demo Api Tests 3' },
 ];
 
-const OPTIONS_STRINGS = [
+const OPTIONS_STRINGS: string[] = [
   'Demo Api Tests',
   'Demo Api Tests 1',
   'Demo Api Tests 2',
   'Demo Api Tests 3',
 ];
 
-const TEST_DATA_OBJECTS = {
+type WithStorybookProps<T, K> = T & { value: K };
+
+const TEST_DATA_OBJECTS: Partial<
+  WithStorybookProps<
+    ComponentProps<typeof SingleAutocomplete<(typeof OPTIONS_OBJECTS)[number]>>,
+    (typeof OPTIONS_OBJECTS)[number]
+  >
+> = {
   options: OPTIONS_OBJECTS,
   loading: false,
   async: true,
   createWithoutConfirmation: true,
-  creatable: false,
-  editable: true,
-  existingItemsMap: {
-    [OPTIONS_OBJECTS[0].id]: true,
+  parseValueToString: (value) => {
+    return String(value?.id);
   },
-  parseValueToString: (value: (typeof OPTIONS_OBJECTS)[number]) => {
-    return value?.id;
-  },
-  highlightUnStoredItem: true,
   value: OPTIONS_OBJECTS[0],
   error: '',
-  active: true,
-  name: 'launchNames',
   touched: true,
-  asyncValidating: false,
   minLength: 1,
   placeholder: 'Test placeholder',
   disabled: false,
-  mobileDisabled: false,
   inputProps: {
     clearable: true,
   },
   maxLength: null,
-  customClass: '',
-  getItemValidationErrorType: null,
-  parseInputValueFn: null,
-  dataAutomationId: '',
-  clearable: true,
   variant: 'light',
-  // renderOption: (item, index, isNew, getItemProps) => {
-  //   return (
-  //     <div style={{ backgroundColor: 'red' }} {...getItemProps({ item, index })}>
-  //       {item.name}
-  //     </div>
-  //   );
-  // },
 };
 
-const TEST_DATA_STRINGS = {
+const TEST_DATA_STRINGS: Partial<
+  WithStorybookProps<
+    ComponentProps<typeof SingleAutocomplete<(typeof OPTIONS_STRINGS)[number]>>,
+    (typeof OPTIONS_STRINGS)[number]
+  >
+> = {
   options: OPTIONS_STRINGS,
   loading: false,
   async: true,
   createWithoutConfirmation: true,
-  creatable: false,
-  editable: true,
-  existingItemsMap: {
-    'Demo Api Tests': true,
+  parseValueToString: (value) => {
+    return String(value);
   },
-  parseValueToString: (value: string) => {
-    return value;
-  },
-  highlightUnStoredItem: true,
   value: OPTIONS_STRINGS[0],
   error: '',
-  active: true,
-  name: 'launchNames',
   touched: true,
-  asyncValidating: false,
   minLength: 1,
   placeholder: 'Test placeholder',
   disabled: false,
-  mobileDisabled: false,
   inputProps: {
     clearable: true,
   },
   maxLength: null,
-  customClass: '',
-  getItemValidationErrorType: null,
-  parseInputValueFn: null,
-  dataAutomationId: '',
   variant: 'light',
-  // renderOption: (item, index, isNew, getItemProps) => {
-  //   return (
-  //     <div style={{ backgroundColor: 'red' }} {...getItemProps({ item, index })}>
-  //       {item}
-  //     </div>
-  //   );
-  // },
 };
 
 const meta: Meta<typeof SingleAutocomplete> = {
@@ -114,22 +83,27 @@ const meta: Meta<typeof SingleAutocomplete> = {
 
 export default meta;
 
-type Story = StoryObj<typeof SingleAutocomplete>;
+type Story<T> = StoryObj<WithStorybookProps<ComponentProps<typeof SingleAutocomplete<T>>, T>>;
 
-export const SingleSelectObjects: Story = {
+export const SingleSelectObjects: Story<(typeof OPTIONS_OBJECTS)[number]> = {
   args: {
     ...TEST_DATA_OBJECTS,
-  } as any,
-  render: (args: any) => {
+  },
+  render: (args) => {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const [state, setState] = useState(args.value || {});
 
     const modifiedArgs = {
       ...args,
-      inputProps: { ...args.inputProps, onClear: () => setState({}) },
+      inputProps: {
+        ...args.inputProps,
+        onClear: () => setState({} as (typeof OPTIONS_OBJECTS)[number]),
+      },
     };
 
-    const handleStateChange = (prevState: any, changes: any) => {
+    const handleStateChange: ComponentProps<
+      typeof SingleAutocomplete<(typeof OPTIONS_OBJECTS)[number]>
+    >['stateReducer'] = (prevState, changes) => {
       switch (changes.type) {
         case Downshift.stateChangeTypes.keyDownEnter:
         case Downshift.stateChangeTypes.clickItem:
@@ -143,15 +117,17 @@ export const SingleSelectObjects: Story = {
       }
     };
 
-    const x = (newState: any) => {
-      setState(newState);
+    const onChange: ComponentProps<
+      typeof SingleAutocomplete<(typeof OPTIONS_OBJECTS)[number]>
+    >['onChange'] = (newState) => {
+      setState(newState as (typeof OPTIONS_OBJECTS)[number]);
     };
 
     return (
       <div style={{ width: '600px', height: '400px', display: 'flex', alignItems: 'center' }}>
-        <SingleAutocomplete
+        <SingleAutocomplete<(typeof OPTIONS_OBJECTS)[number]>
           {...modifiedArgs}
-          onChange={x}
+          onChange={onChange}
           stateReducer={handleStateChange}
           value={state}
         />
@@ -160,11 +136,11 @@ export const SingleSelectObjects: Story = {
   },
 };
 
-export const SingleSelectStrings: Story = {
+export const SingleSelectStrings: Story<(typeof OPTIONS_STRINGS)[number]> = {
   args: {
     ...TEST_DATA_STRINGS,
-  } as any,
-  render: (args: any) => {
+  },
+  render: (args) => {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const [state, setState] = useState(args.value || '');
 
@@ -173,7 +149,9 @@ export const SingleSelectStrings: Story = {
       inputProps: { ...args.inputProps, onClear: () => setState('') },
     };
 
-    const handleStateChange = (prevState: any, changes: any) => {
+    const handleStateChange: ComponentProps<
+      typeof SingleAutocomplete<(typeof OPTIONS_STRINGS)[number]>
+    >['stateReducer'] = (prevState, changes) => {
       switch (changes.type) {
         case Downshift.stateChangeTypes.keyDownEnter:
         case Downshift.stateChangeTypes.clickItem:
@@ -187,15 +165,17 @@ export const SingleSelectStrings: Story = {
       }
     };
 
-    const x = (newState: any) => {
-      setState(newState);
+    const onChange: ComponentProps<
+      typeof SingleAutocomplete<(typeof OPTIONS_STRINGS)[number]>
+    >['onChange'] = (newState) => {
+      setState(newState as (typeof OPTIONS_STRINGS)[number]);
     };
 
     return (
       <div style={{ width: '600px', height: '400px', display: 'flex', alignItems: 'center' }}>
         <SingleAutocomplete
           {...modifiedArgs}
-          onChange={x}
+          onChange={onChange}
           stateReducer={handleStateChange}
           value={state}
         />
@@ -203,20 +183,3 @@ export const SingleSelectStrings: Story = {
     );
   },
 };
-
-// {
-//     "createWithoutConfirmation": true,
-//     "creatable": true,
-//     "editable": true,
-//     "existingItemsMap": {
-//         "Demo Api Tests": true
-//     },
-//     "highlightUnStoredItem": true,
-//     "value": [],
-//     "error": "",
-//     "active": false,
-//     "name": "launchNames",
-//     "touched": false,
-//     "asyncValidating": false,
-//     "minLength": 1
-// }

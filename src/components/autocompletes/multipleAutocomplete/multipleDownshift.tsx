@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { ReactNode, useState } from 'react';
+import { useState } from 'react';
 import Downshift, {
   ControllerStateAndHelpers,
   DownshiftProps,
@@ -31,7 +31,6 @@ export type DownshiftStore<T> =
 
 export interface MultipleDownshiftProps<T> extends Partial<DownshiftProps<T>> {
   options: T[];
-  children: (value: ControllerStateAndHelpers<T>) => ReactNode | ReactNode[];
   selectedItems: T[];
   handleUnStoredItemCb:
     | ((newSelectedItems: DownshiftStore<T>, prevSelectedItems: DownshiftStore<T>) => void)
@@ -164,7 +163,7 @@ export const MultipleDownshift = <T,>({
       onChange={handleSelection}
       selectedItem={null}
     >
-      {(downshift) => children(getStateAndHelpers(downshift))}
+      {(downshift) => children?.(getStateAndHelpers(downshift))}
     </Downshift>
   );
 };

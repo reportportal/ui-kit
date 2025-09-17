@@ -18,23 +18,29 @@ import { ComponentProps, KeyboardEvent, ReactNode, useEffect, useRef } from 'rea
 import classNames from 'classnames/bind';
 import { AutocompleteMenu } from '../common/autocompleteMenu';
 import { SelectedItems } from './selectedItems';
-import { DownshiftStore, GetStateAndHelpersT, MultipleDownshift } from './multipleDownshift';
+import {
+  DownshiftStore,
+  GetStateAndHelpersT,
+  MultipleDownshift,
+  MultipleDownshiftProps,
+} from './multipleDownshift';
 import styles from './multipleAutocomplete.module.scss';
 import { default as FieldText } from '@/components/fieldText';
 import { useFloating } from '@floating-ui/react';
-import { ControllerStateAndHelpers, PropGetters } from 'downshift';
+import { ControllerStateAndHelpers, GetItemPropsOptions, PropGetters } from 'downshift';
 import { isEqual } from '../utils';
 import { ClearIcon } from '@/components/icons';
+import { AdditionalDownshiftFields } from '../types';
 
 const cx = classNames.bind(styles);
 
 export interface MultipleAutocompleteProps<T> {
   options: T[];
   loading: boolean;
-  onStateChange: () => void;
+  onStateChange: MultipleDownshiftProps<T>['onStateChange'];
   value: T[];
   placeholder: string;
-  error: string | boolean; // string | boolean
+  error: string | boolean;
   touched: boolean;
   creatable: boolean;
   editable: boolean;
@@ -100,7 +106,7 @@ export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompletePr
     dataAutomationId = '',
     existingItemsMap = {},
     variant = 'light',
-    customizeNewSelectedValue = (v) => v,
+    customizeNewSelectedValue = (newValue) => newValue,
     renderCustomSelecetedItem,
     isClearAvailable = true,
     ...props
@@ -109,8 +115,6 @@ export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompletePr
   const { refs, floatingStyles } = useFloating({
     placement: 'bottom-start',
   });
-
-  // let updatePosition: () => void;
 
   const placeholderIfEmptyField = value.length === 0 && !disabled ? placeholder : '';
   const inputRef = useRef<HTMLInputElement>(null);
@@ -125,33 +129,52 @@ export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompletePr
   ) => {
     onChange(selectedItems, downshift);
   };
+
   const getOptionProps =
     (
       getItemProps: PropGetters<T>['getItemProps'],
       highlightedIndex: number | null,
       selectedItems: T[],
     ) =>
-    ({ item, index, ...rest }: { item: T; index: number } & any) =>
+    ({ item, index, ...rest }: GetItemPropsOptions<T> & AdditionalDownshiftFields) =>
       getItemProps({
         item,
         index,
-        isActive: highlightedIndex === index,
         isSelected: selectedItems.some((selectedItem: T) => isEqual(selectedItem, item)),
         ...rest,
-      });
-  const removeItemByBackspace = ({ event, removeItem, inputValue }: any) => {
+        isActive: highlightedIndex === index,
+      } as GetItemPropsOptions<T> & AdditionalDownshiftFields);
+
+  const removeItemByBackspace = ({
+    event,
+    removeItem,
+    inputValue,
+  }: {
+    event: KeyboardEvent<HTMLInputElement>;
+    removeItem: GetStateAndHelpersT<T>['removeItem'];
+    inputValue: string | null;
+  }) => {
     if (event.key === 'Backspace' && !inputValue && value.length) {
-      removeItem(value[value.length - 1]);
+      removeItem(value[value.length - 1], null);
     }
   };
-  const createNewItem = ({ inputValue, selectItem, clearSelection }: any) => {
+
+  const createNewItem = ({
+    inputValue,
+    selectItem,
+    clearSelection,
+  }: {
+    inputValue: string;
+    selectItem: (value: T) => void;
+    clearSelection: () => void;
+  }) => {
     if (parseInputValueFn) {
       const parsedItems = parseInputValueFn(inputValue);
-      const items = parsedItems.length ? parsedItems : [inputValue];
+      const items = (parsedItems.length ? parsedItems : [inputValue]) as T;
       selectItem(items);
       clearSelection();
     } else {
-      selectItem(inputValue);
+      selectItem(inputValue as T);
       clearSelection();
     }
   };
@@ -193,8 +216,9 @@ export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompletePr
           selectItem,
           clearSelection,
           storedItemsMap,
-        }: GetStateAndHelpersT<T>): ReactNode | ReactNode[] => (
-          <div>
+          getRootProps,
+        }: GetStateAndHelpersT<T>) => (
+          <div {...getRootProps()}>
             <>
               <div
                 ref={refs.setReference}
@@ -252,10 +276,12 @@ export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompletePr
                       },
                       onBlur: () => {
                         onBlur();
+
                         const creationCondition =
                           inputValue &&
                           creatable &&
                           getAdditionalCreationCondition(inputValue as T);
+
                         if (creationCondition) {
                           createNewItem({
                             inputValue,
@@ -294,7 +320,7 @@ export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompletePr
               {...props}
             />
           </div>
-        )) as any
+        )) as MultipleDownshiftProps<T>['children']
       }
     </MultipleDownshift>
   );

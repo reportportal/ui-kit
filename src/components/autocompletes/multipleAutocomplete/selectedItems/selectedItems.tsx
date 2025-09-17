@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { useState, ChangeEvent, KeyboardEvent, FocusEvent, ComponentProps, ReactNode } from 'react';
+import { useState, ChangeEvent, KeyboardEvent, FocusEvent, ReactNode, MouseEvent } from 'react';
 import classNames from 'classnames/bind';
 import CrossIcon from 'src/assets/img/cross-rounded-icon-inline.svg';
 import styles from './selectedItems.module.scss';
@@ -54,19 +54,22 @@ const SelectedItem = <T,>({
   storedOption = true,
   highlightUnStoredItem = false,
   variant = 'light',
-  changeItemHandler,
   getItemName,
 }: SelectedItemProps<T>) => {
   const [editMode, setEditMode] = useState(false);
   const [value, setValue] = useState<string>('');
 
   const changeEditMode = () => {
-    setValue(getItemName?.(item) || (item as string));
-    setEditMode(true);
+    if (!disabled && editable && !storedOption) {
+      setValue(getItemName?.(item) || (item as string));
+      setEditMode(true);
+    }
   };
+
   const onChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
     setValue(e.target.value);
   };
+
   const onKeyDownHandler = (e: KeyboardEvent<HTMLInputElement>) => {
     const creationCondition = getAdditionalCreationCondition(value as T);
     if (e.key === 'Enter' && creationCondition) {
@@ -75,9 +78,15 @@ const SelectedItem = <T,>({
       setValue('');
     }
   };
+
   const onBlurHandler = (_e: FocusEvent<HTMLInputElement>) => {
     setEditMode(false);
     setValue('');
+  };
+
+  const removeItemHandler = (event: MouseEvent<HTMLElement>) => {
+    event.stopPropagation();
+    onRemoveItem(item);
   };
 
   return editMode ? (
@@ -97,7 +106,7 @@ const SelectedItem = <T,>({
         'mobile-disabled': mobileDisabled,
         'highlight-un-stored-item': highlightUnStoredItem && !storedOption,
       })}
-      onClick={!disabled && editable && !storedOption ? changeEditMode : undefined}
+      onClick={changeEditMode}
     >
       {parseValueToString(item)}
       {!disabled && (
@@ -107,10 +116,7 @@ const SelectedItem = <T,>({
             'mobile-disabled': mobileDisabled,
             disabled,
           })}
-          onClick={(e) => {
-            e.stopPropagation();
-            onRemoveItem(item);
-          }}
+          onClick={removeItemHandler}
         >
           <CrossIcon />
         </i>
@@ -145,19 +151,14 @@ export const SelectedItems = <T,>({
   renderCustomSelecetedItem,
   ...props
 }: SelectedItemsProps<T>) => {
-  return (items || []).map((item) => {
-    let errorType = '';
-    if (getItemValidationErrorType) {
-      errorType = getItemValidationErrorType(item);
-    }
-
+  return items.map((item) => {
     return renderCustomSelecetedItem ? (
       renderCustomSelecetedItem(item)
     ) : (
       <SelectedItem
         key={parseValueToString(item)}
         parseValueToString={parseValueToString}
-        error={errorType}
+        error={getItemValidationErrorType?.(item) || ''}
         item={item}
         storedOption={!!storedItemsMap[parseValueToString(item)]}
         highlightUnStoredItem={highlightUnStoredItem}

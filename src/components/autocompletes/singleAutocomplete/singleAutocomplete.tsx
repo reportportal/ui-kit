@@ -30,7 +30,7 @@ export interface SingleAutocompleteProps<T> {
   onStateChange: () => void;
   value: T;
   placeholder: string;
-  onChange: () => void;
+  onChange: ComponentProps<typeof Downshift<T>>['onChange'];
   onFocus: () => void;
   onBlur: (e: ChangeEvent<HTMLInputElement>) => void;
   disabled: boolean;
@@ -63,12 +63,12 @@ export const SingleAutocomplete = <T,>(componentProps: SingleAutocompleteProps<T
     options = [],
     value,
     placeholder = '',
-    onChange = () => {},
+    onChange = (() => {}) as ComponentProps<typeof Downshift<T>>['onChange'],
     onFocus = () => {},
     onBlur = () => {},
     disabled = false,
     inputProps = {},
-    parseValueToString = ((v) => v || '') as (item: T | null) => string,
+    parseValueToString = ((valueToParse) => valueToParse || '') as (item: T | null) => string,
     minLength = 1,
     maxLength = null,
     optionVariant = '',
@@ -120,7 +120,7 @@ export const SingleAutocomplete = <T,>(componentProps: SingleAutocompleteProps<T
   };
 
   return (
-    <Downshift
+    <Downshift<T>
       onChange={onChange}
       itemToString={parseValueToString}
       selectedItem={value}

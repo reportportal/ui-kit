@@ -3,8 +3,9 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
 import { MultipleAutocomplete } from './multipleAutocomplete';
-import { useState } from 'react';
-import Downshift from 'downshift';
+import { ComponentProps, useState } from 'react';
+
+type WithStorybookProps<T, K> = T & { value: K };
 
 const OPTIONS_OBJECTS = [
   { id: 'Demo Api Tests', name: 'Demo Api Tests' },
@@ -20,7 +21,12 @@ const OPTIONS_STRINGS = [
   'Demo Api Tests 3',
 ];
 
-const TEST_DATA_OBJECTS = {
+const TEST_DATA_OBJECTS: Partial<
+  WithStorybookProps<
+    ComponentProps<typeof MultipleAutocomplete<(typeof OPTIONS_OBJECTS)[number]>>,
+    typeof OPTIONS_OBJECTS
+  >
+> = {
   options: OPTIONS_OBJECTS,
   loading: false,
   async: true,
@@ -30,16 +36,13 @@ const TEST_DATA_OBJECTS = {
   existingItemsMap: {
     [OPTIONS_OBJECTS[0].id]: true,
   },
-  parseValueToString: (value: (typeof OPTIONS_OBJECTS)[number]) => {
-    return value?.id;
+  parseValueToString: (value) => {
+    return String(value?.id);
   },
   highlightUnStoredItem: true,
   value: [OPTIONS_OBJECTS[0]],
   error: '',
-  active: true,
-  name: 'launchNames',
   touched: true,
-  asyncValidating: false,
   minLength: 1,
   placeholder: 'Test placeholder',
   disabled: false,
@@ -49,13 +52,17 @@ const TEST_DATA_OBJECTS = {
   },
   maxLength: null,
   customClass: '',
-  getItemValidationErrorType: null,
   parseInputValueFn: null,
   dataAutomationId: '',
   variant: 'light',
 };
 
-const TEST_DATA_STRINGS = {
+const TEST_DATA_STRINGS: Partial<
+  WithStorybookProps<
+    ComponentProps<typeof MultipleAutocomplete<(typeof OPTIONS_STRINGS)[number]>>,
+    typeof OPTIONS_STRINGS
+  >
+> = {
   options: OPTIONS_STRINGS,
   loading: false,
   async: true,
@@ -65,16 +72,13 @@ const TEST_DATA_STRINGS = {
   existingItemsMap: {
     'Demo Api Tests': true,
   },
-  parseValueToString: (value: string) => {
-    return value;
+  parseValueToString: (value) => {
+    return String(value);
   },
   highlightUnStoredItem: true,
   value: [OPTIONS_STRINGS[0]],
   error: '',
-  active: true,
-  name: 'launchNames',
   touched: true,
-  asyncValidating: false,
   inputProps: {
     clearable: true,
   },
@@ -84,7 +88,6 @@ const TEST_DATA_STRINGS = {
   mobileDisabled: false,
   maxLength: null,
   customClass: '',
-  getItemValidationErrorType: null,
   parseInputValueFn: null,
   dataAutomationId: '',
   variant: 'light',
@@ -101,13 +104,13 @@ const meta: Meta<typeof MultipleAutocomplete> = {
 
 export default meta;
 
-type Story = StoryObj<typeof MultipleAutocomplete>;
+type Story<T> = StoryObj<WithStorybookProps<ComponentProps<typeof MultipleAutocomplete<T>>, T[]>>;
 
-export const Objects: Story = {
+export const Objects: Story<(typeof OPTIONS_OBJECTS)[number]> = {
   args: {
     ...TEST_DATA_OBJECTS,
-  } as any,
-  render: (args: any) => {
+  },
+  render: (args) => {
     const [state, setState] = useState(args.value || []);
 
     const modifiedArgs = {
@@ -115,30 +118,17 @@ export const Objects: Story = {
       inputProps: { ...args.inputProps, onClear: () => setState([]) },
     };
 
-    const handleStateChange = (state: any, changes: any) => {
-      switch (changes.type) {
-        case Downshift.stateChangeTypes.keyDownEnter:
-        case Downshift.stateChangeTypes.clickItem:
-          return {
-            ...changes,
-            highlightedIndex: state.highlightedIndex,
-            inputValue: '',
-          };
-        default:
-          return changes;
-      }
-    };
-
-    const x = (newState: any) => {
-      setState(newState);
+    const onChange: ComponentProps<
+      typeof MultipleAutocomplete<(typeof OPTIONS_OBJECTS)[number]>
+    >['onChange'] = (newState) => {
+      setState(newState as typeof OPTIONS_OBJECTS);
     };
 
     return (
       <div style={{ width: '600px', height: '400px', display: 'flex', alignItems: 'center' }}>
-        <MultipleAutocomplete
+        <MultipleAutocomplete<(typeof OPTIONS_OBJECTS)[number]>
           {...modifiedArgs}
-          onChange={x}
-          stateReducer={handleStateChange}
+          onChange={onChange}
           value={state}
         />
       </div>
@@ -146,11 +136,11 @@ export const Objects: Story = {
   },
 };
 
-export const Strings: Story = {
+export const Strings: Story<(typeof OPTIONS_STRINGS)[number]> = {
   args: {
     ...TEST_DATA_STRINGS,
-  } as any,
-  render: (args: any) => {
+  },
+  render: (args) => {
     const [state, setState] = useState(args.value || []);
 
     const modifiedArgs = {
@@ -158,50 +148,16 @@ export const Strings: Story = {
       inputProps: { ...args.inputProps, onClear: () => setState([]) },
     };
 
-    const stateReducer = (state: any, changes: any) => {
-      switch (changes.type) {
-        case Downshift.stateChangeTypes.keyDownEnter:
-        case Downshift.stateChangeTypes.clickItem:
-          return {
-            ...changes,
-            highlightedIndex: state.highlightedIndex,
-            inputValue: '',
-          };
-        default:
-          return changes;
-      }
-    };
-
-    const x = (newState: any) => {
-      setState(newState);
+    const onChange: ComponentProps<
+      typeof MultipleAutocomplete<(typeof OPTIONS_STRINGS)[number]>
+    >['onChange'] = (newState) => {
+      setState(newState as typeof OPTIONS_STRINGS);
     };
 
     return (
       <div style={{ width: '600px', height: '400px', display: 'flex', alignItems: 'center' }}>
-        <MultipleAutocomplete
-          {...modifiedArgs}
-          stateReducer={stateReducer}
-          onChange={x}
-          value={state}
-        />
+        <MultipleAutocomplete {...modifiedArgs} onChange={onChange} value={state} />
       </div>
     );
   },
 };
-
-// {
-//     "createWithoutConfirmation": true,
-//     "creatable": true,
-//     "editable": true,
-//     "existingItemsMap": {
-//         "Demo Api Tests": true
-//     },
-//     "highlightUnStoredItem": true,
-//     "value": [],
-//     "error": "",
-//     "active": false,
-//     "name": "launchNames",
-//     "touched": false,
-//     "asyncValidating": false,
-//     "minLength": 1
-// }
