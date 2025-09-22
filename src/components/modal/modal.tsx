@@ -8,6 +8,7 @@ import { ButtonProps } from '@components/button';
 import { ModalContent } from './modalContent';
 import { ModalFooter, ModalSize } from './modalFooter';
 import { ModalHeader } from './modalHeader';
+import { ExtendedButtonProps } from './types';
 import styles from './modal.module.scss';
 
 const cx = classNames.bind(styles);
@@ -30,7 +31,7 @@ interface ModalProps {
   size?: ModalSize;
   overlay?: ModalOverlay;
   allowCloseOutside?: boolean;
-  okButton?: ButtonProps;
+  okButton?: ExtendedButtonProps;
   cancelButton?: ButtonProps;
   scrollable?: boolean;
   withoutFooter?: boolean;
