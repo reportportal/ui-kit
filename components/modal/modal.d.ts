@@ -1,6 +1,7 @@
 import { ReactNode, FC } from '../../../node_modules/react';
 import { ButtonProps } from '../button';
 import { ModalSize } from './modalFooter';
+import { ExtendedButtonProps } from './types';
 
 type ModalOverlay = 'default' | 'light-cyan';
 interface ModalProps {
@@ -13,7 +14,7 @@ interface ModalProps {
     size?: ModalSize;
     overlay?: ModalOverlay;
     allowCloseOutside?: boolean;
-    okButton?: ButtonProps;
+    okButton?: ExtendedButtonProps;
     cancelButton?: ButtonProps;
     scrollable?: boolean;
     withoutFooter?: boolean;

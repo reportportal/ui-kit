@@ -1,11 +1,12 @@
 import { ReactNode, FC, MouseEventHandler } from '../../../../node_modules/react';
 import { ButtonProps } from '../../button';
+import { ExtendedButtonProps } from '../types';
 
 export type ModalSize = 'default' | 'small' | 'large';
 interface ModalFooterProps {
     closeHandler: MouseEventHandler<HTMLButtonElement>;
     footerNode?: ReactNode;
-    okButton?: ButtonProps;
+    okButton?: ExtendedButtonProps;
     cancelButton?: ButtonProps;
     size?: ModalSize;
 }
