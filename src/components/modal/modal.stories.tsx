@@ -213,3 +213,17 @@ export const ScrollableWithoutFooter: Story = {
     ),
   },
 };
+
+export const WithTooltipOnOkButton: Story = {
+  args: {
+    title: 'Modal with tooltip on OK button',
+    children: 'Hover over the OK button to see the tooltip.',
+    okButton: {
+      children: 'Save',
+      tooltipNode: 'This will save all your changes to the database',
+    },
+    cancelButton: {
+      children: 'Cancel',
+    },
+  },
+};
