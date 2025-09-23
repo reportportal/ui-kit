@@ -1,5 +1,5 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import type { Meta, StoryObj } from '@storybook/react';
-
 import { SingleAutocomplete } from './singleAutocomplete';
 import Downshift from 'downshift';
 import { ComponentProps, useState } from 'react';
@@ -90,7 +90,6 @@ export const SingleSelectObjects: Story<(typeof OPTIONS_OBJECTS)[number]> = {
     ...TEST_DATA_OBJECTS,
   },
   render: (args) => {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
     const [state, setState] = useState(args.value || {});
 
     const modifiedArgs = {
@@ -141,7 +140,6 @@ export const SingleSelectStrings: Story<(typeof OPTIONS_STRINGS)[number]> = {
     ...TEST_DATA_STRINGS,
   },
   render: (args) => {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
     const [state, setState] = useState(args.value || '');
 
     const modifiedArgs = {

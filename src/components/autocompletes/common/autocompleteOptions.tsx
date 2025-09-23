@@ -121,7 +121,9 @@ export class AutocompleteOptions<T> extends Component<AutocompleteOptionsProps<T
     const { async, options, createWithoutConfirmation } = this.props;
     const availableOptions = async ? options : this.filterStaticOptions();
     const prompt = this.getPrompt(options);
+
     if (prompt) return prompt;
+
     return (
       <div className={cx({ container: options.length })}>
         <Scrollbars autoHeight autoHeightMax={216} hideTracksWhenNotNeeded>

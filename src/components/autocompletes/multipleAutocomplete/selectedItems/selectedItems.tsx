@@ -66,20 +66,20 @@ const SelectedItem = <T,>({
     }
   };
 
-  const onChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
-    setValue(e.target.value);
+  const onChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
+    setValue(event.target.value);
   };
 
-  const onKeyDownHandler = (e: KeyboardEvent<HTMLInputElement>) => {
+  const onKeyDownHandler = (event: KeyboardEvent<HTMLInputElement>) => {
     const creationCondition = getAdditionalCreationCondition(value as T);
-    if (e.key === 'Enter' && creationCondition) {
+    if (event.key === 'Enter' && creationCondition) {
       editItem(item, value as T);
       setEditMode(false);
       setValue('');
     }
   };
 
-  const onBlurHandler = (_e: FocusEvent<HTMLInputElement>) => {
+  const onBlurHandler = () => {
     setEditMode(false);
     setValue('');
   };
