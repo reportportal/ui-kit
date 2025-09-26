@@ -127,12 +127,12 @@ describe('FieldNumber Component', () => {
       expect(handleChange).toHaveBeenCalledWith(6);
     });
 
-    it('calls onChange with min value when input is cleared', async () => {
+    it('calls onChange with empty string when input is cleared', async () => {
       const handleChange = vi.fn();
       render(<FieldNumber onChange={handleChange} min={10} value={42} />);
       const inputField = screen.getByRole('spinbutton');
       await userEvent.clear(inputField);
-      expect(handleChange).toHaveBeenCalledWith(10);
+      expect(handleChange).toHaveBeenCalledWith('');
     });
 
     it('respects min value constraint when using buttons', async () => {
@@ -272,20 +272,44 @@ describe('FieldNumber Component', () => {
       expect(handleChange).toHaveBeenCalledWith(42);
     });
 
-    it('does not call onChange when manually entered value is above max', () => {
+    it('allows manually entered value above max during input', () => {
       const handleChange = vi.fn();
       render(<FieldNumber onChange={handleChange} value={15} min={10} max={20} />);
       const inputField = screen.getByRole('spinbutton');
       fireEvent.change(inputField, { target: { value: '25' } });
-      expect(handleChange).not.toHaveBeenCalled();
+      expect(handleChange).toHaveBeenCalledWith(25);
     });
 
-    it('call onChange when manually entered value is below min and set it to min', () => {
+    it('allows manually entered value below min during input', () => {
       const handleChange = vi.fn();
       render(<FieldNumber onChange={handleChange} value={15} min={10} max={20} />);
       const inputField = screen.getByRole('spinbutton');
       fireEvent.change(inputField, { target: { value: '5' } });
+      expect(handleChange).toHaveBeenCalledWith(5);
+    });
+
+    it('normalizes value to min on blur when below min', () => {
+      const handleChange = vi.fn();
+      render(<FieldNumber onChange={handleChange} value={5} min={10} max={20} />);
+      const inputField = screen.getByRole('spinbutton');
+      fireEvent.blur(inputField);
       expect(handleChange).toHaveBeenCalledWith(10);
+    });
+
+    it('normalizes value to max on blur when above max', () => {
+      const handleChange = vi.fn();
+      render(<FieldNumber onChange={handleChange} value={25} min={10} max={20} />);
+      const inputField = screen.getByRole('spinbutton');
+      fireEvent.blur(inputField);
+      expect(handleChange).toHaveBeenCalledWith(20);
+    });
+
+    it('does not change value on blur when within range', () => {
+      const handleChange = vi.fn();
+      render(<FieldNumber onChange={handleChange} value={15} min={10} max={20} />);
+      const inputField = screen.getByRole('spinbutton');
+      fireEvent.blur(inputField);
+      expect(handleChange).not.toHaveBeenCalled();
     });
   });
 
@@ -303,7 +327,7 @@ describe('FieldNumber Component', () => {
       render(<FieldNumber onChange={handleChange} value="5" />);
       const inputField = screen.getByRole('spinbutton');
       await userEvent.clear(inputField);
-      expect(handleChange).toHaveBeenCalledWith(0);
+      expect(handleChange).toHaveBeenCalledWith('');
     });
 
     it('handles empty input correctly with set min value', async () => {
@@ -311,7 +335,7 @@ describe('FieldNumber Component', () => {
       render(<FieldNumber onChange={handleChange} min={4} value="5" />);
       const inputField = screen.getByRole('spinbutton');
       await userEvent.clear(inputField);
-      expect(handleChange).toHaveBeenCalledWith(4);
+      expect(handleChange).toHaveBeenCalledWith('');
     });
 
     it('dynamically adjusts input width based on value length', () => {

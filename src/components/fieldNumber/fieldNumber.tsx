@@ -52,15 +52,34 @@ export const FieldNumber = ({
 }: FieldNumberProps) => {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const inputId = useId();
+
+  const normalizeValue = (val: number): number => {
+    if (val < min) return min;
+    if (val > max) return max;
+    return val;
+  };
+
   const handleChange: ChangeEventHandler<HTMLInputElement> = (event) => {
     let newValue: FieldNumberValue = event.target.value.replace(/^0(?=\d+|^\d)/g, '');
+    if (newValue === '') {
+      onChange('');
+      return;
+    }
     newValue = +newValue;
-    newValue = newValue < min ? min : newValue;
+    onChange(newValue);
+  };
 
-    if (newValue >= min && newValue <= max) {
-      onChange(newValue);
+  const handleBlur: FocusEventHandler<HTMLInputElement> = (event) => {
+    const normalizedValue = normalizeValue(+value);
+    if (normalizedValue !== +value) {
+      onChange(normalizedValue);
+    }
+
+    if (onBlur) {
+      onBlur(event);
     }
   };
+
   const handleKeyDown: KeyboardEventHandler<HTMLInputElement> = (event) => {
     const { keyCode } = event;
 
@@ -138,6 +157,7 @@ export const FieldNumber = ({
               onKeyDown={disabled ? undefined : handleKeyDown}
               onChange={disabled ? undefined : handleChange}
               onFocus={disabled ? undefined : onFocus}
+              onBlur={disabled ? undefined : handleBlur}
               style={{ width: inputWidth }}
               {...rest}
             />
