@@ -54,11 +54,9 @@ export const FieldNumber = ({
   const inputId = useId();
   const handleChange: ChangeEventHandler<HTMLInputElement> = (event) => {
     let newValue: FieldNumberValue = event.target.value.replace(/^0(?=\d+|^\d)/g, '');
-    if (newValue === '') {
-      onChange('');
-      return;
-    }
     newValue = +newValue;
+    newValue = newValue < min ? min : newValue;
+
     if (newValue >= min && newValue <= max) {
       onChange(newValue);
     }
