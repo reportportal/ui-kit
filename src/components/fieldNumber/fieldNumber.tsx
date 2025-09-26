@@ -70,8 +70,10 @@ export const FieldNumber = ({
   };
 
   const handleBlur: FocusEventHandler<HTMLInputElement> = (event) => {
-    const normalizedValue = normalizeValue(+value);
-    if (normalizedValue !== +value) {
+    const numValue = +event.currentTarget.value;
+    const normalizedValue = normalizeValue(numValue);
+
+    if (normalizedValue !== numValue) {
       onChange(normalizedValue);
     }
 
