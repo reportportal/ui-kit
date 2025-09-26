@@ -127,12 +127,12 @@ describe('FieldNumber Component', () => {
       expect(handleChange).toHaveBeenCalledWith(6);
     });
 
-    it('calls onChange with empty string when input is cleared', async () => {
+    it('calls onChange with min value when input is cleared', async () => {
       const handleChange = vi.fn();
-      render(<FieldNumber onChange={handleChange} value={42} />);
+      render(<FieldNumber onChange={handleChange} min={10} value={42} />);
       const inputField = screen.getByRole('spinbutton');
       await userEvent.clear(inputField);
-      expect(handleChange).toHaveBeenCalledWith('');
+      expect(handleChange).toHaveBeenCalledWith(10);
     });
 
     it('respects min value constraint when using buttons', async () => {
@@ -280,12 +280,12 @@ describe('FieldNumber Component', () => {
       expect(handleChange).not.toHaveBeenCalled();
     });
 
-    it('does not call onChange when manually entered value is below min', () => {
+    it('call onChange when manually entered value is below min and set it to min', () => {
       const handleChange = vi.fn();
       render(<FieldNumber onChange={handleChange} value={15} min={10} max={20} />);
       const inputField = screen.getByRole('spinbutton');
       fireEvent.change(inputField, { target: { value: '5' } });
-      expect(handleChange).not.toHaveBeenCalled();
+      expect(handleChange).toHaveBeenCalledWith(10);
     });
   });
 
@@ -298,12 +298,20 @@ describe('FieldNumber Component', () => {
       expect(inputField).toHaveValue(7);
     });
 
-    it('handles empty input correctly', async () => {
+    it('handles empty input correctly with default min value', async () => {
       const handleChange = vi.fn();
       render(<FieldNumber onChange={handleChange} value="5" />);
       const inputField = screen.getByRole('spinbutton');
       await userEvent.clear(inputField);
-      expect(handleChange).toHaveBeenCalledWith('');
+      expect(handleChange).toHaveBeenCalledWith(0);
+    });
+
+    it('handles empty input correctly with set min value', async () => {
+      const handleChange = vi.fn();
+      render(<FieldNumber onChange={handleChange} min={4} value="5" />);
+      const inputField = screen.getByRole('spinbutton');
+      await userEvent.clear(inputField);
+      expect(handleChange).toHaveBeenCalledWith(4);
     });
 
     it('dynamically adjusts input width based on value length', () => {
