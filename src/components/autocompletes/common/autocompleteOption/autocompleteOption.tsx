@@ -22,31 +22,29 @@ import { Button } from '@/components/button';
 
 const cx = classNames.bind(styles);
 
-type AutocompleteOptionProps<T> = {
+type AutocompleteOptionProps = {
   isActive?: boolean;
   isSelected?: boolean;
   isNew?: boolean;
   children?: ReactNode;
   disabled?: boolean;
   optionVariant?: 'key-variant' | 'value-variant' | '';
-  variant?: 'light' | 'dark' | string;
 } & HTMLAttributes<HTMLLIElement | HTMLButtonElement>;
 
-export const AutocompleteOption = <T,>({
+export const AutocompleteOption = ({
   isActive = false,
   isSelected = false,
   isNew = false,
   children = null,
   disabled = false,
   optionVariant = '',
-  variant = 'light',
   ...props
-}: AutocompleteOptionProps<T>) => {
+}: AutocompleteOptionProps) => {
   return isNew ? (
     <>
-      <div className={cx('divider', variant)} />
+      <div className={cx('divider')} />
       <li
-        className={cx('new-item', optionVariant, variant, {
+        className={cx('new-item', optionVariant, {
           active: isActive,
           selected: isSelected,
           disabled,
@@ -58,7 +56,7 @@ export const AutocompleteOption = <T,>({
           {...(!disabled ? props : {})}
           className={cx({ 'button-active': isActive })}
           icon={<PlusIcon />}
-          variant={'text'}
+          variant="text"
         >
           {optionVariant === 'key-variant' ? 'New key' : 'New value'}
         </Button>
@@ -66,7 +64,7 @@ export const AutocompleteOption = <T,>({
     </>
   ) : (
     <li
-      className={cx('item', optionVariant, variant, {
+      className={cx('item', optionVariant, {
         active: isActive,
         selected: isSelected,
         disabled,

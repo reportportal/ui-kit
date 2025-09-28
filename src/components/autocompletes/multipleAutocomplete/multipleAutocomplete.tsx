@@ -27,10 +27,10 @@ import {
 import styles from './multipleAutocomplete.module.scss';
 import { default as FieldText } from '@/components/fieldText';
 import { useFloating } from '@floating-ui/react';
-import { ControllerStateAndHelpers, GetItemPropsOptions, PropGetters } from 'downshift';
+import { ControllerStateAndHelpers } from 'downshift';
 import { isEqual } from '../utils';
 import { ClearIcon } from '@/components/icons';
-import { AdditionalDownshiftFields } from '../types';
+import { GetItemPropsT } from '../types';
 
 const cx = classNames.bind(styles);
 
@@ -66,7 +66,6 @@ export interface MultipleAutocompleteProps<T> {
     | null;
   dataAutomationId: string;
   existingItemsMap: { [key: string | number]: boolean };
-  variant: ComponentProps<typeof AutocompleteMenu>['variant'];
   optionVariant: ComponentProps<typeof AutocompleteMenu>['optionVariant'];
   isClearAvailable?: boolean;
   customizeNewSelectedValue: (value: T) => T;
@@ -105,7 +104,6 @@ export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompletePr
     handleUnStoredItemCb = null,
     dataAutomationId = '',
     existingItemsMap = {},
-    variant = 'light',
     customizeNewSelectedValue = (newValue) => newValue,
     renderCustomSelecetedItem,
     isClearAvailable = true,
@@ -132,18 +130,18 @@ export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompletePr
 
   const getOptionProps =
     (
-      getItemProps: PropGetters<T>['getItemProps'],
+      getItemProps: GetItemPropsT<T>,
       highlightedIndex: number | null,
       selectedItems: T[],
-    ) =>
-    ({ item, index, ...rest }: GetItemPropsOptions<T> & AdditionalDownshiftFields) =>
+    ): GetItemPropsT<T> =>
+    ({ item, index, ...rest }) =>
       getItemProps({
         item,
         index,
         isSelected: selectedItems.some((selectedItem: T) => isEqual(selectedItem, item)),
         ...rest,
         isActive: highlightedIndex === index,
-      } as GetItemPropsOptions<T> & AdditionalDownshiftFields);
+      });
 
   const removeItemByBackspace = ({
     event,
@@ -222,7 +220,7 @@ export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompletePr
             <>
               <div
                 ref={refs.setReference}
-                className={cx('autocomplete', customClass, variant, {
+                className={cx('autocomplete', customClass, {
                   'mobile-disabled': mobileDisabled,
                   error,
                   touched,
@@ -247,7 +245,6 @@ export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompletePr
                     getAdditionalCreationCondition={getAdditionalCreationCondition}
                     storedItemsMap={storedItemsMap}
                     highlightUnStoredItem={highlightUnStoredItem}
-                    variant={variant}
                   />
 
                   <input
@@ -316,7 +313,6 @@ export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompletePr
               parseValueToString={parseValueToString}
               createWithoutConfirmation={createWithoutConfirmation}
               options={filteredOptions}
-              variant={variant}
               {...props}
             />
           </div>

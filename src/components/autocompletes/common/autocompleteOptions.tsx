@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-import { Component, ComponentProps, ReactNode } from 'react';
+import { Component, ReactNode } from 'react';
 import classNames from 'classnames/bind';
 import { Scrollbars } from 'rc-scrollbars';
+
 import { AutocompletePrompt } from './autocompletePrompt';
 import { AutocompleteOption } from './autocompleteOption';
-import styles from './autocompleteOptions.module.scss';
 import { default as BubblesLoader } from '@/components/bubblesLoader';
-import { GetItemPropsOptions } from 'downshift';
-import { AdditionalDownshiftFields } from '../types';
+import { GetItemPropsT } from '../types';
+import styles from './autocompleteOptions.module.scss';
 
 const cx = classNames.bind(styles);
 
@@ -31,21 +31,16 @@ interface AutocompleteOptionsProps<T> {
   loading: boolean;
   inputValue: string;
   parseValueToString: (value: T | null) => string;
-  getItemProps: (
-    args: GetItemPropsOptions<T> & AdditionalDownshiftFields,
-  ) => GetItemPropsOptions<T> & AdditionalDownshiftFields;
+  getItemProps: GetItemPropsT<T>;
   renderOption?: (
     item: T,
     index: number,
     isNew: boolean,
-    getItemProps: (
-      args: GetItemPropsOptions<T> & AdditionalDownshiftFields,
-    ) => GetItemPropsOptions<T> & AdditionalDownshiftFields,
+    getItemProps: GetItemPropsT<T>,
   ) => ReactNode;
   async: boolean;
   optionVariant: 'key-variant' | 'value-variant' | '';
   createWithoutConfirmation: boolean;
-  variant: ComponentProps<typeof AutocompletePrompt>['variant'];
 }
 
 export class AutocompleteOptions<T> extends Component<AutocompleteOptionsProps<T>> {
@@ -61,11 +56,11 @@ export class AutocompleteOptions<T> extends Component<AutocompleteOptionsProps<T
   };
 
   getPrompt = (options: T[]) => {
-    const { loading, createWithoutConfirmation, variant } = this.props;
+    const { loading, createWithoutConfirmation } = this.props;
     if (loading) {
       return (
         <>
-          <AutocompletePrompt variant={variant}>
+          <AutocompletePrompt>
             <BubblesLoader />
           </AutocompletePrompt>
           {!createWithoutConfirmation && this.renderNewItem(options)}
@@ -76,7 +71,7 @@ export class AutocompleteOptions<T> extends Component<AutocompleteOptionsProps<T
   };
 
   renderItem = (item: T, index: number, isNew = false) => {
-    const { getItemProps, renderOption, optionVariant, variant } = this.props;
+    const { getItemProps, renderOption, optionVariant } = this.props;
 
     return renderOption ? (
       renderOption(item, index, isNew, getItemProps)
@@ -86,7 +81,6 @@ export class AutocompleteOptions<T> extends Component<AutocompleteOptionsProps<T
         optionVariant={optionVariant}
         {...getItemProps({ item, index })}
         isNew={isNew}
-        variant={variant}
       >
         {this.props.parseValueToString(item)}
       </AutocompleteOption>
@@ -98,7 +92,7 @@ export class AutocompleteOptions<T> extends Component<AutocompleteOptionsProps<T
   };
 
   renderNewItem = (options: T[]) => {
-    const { inputValue, getItemProps, parseValueToString, optionVariant, variant } = this.props;
+    const { inputValue, getItemProps, parseValueToString, optionVariant } = this.props;
 
     const index = options.length;
     const isNew = true;
@@ -109,7 +103,6 @@ export class AutocompleteOptions<T> extends Component<AutocompleteOptionsProps<T
           optionVariant={optionVariant}
           {...getItemProps({ item: inputValue as T, index })}
           isNew={isNew}
-          variant={variant}
         >
           {parseValueToString(inputValue as T)}
         </AutocompleteOption>

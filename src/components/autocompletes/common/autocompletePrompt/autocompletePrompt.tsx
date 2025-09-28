@@ -22,10 +22,8 @@ const cx = classNames.bind(styles);
 
 interface AutocompletePromptProps {
   children: ReactNode | ReactNode[];
-  variant: 'light' | 'dark';
 }
 
-export const AutocompletePrompt = ({
-  children = null,
-  variant = 'light',
-}: AutocompletePromptProps) => <div className={cx('prompt', variant)}>{children}</div>;
+export const AutocompletePrompt = ({ children = null }: AutocompletePromptProps) => (
+  <div className={cx('prompt')}>{children}</div>
+);

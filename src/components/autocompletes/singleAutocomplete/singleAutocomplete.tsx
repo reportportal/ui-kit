@@ -15,12 +15,12 @@
  */
 
 import { ChangeEvent, ComponentProps, KeyboardEvent, Ref } from 'react';
-import Downshift, { DownshiftState, GetItemPropsOptions, StateChangeOptions } from 'downshift';
+import Downshift, { DownshiftState, StateChangeOptions } from 'downshift';
 import { AutocompleteMenu } from '../common/autocompleteMenu';
 import { default as FieldText } from '@/components/fieldText';
 import { ENTER_KEY_NAME, TAB_KEY_NAME } from '../constants';
 import { useFloating } from '@floating-ui/react';
-import { AdditionalDownshiftFields } from '../types';
+import { GetItemPropsT } from '../types';
 
 const DEFAULT_OPTIONS_INDEX = 0;
 
@@ -54,7 +54,6 @@ export interface SingleAutocompleteProps<T> {
     state: DownshiftState<T>,
     changes: StateChangeOptions<T>,
   ) => Partial<StateChangeOptions<T>>;
-  variant: ComponentProps<typeof AutocompleteMenu>['variant'];
   useFixedPositioning: boolean;
 }
 
@@ -82,8 +81,6 @@ export const SingleAutocomplete = <T,>(componentProps: SingleAutocompleteProps<T
     isOptionUnique = null,
     refFunction = () => {},
     stateReducer,
-    variant = 'light',
-    useFixedPositioning = false,
     onStateChange,
     ...props
   } = componentProps;
@@ -94,13 +91,11 @@ export const SingleAutocomplete = <T,>(componentProps: SingleAutocompleteProps<T
 
   const getOptionProps =
     (
-      getItemProps: (
-        args: GetItemPropsOptions<T> & AdditionalDownshiftFields,
-      ) => GetItemPropsOptions<T> & AdditionalDownshiftFields,
+      getItemProps: GetItemPropsT<T>,
       highlightedIndex: number | null,
       selectedItem: T,
-    ) =>
-    ({ item, index, ...rest }: GetItemPropsOptions<T> & AdditionalDownshiftFields) =>
+    ): GetItemPropsT<T> =>
+    ({ item, index, ...rest }) =>
       getItemProps({
         item,
         index,
@@ -178,7 +173,6 @@ export const SingleAutocomplete = <T,>(componentProps: SingleAutocompleteProps<T
                 isRequired,
                 touched,
                 error,
-                variant,
                 endIcon: icon,
                 ...inputProps,
               })}
@@ -195,7 +189,6 @@ export const SingleAutocomplete = <T,>(componentProps: SingleAutocompleteProps<T
             createWithoutConfirmation={createWithoutConfirmation}
             className={menuClassName}
             options={options}
-            variant={variant}
             {...props}
           />
         </>

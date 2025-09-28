@@ -40,7 +40,6 @@ export const AutocompleteMenu = forwardRef(
       minLength = 1,
       inputValue = '',
       className = '',
-      variant = 'light',
       ...props
     }: AutocompleteMenuProps<T>,
     ref: ForwardedRef<HTMLUListElement>,
@@ -50,13 +49,12 @@ export const AutocompleteMenu = forwardRef(
         ref={ref}
         className={cx(
           'menu',
-          variant,
           { opened: isOpen && isReadyForSearch(minLength, inputValue) },
           className,
         )}
         style={style}
       >
-        <AutocompleteOptions inputValue={inputValue} variant={variant} {...props} />
+        <AutocompleteOptions inputValue={inputValue} {...props} />
       </ul>
     );
   },
