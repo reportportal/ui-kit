@@ -37,9 +37,9 @@ const TEST_DATA_OBJECTS: Partial<
     [OPTIONS_OBJECTS[0].id]: true,
   },
   parseValueToString: (value) => {
-    return String(value?.id);
+    return value?.id ? String(value.id) : '';
   },
-  highlightUnStoredItem: true,
+  highlightUnStoredItem: false,
   value: [OPTIONS_OBJECTS[0]],
   error: '',
   touched: true,
@@ -54,7 +54,6 @@ const TEST_DATA_OBJECTS: Partial<
   customClass: '',
   parseInputValueFn: null,
   dataAutomationId: '',
-  variant: 'light',
 };
 
 const TEST_DATA_STRINGS: Partial<
@@ -73,7 +72,7 @@ const TEST_DATA_STRINGS: Partial<
     'Demo Api Tests': true,
   },
   parseValueToString: (value) => {
-    return String(value);
+    return value ? String(value) : '';
   },
   highlightUnStoredItem: true,
   value: [OPTIONS_STRINGS[0]],
@@ -90,7 +89,6 @@ const TEST_DATA_STRINGS: Partial<
   customClass: '',
   parseInputValueFn: null,
   dataAutomationId: '',
-  variant: 'light',
 };
 
 const meta: Meta<typeof MultipleAutocomplete> = {

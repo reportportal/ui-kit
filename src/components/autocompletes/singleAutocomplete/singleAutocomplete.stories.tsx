@@ -31,7 +31,7 @@ const TEST_DATA_OBJECTS: Partial<
   async: true,
   createWithoutConfirmation: true,
   parseValueToString: (value) => {
-    return String(value?.id);
+    return value?.id ? String(value?.id) : '';
   },
   value: OPTIONS_OBJECTS[0],
   error: '',
@@ -43,7 +43,6 @@ const TEST_DATA_OBJECTS: Partial<
     clearable: true,
   },
   maxLength: null,
-  variant: 'light',
 };
 
 const TEST_DATA_STRINGS: Partial<
@@ -57,7 +56,7 @@ const TEST_DATA_STRINGS: Partial<
   async: true,
   createWithoutConfirmation: true,
   parseValueToString: (value) => {
-    return String(value);
+    return value ? String(value) : '';
   },
   value: OPTIONS_STRINGS[0],
   error: '',
@@ -69,7 +68,6 @@ const TEST_DATA_STRINGS: Partial<
     clearable: true,
   },
   maxLength: null,
-  variant: 'light',
 };
 
 const meta: Meta<typeof SingleAutocomplete> = {

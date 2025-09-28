@@ -49,11 +49,13 @@
   --rp-ui-box-shadow: var(--rp-ui-base-shadow-secondary);
   --rp-ui-tag-key-text: var(--rp-ui-base-tag-key-text);
   --rp-ui-tag-key-bg: var(--rp-ui-base-tag-key-background);
-
   --rp-ui-tag-value-text: var(--rp-ui-base-tag-value-text);
   --rp-ui-tag-value-bg: var(--rp-ui-base-tag-value-background);
-
   --rp-ui-validation-error-border: var(--rp-ui-base-sm-error-line-100);
-
   --rp-ui-highlight-unstored-item: var(--rp-ui-base-defect-type-AB);
+  --rp-ui-autocomplete-close-icon-color: var(--rp-ui-base-dark-e-50);
+  --rp-ui-autocomplete-selected-item-bg-color: var(--rp-ui-base-dark-e-350);
+
+  /* Autocomplete opacity */
+  --rp-ui-autocomplete-opacity: 0.3;
 }

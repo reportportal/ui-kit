@@ -37,13 +37,15 @@ $SCREEN_XS_MAX: 767px;
   align-items: center;
   min-width: 0;
   padding: 3px 8px;
-  background-color: var(--rp-ui-color-bg);
+  background-color: var(--rp-ui-autocomplete-selected-item-bg-color);
   border-radius: 6px;
   border: 1px solid transparent;
   font-family: var(--rp-ui-base-font-family);
   font-size: 13px;
   line-height: 20px;
   text-indent: 1px;
+  font-weight: var(--rp-ui-base-fw-medium);
+  opacity: var(--rp-ui-autocomplete-opacity);
   color: var(--rp-ui-color-text);
   box-sizing: border-box;
   word-break: break-word;
@@ -52,6 +54,7 @@ $SCREEN_XS_MAX: 767px;
   &.validation-error {
     border-color: var(--rp-ui-validation-error-border);
     color: var(--rp-ui-color-error);
+    background-color: var(--rp-ui-base-bg-200);
   }
 
   &.highlight-un-stored-item {
@@ -76,17 +79,18 @@ $SCREEN_XS_MAX: 767px;
   width: 16px;
   height: 16px;
   cursor: pointer;
+  @include fill-svg(var(--rp-ui-color-text));
 
   &.validation-error {
     @include fill-svg(var(--rp-ui-color-error));
   }
 
   &:hover:not(.validation-error) {
-    @include fill-svg(var(--rp-ui-color-text-secondary));
+    @include fill-svg(var(--rp-ui-color-text));
   }
 
   &:active:not(.validation-error) {
-    @include fill-svg(var(--rp-ui-color-field-opened));
+    @include fill-svg(var(--rp-ui-color-text));
   }
 }
 

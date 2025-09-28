@@ -53,8 +53,12 @@
   --rp-ui-validation-error-border: var(--rp-ui-base-sm-error-line-100);
   --rp-ui-highlight-unstored-item: var(--rp-ui-base-defect-type-AB);
   --rp-ui-menu-text-color: var(--rp-ui-base-charcoal);
-
+  --rp-ui-autocomplete-close-icon-color: var(--rp-ui-base-almost-black);
+  --rp-ui-autocomplete-selected-item-bg-color: var(--rp-ui-base-bg-200);
   /* === */
+
+  /* Autocomplete opacity */
+  --rp-ui-autocomplete-opacity: 1;
 }
 
 .rp-ui-kit-theme-light {
