@@ -71,7 +71,7 @@ export const AttachedFile = ({
   uploadFailedMessage,
   isUploading = false,
   isFullWidth = false,
-  onDownload = () => {},
+  onDownload,
   onRemove,
 }: AttachedFileProps) => {
   const fileExtension = useMemo(() => getFileExtension(fileName), [fileName]);
@@ -91,7 +91,7 @@ export const AttachedFile = ({
     (event: MouseEvent<HTMLButtonElement>) => {
       event.stopPropagation();
 
-      if (!isUploadFailed && !isUploading) {
+      if (!isUploadFailed && !isUploading && onDownload) {
         onDownload();
       }
     },
@@ -112,14 +112,20 @@ export const AttachedFile = ({
         </div>
       </div>
       <div className={cx('attached-file__info')}>
-        <button type="button" className={cx('attached-file__file-name')} onClick={downloadFile}>
-          <span className={cx('attached-file__name-text')}>{fileName}</span>
-          {!isUploading && !isUploadFailed && (
-            <span className={cx('attached-file__download-icon')}>
-              <ExternalLinkIcon />
-            </span>
-          )}
-        </button>
+        {onDownload ? (
+          <button type="button" className={cx('attached-file__file-name')} onClick={downloadFile}>
+            <span className={cx('attached-file__name-text')}>{fileName}</span>
+            {!isUploading && !isUploadFailed && (
+              <span className={cx('attached-file__download-icon')}>
+                <ExternalLinkIcon />
+              </span>
+            )}
+          </button>
+        ) : (
+          <div className={cx('attached-file__file-name')}>
+            <span className={cx('attached-file__name-text')}>{fileName}</span>
+          </div>
+        )}
         {!isUploadFailed && (
           <div className={cx('attached-file__file-details')}>
             {upperCaseExtension}, {size} MB

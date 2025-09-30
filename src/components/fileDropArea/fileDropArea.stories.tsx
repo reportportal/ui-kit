@@ -91,7 +91,7 @@ export const Images: Story = {
               <FileDropArea.BrowseButton>Browse</FileDropArea.BrowseButton> to attach
             </>
           }
-          fileSizeMessage="File size should be up to 128 MB"
+          fileSizeMessage="File size should be up to 5 MB"
         />
         <FileDropArea.Error />
       </div>
