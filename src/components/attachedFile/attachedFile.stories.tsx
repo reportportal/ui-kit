@@ -34,13 +34,16 @@ export const WithoutRemove = {
 } satisfies Story;
 
 export const FullWidth = {
-  args: {
-    fileName: 'very-long-file-name-that-should-be-truncated.pdf',
-    size: 5.8,
-    isFullWidth: true,
-    onRemove: () => {},
-    onDownload: () => {},
-  },
+  render: () => (
+    <div style={{ width: '250px' }}>
+      <AttachedFile
+        fileName="very-long-file-name-that-should-be-truncated.pdf"
+        size={1.5}
+        onRemove={() => {}}
+        onDownload={() => {}}
+      />
+    </div>
+  ),
 } satisfies Story;
 
 export const Uploading = {
@@ -56,7 +59,7 @@ export const Uploading = {
 
 export const UploadFailedCustomMessage = {
   args: {
-    fileName: 'custom-errorMessage.pdf',
+    fileName: 'custom-error.pdf',
     size: 2.3,
     isUploadFailed: true,
     uploadFailedMessage: 'File too large',

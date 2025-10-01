@@ -27,7 +27,8 @@
   background-color: var(--rp-ui-base-bg-200);
   cursor: pointer;
 
-  &--active {
+  &--active,
+  &:hover {
     border-color: var(--rp-ui-base-topaz-hover);
     background-color: var(--rp-ui-base-topaz-100);
   }

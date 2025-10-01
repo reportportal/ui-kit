@@ -32,11 +32,12 @@
   align-items: center;
   padding: 16px;
   background-color: var(--rp-ui-base-bg-000);
-  box-shadow: var(--rp-ui-base-shadow);
+  box-shadow: var(--rp-ui-base-shadow-hover);
   border-radius: 4px;
   gap: 12px;
   cursor: pointer;
   position: relative;
+  min-width: 250px;
 
   &:hover {
     .attached-file__file-name {
@@ -48,12 +49,21 @@
     @include disabled-state();
 
     border: 1px solid var(--rp-ui-base-error);
+    cursor: default;
+
+    .attached-file__file-name {
+      cursor: default;
+    }
   }
 
   &--uploading {
     @include disabled-state();
 
-    opacity: 0.8;
+    cursor: default;
+
+    .attached-file__file-name {
+      cursor: default;
+    }
   }
 
   &--full-width {
@@ -106,10 +116,6 @@
 
     &:hover {
       color: var(--rp-ui-base-topaz-hover);
-
-      .attached-file__download-icon {
-        opacity: 1;
-      }
     }
   }
 
@@ -124,7 +130,6 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    opacity: 0;
 
     svg {
       width: 16px;
@@ -152,6 +157,7 @@
     height: 4px;
     background-color: var(--rp-ui-base-e-100);
     overflow: hidden;
+    border-radius: 0 0 4px 4px;
   }
 
   &__upload-progress-bar {

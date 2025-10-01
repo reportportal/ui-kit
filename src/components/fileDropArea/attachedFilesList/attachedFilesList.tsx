@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { useCallback, useEffect } from 'react';
 import classNames from 'classnames/bind';
 import { isEmpty } from 'es-toolkit/compat';
 
@@ -24,7 +25,6 @@ import { FileValidationError } from '../types';
 import { getValidationErrorMessage } from '../utils';
 
 import styles from './attachedFilesList.module.scss';
-import { useCallback } from 'react';
 
 const cx = classNames.bind(styles);
 
@@ -52,7 +52,15 @@ export const AttachedFilesList = ({
   onRemoveFile,
   onDownloadFile,
 }: AttachedFilesListProps) => {
-  const { messages } = useFileDropAreaContext();
+  const { messages, clearError } = useFileDropAreaContext();
+
+  useEffect(() => {
+    const hasFilesWithValidationErrors = files.some((file) => !isEmpty(file.validationErrors));
+
+    if (hasFilesWithValidationErrors) {
+      clearError();
+    }
+  }, [files, clearError]);
 
   const handleFileRemoval = useCallback(
     (file: AttachmentFile) => () => onRemoveFile(file.id),
@@ -75,7 +83,6 @@ export const AttachedFilesList = ({
           file.validationErrors ?? [],
           messages,
         );
-        const shouldShowValidationError = !file.isUploadFailed && validationErrorMessage;
 
         return (
           <AttachedFile
@@ -86,7 +93,7 @@ export const AttachedFilesList = ({
             isUploadFailed={file.isUploadFailed || Boolean(validationErrorMessage)}
             isUploading={file.isUploading}
             onRemove={handleFileRemoval(file)}
-            {...(shouldShowValidationError && { uploadFailedMessage: validationErrorMessage })}
+            {...(validationErrorMessage && { uploadFailedMessage: validationErrorMessage })}
             {...(onDownloadFile && { onDownload: handleFileDownload(file) })}
           />
         );
