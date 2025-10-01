@@ -69,7 +69,7 @@ const primaryColumns: Column[] = [
   {
     key: 'name',
     header: 'Name',
-  }
+  },
 ];
 
 const fixedColumns: FixedColumn[] = [
@@ -217,7 +217,7 @@ const wideTableData: RowData[] = [
     status: 'Active',
     manager: 'Michael Brown',
     projects: 'Employee Onboarding, Policy Updates',
-    rowConfigs: { size: 'small' },              
+    rowConfigs: { size: 'small' },
   },
   {
     id: 5,
@@ -315,7 +315,7 @@ const wideTablePrimaryColumns: Column[] = [
   {
     key: 'name',
     header: 'Full Name',
-  }
+  },
 ];
 
 const wideTableFixedColumns: FixedColumn[] = [
@@ -330,7 +330,6 @@ const wideTableFixedColumns: FixedColumn[] = [
   { key: 'manager', header: 'Manager', width: 150 },
   { key: 'projects', header: 'Current Projects', width: 200 },
 ];
-
 
 // Generate more data for scrolling demonstration
 const generateLargeDataSet = (count: number): RowData[] => {
@@ -410,7 +409,10 @@ export const FixedHeader: Story = {
     return (
       <div style={{ width: '900px', height: '500px', border: '1px solid #ccc', padding: '16px' }}>
         <h3 style={{ margin: '0 0 16px 0' }}>Fixed Header Table with Scrollable Body</h3>
-        <div className="storybook-table-wrapper" style={{ height: 'calc(100% - 50px)', overflow: 'auto' }}>
+        <div
+          className="storybook-table-wrapper"
+          style={{ height: 'calc(100% - 50px)', overflow: 'auto' }}
+        >
           <Table
             {...args}
             data={tableData}
@@ -457,7 +459,6 @@ export const FixedHeader: Story = {
   },
 };
 
-
 export const HorizontalScrollWithFixedHeaderControl: Story = {
   render: (args: TableComponentProps) => {
     return (
@@ -465,8 +466,8 @@ export const HorizontalScrollWithFixedHeaderControl: Story = {
         <h3 style={{ margin: '0 0 16px 0', fontSize: '14px', color: '#666' }}>
           Fixed Header + Horizontal Scroll: Both scrollbars visible when needed
         </h3>
-        <div 
-          className="storybook-table-wrapper" 
+        <div
+          className="storybook-table-wrapper"
           style={{ height: 'calc(100% - 50px)', position: 'relative' }}
         >
           <Table
@@ -492,10 +493,11 @@ export const PinnedColumnsWithFixedHeader: Story = {
     return (
       <div style={{ width: '600px', height: '500px', border: '1px solid #ccc', padding: '16px' }}>
         <h3 style={{ margin: '0 0 16px 0', fontSize: '14px', color: '#666' }}>
-          Pinned Columns + Fixed Header: Name and Email pinned with vertical and horizontal scrolling
+          Pinned Columns + Fixed Header: Name and Email pinned with vertical and horizontal
+          scrolling
         </h3>
-        <div 
-          className="storybook-table-wrapper" 
+        <div
+          className="storybook-table-wrapper"
           style={{ width: '550px', height: 'calc(100% - 50px)', position: 'relative' }}
         >
           <Table
@@ -532,49 +534,43 @@ export const ExpandableRows: Story = {
         city: 'New York',
         department: 'Engineering',
         email: 'sam.johnson@example.com',
-        // metaData: { fullName: 'Samuel Johnson', phone: '+1 (555) 123-4567', startDate: '2022-03-15' },
       },
-      { 
+      {
         id: 2,
-        name: 'Anna Smith', 
-        age: 32, 
-        city: 'San Francisco', 
+        name: 'Anna Smith',
+        age: 32,
+        city: 'San Francisco',
         department: 'Design',
         email: 'anna.smith@example.com',
-        // metaData: { fullName: 'Anna Marie Smith', phone: '+1 (555) 987-6543', startDate: '2021-07-20' },
       },
-      { 
+      {
         id: 3,
-        name: 'Mike Davis', 
-        age: 28, 
-        city: 'Los Angeles', 
+        name: 'Mike Davis',
+        age: 28,
+        city: 'Los Angeles',
         department: 'Marketing',
         email: 'mike.davis@example.com',
-        // metaData: { fullName: 'Michael Davis', phone: '+1 (555) 456-7890', startDate: '2023-01-10' },
       },
-      { 
+      {
         id: 4,
-        name: 'Sarah Wilson', 
-        age: 35, 
-        city: 'Chicago', 
+        name: 'Sarah Wilson',
+        age: 35,
+        city: 'Chicago',
         department: 'Sales',
         email: 'sarah.wilson@example.com',
-        // metaData: { fullName: 'Sarah Elizabeth Wilson', phone: '+1 (555) 321-0987', startDate: '2020-11-05' },
       },
     ];
 
-    // Expandable content function - removed as it's not used in this implementation
-
-    const fixedColumns: FixedColumn[] = [
+    const expandableFixedColumns: FixedColumn[] = [
       { key: 'age', header: 'Age', align: 'right', width: 80 },
       { key: 'department', header: 'Department', width: 100 },
       { key: 'city', header: 'City', width: 100 },
     ];
-    const primaryColumns: Column[] = [
+    const expandablePrimaryColumns: Column[] = [
       {
         key: 'name',
         header: 'Name',
-      }
+      },
     ];
 
     return (
@@ -583,14 +579,14 @@ export const ExpandableRows: Story = {
           Expandable Rows Example
         </h3>
         <p style={{ margin: '0 0 16px 0', fontSize: '14px', color: '#666' }}>
-          Click the expand/collapse icons to view detailed information for each row. 
-          Rows can be expanded and collapsed independently.
+          Click the expand/collapse icons to view detailed information for each row. Rows can be
+          expanded and collapsed independently.
         </p>
         <Table
           {...args}
           data={expandableData}
-          primaryColumns={primaryColumns}
-          fixedColumns={fixedColumns}
+          primaryColumns={expandablePrimaryColumns}
+          fixedColumns={expandableFixedColumns}
           isRowsExpandable={true}
           expandedRowIds={[...expandedRows]}
           setExpandedRowIds={setExpandedRows}
@@ -635,25 +631,33 @@ const longTextData: RowData[] = [
   {
     id: 1,
     name: 'John Alexander Maximilian Winchester-Blackwood III',
-    description: 'This is long text but anyway no matter ellipsed or opened it should not overcome his width it can be brake. When you click on this cell, it will expand to show the full content without ellipsis truncation, and the text should wrap properly within the cell boundaries without breaking the table layout.',
+    description:
+      'This is long text but anyway no matter ellipsed or opened it should not overcome his width it can be brake. When you click on this cell, it will expand to show the full content without ellipsis truncation, and the text should wrap properly within the cell boundaries without breaking the table layout.',
     shortText: 'Brief note',
-    longTitle: 'Senior Vice President of Engineering and Technology Development for Enterprise Solutions and Digital Transformation Initiatives',
-    email: 'john.alexander.maximilian.winchester.blackwood.third@very-long-company-name-example.com',
-    notes: 'This is a comprehensive test of how the table handles extremely long content that would normally break layouts. The content should be properly contained within cell boundaries.',
+    longTitle:
+      'Senior Vice President of Engineering and Technology Development for Enterprise Solutions and Digital Transformation Initiatives',
+    email:
+      'john.alexander.maximilian.winchester.blackwood.third@very-long-company-name-example.com',
+    notes:
+      'This is a comprehensive test of how the table handles extremely long content that would normally break layouts. The content should be properly contained within cell boundaries.',
   },
   {
     id: 2,
     name: 'Maria Elena Rodriguez-Martinez',
-    description: 'Another extremely lengthy description that showcases the cell expansion capabilities. This description contains detailed information about the person, their role, responsibilities, and achievements. The purpose is to demonstrate how users can easily expand cells to read full content when the default view shows only a truncated version with ellipsis.',
+    description:
+      'Another extremely lengthy description that showcases the cell expansion capabilities. This description contains detailed information about the person, their role, responsibilities, and achievements. The purpose is to demonstrate how users can easily expand cells to read full content when the default view shows only a truncated version with ellipsis.',
     shortText: 'Quick summary here',
-    longTitle: 'Chief Marketing Officer and Head of Brand Strategy for Global Markets and Customer Experience Enhancement',
+    longTitle:
+      'Chief Marketing Officer and Head of Brand Strategy for Global Markets and Customer Experience Enhancement',
     email: 'maria.elena.rodriguez.martinez@another-extremely-long-domain-name.example.org',
-    notes: 'Testing various content lengths and how they behave in both collapsed and expanded states. The text should wrap appropriately without overflowing.',
+    notes:
+      'Testing various content lengths and how they behave in both collapsed and expanded states. The text should wrap appropriately without overflowing.',
   },
   {
     id: 3,
     name: 'Robert James Thompson',
-    description: 'A comprehensive description that tests the expand functionality with moderate length content. This shows how the feature works with different content lengths and provides a good example of real-world usage.',
+    description:
+      'A comprehensive description that tests the expand functionality with moderate length content. This shows how the feature works with different content lengths and provides a good example of real-world usage.',
     shortText: 'Standard',
     longTitle: 'Director of Operations',
     email: 'robert.thompson@company.com',
@@ -662,11 +666,15 @@ const longTextData: RowData[] = [
   {
     id: 4,
     name: 'Dr. Elizabeth Catherine Pemberton-Williams, PhD, MBA, CISSP',
-    description: 'This cell contains an exceptionally detailed description that really pushes the limits of what might be considered reasonable content length. It includes professional background, educational achievements, current responsibilities, ongoing projects, future goals, and various other details that would typically require a much larger display area.',
+    description:
+      'This cell contains an exceptionally detailed description that really pushes the limits of what might be considered reasonable content length. It includes professional background, educational achievements, current responsibilities, ongoing projects, future goals, and various other details that would typically require a much larger display area.',
     shortText: 'Complex background',
-    longTitle: 'Chief Technology Officer and Principal Software Architect for Distributed Systems and Cloud Infrastructure with specialization in Cybersecurity and Data Analytics',
-    email: 'dr.elizabeth.catherine.pemberton.williams.phd.mba.cissp@enterprise-solutions-technology-consulting.example.net',
-    notes: 'Comprehensive notes about professional achievements, certifications, ongoing projects, and future development plans. This tests the maximum reasonable content length.',
+    longTitle:
+      'Chief Technology Officer and Principal Software Architect for Distributed Systems and Cloud Infrastructure with specialization in Cybersecurity and Data Analytics',
+    email:
+      'dr.elizabeth.catherine.pemberton.williams.phd.mba.cissp@enterprise-solutions-technology-consulting.example.net',
+    notes:
+      'Comprehensive notes about professional achievements, certifications, ongoing projects, and future development plans. This tests the maximum reasonable content length.',
   },
 ];
 
@@ -709,7 +717,8 @@ export const CellExpansion: Story = {
           Row Content Expansion - Long Text Handling
         </h3>
         <p style={{ margin: '0 0 16px 0', fontSize: '14px', color: '#666', lineHeight: 1.5 }}>
-          <strong>Click the expand icon</strong> at the beginning of each row to expand/collapse ALL cells in that row. This example tests:
+          <strong>Click the expand icon</strong> at the beginning of each row to expand/collapse ALL
+          cells in that row. This example tests:
           <br />• Very long email addresses that should be ellipsed when collapsed
           <br />• Long text content that should wrap without breaking cell width constraints
           <br />• Proper word breaking for extremely long content
@@ -736,7 +745,8 @@ export const CellExpansion: Story = {
           />
         </div>
         <p style={{ margin: '16px 0 0 0', fontSize: '12px', color: '#888', fontStyle: 'italic' }}>
-          Test the table with your browser's developer tools at different widths to verify responsive behavior.
+          Test the table with your browser's developer tools at different widths to verify
+          responsive behavior.
         </p>
       </div>
     );
@@ -745,4 +755,3 @@ export const CellExpansion: Story = {
     renderRowActions: undefined,
   },
 };
-

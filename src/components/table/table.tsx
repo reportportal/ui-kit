@@ -32,11 +32,15 @@ export const Table: FC<TableComponentProps> = ({
   onToggleAllRowsSelection = () => {},
   onToggleRowExpansion = () => {},
 }) => {
-  const primaryColumns = Array.isArray(primaryColumnsInput) ? primaryColumnsInput : [primaryColumnsInput];
-  
+  const primaryColumns = useMemo(
+    () => (Array.isArray(primaryColumnsInput) ? primaryColumnsInput : [primaryColumnsInput]),
+    [primaryColumnsInput],
+  );
+
   const defaultSortingColumn = sortingColumn ?? primaryColumns[0];
-  const defaultSortableColumns = sortableColumns ?? getColumnsKeys([...primaryColumns, ...fixedColumns]);
-  
+  const defaultSortableColumns =
+    sortableColumns ?? getColumnsKeys([...primaryColumns, ...fixedColumns]);
+
   const [hoveredColumn, setHoveredColumn] = useState<string | null>(null);
   const [hoveredRow, setHoveredRow] = useState<number | null>(null);
   const [expandedCells, setExpandedCells] = useState<Set<string>>(new Set());
@@ -44,8 +48,8 @@ export const Table: FC<TableComponentProps> = ({
   const { pinnedColumns, scrollableColumns } = useMemo(() => {
     const pinned: (PrimaryColumn | FixedColumn)[] = [];
     const scrollable: (PrimaryColumn | FixedColumn)[] = [];
-    
-    primaryColumns.forEach(primaryCol => {
+
+    primaryColumns.forEach((primaryCol) => {
       const primaryColumn = { ...primaryCol, primary: true };
       if (pinnedColumnKeys.includes(primaryCol.key)) {
         pinned.push(primaryColumn);
@@ -53,42 +57,48 @@ export const Table: FC<TableComponentProps> = ({
         scrollable.push(primaryColumn);
       }
     });
-    
-    fixedColumns.forEach(column => {
+
+    fixedColumns.forEach((column) => {
       if (pinnedColumnKeys.includes(column.key)) {
         pinned.push(column);
       } else {
         scrollable.push(column);
       }
     });
-    
+
     return {
       pinnedColumns: pinned,
-      scrollableColumns: scrollable
+      scrollableColumns: scrollable,
     };
   }, [primaryColumns, fixedColumns, pinnedColumnKeys]);
 
-  const setCellRef = useCallback((columnKey: string) => (element: HTMLDivElement | null) => {
-    if (element) {
-      const width = element.getBoundingClientRect().width;
-      if (width > 0) {
-        columnWidthsRef.current.set(columnKey, width);
+  const setCellRef = useCallback(
+    (columnKey: string) => (element: HTMLDivElement | null) => {
+      if (element) {
+        const width = element.getBoundingClientRect().width;
+        if (width > 0) {
+          columnWidthsRef.current.set(columnKey, width);
+        }
       }
-    }
-  }, []);
+    },
+    [],
+  );
 
   const handleSort = (key: string) => {
     if (!defaultSortableColumns.includes(key)) return;
     onChangeSorting({ key, direction: sortingDirection });
   };
 
-  const calculatePinnedPosition = (columnIndex: number, columns: (PrimaryColumn | FixedColumn)[]): number => {
+  const calculatePinnedPosition = (
+    columnIndex: number,
+    columns: (PrimaryColumn | FixedColumn)[],
+  ): number => {
     let position = 0;
-    
+
     if (isRowsExpandable) {
-      position += 32; 
+      position += 32;
     }
-    
+
     for (let i = 0; i < columnIndex; i++) {
       const column = columns[i];
       const isPrimaryColumn = 'primary' in column && column.primary;
@@ -97,28 +107,35 @@ export const Table: FC<TableComponentProps> = ({
         position += actualWidth;
       } else {
         const fixedColumn = column as FixedColumn;
-        const width = typeof fixedColumn.width === 'string' ? parseInt(fixedColumn.width, 10) : fixedColumn.width;
+        const width =
+          typeof fixedColumn.width === 'string'
+            ? parseInt(fixedColumn.width, 10)
+            : fixedColumn.width;
         position += width;
       }
     }
     return position;
   };
 
-  const getCellStyle = (column: FixedColumn | PrimaryColumn, isPinned = false, pinnedIndex?: number): CSSProperties => {
+  const getCellStyle = (
+    column: FixedColumn | PrimaryColumn,
+    isPinned = false,
+    pinnedIndex?: number,
+  ): CSSProperties => {
     const isPrimaryColumn = 'primary' in column && column.primary;
-    
+
     const baseStyle: CSSProperties = {};
-    
+
     if (!isPrimaryColumn) {
       const fixedColumn = column as FixedColumn;
       baseStyle.textAlign = fixedColumn.align;
     }
-    
+
     if (isPinned && pinnedIndex !== undefined) {
       const leftPosition = calculatePinnedPosition(pinnedIndex, pinnedColumns);
       baseStyle.left = `${leftPosition}px`;
     }
-    
+
     return baseStyle;
   };
 
@@ -149,21 +166,24 @@ export const Table: FC<TableComponentProps> = ({
   const handleToggleRowExpansion = (id: string | number) => {
     const newExpandedCells = new Set(expandedCells);
     const isRowCurrentlyExpanded = expandedRowIds.includes(id);
-    
-    const allColumnKeys = [...primaryColumns.map(col => col.key), ...fixedColumns.map(col => col.key)];
-    
+
+    const allColumnKeys = [
+      ...primaryColumns.map((col) => col.key),
+      ...fixedColumns.map((col) => col.key),
+    ];
+
     if (isRowCurrentlyExpanded) {
-      allColumnKeys.forEach(columnKey => {
+      allColumnKeys.forEach((columnKey) => {
         const cellId = `${id}-${columnKey}`;
         newExpandedCells.delete(cellId);
       });
     } else {
-      allColumnKeys.forEach(columnKey => {
+      allColumnKeys.forEach((columnKey) => {
         const cellId = `${id}-${columnKey}`;
         newExpandedCells.add(cellId);
       });
     }
-    
+
     setExpandedCells(newExpandedCells);
     onToggleRowExpansion(id);
   };
@@ -184,56 +204,67 @@ export const Table: FC<TableComponentProps> = ({
 
   const getSortIcon = (columnKey: string) => {
     if (!defaultSortableColumns.includes(columnKey)) return null;
-    
+
     if (defaultSortingColumn?.key === columnKey) {
       return isAsc(sortingDirection) ? <ArrowUpIcon /> : <ArrowDownIcon />;
     }
-    
+
     return <ArrowUpIcon />;
   };
 
   const getGridTemplateColumns = (): string => {
     const columns: string[] = [];
-    
+
     if (isRowsExpandable) {
       columns.push('32px');
     }
-    
+
     const addColumnWidth = (column: Column) => {
       const isPrimaryColumn = 'primary' in column && column.primary;
       if (isPrimaryColumn) {
         columns.push('minmax(100px, 1fr)');
       } else {
         const fixedColumn = column as FixedColumn;
-        const width = typeof fixedColumn.width === 'string' ? fixedColumn.width : `${fixedColumn.width}px`;
+        const width =
+          typeof fixedColumn.width === 'string' ? fixedColumn.width : `${fixedColumn.width}px`;
         columns.push(width);
       }
     };
-    
+
     pinnedColumns.forEach(addColumnWidth);
     scrollableColumns.forEach(addColumnWidth);
-    
+
     if (renderRowActions) {
       columns.push('48px');
     }
-    
+
     return columns.join(' ');
   };
 
   const gridTemplateColumns = getGridTemplateColumns();
 
   return (
-    <div className={cx('table', { 
-      'fixed-header': isHeaderFixed,
-      'horizontally-scrollable-container': isHeaderFixed && isHorizontallyScrollable
-    }, className)}>
-      <div 
-        className={cx('table-header', { 
-          'sticky-header': isHeaderFixed,
-          'horizontally-scrollable': isHorizontallyScrollable
-        }, headerClassName)}
-        style={{ gridTemplateColumns }}>
-       
+    <div
+      className={cx(
+        'table',
+        {
+          'fixed-header': isHeaderFixed,
+          'horizontally-scrollable-container': isHeaderFixed && isHorizontallyScrollable,
+        },
+        className,
+      )}
+    >
+      <div
+        className={cx(
+          'table-header',
+          {
+            'sticky-header': isHeaderFixed,
+            'horizontally-scrollable': isHorizontallyScrollable,
+          },
+          headerClassName,
+        )}
+        style={{ gridTemplateColumns }}
+      >
         {selectable && (
           <div className={cx('table-header-cell', 'checkbox-cell')}>
             {hasSelectedRows && (
@@ -246,14 +277,14 @@ export const Table: FC<TableComponentProps> = ({
             )}
           </div>
         )}
-         {isRowsExpandable && (
+        {isRowsExpandable && (
           <div className={cx('table-header-cell', 'expand-cell')}>
-          <button onClick={() => {}}>
-            <span className={cx('expand-icon', { 'expanded': true })}>
-              <ChevronDownDropdownIcon />
-            </span>
-          </button>
-        </div>
+            <button onClick={() => {}}>
+              <span className={cx('expand-icon', { expanded: true })}>
+                <ChevronDownDropdownIcon />
+              </span>
+            </button>
+          </div>
         )}
         {pinnedColumns.map((column, index) => (
           <button
@@ -302,11 +333,12 @@ export const Table: FC<TableComponentProps> = ({
         {renderRowActions && <div className={cx('table-header-cell', 'action-menu-cell')} />}
       </div>
 
-      <div 
-        className={cx('table-body', { 
+      <div
+        className={cx('table-body', {
           'scrollable-body': isHeaderFixed,
-          'horizontally-scrollable': isHorizontallyScrollable
-        })}>
+          'horizontally-scrollable': isHorizontallyScrollable,
+        })}
+      >
         {data.map((item, index) => (
           <div
             key={item.id}
@@ -329,7 +361,9 @@ export const Table: FC<TableComponentProps> = ({
               {isRowsExpandable && (
                 <div className={cx('table-cell', 'expand-cell')}>
                   <button onClick={() => handleToggleRowExpansion(item.id)}>
-                    <span className={cx('expand-icon', { 'expanded': expandedRowIds.includes(item.id) })}>
+                    <span
+                      className={cx('expand-icon', { expanded: expandedRowIds.includes(item.id) })}
+                    >
                       <ChevronDownDropdownIcon />
                     </span>
                   </button>
@@ -338,7 +372,7 @@ export const Table: FC<TableComponentProps> = ({
               {pinnedColumns.map((column, colIndex) => {
                 const isPrimaryColumn = 'primary' in column && column.primary;
                 const isExpanded = isCellExpanded(item.id, column.key);
-                
+
                 return (
                   <div
                     key={column.key}
@@ -356,7 +390,7 @@ export const Table: FC<TableComponentProps> = ({
               {scrollableColumns.map((column) => {
                 const isPrimaryColumn = 'primary' in column && column.primary;
                 const isExpanded = isCellExpanded(item.id, column.key);
-                
+
                 return (
                   <div
                     key={column.key}

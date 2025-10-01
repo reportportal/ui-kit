@@ -41,7 +41,7 @@ describe('Table Component', () => {
     {
       key: 'name',
       header: 'Name',
-    }
+    },
   ];
 
   const mockFixedColumns: FixedColumn[] = [
