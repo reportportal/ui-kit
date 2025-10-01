@@ -65,10 +65,12 @@ const data: RowData[] = [
   { name: 'Mike', age: 30, city: 'Los Angeles', config: { size: 'small' }, id: 3 },
 ];
 
-const primaryColumn: Column = {
-  key: 'name',
-  header: 'Name',
-};
+const primaryColumns: Column[] = [
+  {
+    key: 'name',
+    header: 'Name',
+  }
+];
 
 const fixedColumns: FixedColumn[] = [
   {
@@ -88,11 +90,11 @@ export const Default: Story = {
   render: (args: TableComponentProps) => {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const [sortConfig, setSortConfig] = useState<SortConfig>({
-      key: primaryColumn.key,
+      key: primaryColumns[0].key,
       direction: ASC,
     });
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    const [sortingColumn, setSortingColumn] = useState<Column>(primaryColumn);
+    const [sortingColumn, setSortingColumn] = useState<Column>(primaryColumns[0]);
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const [sortingDirection, setSortingDirection] = useState<SortingDirection>(ASC);
     // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -105,7 +107,7 @@ export const Default: Story = {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     useEffect(() => {
       const { key, direction } = sortConfig;
-      const column = [...fixedColumns, primaryColumn].find((col) => col.key === key);
+      const column = [...fixedColumns, ...primaryColumns].find((col) => col.key === key);
       setSortingDirection(direction);
       setSortingColumn(column as Column);
     }, [sortConfig]);
@@ -115,7 +117,7 @@ export const Default: Story = {
         <Table
           {...args}
           data={tableData}
-          sortableColumns={[primaryColumn.key]}
+          sortableColumns={[primaryColumns[0].key]}
           onChangeSorting={(sortConfigParam = sortConfig) => {
             let { direction } = sortConfigParam;
             const { key } = sortConfigParam;
@@ -149,9 +151,598 @@ export const Default: Story = {
     );
   },
   args: {
-    primaryColumn,
+    primaryColumns,
     fixedColumns,
     renderRowActions,
     selectable: true,
   },
 };
+
+const wideTableData: RowData[] = [
+  {
+    id: 1,
+    name: 'John Doe',
+    email: 'john.doe@example.com',
+    phone: '+1-555-123-4567',
+    address: '123 Main Street, New York, NY 10001',
+    department: 'Engineering',
+    role: 'Senior Software Engineer',
+    salary: '$120,000',
+    startDate: '2020-01-15',
+    status: 'Active',
+    manager: 'Jane Smith',
+    projects: 'Project Alpha, Project Beta',
+    rowConfigs: { size: 'small' },
+  },
+  {
+    id: 2,
+    name: 'Jane Smith',
+    email: 'jane.smith@example.com',
+    phone: '+1-555-987-6543',
+    address: '456 Oak Avenue, Los Angeles, CA 90210',
+    department: 'Marketing',
+    role: 'Marketing Director',
+    salary: '$95,000',
+    startDate: '2019-03-20',
+    status: 'Active',
+    manager: 'Robert Johnson',
+    projects: 'Campaign X, Campaign Y',
+    rowConfigs: { size: 'small' },
+  },
+  {
+    id: 3,
+    name: 'Mike Wilson',
+    email: 'mike.wilson@example.com',
+    phone: '+1-555-456-7890',
+    address: '789 Pine Road, Chicago, IL 60601',
+    department: 'Sales',
+    role: 'Sales Representative',
+    salary: '$75,000',
+    startDate: '2021-06-10',
+    status: 'Active',
+    manager: 'Sarah Davis',
+    projects: 'Client Onboarding, Lead Generation',
+    rowConfigs: { size: 'small' },
+  },
+  {
+    id: 4,
+    name: 'Sarah Davis',
+    email: 'sarah.davis@example.com',
+    phone: '+1-555-234-5678',
+    address: '321 Elm Street, Houston, TX 77001',
+    department: 'HR',
+    role: 'HR Manager',
+    salary: '$85,000',
+    startDate: '2018-09-12',
+    status: 'Active',
+    manager: 'Michael Brown',
+    projects: 'Employee Onboarding, Policy Updates',
+    rowConfigs: { size: 'small' },              
+  },
+  {
+    id: 5,
+    name: 'Robert Johnson',
+    email: 'robert.johnson@example.com',
+    phone: '+1-555-345-6789',
+    address: '654 Maple Drive, Phoenix, AZ 85001',
+    department: 'Finance',
+    role: 'Financial Analyst',
+    salary: '$78,000',
+    startDate: '2020-11-08',
+    status: 'Active',
+    manager: 'Emily White',
+    projects: 'Budget Planning, Cost Analysis',
+    rowConfigs: { size: 'small' },
+  },
+  {
+    id: 6,
+    name: 'Emily White',
+    email: 'emily.white@example.com',
+    phone: '+1-555-456-7891',
+    address: '987 Cedar Lane, Philadelphia, PA 19101',
+    department: 'Operations',
+    role: 'Operations Manager',
+    salary: '$110,000',
+    startDate: '2017-05-22',
+    status: 'Active',
+    manager: 'David Green',
+    projects: 'Process Optimization, Quality Control',
+    rowConfigs: { size: 'small' },
+  },
+  {
+    id: 7,
+    name: 'David Green',
+    email: 'david.green@example.com',
+    phone: '+1-555-567-8901',
+    address: '147 Birch Avenue, San Antonio, TX 78201',
+    department: 'Engineering',
+    role: 'Lead Developer',
+    salary: '$135,000',
+    startDate: '2016-02-14',
+    status: 'Active',
+    manager: 'Lisa Thompson',
+    projects: 'Architecture Review, Team Mentoring',
+    rowConfigs: { size: 'small' },
+  },
+  {
+    id: 8,
+    name: 'Lisa Thompson',
+    email: 'lisa.thompson@example.com',
+    phone: '+1-555-678-9012',
+    address: '258 Spruce Court, San Diego, CA 92101',
+    department: 'Product',
+    role: 'Product Manager',
+    salary: '$105,000',
+    startDate: '2019-08-30',
+    status: 'Active',
+    manager: 'Tom Anderson',
+    projects: 'Feature Planning, User Research',
+    rowConfigs: { size: 'small' },
+  },
+  {
+    id: 9,
+    name: 'Tom Anderson',
+    email: 'tom.anderson@example.com',
+    phone: '+1-555-789-0123',
+    address: '369 Willow Street, Dallas, TX 75201',
+    department: 'Design',
+    role: 'UX Designer',
+    salary: '$88,000',
+    startDate: '2021-01-18',
+    status: 'Active',
+    manager: 'Anna Martinez',
+    projects: 'UI Redesign, User Testing',
+    rowConfigs: { size: 'small' },
+  },
+  {
+    id: 10,
+    name: 'Anna Martinez',
+    email: 'anna.martinez@example.com',
+    phone: '+1-555-890-1234',
+    address: '741 Poplar Boulevard, San Jose, CA 95101',
+    department: 'QA',
+    role: 'QA Engineer',
+    salary: '$82,000',
+    startDate: '2020-07-25',
+    status: 'Active',
+    manager: 'John Doe',
+    projects: 'Automation Testing, Bug Tracking',
+    rowConfigs: { size: 'small' },
+  },
+];
+
+const wideTablePrimaryColumns: Column[] = [
+  {
+    key: 'name',
+    header: 'Full Name',
+  }
+];
+
+const wideTableFixedColumns: FixedColumn[] = [
+  { key: 'email', header: 'Email Address', width: 200 },
+  { key: 'phone', header: 'Phone Number', width: 150 },
+  { key: 'address', header: 'Address', width: 250 },
+  { key: 'department', header: 'Department', width: 120 },
+  { key: 'role', header: 'Job Role', width: 180 },
+  { key: 'salary', header: 'Salary', width: 100 },
+  { key: 'startDate', header: 'Start Date', width: 120 },
+  { key: 'status', header: 'Status', width: 100 },
+  { key: 'manager', header: 'Manager', width: 150 },
+  { key: 'projects', header: 'Current Projects', width: 200 },
+];
+
+
+// Generate more data for scrolling demonstration
+const generateLargeDataSet = (count: number): RowData[] => {
+  const names = ['John', 'Jane', 'Mike', 'Sarah', 'David', 'Emma', 'Chris', 'Lisa', 'Tom', 'Anna'];
+  const cities = [
+    'New York',
+    'Los Angeles',
+    'Chicago',
+    'Houston',
+    'Phoenix',
+    'Philadelphia',
+    'San Antonio',
+    'San Diego',
+    'Dallas',
+    'San Jose',
+  ];
+  const departments = [
+    'Engineering',
+    'Marketing',
+    'Sales',
+    'HR',
+    'Finance',
+    'Operations',
+    'Design',
+    'Product',
+    'Legal',
+    'Support',
+  ];
+
+  return Array.from({ length: count }, (_, index) => ({
+    id: index + 1,
+    name: `${names[index % names.length]} ${index + 1}`,
+    age: 22 + (index % 40),
+    city: cities[index % cities.length],
+    department: departments[index % departments.length],
+    email: `user${index + 1}@example.com`,
+    salary: `$${(50000 + ((index * 1000) % 100000)).toLocaleString()}`,
+  }));
+};
+
+const largeDataSet = generateLargeDataSet(50);
+
+const scrollableFixedColumns: FixedColumn[] = [
+  { key: 'age', header: 'Age', width: 80, align: 'right' },
+  { key: 'city', header: 'City', width: 120 },
+  { key: 'department', header: 'Department', width: 120 },
+  { key: 'email', header: 'Email', width: 200 },
+  { key: 'salary', header: 'Salary', width: 100, align: 'right' },
+];
+
+export const FixedHeader: Story = {
+  render: (args: TableComponentProps) => {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const [sortConfig, setSortConfig] = useState<SortConfig>({
+      key: primaryColumns[0].key,
+      direction: ASC,
+    });
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const [sortingColumn, setSortingColumn] = useState<Column>(primaryColumns[0]);
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const [sortingDirection, setSortingDirection] = useState<SortingDirection>(ASC);
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const defaultSortedData = sortTableData(largeDataSet, sortConfig);
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const [tableData, setTableData] = useState(defaultSortedData);
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const [checkedRows, setCheckedRows] = useState<Set<number | string>>(new Set([]));
+
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    useEffect(() => {
+      const { key, direction } = sortConfig;
+      const column = [...scrollableFixedColumns, ...primaryColumns].find((col) => col.key === key);
+      setSortingDirection(direction);
+      setSortingColumn(column as Column);
+    }, [sortConfig]);
+
+    return (
+      <div style={{ width: '900px', height: '500px', border: '1px solid #ccc', padding: '16px' }}>
+        <h3 style={{ margin: '0 0 16px 0' }}>Fixed Header Table with Scrollable Body</h3>
+        <div className="storybook-table-wrapper" style={{ height: 'calc(100% - 50px)', overflow: 'auto' }}>
+          <Table
+            {...args}
+            data={tableData}
+            primaryColumns={primaryColumns}
+            fixedColumns={scrollableFixedColumns}
+            isHeaderFixed={true}
+            sortableColumns={[primaryColumns[0].key, 'age', 'department']}
+            onChangeSorting={(sortConfigParam = sortConfig) => {
+              let { direction } = sortConfigParam;
+              const { key } = sortConfigParam;
+              direction = toggleDirection(direction);
+              const sortedData = sortTableData(tableData, { key, direction });
+              setSortConfig({ key, direction });
+              setTableData(sortedData);
+            }}
+            onToggleRowSelection={(id) => {
+              const newCheckedRows = new Set(checkedRows);
+              if (newCheckedRows.has(id)) {
+                newCheckedRows.delete(id);
+              } else {
+                newCheckedRows.add(id);
+              }
+              setCheckedRows(newCheckedRows);
+            }}
+            onToggleAllRowsSelection={() => {
+              if (checkedRows.size === largeDataSet.length) {
+                setCheckedRows(new Set());
+              } else {
+                const allRows = new Set(largeDataSet.map((item) => item.id));
+                setCheckedRows(allRows);
+              }
+            }}
+            selectedRowIds={[...checkedRows]}
+            sortingColumn={sortingColumn}
+            sortingDirection={sortingDirection}
+          />
+        </div>
+      </div>
+    );
+  },
+  args: {
+    selectable: true,
+    renderRowActions,
+  },
+};
+
+
+export const HorizontalScrollWithFixedHeaderControl: Story = {
+  render: (args: TableComponentProps) => {
+    return (
+      <div style={{ width: '600px', height: '500px', border: '1px solid #ccc', padding: '16px' }}>
+        <h3 style={{ margin: '0 0 16px 0', fontSize: '14px', color: '#666' }}>
+          Fixed Header + Horizontal Scroll: Both scrollbars visible when needed
+        </h3>
+        <div 
+          className="storybook-table-wrapper" 
+          style={{ height: 'calc(100% - 50px)', position: 'relative' }}
+        >
+          <Table
+            {...args}
+            data={wideTableData}
+            primaryColumns={wideTablePrimaryColumns}
+            fixedColumns={wideTableFixedColumns}
+            isHorizontallyScrollable
+            isHeaderFixed
+          />
+        </div>
+      </div>
+    );
+  },
+  args: {
+    selectable: false,
+    renderRowActions,
+  },
+};
+
+export const PinnedColumnsWithFixedHeader: Story = {
+  render: (args: TableComponentProps) => {
+    return (
+      <div style={{ width: '600px', height: '500px', border: '1px solid #ccc', padding: '16px' }}>
+        <h3 style={{ margin: '0 0 16px 0', fontSize: '14px', color: '#666' }}>
+          Pinned Columns + Fixed Header: Name and Email pinned with vertical and horizontal scrolling
+        </h3>
+        <div 
+          className="storybook-table-wrapper" 
+          style={{ width: '550px', height: 'calc(100% - 50px)', position: 'relative' }}
+        >
+          <Table
+            {...args}
+            data={wideTableData}
+            primaryColumns={wideTablePrimaryColumns}
+            fixedColumns={wideTableFixedColumns}
+            isHorizontallyScrollable
+            isHeaderFixed
+            pinnedColumnKeys={['name', 'email', 'department']}
+          />
+        </div>
+      </div>
+    );
+  },
+  args: {
+    selectable: true,
+    renderRowActions,
+  },
+};
+
+export const ExpandableRows: Story = {
+  render: (args: TableComponentProps) => {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const [expandedRows, setExpandedRows] = useState<Set<number | string>>(new Set([1]));
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const [checkedRows, setCheckedRows] = useState<Set<number | string>>(new Set([]));
+
+    const expandableData: RowData[] = [
+      {
+        id: 1,
+        name: 'Anna Smith',
+        age: 25,
+        city: 'New York',
+        department: 'Engineering',
+        email: 'sam.johnson@example.com',
+        // metaData: { fullName: 'Samuel Johnson', phone: '+1 (555) 123-4567', startDate: '2022-03-15' },
+      },
+      { 
+        id: 2,
+        name: 'Anna Smith', 
+        age: 32, 
+        city: 'San Francisco', 
+        department: 'Design',
+        email: 'anna.smith@example.com',
+        // metaData: { fullName: 'Anna Marie Smith', phone: '+1 (555) 987-6543', startDate: '2021-07-20' },
+      },
+      { 
+        id: 3,
+        name: 'Mike Davis', 
+        age: 28, 
+        city: 'Los Angeles', 
+        department: 'Marketing',
+        email: 'mike.davis@example.com',
+        // metaData: { fullName: 'Michael Davis', phone: '+1 (555) 456-7890', startDate: '2023-01-10' },
+      },
+      { 
+        id: 4,
+        name: 'Sarah Wilson', 
+        age: 35, 
+        city: 'Chicago', 
+        department: 'Sales',
+        email: 'sarah.wilson@example.com',
+        // metaData: { fullName: 'Sarah Elizabeth Wilson', phone: '+1 (555) 321-0987', startDate: '2020-11-05' },
+      },
+    ];
+
+    // Expandable content function - removed as it's not used in this implementation
+
+    const fixedColumns: FixedColumn[] = [
+      { key: 'age', header: 'Age', align: 'right', width: 80 },
+      { key: 'department', header: 'Department', width: 100 },
+      { key: 'city', header: 'City', width: 100 },
+    ];
+    const primaryColumns: Column[] = [
+      {
+        key: 'name',
+        header: 'Name',
+      }
+    ];
+
+    return (
+      <div style={{ minWidth: '800px', maxWidth: '1300px' }}>
+        <h3 style={{ margin: '0 0 16px 0', fontSize: '16px', color: '#333' }}>
+          Expandable Rows Example
+        </h3>
+        <p style={{ margin: '0 0 16px 0', fontSize: '14px', color: '#666' }}>
+          Click the expand/collapse icons to view detailed information for each row. 
+          Rows can be expanded and collapsed independently.
+        </p>
+        <Table
+          {...args}
+          data={expandableData}
+          primaryColumns={primaryColumns}
+          fixedColumns={fixedColumns}
+          isRowsExpandable={true}
+          expandedRowIds={[...expandedRows]}
+          setExpandedRowIds={setExpandedRows}
+          onToggleRowExpansion={(id) => {
+            const newExpandedRows = new Set(expandedRows);
+            if (newExpandedRows.has(id)) {
+              newExpandedRows.delete(id);
+            } else {
+              newExpandedRows.add(id);
+            }
+            setExpandedRows(newExpandedRows);
+          }}
+          selectedRowIds={[...checkedRows]}
+          onToggleRowSelection={(id) => {
+            const newCheckedRows = new Set(checkedRows);
+            if (newCheckedRows.has(id)) {
+              newCheckedRows.delete(id);
+            } else {
+              newCheckedRows.add(id);
+            }
+            setCheckedRows(newCheckedRows);
+          }}
+          onToggleAllRowsSelection={() => {
+            if (checkedRows.size === expandableData.length) {
+              setCheckedRows(new Set());
+            } else {
+              const allRows = new Set(expandableData.map((item) => item.id));
+              setCheckedRows(allRows);
+            }
+          }}
+        />
+      </div>
+    );
+  },
+  args: {
+    selectable: true,
+  },
+};
+
+// Data with very long text content for expansion testing
+const longTextData: RowData[] = [
+  {
+    id: 1,
+    name: 'John Alexander Maximilian Winchester-Blackwood III',
+    description: 'This is long text but anyway no matter ellipsed or opened it should not overcome his width it can be brake. When you click on this cell, it will expand to show the full content without ellipsis truncation, and the text should wrap properly within the cell boundaries without breaking the table layout.',
+    shortText: 'Brief note',
+    longTitle: 'Senior Vice President of Engineering and Technology Development for Enterprise Solutions and Digital Transformation Initiatives',
+    email: 'john.alexander.maximilian.winchester.blackwood.third@very-long-company-name-example.com',
+    notes: 'This is a comprehensive test of how the table handles extremely long content that would normally break layouts. The content should be properly contained within cell boundaries.',
+  },
+  {
+    id: 2,
+    name: 'Maria Elena Rodriguez-Martinez',
+    description: 'Another extremely lengthy description that showcases the cell expansion capabilities. This description contains detailed information about the person, their role, responsibilities, and achievements. The purpose is to demonstrate how users can easily expand cells to read full content when the default view shows only a truncated version with ellipsis.',
+    shortText: 'Quick summary here',
+    longTitle: 'Chief Marketing Officer and Head of Brand Strategy for Global Markets and Customer Experience Enhancement',
+    email: 'maria.elena.rodriguez.martinez@another-extremely-long-domain-name.example.org',
+    notes: 'Testing various content lengths and how they behave in both collapsed and expanded states. The text should wrap appropriately without overflowing.',
+  },
+  {
+    id: 3,
+    name: 'Robert James Thompson',
+    description: 'A comprehensive description that tests the expand functionality with moderate length content. This shows how the feature works with different content lengths and provides a good example of real-world usage.',
+    shortText: 'Standard',
+    longTitle: 'Director of Operations',
+    email: 'robert.thompson@company.com',
+    notes: 'Short note about this person and their current projects.',
+  },
+  {
+    id: 4,
+    name: 'Dr. Elizabeth Catherine Pemberton-Williams, PhD, MBA, CISSP',
+    description: 'This cell contains an exceptionally detailed description that really pushes the limits of what might be considered reasonable content length. It includes professional background, educational achievements, current responsibilities, ongoing projects, future goals, and various other details that would typically require a much larger display area.',
+    shortText: 'Complex background',
+    longTitle: 'Chief Technology Officer and Principal Software Architect for Distributed Systems and Cloud Infrastructure with specialization in Cybersecurity and Data Analytics',
+    email: 'dr.elizabeth.catherine.pemberton.williams.phd.mba.cissp@enterprise-solutions-technology-consulting.example.net',
+    notes: 'Comprehensive notes about professional achievements, certifications, ongoing projects, and future development plans. This tests the maximum reasonable content length.',
+  },
+];
+
+const longTextColumns: FixedColumn[] = [
+  {
+    key: 'description',
+    header: 'Description',
+    width: 200,
+  },
+  {
+    key: 'longTitle',
+    header: 'Job Title',
+    width: 120,
+  },
+  {
+    key: 'email',
+    header: 'Email Address',
+    width: 100,
+  },
+  {
+    key: 'shortText',
+    header: 'Type',
+    width: 100,
+  },
+  {
+    key: 'notes',
+    header: 'Notes',
+    width: 100,
+  },
+];
+
+export const CellExpansion: Story = {
+  render: (args: TableComponentProps) => {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const [expandedRows, setExpandedRows] = useState<Set<number | string>>(new Set());
+
+    return (
+      <div style={{ width: '1000px', padding: '16px' }}>
+        <h3 style={{ margin: '0 0 16px 0', fontSize: '16px', color: '#333' }}>
+          Row Content Expansion - Long Text Handling
+        </h3>
+        <p style={{ margin: '0 0 16px 0', fontSize: '14px', color: '#666', lineHeight: 1.5 }}>
+          <strong>Click the expand icon</strong> at the beginning of each row to expand/collapse ALL cells in that row. This example tests:
+          <br />• Very long email addresses that should be ellipsed when collapsed
+          <br />• Long text content that should wrap without breaking cell width constraints
+          <br />• Proper word breaking for extremely long content
+          <br />• Layout stability when transitioning between collapsed and expanded states
+        </p>
+        <div style={{ border: '1px solid #e1e5e9', borderRadius: '8px', overflow: 'hidden' }}>
+          <Table
+            {...args}
+            data={longTextData}
+            primaryColumns={[{ key: 'name', header: 'Full Name' }]}
+            fixedColumns={longTextColumns}
+            selectable={false}
+            isRowsExpandable={true}
+            expandedRowIds={[...expandedRows]}
+            onToggleRowExpansion={(id) => {
+              const newExpandedRows = new Set(expandedRows);
+              if (newExpandedRows.has(id)) {
+                newExpandedRows.delete(id);
+              } else {
+                newExpandedRows.add(id);
+              }
+              setExpandedRows(newExpandedRows);
+            }}
+          />
+        </div>
+        <p style={{ margin: '16px 0 0 0', fontSize: '12px', color: '#888', fontStyle: 'italic' }}>
+          Test the table with your browser's developer tools at different widths to verify responsive behavior.
+        </p>
+      </div>
+    );
+  },
+  args: {
+    renderRowActions: undefined,
+  },
+};
+
