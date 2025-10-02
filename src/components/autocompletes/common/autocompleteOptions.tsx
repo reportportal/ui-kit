@@ -41,6 +41,9 @@ interface AutocompleteOptionsProps<T> {
   async: boolean;
   optionVariant: 'key-variant' | 'value-variant' | '';
   createWithoutConfirmation: boolean;
+  customEmptyListMessage?: string;
+  customNoMatchesMessage?: string;
+  getUniqKey?: (item: T) => string;
 }
 
 export class AutocompleteOptions<T> extends Component<AutocompleteOptionsProps<T>> {
@@ -77,7 +80,7 @@ export class AutocompleteOptions<T> extends Component<AutocompleteOptionsProps<T
       renderOption(item, index, isNew, getItemProps)
     ) : (
       <AutocompleteOption
-        key={this.props.parseValueToString(item)}
+        key={this.props.getUniqKey?.(item) || this.props.parseValueToString(item)}
         optionVariant={optionVariant}
         {...getItemProps({ item, index })}
         isNew={isNew}
@@ -108,6 +111,15 @@ export class AutocompleteOptions<T> extends Component<AutocompleteOptionsProps<T
         </AutocompleteOption>
       </div>
     );
+  };
+
+  renderEmptyList = () => {
+    const message =
+      this.props.options?.length === 0
+        ? this.props.customEmptyListMessage || 'No available options'
+        : this.props.customNoMatchesMessage || 'No matches found';
+
+    return <div className={cx('empty-list-message')}>{message}</div>;
   };
 
   render() {

@@ -48,6 +48,7 @@ export interface SingleAutocompleteProps<T> {
   createWithoutConfirmation: boolean;
   menuClassName: string;
   icon: string;
+  skipOptionCreation?: boolean;
   isOptionUnique?: (value: boolean | null) => void;
   refFunction: Ref<HTMLInputElement>;
   stateReducer: (
@@ -55,6 +56,9 @@ export interface SingleAutocompleteProps<T> {
     changes: StateChangeOptions<T>,
   ) => Partial<StateChangeOptions<T>>;
   useFixedPositioning: boolean;
+  getUniqKey?: (item: T) => string;
+  customEmptyListMessage?: string;
+  customNoMatchesMessage?: string;
 }
 
 export const SingleAutocomplete = <T,>(componentProps: SingleAutocompleteProps<T>) => {
@@ -69,6 +73,7 @@ export const SingleAutocomplete = <T,>(componentProps: SingleAutocompleteProps<T
     inputProps = {},
     parseValueToString = ((valueToParse) => valueToParse || '') as (item: T | null) => string,
     minLength = 1,
+    skipOptionCreation = false,
     maxLength = null,
     optionVariant = '',
     isRequired = false,
@@ -156,12 +161,14 @@ export const SingleAutocomplete = <T,>(componentProps: SingleAutocompleteProps<T
                 onBlur: (e) => {
                   const newValue = (inputValue || '').trim() as T;
 
-                  if (!createWithoutConfirmation && !newValue) {
-                    selectItem(newValue);
-                  }
+                  if (!skipOptionCreation) {
+                    if (!createWithoutConfirmation && !newValue) {
+                      selectItem(newValue);
+                    }
 
-                  if (createWithoutConfirmation) {
-                    selectItem(newValue);
+                    if (createWithoutConfirmation) {
+                      selectItem(newValue);
+                    }
                   }
 
                   onBlur(e);

@@ -70,6 +70,9 @@ export interface MultipleAutocompleteProps<T> {
   isClearAvailable?: boolean;
   customizeNewSelectedValue: (value: T) => T;
   renderCustomSelecetedItem?: (item: T) => ReactNode;
+  getUniqKey?: (item: T) => string;
+  customEmptyListMessage?: string;
+  customNoMatchesMessage?: string;
 }
 
 export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompleteProps<T>) => {
