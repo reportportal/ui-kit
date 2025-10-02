@@ -15,6 +15,10 @@ const config: StorybookConfig = {
   docs: {
     autodocs: 'tag',
   },
+  staticDirs: [
+    { from: '../public', to: '/' },
+    { from: '../public/fonts', to: '/assets/fonts' },
+  ],
   managerHead: (head) => `
     ${head}
     <meta name="robots" content="noindex" />

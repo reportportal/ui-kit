@@ -1,5 +1,5 @@
 import { FC, ReactElement, useEffect, useRef, useState } from 'react';
-import { SystemAlertProps, SystemAlertType } from './types';
+import { SystemAlertProps, SystemAlertType, SystemAlertTypographyColorType } from './types';
 import styles from './systemAlert.module.scss';
 import classNames from 'classnames/bind';
 import { CloseIcon, ErrorIcon, InfoIcon, SuccessIcon } from '@components/icons';
@@ -13,6 +13,7 @@ export const SystemAlert: FC<SystemAlertProps> = ({
   onClose,
   icon = null,
   type = SystemAlertType.INFO,
+  typographyColor = SystemAlertTypographyColorType.WHITE,
   duration = DEFAULT_DURATION,
   className,
   dataAutomationId,
@@ -43,6 +44,7 @@ export const SystemAlert: FC<SystemAlertProps> = ({
         return <InfoIcon />;
       case 'success':
         return <SuccessIcon />;
+      case 'warning':
       case 'error':
         return <ErrorIcon />;
       default:
@@ -52,13 +54,13 @@ export const SystemAlert: FC<SystemAlertProps> = ({
 
   return (
     <div
-      className={cx('system-alert', type, className)}
+      className={cx('system-alert', type, className, `system-alert--${typographyColor}`)}
       title={systemTitle}
       data-automation-id={dataAutomationId}
     >
       <div className={cx('icon-wrapper')}>{getIcon()}</div>
       <div className={cx('content-wrapper')}>
-        <h2 ref={refSystemAlert} className={cx('title')}>
+        <h2 ref={refSystemAlert} className={cx('title', `title--${typographyColor}`)}>
           {title}
         </h2>
       </div>

@@ -1,0 +1,132 @@
+/*
+ * Copyright 2025 EPAM Systems
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@import 'src/assets/styles/mixins/font-scale';
+
+.file-drop-area {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed var(--rp-ui-base-e-300);
+  border-radius: 8px;
+  background-color: var(--rp-ui-base-bg-200);
+  cursor: pointer;
+
+  &--active,
+  &:hover {
+    border-color: var(--rp-ui-base-topaz-hover);
+    background-color: var(--rp-ui-base-topaz-100);
+  }
+
+  &--disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+
+  &--error {
+    border-color: var(--rp-ui-base-error);
+  }
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    font-family: var(--rp-ui-base-font-family), sans-serif;
+  }
+
+  &__icon {
+    margin-bottom: 8px;
+    color: var(--rp-ui-base-e-300);
+
+    svg {
+      width: 28px;
+      height: 28px;
+    }
+  }
+
+  &__text {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: var(--rp-ui-base-e-400);
+  }
+
+  &__description {
+    @include font-scale();
+
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+    flex-wrap: wrap;
+    justify-content: center;
+    font-weight: var(--rp-ui-base-fw-bold);
+
+    button {
+      padding: 0;
+    }
+  }
+
+  &__browse-button {
+    color: var(--rp-ui-base-topaz);
+  }
+
+  &__file-size-info {
+    @include font-scale(s-small);
+  }
+
+  &__hidden-input {
+    display: none;
+  }
+
+  &__error-message {
+    font-size: 11px;
+    line-height: 16px;
+    margin-top: 4px;
+    color: var(--rp-ui-base-error);
+  }
+
+  &--overlay {
+    position: relative;
+
+    .file-drop-area {
+      opacity: 0;
+      box-sizing: border-box;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 1000;
+      cursor: default;
+
+      &.file-drop-area--active {
+        opacity: 0.8;
+        cursor: default;
+      }
+    }
+  }
+
+  &--overlay-mode {
+    pointer-events: none;
+
+    &.file-drop-area--active {
+      pointer-events: auto;
+    }
+  }
+}

@@ -2,7 +2,7 @@
 
 Default width - 480px, height 100%
 
-> okButton format (see Button)
+> okButton format (see Button) - supports tooltipNode for displaying tooltips
 
 > cancelButton (see Button)
 
@@ -11,7 +11,7 @@ Default width - 480px, height 100%
 - **title**: _string_, optional, default = ""
 - **children**: _node_, optional, default = null
 - **footerNode**: _node_, optional, default = null
-- **okButton**: _object_, optional, default = null
+- **okButton**: _object_, optional, default = null (supports **tooltipNode**: _ReactNode_)
 - **cancelButton**: _object_, optional, default = null
 - **className**: _string_, optional, default = ""
 - **size**: _string_, optional, default = "default"

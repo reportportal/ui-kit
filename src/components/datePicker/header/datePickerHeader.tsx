@@ -61,7 +61,7 @@ export const DatePickerHeader: FC<DatePickerHeaderProps> = ({
         acc.concat({ value: yearValue, label: `${yearValue}` }),
       [],
     );
-  }, [yearsOptions]);
+  }, [yearsOptions, year]);
 
   const onMonthChange = (changedMonth: DropdownValue | DropdownValue[]) => {
     const numberMonth: number = changedMonth as number;

@@ -1,4 +1,12 @@
-import { useRef, useState, ReactNode, FC, ReactElement, KeyboardEventHandler } from 'react';
+import {
+  useRef,
+  useState,
+  ReactNode,
+  FC,
+  ReactElement,
+  KeyboardEventHandler,
+  useCallback,
+} from 'react';
 import classNames from 'classnames/bind';
 import { useFloating, offset, flip } from '@floating-ui/react-dom';
 import { useSelect } from 'downshift';
@@ -31,6 +39,7 @@ export interface DropdownProps {
   transparentBackground?: boolean;
   className?: string;
   toggleButtonClassName?: string;
+  selectListClassName?: string;
   label?: ReactNode;
   onChange: (value: DropdownValue | DropdownValue[]) => void;
   onFocus?: () => void;
@@ -43,7 +52,7 @@ export interface DropdownProps {
   onSelectAll?: () => void;
   formatDisplayedValue?: (value: string | undefined) => string;
   notScrollable?: boolean;
-  footer?: ReactNode;
+  footer?: ReactNode | ((closeHandler: () => void) => ReactNode);
 }
 
 // DS link - https://www.figma.com/file/gjYQPbeyf4YsH3wZiVKoaj/%F0%9F%9B%A0-RP-DS-6?type=design&node-id=3424-12207&mode=design&t=dDq6moPaTzQLviS1-0
@@ -67,6 +76,7 @@ export const Dropdown: FC<DropdownProps> = ({
   transparentBackground = false,
   className,
   toggleButtonClassName,
+  selectListClassName,
   isListWidthLimited = false,
   optionAll = { value: 'all', label: 'All' },
   isOptionAllVisible = false,
@@ -99,10 +109,14 @@ export const Dropdown: FC<DropdownProps> = ({
     }
   };
 
+  const closeHandler = useCallback(() => {
+    setOpened(false);
+    onBlur?.();
+  }, [onBlur]);
+
   const handleClickOutside = () => {
     if (opened) {
-      setOpened(false);
-      onBlur?.();
+      closeHandler();
     }
   };
   useOnClickOutside(containerRef, handleClickOutside);
@@ -216,16 +230,14 @@ export const Dropdown: FC<DropdownProps> = ({
       const option = options[highlightedIndex];
       handleChange(option);
       if (!multiSelect) {
-        setOpened(false);
-        onBlur?.();
+        closeHandler();
       }
       return;
     }
 
     if (CLOSE_DROPDOWN_KEY_CODES.includes(keyCode)) {
       event.stopPropagation();
-      setOpened(false);
-      onBlur?.();
+      closeHandler();
     }
   };
 
@@ -266,7 +278,7 @@ export const Dropdown: FC<DropdownProps> = ({
       {footer && (
         <>
           <div className={cx('divider')} />
-          {footer}
+          {typeof footer === 'function' ? footer(closeHandler) : footer}
         </>
       )}
     </div>
@@ -307,7 +319,11 @@ export const Dropdown: FC<DropdownProps> = ({
       {opened && (
         <div
           style={floatingStyles}
-          className={cx('select-list', { opened, 'limited-width': isListWidthLimited })}
+          className={cx(
+            'select-list',
+            { opened, 'limited-width': isListWidthLimited },
+            selectListClassName,
+          )}
           {...getMenuProps({
             onKeyDown: handleKeyDownMenu,
             ref: refs.setFloating,

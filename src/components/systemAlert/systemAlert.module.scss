@@ -10,6 +10,12 @@
   justify-content: space-between;
   box-shadow: var(--rp-ui-base-shadow-secondary);
 
+  &--black {
+    svg path {
+      fill: var(--rp-ui-base-almost-black) !important;
+    }
+  }
+
   &.error {
     background-color: var(--rp-ui-base-sm-error);
   }
@@ -20,6 +26,10 @@
 
   &.info {
     background-color: var(--rp-ui-base-no-defect-bug-group);
+  }
+
+  &.warning {
+    background-color: var(--rp-ui-base-defect-type-AB);
   }
 
   .icon-wrapper {
@@ -40,12 +50,19 @@
       font-family: var(--rp-ui-base-font-family);
       @include font-scale(x2-medium);
       font-weight: var(--rp-ui-base-fw-semi-bold);
-      color: var(--rp-ui-base-bg-000);
       display: -webkit-box;
       max-width: 100%;
       -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
       overflow: hidden;
+
+      &--white {
+        color: var(--rp-ui-base-bg-000);
+      }
+
+      &--black {
+        color: var(--rp-ui-base-almost-black);
+      }
     }
   }
 
