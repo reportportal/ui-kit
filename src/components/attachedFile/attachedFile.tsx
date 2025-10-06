@@ -82,9 +82,11 @@ export const AttachedFile = ({
   const handleRemove = useCallback(
     (event: MouseEvent<HTMLButtonElement>) => {
       event.stopPropagation();
-      onRemove?.();
+      if (!isUploading) {
+        onRemove?.();
+      }
     },
-    [onRemove],
+    [isUploading, onRemove],
   );
 
   const downloadFile = useCallback(
@@ -136,7 +138,14 @@ export const AttachedFile = ({
         )}
       </div>
       {onRemove && (
-        <button type="button" className={cx('attached-file__remove-button')} onClick={handleRemove}>
+        <button
+          type="button"
+          className={cx('attached-file__remove-button', {
+            'attached-file__remove-button--disabled': isUploading,
+          })}
+          disabled={isUploading}
+          onClick={handleRemove}
+        >
           <CloseIcon />
         </button>
       )}

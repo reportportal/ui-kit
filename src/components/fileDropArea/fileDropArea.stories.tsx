@@ -112,6 +112,7 @@ export const WithFileList = () => {
       size: Math.round((fileWithValidation.file.size / (1024 * 1024)) * 100) / 100,
       isUploading: false,
       validationErrors: fileWithValidation.validationErrors,
+      customErrorMessage: fileWithValidation.customErrorMessage,
     }));
     setAttachedFiles((prev) => [...prev, ...newFiles]);
   };
@@ -159,6 +160,7 @@ export const OverlayVariant = () => {
       size: Math.round((fileWithValidation.file.size / (1024 * 1024)) * 100) / 100,
       isUploading: false,
       validationErrors: fileWithValidation.validationErrors,
+      customErrorMessage: fileWithValidation.customErrorMessage,
     }));
 
     setAttachedFiles((prev) => [...prev, ...newFiles]);

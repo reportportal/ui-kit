@@ -21,7 +21,12 @@ import { FileValidationError, FileValidationMessages } from '../types';
 export const getValidationErrorMessage = (
   errors: FileValidationError[],
   messages: FileValidationMessages,
+  customErrorMessage?: string,
 ) => {
+  if (customErrorMessage) {
+    return customErrorMessage;
+  }
+
   if (isEmpty(errors)) {
     return null;
   }

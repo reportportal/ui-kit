@@ -37,6 +37,7 @@ export interface AttachmentFile {
   isUploadFailed?: boolean;
   isUploading?: boolean;
   validationErrors?: FileValidationError[];
+  customErrorMessage?: string;
 }
 
 interface AttachedFilesListProps {
@@ -82,6 +83,7 @@ export const AttachedFilesList = ({
         const validationErrorMessage = getValidationErrorMessage(
           file.validationErrors ?? [],
           messages,
+          file.customErrorMessage,
         );
 
         return (
