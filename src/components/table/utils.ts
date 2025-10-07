@@ -129,8 +129,8 @@ export const getGridTemplateColumns = (
     columns.push(`${EXPANDABLE_CHECKBOX_COLUMN_WIDTH}px`);
   }
 
-  const addColumnWidth = (column: Column) => {
-    if (isPrimaryColumn(column as PrimaryColumn | FixedColumn)) {
+  const addColumnWidth = (column: PrimaryColumn | FixedColumn) => {
+    if (isPrimaryColumn(column)) {
       columns.push(`minmax(${PRIMARY_COLUMN_DEFAULT_WIDTH}px, 1fr)`);
     } else {
       const fixedColumn = column as FixedColumn;
