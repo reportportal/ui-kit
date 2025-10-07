@@ -490,6 +490,9 @@ export const HorizontalScrollWithFixedHeaderControl: Story = {
 
 export const PinnedColumnsWithFixedHeader: Story = {
   render: (args: TableComponentProps) => {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const [checkedRows, setCheckedRows] = useState<Set<number | string>>(new Set([]));
+
     return (
       <div style={{ width: '600px', height: '500px', border: '1px solid #ccc', padding: '16px' }}>
         <h3 style={{ margin: '0 0 16px 0', fontSize: '14px', color: '#666' }}>
@@ -508,6 +511,24 @@ export const PinnedColumnsWithFixedHeader: Story = {
             isHorizontallyScrollable
             isHeaderFixed
             pinnedColumnKeys={['name', 'email', 'department']}
+            onToggleRowSelection={(id) => {
+              const newCheckedRows = new Set(checkedRows);
+              if (newCheckedRows.has(id)) {
+                newCheckedRows.delete(id);
+              } else {
+                newCheckedRows.add(id);
+              }
+              setCheckedRows(newCheckedRows);
+            }}
+            onToggleAllRowsSelection={() => {
+              if (checkedRows.size === wideTableData.length) {
+                setCheckedRows(new Set());
+              } else {
+                const allRows = new Set(wideTableData.map((item) => item.id));
+                setCheckedRows(allRows);
+              }
+            }}
+            selectedRowIds={[...checkedRows]}
           />
         </div>
       </div>
@@ -588,6 +609,7 @@ export const ExpandableRows: Story = {
           primaryColumns={expandablePrimaryColumns}
           fixedColumns={expandableFixedColumns}
           isRowsExpandable={true}
+          selectable={true}
           expandedRowIds={[...expandedRows]}
           setExpandedRowIds={setExpandedRows}
           onToggleRowExpansion={(id) => {

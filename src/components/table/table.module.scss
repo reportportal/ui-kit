@@ -43,7 +43,6 @@ $PADDING_VERTICAL-LARGE: 30px;
     background-color: var(--rp-ui-base-bg-000);
     border-bottom: 1px solid var(--rp-ui-base-e-100);
     flex-shrink: 0;
-    width: 100%;
     box-sizing: border-box;
   }
 
@@ -54,21 +53,9 @@ $PADDING_VERTICAL-LARGE: 30px;
 
     &.sticky-header {
       overflow-x: visible;
-      position: sticky;
-      top: 0;
-      left: 0;
-      z-index: 2;
-      background-color: var(--rp-ui-base-bg-000);
-      border-bottom: 1px solid var(--rp-ui-base-e-100);
-      flex-shrink: 0;
       height: auto;
       min-height: 32px;
-      overflow: visible;
     }
-  }
-
-  &:not(.horizontally-scrollable) {
-    width: 100%;
   }
 }
 
@@ -80,6 +67,17 @@ $PADDING_VERTICAL-LARGE: 30px;
   &:has(.expanded-cell) {
     height: max-content;
     min-height: $HEIGHT-DEFAULT;
+  }
+
+  &.selectable {
+    display: grid;
+    grid-template-columns: 32px 1fr;
+  }
+
+  .row-content-wrapper {
+    display: grid;
+    padding: 2px;
+    width: 100%;
   }
 
   .table-row-content {
@@ -97,6 +95,10 @@ $PADDING_VERTICAL-LARGE: 30px;
       align-items: flex-start;
       height: auto;
       min-height: $HEIGHT-DEFAULT;
+    }
+
+    .expand-cell {
+      background-color: inherit;
     }
   }
 
@@ -177,23 +179,10 @@ $PADDING_VERTICAL-LARGE: 30px;
   }
 
   &.scrollable-body.horizontally-scrollable {
-    flex: 1;
     overflow: visible;
-    min-height: 0;
-    padding: 0 3px 3px 3px;
-    min-width: fit-content;
 
     .table-row {
       min-width: fit-content;
-      min-height: $HEIGHT-DEFAULT;
-
-      &.size-small {
-        min-height: $HEIGHT-SMALL;
-      }
-
-      &.size-large {
-        min-height: $HEIGHT-LARGE;
-      }
 
       .table-row-content {
         min-width: fit-content;
@@ -203,7 +192,6 @@ $PADDING_VERTICAL-LARGE: 30px;
   }
 
   &:not(.horizontally-scrollable) {
-
     .table-row {
       width: 100%;
 
@@ -249,15 +237,20 @@ $PADDING_VERTICAL-LARGE: 30px;
   }
 
   &.checkbox-cell {
-    position: absolute;
-    left: -32px;
     width: 32px;
-    display: flex;
-    justify-content: center;
     padding: 0;
-    height: 100%;
+    align-self: center;
+    height: 18px;
     cursor: pointer;
-    align-items: center;
+    position: sticky;
+    left: 0;
+    z-index: 10;
+    background-color: var(--rp-ui-base-bg-000);
+
+    label {
+      height: 18px;
+      width: 16px;
+    }
   }
 
   &.expand-cell {
@@ -265,6 +258,9 @@ $PADDING_VERTICAL-LARGE: 30px;
     width: 32px;
     display: flex;
     align-items: center;
+    position: sticky;
+    z-index: 10;
+    background-color: var(--rp-ui-base-bg-000);
 
     button {
       display: flex;
@@ -288,11 +284,6 @@ $PADDING_VERTICAL-LARGE: 30px;
 
       &.expanded {
         transform: rotate(0deg);
-      }
-
-      svg {
-        width: 16px;
-        height: 16px;
       }
     }
   }
@@ -320,7 +311,7 @@ $PADDING_VERTICAL-LARGE: 30px;
     align-items: center;
   }
 
-  &.sortable-cell>.label {
+  &.sortable-cell > .label {
     cursor: pointer;
   }
 
@@ -367,34 +358,5 @@ $PADDING_VERTICAL-LARGE: 30px;
     z-index: 1;
     background: var(--rp-ui-color-field-bg);
 
-  }
-}
-
-.expand-button {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
-  border-radius: 4px;
-  color: var(--rp-ui-base-e-400);
-
-  &:hover {
-    background-color: var(--rp-ui-base-e-050);
-    color: var(--rp-ui-base-e-500);
-  }
-
-  &:focus {
-    outline: 2px solid var(--rp-ui-base-b-300);
-    outline-offset: 2px;
-  }
-
-  svg {
-    width: 16px;
-    height: 16px;
   }
 }
