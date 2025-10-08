@@ -29,6 +29,7 @@ type AutocompleteOptionProps = {
   children?: ReactNode;
   disabled?: boolean;
   optionVariant?: 'key-variant' | 'value-variant' | '';
+  newItemButtonText?: string;
 } & HTMLAttributes<HTMLLIElement | HTMLButtonElement>;
 
 export const AutocompleteOption = ({
@@ -38,8 +39,17 @@ export const AutocompleteOption = ({
   children = null,
   disabled = false,
   optionVariant = '',
+  newItemButtonText = '',
   ...props
 }: AutocompleteOptionProps) => {
+  const getButtonText = () => {
+    if (newItemButtonText) {
+      return newItemButtonText;
+    }
+
+    return optionVariant === 'key-variant' ? 'New key' : 'New value';
+  };
+
   return isNew ? (
     <>
       <div className={cx('divider')} />
@@ -58,7 +68,7 @@ export const AutocompleteOption = ({
           icon={<PlusIcon />}
           variant="text"
         >
-          {optionVariant === 'key-variant' ? 'New key' : 'New value'}
+          {getButtonText()}
         </Button>
       </li>
     </>
