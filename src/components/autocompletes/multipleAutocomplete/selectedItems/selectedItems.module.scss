@@ -78,6 +78,11 @@ $SCREEN_XS_MAX: 767px;
   width: 16px;
   height: 16px;
   cursor: pointer;
+  outline: none;
+  border: none;
+  padding: 0;
+  background-color: transparent;
+
   @include fill-svg(var(--rp-ui-color-text));
 
   &.validation-error {

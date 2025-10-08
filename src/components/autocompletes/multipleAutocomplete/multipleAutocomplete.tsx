@@ -226,10 +226,9 @@ export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompletePr
           storedItemsMap,
           getRootProps,
         }: GetStateAndHelpersT<T>) => (
-          <div {...getRootProps()}>
+          <div {...getRootProps(undefined, { suppressRefError: true })} ref={refs.setReference}>
             <>
               <div
-                ref={refs.setReference}
                 className={cx('autocomplete', customClass, {
                   'mobile-disabled': mobileDisabled,
                   error,
@@ -305,9 +304,9 @@ export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompletePr
                   />
                 </div>
                 {inputProps?.clearable && value?.length > 0 && (
-                  <div className={cx('clear-icon')} onClick={() => inputProps?.onClear?.()}>
+                  <button className={cx('clear-icon')} onClick={() => inputProps?.onClear?.()}>
                     <ClearIcon />
-                  </div>
+                  </button>
                 )}
               </div>
               {error && touched && <span className={cx('error-text')}>{error}</span>}

@@ -15,6 +15,7 @@
  */
 
 import { ComponentProps, FocusEvent, KeyboardEvent, ReactNode, Ref } from 'react';
+import classNames from 'classnames';
 import Downshift, { DownshiftState, StateChangeOptions } from 'downshift';
 import { autoUpdate, useFloating } from '@floating-ui/react';
 
@@ -23,6 +24,10 @@ import { default as FieldText } from '@/components/fieldText';
 import { AutocompleteMenu } from '../common/autocompleteMenu';
 import { ENTER_KEY_NAME, TAB_KEY_NAME } from '../constants';
 import { GetItemPropsT } from '../types';
+
+import styles from './singleAutocomplete.module.scss';
+
+const cx = classNames.bind(styles);
 
 const DEFAULT_OPTIONS_INDEX = 0;
 
@@ -90,7 +95,7 @@ export const SingleAutocomplete = <T,>(componentProps: SingleAutocompleteProps<T
     refFunction,
     stateReducer,
     onStateChange,
-    useFixedPositioning = false,
+    useFixedPositioning = true,
     newItemButtonText = '',
     ...props
   } = componentProps;
@@ -146,7 +151,11 @@ export const SingleAutocomplete = <T,>(componentProps: SingleAutocompleteProps<T
         selectItem,
       }) => (
         <>
-          <div ref={refs.setReference} {...getRootProps()}>
+          <div
+            className={cx('input-wrapper')}
+            {...getRootProps(undefined, { suppressRefError: true })}
+            ref={refs.setReference}
+          >
             <FieldText
               {...getInputProps({
                 placeholder: !disabled ? placeholder : '',

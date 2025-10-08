@@ -74,6 +74,9 @@ $SCREEN_XS_MAX: 767px;
   align-items: center;
   cursor: pointer;
   padding-left: 14px;
+  outline: none;
+  border: none;
+  background-color: transparent;
 }
 
 .autocomplete-input {

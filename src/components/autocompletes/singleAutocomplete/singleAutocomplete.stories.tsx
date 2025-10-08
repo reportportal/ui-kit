@@ -121,7 +121,15 @@ export const SingleSelectObjects: Story<(typeof OPTIONS_OBJECTS)[number]> = {
     };
 
     return (
-      <div style={{ width: '600px', height: '400px', display: 'flex', alignItems: 'center' }}>
+      <div
+        style={{
+          width: '600px',
+          height: '400px',
+          display: 'flex',
+          alignItems: 'center',
+          position: 'relative',
+        }}
+      >
         <SingleAutocomplete<(typeof OPTIONS_OBJECTS)[number]>
           {...modifiedArgs}
           onChange={onChange}
@@ -168,7 +176,15 @@ export const SingleSelectStrings: Story<(typeof OPTIONS_STRINGS)[number]> = {
     };
 
     return (
-      <div style={{ width: '600px', height: '400px', display: 'flex', alignItems: 'center' }}>
+      <div
+        style={{
+          width: '600px',
+          height: '400px',
+          display: 'flex',
+          alignItems: 'center',
+          position: 'relative',
+        }}
+      >
         <SingleAutocomplete
           {...modifiedArgs}
           onChange={onChange}
