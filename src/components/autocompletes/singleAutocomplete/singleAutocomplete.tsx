@@ -61,6 +61,7 @@ export interface SingleAutocompleteProps<T> {
   getUniqKey?: (item: T) => string;
   customEmptyListMessage?: string;
   customNoMatchesMessage?: string;
+  newItemButtonText?: string;
 }
 
 export const SingleAutocomplete = <T,>(componentProps: SingleAutocompleteProps<T>) => {
@@ -90,6 +91,7 @@ export const SingleAutocomplete = <T,>(componentProps: SingleAutocompleteProps<T
     stateReducer,
     onStateChange,
     useFixedPositioning = false,
+    newItemButtonText = '',
     ...props
   } = componentProps;
 
@@ -203,6 +205,7 @@ export const SingleAutocomplete = <T,>(componentProps: SingleAutocompleteProps<T
             createWithoutConfirmation={createWithoutConfirmation}
             className={menuClassName}
             options={options}
+            newItemButtonText={newItemButtonText}
             {...props}
           />
         </>

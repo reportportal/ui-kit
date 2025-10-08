@@ -46,6 +46,7 @@ interface AutocompleteOptionsProps<T> {
   customEmptyListMessage?: string;
   customNoMatchesMessage?: string;
   getUniqKey?: (item: T) => string;
+  newItemButtonText: string;
 }
 
 export class AutocompleteOptions<T> extends Component<AutocompleteOptionsProps<T>> {
@@ -86,6 +87,7 @@ export class AutocompleteOptions<T> extends Component<AutocompleteOptionsProps<T
         optionVariant={optionVariant}
         {...getItemProps({ item, index })}
         isNew={isNew}
+        newItemButtonText={this.props.newItemButtonText}
       >
         {this.props.parseValueToString(item)}
       </AutocompleteOption>
