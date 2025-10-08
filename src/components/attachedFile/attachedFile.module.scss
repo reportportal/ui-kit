@@ -191,5 +191,15 @@
         fill: var(--rp-ui-base-topaz-hover);
       }
     }
+
+    &--disabled {
+      cursor: default;
+
+      &:hover {
+        svg path {
+          fill: var(--rp-ui-base-e-300);
+        }
+      }
+    }
   }
 }
