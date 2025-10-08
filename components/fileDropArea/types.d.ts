@@ -49,6 +49,7 @@ export interface FileValidationOptions {
 export interface FileWithValidation {
     file: File;
     validationErrors: FileValidationError[];
+    customErrorMessage?: string;
 }
 export interface FileDropAreaBaseConfig extends FileValidationOptions {
     messages: FileValidationMessages;

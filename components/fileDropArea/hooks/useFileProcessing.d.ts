@@ -5,9 +5,9 @@ interface FileProcessingOptions extends FileValidationOptions {
     onFilesAdded: (files: FileWithValidation[]) => void;
 }
 export declare const useFileProcessing: ({ maxFileSize, acceptFileMimeTypes, onFilesAdded, }: FileProcessingOptions) => {
-    onDrop: (acceptedFiles: File[]) => void;
-    handleFileInputChange: (event: ChangeEvent<HTMLInputElement>) => void;
     error: ValidationError | null;
+    handleFileInputChange: (event: ChangeEvent<HTMLInputElement>) => void;
     clearError: () => void;
+    onDrop: (acceptedFiles: File[]) => void;
 };
 export {};

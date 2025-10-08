@@ -9,6 +9,7 @@ export interface AttachmentFile {
     isUploadFailed?: boolean;
     isUploading?: boolean;
     validationErrors?: FileValidationError[];
+    customErrorMessage?: string;
 }
 interface AttachedFilesListProps {
     files: AttachmentFile[];
