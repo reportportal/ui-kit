@@ -76,6 +76,7 @@ export interface MultipleAutocompleteProps<T> {
   customEmptyListMessage?: string;
   customNoMatchesMessage?: string;
   useFixedPositioning?: boolean;
+  newItemButtonText?: string;
 }
 
 export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompleteProps<T>) => {
@@ -113,6 +114,7 @@ export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompletePr
     customizeNewSelectedValue = (newValue) => newValue,
     renderCustomSelectedItem,
     useFixedPositioning,
+    newItemButtonText = '',
     ...props
   } = componentsProps;
 
@@ -315,6 +317,7 @@ export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompletePr
               loading={loading}
               async={async}
               ref={refs.setFloating}
+              newItemButtonText={newItemButtonText}
               style={floatingStyles}
               inputValue={(inputValue || '').trim()}
               getItemProps={getOptionProps(getItemProps, highlightedIndex, value)}
