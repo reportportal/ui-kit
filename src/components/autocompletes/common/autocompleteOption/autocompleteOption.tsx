@@ -16,9 +16,12 @@
 
 import { HTMLAttributes, ReactNode } from 'react';
 import classNames from 'classnames/bind';
+
 import PlusIcon from 'src/assets/img/plus-button-inline.svg';
-import styles from './autocompleteOption.module.scss';
+
 import { Button } from '@/components/button';
+
+import styles from './autocompleteOption.module.scss';
 
 const cx = classNames.bind(styles);
 

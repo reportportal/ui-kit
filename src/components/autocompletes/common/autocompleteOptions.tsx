@@ -18,10 +18,12 @@ import { Component, ReactNode } from 'react';
 import classNames from 'classnames/bind';
 import { Scrollbars } from 'rc-scrollbars';
 
+import { default as BubblesLoader } from '@/components/bubblesLoader';
+
 import { AutocompletePrompt } from './autocompletePrompt';
 import { AutocompleteOption } from './autocompleteOption';
-import { default as BubblesLoader } from '@/components/bubblesLoader';
 import { GetItemPropsT } from '../types';
+
 import styles from './autocompleteOptions.module.scss';
 
 const cx = classNames.bind(styles);

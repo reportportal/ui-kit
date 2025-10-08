@@ -16,12 +16,13 @@
 
 import { ReactNode } from 'react';
 import classNames from 'classnames/bind';
+
 import styles from './autocompletePrompt.module.scss';
 
 const cx = classNames.bind(styles);
 
 interface AutocompletePromptProps {
-  children: ReactNode | ReactNode[];
+  children: ReactNode;
 }
 
 export const AutocompletePrompt = ({ children = null }: AutocompletePromptProps) => (

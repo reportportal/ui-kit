@@ -16,6 +16,12 @@
 
 import { ComponentProps, KeyboardEvent, ReactNode, useEffect, useRef } from 'react';
 import classNames from 'classnames/bind';
+import { ControllerStateAndHelpers } from 'downshift';
+
+import { ClearIcon } from '@/components/icons';
+import { default as FieldText } from '@/components/fieldText';
+import { useFloating, autoUpdate } from '@floating-ui/react';
+
 import { AutocompleteMenu } from '../common/autocompleteMenu';
 import { SelectedItems } from './selectedItems';
 import {
@@ -24,13 +30,10 @@ import {
   MultipleDownshift,
   MultipleDownshiftProps,
 } from './multipleDownshift';
-import styles from './multipleAutocomplete.module.scss';
-import { default as FieldText } from '@/components/fieldText';
-import { useFloating } from '@floating-ui/react';
-import { ControllerStateAndHelpers } from 'downshift';
 import { isEqual } from '../utils';
-import { ClearIcon } from '@/components/icons';
 import { GetItemPropsT } from '../types';
+
+import styles from './multipleAutocomplete.module.scss';
 
 const cx = classNames.bind(styles);
 
@@ -67,12 +70,12 @@ export interface MultipleAutocompleteProps<T> {
   dataAutomationId: string;
   existingItemsMap: { [key: string | number]: boolean };
   optionVariant: ComponentProps<typeof AutocompleteMenu>['optionVariant'];
-  isClearAvailable?: boolean;
   customizeNewSelectedValue: (value: T) => T;
-  renderCustomSelecetedItem?: (item: T) => ReactNode;
+  renderCustomSelectedItem?: (item: T) => ReactNode;
   getUniqKey?: (item: T) => string;
   customEmptyListMessage?: string;
   customNoMatchesMessage?: string;
+  useFixedPositioning?: boolean;
 }
 
 export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompleteProps<T>) => {
@@ -92,8 +95,8 @@ export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompletePr
     disabled = false,
     mobileDisabled = false,
     inputProps = {},
-    parseValueToString = ((v: T) => v || '') as MultipleAutocompleteProps<T>['parseValueToString'],
-    minLength = 1,
+    parseValueToString = ((item: T) =>
+      item || '') as MultipleAutocompleteProps<T>['parseValueToString'],
     maxLength = null,
     async = false,
     customClass = '',
@@ -108,13 +111,15 @@ export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompletePr
     dataAutomationId = '',
     existingItemsMap = {},
     customizeNewSelectedValue = (newValue) => newValue,
-    renderCustomSelecetedItem,
-    isClearAvailable = true,
+    renderCustomSelectedItem,
+    useFixedPositioning,
     ...props
   } = componentsProps;
 
   const { refs, floatingStyles } = useFloating({
     placement: 'bottom-start',
+    strategy: useFixedPositioning ? 'fixed' : 'absolute',
+    whileElementsMounted: autoUpdate,
   });
 
   const placeholderIfEmptyField = value.length === 0 && !disabled ? placeholder : '';
@@ -122,7 +127,7 @@ export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompletePr
 
   useEffect(() => {
     clearItemsError();
-  }, [value]);
+  }, [clearItemsError, value]);
 
   const handleChange = (
     selectedItems: T | T[] | null,
@@ -171,11 +176,11 @@ export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompletePr
   }) => {
     if (parseInputValueFn) {
       const parsedItems = parseInputValueFn(inputValue);
-      const items = (parsedItems.length ? parsedItems : [inputValue]) as T;
-      selectItem(items);
+      const items = parsedItems.length ? parsedItems : [inputValue as unknown as T];
+      selectItem(items as unknown as T);
       clearSelection();
     } else {
-      selectItem(inputValue as T);
+      selectItem(inputValue as unknown as T);
       clearSelection();
     }
   };
@@ -242,7 +247,7 @@ export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompletePr
                     mobileDisabled={mobileDisabled}
                     parseValueToString={parseValueToString}
                     getItemValidationErrorType={getItemValidationErrorType}
-                    renderCustomSelecetedItem={renderCustomSelecetedItem}
+                    renderCustomSelectedItem={renderCustomSelectedItem}
                     editItem={editItem}
                     editable={editable}
                     getAdditionalCreationCondition={getAdditionalCreationCondition}

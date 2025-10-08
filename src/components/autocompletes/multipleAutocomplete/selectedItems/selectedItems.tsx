@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
-import { useState, ChangeEvent, KeyboardEvent, FocusEvent, ReactNode, MouseEvent } from 'react';
+import { useState, ChangeEvent, KeyboardEvent, ReactNode, MouseEvent } from 'react';
 import classNames from 'classnames/bind';
+
 import CrossIcon from 'src/assets/img/cross-rounded-icon-inline.svg';
+
 import styles from './selectedItems.module.scss';
 
 const cx = classNames.bind(styles);
@@ -46,7 +48,7 @@ const SelectedItem = <T,>({
   onRemoveItem,
   disabled = false,
   mobileDisabled = false,
-  parseValueToString = () => '',
+  parseValueToString,
   error = false,
   editItem,
   editable = false,
@@ -108,9 +110,10 @@ const SelectedItem = <T,>({
       })}
       onClick={changeEditMode}
     >
-      {parseValueToString(item)}
+      {parseValueToString?.(item)}
       {!disabled && (
-        <i
+        <button
+          type="button"
           className={cx('cross-icon', {
             [`validation-${error}`]: error,
             'mobile-disabled': mobileDisabled,
@@ -119,7 +122,7 @@ const SelectedItem = <T,>({
           onClick={removeItemHandler}
         >
           <CrossIcon />
-        </i>
+        </button>
       )}
     </div>
   );
@@ -128,35 +131,33 @@ const SelectedItem = <T,>({
 type SelectedItemsProps<T> = Omit<SelectedItemProps<T>, 'item'> & {
   items?: T[];
   onRemoveItem?: (item: T) => void;
-  parseValueToString?: (value: T | null) => string;
+  parseValueToString: (value: T | null) => string;
   editItem?: (oldItem: T, newValue: T) => void;
   disabled?: boolean;
   mobileDisabled?: boolean;
-  options?: T[];
   storedItemsMap?: Record<string, boolean>;
   highlightUnStoredItem?: boolean;
   editable?: boolean;
   variant?: VariantType;
   getItemValidationErrorType?: ((item: T) => string) | null;
-  renderCustomSelecetedItem?: (item: T) => ReactNode;
+  renderCustomSelectedItem?: (item: T) => ReactNode;
 };
 
 export const SelectedItems = <T,>({
   items = [],
-  parseValueToString = () => '',
+  parseValueToString,
   getItemValidationErrorType,
-  options,
   storedItemsMap = {},
   highlightUnStoredItem = false,
-  renderCustomSelecetedItem,
+  renderCustomSelectedItem,
   ...props
 }: SelectedItemsProps<T>) => {
   return items.map((item) => {
-    return renderCustomSelecetedItem ? (
-      renderCustomSelecetedItem(item)
+    return renderCustomSelectedItem ? (
+      renderCustomSelectedItem(item)
     ) : (
       <SelectedItem
-        key={parseValueToString(item)}
+        key={parseValueToString?.(item)}
         parseValueToString={parseValueToString}
         error={getItemValidationErrorType?.(item) || ''}
         item={item}

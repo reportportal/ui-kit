@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-import { ChangeEvent, ComponentProps, KeyboardEvent, Ref } from 'react';
+import { ComponentProps, FocusEvent, KeyboardEvent, ReactNode, Ref } from 'react';
 import Downshift, { DownshiftState, StateChangeOptions } from 'downshift';
-import { AutocompleteMenu } from '../common/autocompleteMenu';
+import { autoUpdate, useFloating } from '@floating-ui/react';
+
 import { default as FieldText } from '@/components/fieldText';
+
+import { AutocompleteMenu } from '../common/autocompleteMenu';
 import { ENTER_KEY_NAME, TAB_KEY_NAME } from '../constants';
-import { useFloating } from '@floating-ui/react';
 import { GetItemPropsT } from '../types';
 
 const DEFAULT_OPTIONS_INDEX = 0;
@@ -27,16 +29,16 @@ const DEFAULT_OPTIONS_INDEX = 0;
 export interface SingleAutocompleteProps<T> {
   options: T[];
   loading: boolean;
-  onStateChange: () => void;
-  value: T;
+  onStateChange: ComponentProps<typeof Downshift<T>>['onStateChange'];
+  value: T | null;
   placeholder: string;
   onChange: ComponentProps<typeof Downshift<T>>['onChange'];
   onFocus: () => void;
-  onBlur: (e: ChangeEvent<HTMLInputElement>) => void;
+  onBlur: (e: FocusEvent<HTMLInputElement>) => void;
   disabled: boolean;
   inputProps: ComponentProps<typeof FieldText>;
   parseValueToString: (value: T | null) => string;
-  renderOption: (value: T) => React.ReactNode;
+  renderOption: (value: T) => ReactNode;
   minLength: number;
   maxLength: number | null;
   async: boolean;
@@ -47,11 +49,11 @@ export interface SingleAutocompleteProps<T> {
   setTouch: (value: boolean) => void;
   createWithoutConfirmation: boolean;
   menuClassName: string;
-  icon: string;
+  icon?: ReactNode;
   skipOptionCreation?: boolean;
   isOptionUnique?: (value: boolean | null) => void;
   refFunction: Ref<HTMLInputElement>;
-  stateReducer: (
+  stateReducer?: (
     state: DownshiftState<T>,
     changes: StateChangeOptions<T>,
   ) => Partial<StateChangeOptions<T>>;
@@ -71,7 +73,7 @@ export const SingleAutocomplete = <T,>(componentProps: SingleAutocompleteProps<T
     onBlur = () => {},
     disabled = false,
     inputProps = {},
-    parseValueToString = ((valueToParse) => valueToParse || '') as (item: T | null) => string,
+    parseValueToString = ((v) => (v === null ? '' : String(v))) as (item: T | null) => string,
     minLength = 1,
     skipOptionCreation = false,
     maxLength = null,
@@ -79,32 +81,35 @@ export const SingleAutocomplete = <T,>(componentProps: SingleAutocompleteProps<T
     isRequired = false,
     error = '',
     touched = false,
-    setTouch = () => {},
+    setTouch,
     createWithoutConfirmation = false,
     menuClassName = '',
-    icon = null,
-    isOptionUnique = null,
-    refFunction = () => {},
+    icon,
+    isOptionUnique,
+    refFunction,
     stateReducer,
     onStateChange,
+    useFixedPositioning = false,
     ...props
   } = componentProps;
 
   const { refs, floatingStyles } = useFloating({
     placement: 'bottom-start',
+    strategy: useFixedPositioning ? 'fixed' : 'absolute',
+    whileElementsMounted: autoUpdate,
   });
 
   const getOptionProps =
     (
       getItemProps: GetItemPropsT<T>,
       highlightedIndex: number | null,
-      selectedItem: T,
+      selectedItem: T | null,
     ): GetItemPropsT<T> =>
     ({ item, index, ...rest }) =>
       getItemProps({
         item,
         index,
-        isSelected: selectedItem === item,
+        isSelected: selectedItem !== null && selectedItem === item,
         ...rest,
         isActive: highlightedIndex === index,
       });
@@ -139,9 +144,8 @@ export const SingleAutocomplete = <T,>(componentProps: SingleAutocompleteProps<T
         selectItem,
       }) => (
         <>
-          <div ref={refs.setReference}>
+          <div ref={refs.setReference} {...getRootProps()}>
             <FieldText
-              {...getRootProps()}
               {...getInputProps({
                 placeholder: !disabled ? placeholder : '',
                 maxLength: maxLength || undefined,
@@ -158,21 +162,23 @@ export const SingleAutocomplete = <T,>(componentProps: SingleAutocompleteProps<T
                     handleKeyDown(event, setHighlightedIndex);
                   }
                 },
-                onBlur: (e) => {
-                  const newValue = (inputValue || '').trim() as T;
-
-                  if (!skipOptionCreation) {
-                    if (!createWithoutConfirmation && !newValue) {
-                      selectItem(newValue);
-                    }
-
-                    if (createWithoutConfirmation) {
-                      selectItem(newValue);
-                    }
+                onBlur: (e: FocusEvent<HTMLInputElement>) => {
+                  const trimmed = (inputValue ?? '').trim();
+                  const hasValue = !!trimmed;
+                  const matched = hasValue
+                    ? options.find((v) => parseValueToString(v) === trimmed)
+                    : undefined;
+                  if (matched) {
+                    selectItem(matched);
+                  } else if (!skipOptionCreation && createWithoutConfirmation && hasValue) {
+                    selectItem(trimmed as unknown as T);
+                  } else {
+                    selectItem(null as T);
                   }
-
                   onBlur(e);
-                  isOptionUnique?.(newValue ? !options.find((v) => v === newValue) : null);
+                  isOptionUnique?.(
+                    hasValue ? !options.some((v) => parseValueToString(v) === trimmed) : null,
+                  );
                   setTouch(true);
                 },
                 disabled,
@@ -189,6 +195,7 @@ export const SingleAutocomplete = <T,>(componentProps: SingleAutocompleteProps<T
             isOpen={isOpen}
             style={floatingStyles}
             ref={refs.setFloating}
+            minLength={minLength}
             inputValue={(inputValue || '').trim()}
             getItemProps={getOptionProps(getItemProps, highlightedIndex, value)}
             parseValueToString={parseValueToString}

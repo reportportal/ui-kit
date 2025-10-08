@@ -53,7 +53,7 @@ $SCREEN_XS_MAX: 767px;
   &.validation-error {
     border-color: var(--rp-ui-validation-error-border);
     color: var(--rp-ui-color-error);
-    background-color: var(--rp-ui-base-bg-200);
+    background-color: var(--rp-ui-autocomplete-selected-item-bg-color);
   }
 
   &.highlight-un-stored-item {

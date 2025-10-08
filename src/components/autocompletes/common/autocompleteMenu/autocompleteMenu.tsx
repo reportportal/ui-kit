@@ -14,20 +14,22 @@
  * limitations under the License.
  */
 
-import classNames from 'classnames/bind';
-import { AutocompleteOptions } from '../autocompleteOptions';
-import styles from './autocompleteMenu.module.scss';
 import { ComponentProps, ForwardedRef, forwardRef } from 'react';
+import classNames from 'classnames/bind';
+
+import { AutocompleteOptions } from '../autocompleteOptions';
+
+import styles from './autocompleteMenu.module.scss';
 
 const cx = classNames.bind(styles);
 
-const isReadyForSearch = (minLength: number, inputValue: string) =>
+const isReadyForSearch = (minLength: number | null, inputValue: string) =>
   !minLength || minLength <= inputValue.trim().length;
 
 type AutocompleteMenuProps<T> = {
   isOpen?: boolean;
   style?: React.CSSProperties;
-  minLength?: number;
+  minLength: number | null;
   inputValue?: string;
   className?: string;
 } & ComponentProps<typeof AutocompleteOptions<T>>;
