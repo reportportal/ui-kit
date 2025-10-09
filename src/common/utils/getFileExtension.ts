@@ -17,5 +17,5 @@
 export const getFileExtension = (fileName: string): string => {
   const parts = fileName.split('.');
 
-  return parts.length > 1 ? parts.at(-1)?.toLowerCase() || '' : '';
+  return parts.length > 1 ? parts.pop()?.toLowerCase() || '' : '';
 };

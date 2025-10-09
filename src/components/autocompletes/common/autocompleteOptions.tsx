@@ -102,14 +102,14 @@ export class AutocompleteOptions<T> extends Component<AutocompleteOptionsProps<T
     const { inputValue, getItemProps, parseValueToString, optionVariant } = this.props;
 
     const index = options.length;
-    const isNew = true;
+
     return (
-      <div className={cx({ container: !options.length })}>
+      <div className={cx({ container: !index })}>
         <AutocompleteOption
           key={parseValueToString(inputValue as T)}
           optionVariant={optionVariant}
+          isNew
           {...getItemProps({ item: inputValue as T, index })}
-          isNew={isNew}
         >
           {parseValueToString(inputValue as T)}
         </AutocompleteOption>
