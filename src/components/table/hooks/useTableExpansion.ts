@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { Column, FixedColumn } from '../types';
 
 interface UseTableExpansionProps {
@@ -21,6 +21,39 @@ export const useTableExpansion = ({
   onToggleRowExpansion,
 }: UseTableExpansionProps): UseTableExpansionReturn => {
   const [expandedCells, setExpandedCells] = useState<Set<string>>(new Set());
+
+  useEffect(() => {
+    const allColumnKeys = [
+      ...primaryColumns.map((col) => col.key),
+      ...fixedColumns.map((col) => col.key),
+    ];
+
+    const derivedExpandedCells = new Set<string>();
+
+    expandedRowIds.forEach((rowId) => {
+      allColumnKeys.forEach((columnKey) => {
+        derivedExpandedCells.add(`${rowId}-${columnKey}`);
+      });
+    });
+
+    setExpandedCells((prevExpandedCells) => {
+      if (prevExpandedCells.size === derivedExpandedCells.size) {
+        let isSame = true;
+
+        prevExpandedCells.forEach((value) => {
+          if (!derivedExpandedCells.has(value)) {
+            isSame = false;
+          }
+        });
+
+        if (isSame) {
+          return prevExpandedCells;
+        }
+      }
+
+      return derivedExpandedCells;
+    });
+  }, [expandedRowIds, primaryColumns, fixedColumns]);
 
   const handleToggleRowExpansion = useCallback(
     (id: string | number) => {
