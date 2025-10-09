@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 EPAM Systems
+ * Copyright 2025 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,7 +44,7 @@ export interface MultipleDownshiftProps<T> extends Partial<DownshiftProps<T>> {
 
 export type GetStateAndHelpersT<T> = ControllerStateAndHelpers<T> & {
   removeItem: (removedItem: T, downshift: ControllerStateAndHelpers<T> | null) => void;
-  editItem: (oldItem: T, newItem: T) => void;
+  editItem: (oldItem: T, newValue: string) => void;
   handleChange: MultipleDownshiftProps<T>['onChange'];
   getOptionUniqKeyValue?: (option: T) => string;
   storedItemsMap: MultipleDownshiftProps<T>['existingItemsMap'];
@@ -132,7 +132,7 @@ export const MultipleDownshift = <T,>({
 
   const getStateAndHelpers = (downshift: ControllerStateAndHelpers<T>): GetStateAndHelpersT<T> => ({
     removeItem,
-    editItem,
+    editItem: editItem as (oldItem: T, newItem: string) => void,
     handleChange: onChange,
     getOptionUniqKeyValue,
     storedItemsMap,

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 EPAM Systems
+ * Copyright 2025 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,12 +29,12 @@ interface SelectedItemProps<T> {
   item: T;
   onRemoveItem: (item: T) => void;
   parseValueToString?: (value: T) => string;
-  editItem: (oldItem: T, newValue: T) => void;
+  editItem: (oldItem: T, newValue: string) => void;
   disabled?: boolean;
   mobileDisabled?: boolean;
   error?: string | boolean;
   editable?: boolean;
-  getAdditionalCreationCondition?: (value: T) => boolean;
+  getAdditionalCreationCondition?: (value: string) => boolean;
   storedOption?: boolean;
   highlightUnStoredItem?: boolean;
   variant?: VariantType;
@@ -73,9 +73,9 @@ const SelectedItem = <T,>({
   };
 
   const onKeyDownHandler = (event: KeyboardEvent<HTMLInputElement>) => {
-    const creationCondition = getAdditionalCreationCondition(value as T);
+    const creationCondition = getAdditionalCreationCondition(value);
     if (event.key === 'Enter' && creationCondition) {
-      editItem(item, value as T);
+      editItem(item, value);
       setEditMode(false);
       setValue('');
     }
@@ -128,11 +128,11 @@ const SelectedItem = <T,>({
   );
 };
 
-type SelectedItemsProps<T> = Omit<SelectedItemProps<T>, 'item'> & {
+type SelectedItemsProps<T> = Omit<SelectedItemProps<T>, 'item' | 'editItem'> & {
   items?: T[];
   onRemoveItem?: (item: T) => void;
   parseValueToString: (value: T | null) => string;
-  editItem?: (oldItem: T, newValue: T) => void;
+  editItem: (oldItem: T, newValue: string) => void;
   disabled?: boolean;
   mobileDisabled?: boolean;
   storedItemsMap?: Record<string, boolean>;

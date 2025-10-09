@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 EPAM Systems
+ * Copyright 2025 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -61,7 +61,7 @@ export interface MultipleAutocompleteProps<T> {
   createWithoutConfirmation: boolean;
   getItemValidationErrorType?: (item: T) => string;
   clearItemsError: () => void;
-  getAdditionalCreationCondition: (value: T) => boolean;
+  getAdditionalCreationCondition: (value: string) => boolean;
   highlightUnStoredItem: boolean;
   parseInputValueFn: ((value: string) => T[]) | null;
   handleUnStoredItemCb:
@@ -179,7 +179,7 @@ export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompletePr
     if (parseInputValueFn) {
       const parsedItems = parseInputValueFn(inputValue);
       const items = parsedItems.length ? parsedItems : [inputValue as unknown as T];
-      selectItem(items as unknown as T);
+      items.forEach((item) => selectItem(item));
       clearSelection();
     } else {
       selectItem(inputValue as unknown as T);
@@ -270,7 +270,7 @@ export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompletePr
                           event.key === 'Enter' &&
                           inputValue &&
                           creatable &&
-                          getAdditionalCreationCondition(inputValue as T);
+                          getAdditionalCreationCondition(inputValue);
                         if (creationCondition) {
                           createNewItem({
                             inputValue,
@@ -284,9 +284,7 @@ export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompletePr
                         onBlur();
 
                         const creationCondition =
-                          inputValue &&
-                          creatable &&
-                          getAdditionalCreationCondition(inputValue as T);
+                          inputValue && creatable && getAdditionalCreationCondition(inputValue);
 
                         if (creationCondition) {
                           createNewItem({

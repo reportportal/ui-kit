@@ -1,4 +1,4 @@
-/*
+/*!
  * Copyright 2025 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,3 +15,6 @@
  */
 
 export { AutocompleteMenu } from './autocompleteMenu';
+export { AutocompletePrompt } from './autocompletePrompt';
+export { AutocompleteOption } from './autocompleteOption';
+export { AutocompleteOptions } from './autocompleteOptions';
