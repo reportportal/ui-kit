@@ -304,7 +304,10 @@ export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompletePr
                   />
                 </div>
                 {inputProps?.clearable && value?.length > 0 && (
-                  <button className={cx('clear-icon')} onClick={() => inputProps?.onClear?.()}>
+                  <button
+                    className={cx('clear-icon', { 'clear-icon--disabled': disabled })}
+                    onClick={() => !disabled && inputProps?.onClear?.()}
+                  >
                     <ClearIcon />
                   </button>
                 )}

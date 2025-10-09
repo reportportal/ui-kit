@@ -66,7 +66,7 @@ export const AutocompleteOption = ({
       >
         <span className={cx('value')}>{children}</span>
         <Button
-          {...(!disabled ? props : {})}
+          {...(!disabled && props)}
           className={cx({ 'button-active': isActive })}
           icon={<PlusIcon />}
           variant="text"

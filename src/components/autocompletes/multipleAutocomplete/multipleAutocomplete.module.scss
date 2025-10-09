@@ -77,6 +77,10 @@ $SCREEN_XS_MAX: 767px;
   outline: none;
   border: none;
   background-color: transparent;
+
+  &--disabled {
+    cursor: default;
+  }
 }
 
 .autocomplete-input {
