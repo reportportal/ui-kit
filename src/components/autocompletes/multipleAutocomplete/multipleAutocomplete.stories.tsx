@@ -63,7 +63,7 @@ const TEST_DATA_STRINGS: Partial<
   >
 > = {
   options: OPTIONS_STRINGS,
-  loading: false,
+  loading: true,
   async: true,
   createWithoutConfirmation: true,
   creatable: false,
@@ -77,7 +77,7 @@ const TEST_DATA_STRINGS: Partial<
   highlightUnStoredItem: true,
   value: [OPTIONS_STRINGS[0]],
   error: '',
-  touched: true,
+  touched: false,
   inputProps: {
     clearable: true,
   },

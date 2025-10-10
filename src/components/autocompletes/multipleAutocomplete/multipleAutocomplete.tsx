@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 EPAM Systems
+ * Copyright 2022 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -226,7 +226,11 @@ export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompletePr
           storedItemsMap,
           getRootProps,
         }: GetStateAndHelpersT<T>) => (
-          <div {...getRootProps(undefined, { suppressRefError: true })} ref={refs.setReference}>
+          <div
+            {...getRootProps(undefined, { suppressRefError: true })}
+            className={cx('autocomplete-wrapper')}
+            ref={refs.setReference}
+          >
             <>
               <div
                 className={cx('autocomplete', customClass, {
@@ -255,7 +259,6 @@ export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompletePr
                     storedItemsMap={storedItemsMap}
                     highlightUnStoredItem={highlightUnStoredItem}
                   />
-
                   <input
                     {...getInputProps({
                       ref: inputRef,

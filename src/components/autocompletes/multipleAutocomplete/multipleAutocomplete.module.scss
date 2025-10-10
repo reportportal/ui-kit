@@ -55,6 +55,11 @@ $SCREEN_XS_MAX: 767px;
 }
 
 .autocomplete {
+  &-wrapper {
+    position: relative;
+    width: max-content;
+  }
+
   @include container(var(--rp-ui-color-field-border), var(--rp-ui-color-bg));
   @include hover-state(var(--rp-ui-color-field-hover));
   @include focus-state(var(--rp-ui-color-primary-focused));

@@ -73,7 +73,9 @@ $SCREEN_XS_MAX: 767px;
 
 .cross-icon {
   flex-shrink: 0;
-  display: inline-block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   margin-left: 8px;
   width: 16px;
   height: 16px;
@@ -95,6 +97,11 @@ $SCREEN_XS_MAX: 767px;
 
   &:active:not(.validation-error) {
     @include fill-svg(var(--rp-ui-color-text));
+  }
+
+  svg {
+    width: 8px;
+    height: 8px;
   }
 }
 

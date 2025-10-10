@@ -27,7 +27,7 @@ const TEST_DATA_OBJECTS: Partial<
   >
 > = {
   options: OPTIONS_OBJECTS,
-  loading: false,
+  loading: true,
   async: true,
   createWithoutConfirmation: true,
   parseValueToString: (value) => {

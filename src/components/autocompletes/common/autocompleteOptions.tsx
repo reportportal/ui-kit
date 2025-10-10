@@ -28,7 +28,7 @@ import styles from './autocompleteOptions.module.scss';
 
 const cx = classNames.bind(styles);
 
-interface AutocompleteOptionsProps<T> {
+export interface AutocompleteOptionsProps<T> {
   options: T[];
   loading: boolean;
   inputValue: string;

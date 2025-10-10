@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import { ComponentProps, ForwardedRef, forwardRef } from 'react';
+import { ForwardedRef, forwardRef } from 'react';
 import classNames from 'classnames/bind';
 
-import { AutocompleteOptions } from '../autocompleteOptions';
+import { AutocompleteOptions, AutocompleteOptionsProps } from '../autocompleteOptions';
 
 import styles from './autocompleteMenu.module.scss';
 
@@ -32,7 +32,7 @@ type AutocompleteMenuProps<T> = {
   minLength: number | null;
   inputValue?: string;
   className?: string;
-} & ComponentProps<typeof AutocompleteOptions<T>>;
+} & AutocompleteOptionsProps<T>;
 
 export const AutocompleteMenu = forwardRef(
   <T,>(

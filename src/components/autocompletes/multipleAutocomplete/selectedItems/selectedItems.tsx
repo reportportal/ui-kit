@@ -17,9 +17,8 @@
 import { useState, ChangeEvent, KeyboardEvent, ReactNode, MouseEvent } from 'react';
 import classNames from 'classnames/bind';
 
-import CrossIcon from 'src/assets/img/cross-rounded-icon-inline.svg';
-
 import styles from './selectedItems.module.scss';
+import { CloseIcon } from '@/components/icons';
 
 const cx = classNames.bind(styles);
 
@@ -63,7 +62,7 @@ const SelectedItem = <T,>({
 
   const changeEditMode = () => {
     if (!disabled && editable && !storedOption) {
-      setValue(getItemName?.(item) || (item as string));
+      setValue(getItemName?.(item) || parseValueToString?.(item) || '');
       setEditMode(true);
     }
   };
@@ -121,7 +120,7 @@ const SelectedItem = <T,>({
           })}
           onClick={removeItemHandler}
         >
-          <CrossIcon />
+          <CloseIcon />
         </button>
       )}
     </div>

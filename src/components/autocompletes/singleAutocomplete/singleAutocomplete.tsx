@@ -15,7 +15,7 @@
  */
 
 import { ComponentProps, FocusEvent, KeyboardEvent, ReactNode, Ref } from 'react';
-import classNames from 'classnames';
+import classNames from 'classnames/bind';
 import Downshift, { DownshiftState, StateChangeOptions } from 'downshift';
 import { autoUpdate, useFloating } from '@floating-ui/react';
 
@@ -26,6 +26,8 @@ import { ENTER_KEY_NAME, TAB_KEY_NAME } from '../constants';
 import { GetItemPropsT } from '../types';
 
 import styles from './singleAutocomplete.module.scss';
+
+console.log({ styles });
 
 const cx = classNames.bind(styles);
 
@@ -95,7 +97,7 @@ export const SingleAutocomplete = <T,>(componentProps: SingleAutocompleteProps<T
     refFunction,
     stateReducer,
     onStateChange,
-    useFixedPositioning = true,
+    useFixedPositioning,
     newItemButtonText = '',
     ...props
   } = componentProps;
@@ -201,22 +203,22 @@ export const SingleAutocomplete = <T,>(componentProps: SingleAutocompleteProps<T
                 ...inputProps,
               })}
             />
+            <AutocompleteMenu
+              isOpen={isOpen}
+              style={floatingStyles}
+              ref={refs.setFloating}
+              minLength={minLength}
+              inputValue={(inputValue || '').trim()}
+              getItemProps={getOptionProps(getItemProps, highlightedIndex, value)}
+              parseValueToString={parseValueToString}
+              optionVariant={optionVariant}
+              createWithoutConfirmation={createWithoutConfirmation}
+              className={menuClassName}
+              options={options}
+              newItemButtonText={newItemButtonText}
+              {...props}
+            />
           </div>
-          <AutocompleteMenu
-            isOpen={isOpen}
-            style={floatingStyles}
-            ref={refs.setFloating}
-            minLength={minLength}
-            inputValue={(inputValue || '').trim()}
-            getItemProps={getOptionProps(getItemProps, highlightedIndex, value)}
-            parseValueToString={parseValueToString}
-            optionVariant={optionVariant}
-            createWithoutConfirmation={createWithoutConfirmation}
-            className={menuClassName}
-            options={options}
-            newItemButtonText={newItemButtonText}
-            {...props}
-          />
         </>
       )}
     </Downshift>

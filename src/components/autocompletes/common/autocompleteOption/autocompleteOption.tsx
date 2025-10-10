@@ -17,9 +17,8 @@
 import { HTMLAttributes, ReactNode } from 'react';
 import classNames from 'classnames/bind';
 
-import PlusIcon from 'src/assets/img/plus-button-inline.svg';
-
 import { Button } from '@/components/button';
+import { PlusIcon } from '@/components/icons';
 
 import styles from './autocompleteOption.module.scss';
 
