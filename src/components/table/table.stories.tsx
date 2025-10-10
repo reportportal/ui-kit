@@ -116,6 +116,7 @@ export const Default: Story = {
       <div style={{ minWidth: '700px' }}>
         <Table
           {...args}
+          primaryColumn={primaryColumns}
           data={tableData}
           sortableColumns={[primaryColumns[0].key]}
           onChangeSorting={(sortConfigParam = sortConfig) => {
@@ -151,7 +152,6 @@ export const Default: Story = {
     );
   },
   args: {
-    primaryColumns,
     fixedColumns,
     renderRowActions,
     selectable: true,
@@ -416,7 +416,7 @@ export const FixedHeader: Story = {
           <Table
             {...args}
             data={tableData}
-            primaryColumns={primaryColumns}
+            primaryColumn={primaryColumns}
             fixedColumns={scrollableFixedColumns}
             isHeaderFixed={true}
             sortableColumns={[primaryColumns[0].key, 'age', 'department']}
@@ -473,7 +473,7 @@ export const HorizontalScrollWithFixedHeaderControl: Story = {
           <Table
             {...args}
             data={wideTableData}
-            primaryColumns={wideTablePrimaryColumns}
+            primaryColumn={wideTablePrimaryColumns}
             fixedColumns={wideTableFixedColumns}
             isHorizontallyScrollable
             isHeaderFixed
@@ -506,7 +506,7 @@ export const PinnedColumnsWithFixedHeader: Story = {
           <Table
             {...args}
             data={wideTableData}
-            primaryColumns={wideTablePrimaryColumns}
+            primaryColumn={wideTablePrimaryColumns}
             fixedColumns={wideTableFixedColumns}
             isHorizontallyScrollable
             isHeaderFixed
@@ -606,7 +606,7 @@ export const ExpandableRows: Story = {
         <Table
           {...args}
           data={expandableData}
-          primaryColumns={expandablePrimaryColumns}
+          primaryColumn={expandablePrimaryColumns}
           fixedColumns={expandableFixedColumns}
           isRowsExpandable={true}
           selectable={true}
@@ -750,7 +750,7 @@ export const CellExpansion: Story = {
           <Table
             {...args}
             data={longTextData}
-            primaryColumns={[{ key: 'name', header: 'Full Name' }]}
+            primaryColumn={[{ key: 'name', header: 'Full Name' }]}
             fixedColumns={longTextColumns}
             selectable={false}
             isRowsExpandable={true}

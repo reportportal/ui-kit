@@ -64,7 +64,7 @@ describe('Table Component', () => {
 
   const defaultProps = {
     data: mockData,
-    primaryColumns: mockPrimaryColumns,
+    primaryColumn: mockPrimaryColumns,
     fixedColumns: mockFixedColumns,
   };
 
@@ -135,7 +135,7 @@ describe('Table Component', () => {
     it('accepts single column object for primaryColumns', () => {
       const singleColumnProps = {
         data: mockData,
-        primaryColumns: {
+        primaryColumn: {
           key: 'name',
           header: 'Name',
         },
@@ -394,7 +394,7 @@ describe('Table Component', () => {
       render(
         <Table
           data={complexData}
-          primaryColumns={mockPrimaryColumns}
+          primaryColumn={mockPrimaryColumns}
           fixedColumns={mockFixedColumns}
         />,
       );
