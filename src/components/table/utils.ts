@@ -1,4 +1,4 @@
-import { CSSProperties } from 'react';
+import { CSSProperties, MutableRefObject } from 'react';
 import {
   ASC,
   DESC,
@@ -14,21 +14,20 @@ export const isAsc = (direction: SortingDirection) => {
 };
 
 export const sortTableData = (tableData: RowData[], sortConfig?: SortConfig): RowData[] => {
-  if (sortConfig) {
-    tableData.sort((a, b) => {
-      const contentA = a[sortConfig.key].content || a[sortConfig.key];
-      const contentB = b[sortConfig.key].content || b[sortConfig.key];
+  if (!sortConfig) return tableData;
 
-      if (contentA < contentB) {
-        return isAsc(sortConfig.direction) ? -1 : 1;
-      }
-      if (contentA > contentB) {
-        return isAsc(sortConfig.direction) ? 1 : -1;
-      }
-      return 0;
-    });
-  }
-  return tableData;
+  return [...tableData].sort((a, b) => {
+    const contentA = a[sortConfig.key].content || a[sortConfig.key];
+    const contentB = b[sortConfig.key].content || b[sortConfig.key];
+
+    if (contentA < contentB) {
+      return isAsc(sortConfig.direction) ? -1 : 1;
+    }
+    if (contentA > contentB) {
+      return isAsc(sortConfig.direction) ? 1 : -1;
+    }
+    return 0;
+  });
 };
 
 export const getColumnsKeys = (columns: Column[]): string[] => {
@@ -51,7 +50,7 @@ export const getRowSizeClassName = (rowData: RowData): string => {
 export const calculatePinnedPosition = (
   columnIndex: number,
   columns: (PrimaryColumn | FixedColumn)[],
-  columnWidthsRef: React.MutableRefObject<Map<string, number>>,
+  columnWidthsRef: MutableRefObject<Map<string, number>>,
   isRowsExpandable: boolean,
   selectable: boolean,
 ): number => {
@@ -73,7 +72,7 @@ export const calculatePinnedPosition = (
     } else {
       const fixedColumn = column as FixedColumn;
       const width = isString(fixedColumn.width)
-        ? parseInt(fixedColumn.width, 10)
+        ? parseInt(fixedColumn.width, 10) || 0
         : fixedColumn.width;
       position += width;
     }
@@ -86,7 +85,7 @@ export const getCellStyle = (
   isPinned: boolean,
   pinnedIndex: number | undefined,
   pinnedColumns: (PrimaryColumn | FixedColumn)[],
-  columnWidthsRef: React.MutableRefObject<Map<string, number>>,
+  columnWidthsRef: MutableRefObject<Map<string, number>>,
   isRowsExpandable: boolean,
   selectable: boolean,
 ): CSSProperties => {

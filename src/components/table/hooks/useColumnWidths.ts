@@ -1,7 +1,7 @@
-import { useRef, useCallback } from 'react';
+import { useRef, useCallback, MutableRefObject } from 'react';
 
 interface UseColumnWidthsReturn {
-  columnWidthsRef: React.MutableRefObject<Map<string, number>>;
+  columnWidthsRef: MutableRefObject<Map<string, number>>;
   setCellRef: (columnKey: string) => (element: HTMLDivElement | null) => void;
 }
 
@@ -10,11 +10,10 @@ export const useColumnWidths = (): UseColumnWidthsReturn => {
 
   const setCellRef = useCallback(
     (columnKey: string) => (element: HTMLDivElement | null) => {
-      if (element) {
-        const width = element.getBoundingClientRect().width;
-        if (width > 0) {
-          columnWidthsRef.current.set(columnKey, width);
-        }
+      if (!element) return;
+      const width = element.getBoundingClientRect().width;
+      if (width > 0) {
+        columnWidthsRef.current.set(columnKey, width);
       }
     },
     [],

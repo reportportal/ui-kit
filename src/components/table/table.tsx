@@ -19,7 +19,7 @@ const cx = classNames.bind(styles);
 
 export const Table: FC<TableComponentProps> = ({
   data,
-  primaryColumns: primaryColumnsInput,
+  primaryColumn: primaryColumnsInput,
   fixedColumns,
   renderRowActions,
   className = '',
@@ -39,6 +39,7 @@ export const Table: FC<TableComponentProps> = ({
   onToggleRowSelection = () => {},
   onToggleAllRowsSelection = () => {},
   onToggleRowExpansion = () => {},
+  onToggleAllRowsExpansion = () => {},
 }) => {
   const primaryColumns: Column[] = useMemo(
     () => (Array.isArray(primaryColumnsInput) ? primaryColumnsInput : [primaryColumnsInput]),
@@ -49,7 +50,6 @@ export const Table: FC<TableComponentProps> = ({
   const defaultSortableColumns =
     sortableColumns ?? getColumnsKeys([...primaryColumns, ...fixedColumns]);
 
-  // Custom hooks
   const { pinnedColumns, scrollableColumns } = useTableColumns({
     primaryColumns,
     fixedColumns,
@@ -87,6 +87,10 @@ export const Table: FC<TableComponentProps> = ({
     onToggleAllRowsSelection();
   };
 
+  const handleToggleAllRowsExpansion = () => {
+    onToggleAllRowsExpansion();
+  };
+
   const getSortIcon = (columnKey: string) => {
     if (!defaultSortableColumns.includes(columnKey)) return null;
 
@@ -100,6 +104,8 @@ export const Table: FC<TableComponentProps> = ({
   const isAllRowsSelected: boolean = data.every((row) => selectedRowIds.includes(row.id));
   const isAnyRowSelected: boolean = data.some((row) => selectedRowIds.includes(row.id));
   const hasSelectedRows = selectedRowIds?.length > 0;
+
+  const isAllRowsExpanded: boolean = data.every((row) => expandedRowIds.includes(row.id));
 
   const gridTemplateColumns = getGridTemplateColumns(
     pinnedColumns,
@@ -158,8 +164,8 @@ export const Table: FC<TableComponentProps> = ({
         )}
         {isRowsExpandable && (
           <div className={cx('table-header-cell', 'expand-cell')} style={{ left: '0' }}>
-            <button onClick={() => {}}>
-              <span className={cx('expand-icon', { expanded: true })}>
+            <button onClick={handleToggleAllRowsExpansion} aria-label="Toggle all rows expansion">
+              <span className={cx('expand-icon', { expanded: isAllRowsExpanded })}>
                 <ChevronDownDropdownIcon />
               </span>
             </button>
@@ -261,7 +267,11 @@ export const Table: FC<TableComponentProps> = ({
               <div className={cx('table-row-content')} style={{ gridTemplateColumns }}>
                 {isRowsExpandable && (
                   <div className={cx('table-cell', 'expand-cell')} style={{ left: '0' }}>
-                    <button onClick={() => handleToggleRowExpansion(item.id)}>
+                    <button
+                      onClick={() => handleToggleRowExpansion(item.id)}
+                      aria-label={expandedRowIds.includes(item.id) ? 'Collapse row' : 'Expand row'}
+                      aria-expanded={expandedRowIds.includes(item.id)}
+                    >
                       <span
                         className={cx('expand-icon', {
                           expanded: expandedRowIds.includes(item.id),

@@ -39,7 +39,7 @@ export interface SortConfig {
 }
 export interface TableComponentProps {
   data: RowData[];
-  primaryColumns: Column | Column[];
+  primaryColumn: Column | Column[];
   fixedColumns: FixedColumn[];
   renderRowActions?: (metaData?: MetaData) => ReactNode;
   selectable?: boolean;
@@ -60,4 +60,5 @@ export interface TableComponentProps {
   onToggleRowSelection?: (id: string | number) => void;
   onToggleAllRowsSelection?: () => void;
   onToggleRowExpansion?: (id: string | number) => void;
+  onToggleAllRowsExpansion?: () => void;
 }
