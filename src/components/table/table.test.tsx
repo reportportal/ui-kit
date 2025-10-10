@@ -37,10 +37,12 @@ describe('Table Component', () => {
     { id: 3, name: 'Bob Johnson', age: 40, city: 'Chicago', rowConfigs: { size: 'small' } },
   ];
 
-  const mockPrimaryColumn = {
-    key: 'name',
-    header: 'Name',
-  };
+  const mockPrimaryColumns = [
+    {
+      key: 'name',
+      header: 'Name',
+    },
+  ];
 
   const mockFixedColumns: FixedColumn[] = [
     {
@@ -62,7 +64,7 @@ describe('Table Component', () => {
 
   const defaultProps = {
     data: mockData,
-    primaryColumn: mockPrimaryColumn,
+    primaryColumn: mockPrimaryColumns,
     fixedColumns: mockFixedColumns,
   };
 
@@ -128,6 +130,29 @@ describe('Table Component', () => {
       );
       const headerElement = container.querySelector('[class*="table-header"]');
       expect(headerElement?.className).toContain('custom-header-class');
+    });
+
+    it('accepts single column object for primaryColumns', () => {
+      const singleColumnProps = {
+        data: mockData,
+        primaryColumn: {
+          key: 'name',
+          header: 'Name',
+        },
+        fixedColumns: mockFixedColumns,
+      };
+
+      const { container } = render(<Table {...singleColumnProps} />);
+
+      const tableElement = container.querySelector('[class*="table"]');
+      expect(tableElement).toBeInTheDocument();
+
+      const headerCells = container.querySelectorAll('[class*="table-header-cell"]');
+      // Should have 1 primary column + 2 fixed columns = 3 header cells
+      expect(headerCells.length).toBe(3);
+
+      // Verify the primary column header is rendered
+      expect(screen.getByText('Name')).toBeInTheDocument();
     });
 
     it('applies rowClassName to each row', () => {
@@ -220,7 +245,7 @@ describe('Table Component', () => {
           {...defaultProps}
           sortableColumns={['name']}
           onChangeSorting={onChangeSortingMock}
-          sortingColumn={mockPrimaryColumn}
+          sortingColumn={mockPrimaryColumns[0]}
           sortingDirection={ASC}
         />,
       );
@@ -251,7 +276,7 @@ describe('Table Component', () => {
         <Table
           {...defaultProps}
           sortableColumns={['name']}
-          sortingColumn={mockPrimaryColumn}
+          sortingColumn={mockPrimaryColumns[0]}
           sortingDirection={ASC}
         />,
       );
@@ -265,7 +290,7 @@ describe('Table Component', () => {
         <Table
           {...defaultProps}
           sortableColumns={['name']}
-          sortingColumn={mockPrimaryColumn}
+          sortingColumn={mockPrimaryColumns[0]}
           sortingDirection={DESC}
         />,
       );
@@ -369,7 +394,7 @@ describe('Table Component', () => {
       render(
         <Table
           data={complexData}
-          primaryColumn={mockPrimaryColumn}
+          primaryColumn={mockPrimaryColumns}
           fixedColumns={mockFixedColumns}
         />,
       );

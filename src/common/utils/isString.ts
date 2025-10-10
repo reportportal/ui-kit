@@ -14,5 +14,6 @@
  * limitations under the License.
  */
 
-export { getFileExtension } from './getFileExtension';
-export { isString } from './isString';
+export const isString = (value: unknown): value is string => {
+  return typeof value === 'string';
+};

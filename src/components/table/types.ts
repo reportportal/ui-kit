@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { Dispatch, ReactNode, SetStateAction } from 'react';
 import { ASC, DESC } from './constants';
 
 export interface Column {
@@ -11,6 +11,10 @@ export interface PrimaryColumn extends Column {
 export interface FixedColumn extends Column {
   width: string | number;
   align?: 'left' | 'center' | 'right';
+}
+export interface PinnedColumn extends FixedColumn {
+  pinned: boolean;
+  pinnedPosition?: number;
 }
 export interface RowConfigs {
   size?: 'small' | 'medium' | 'large';
@@ -35,7 +39,7 @@ export interface SortConfig {
 }
 export interface TableComponentProps {
   data: RowData[];
-  primaryColumn: Column;
+  primaryColumn: Column | Column[];
   fixedColumns: FixedColumn[];
   renderRowActions?: (metaData?: MetaData) => ReactNode;
   selectable?: boolean;
@@ -46,7 +50,15 @@ export interface TableComponentProps {
   sortingDirection?: SortingDirection;
   sortingColumn?: Column;
   sortableColumns?: string[];
+  isHeaderFixed?: boolean;
+  isHorizontallyScrollable?: boolean;
+  pinnedColumnKeys?: string[];
+  isRowsExpandable?: boolean;
+  expandedRowIds?: (string | number)[];
+  setExpandedRowIds?: Dispatch<SetStateAction<Set<string | number>>>;
   onChangeSorting?: (sortConfig?: SortConfig) => void;
   onToggleRowSelection?: (id: string | number) => void;
   onToggleAllRowsSelection?: () => void;
+  onToggleRowExpansion?: (id: string | number) => void;
+  onToggleAllRowsExpansion?: () => void;
 }
