@@ -27,8 +27,6 @@ import { GetItemPropsT } from '../types';
 
 import styles from './singleAutocomplete.module.scss';
 
-console.log({ styles });
-
 const cx = classNames.bind(styles);
 
 const DEFAULT_OPTIONS_INDEX = 0;
@@ -59,7 +57,7 @@ export interface SingleAutocompleteProps<T> {
   icon?: ReactNode;
   skipOptionCreation?: boolean;
   isOptionUnique?: (value: boolean | null) => void;
-  refFunction: Ref<HTMLInputElement>;
+  refFunction?: Ref<HTMLInputElement>;
   stateReducer?: (
     state: DownshiftState<T>,
     changes: StateChangeOptions<T>,
@@ -89,7 +87,7 @@ export const SingleAutocomplete = <T,>(componentProps: SingleAutocompleteProps<T
     isRequired = false,
     error = '',
     touched = false,
-    setTouch,
+    setTouch = () => {},
     createWithoutConfirmation = false,
     menuClassName = '',
     icon,

@@ -97,7 +97,7 @@ export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompletePr
     mobileDisabled = false,
     inputProps = {},
     parseValueToString = ((item: T) =>
-      item || '') as MultipleAutocompleteProps<T>['parseValueToString'],
+      item == null ? '' : String(item)) as MultipleAutocompleteProps<T>['parseValueToString'],
     maxLength = null,
     async = false,
     customClass = '',
