@@ -1,17 +1,25 @@
-import { CSSProperties, useMemo, useState, FC } from 'react';
+import { useMemo, FC } from 'react';
 import styles from './table.module.scss';
 import classNames from 'classnames/bind';
-import { ArrowDownIcon, ArrowUpIcon } from '@components/icons';
-import { FixedColumn, PrimaryColumn, RowData, TableComponentProps } from './types';
+import { ArrowDownIcon, ArrowUpIcon, ChevronDownDropdownIcon } from '@components/icons';
+import { TableComponentProps, FixedColumn, Column } from './types';
 import { Checkbox } from '@components/checkbox';
-import { getColumnsKeys, isAsc } from './utils';
-import { ASC } from './constants';
+import {
+  getColumnsKeys,
+  isPrimaryColumn,
+  getRowSizeClassName,
+  getCellStyle,
+  getGridTemplateColumns,
+  isAsc,
+} from './utils';
+import { ASC, EXPANDABLE_CHECKBOX_COLUMN_WIDTH } from './constants';
+import { useTableColumns, useTableHover, useTableExpansion, useColumnWidths } from './hooks';
 
 const cx = classNames.bind(styles);
 
 export const Table: FC<TableComponentProps> = ({
   data,
-  primaryColumn,
+  primaryColumn: primaryColumnsInput,
   fixedColumns,
   renderRowActions,
   className = '',
@@ -20,105 +28,205 @@ export const Table: FC<TableComponentProps> = ({
   selectable = false,
   selectedRowIds = [],
   sortingDirection = ASC,
-  sortingColumn = primaryColumn,
-  sortableColumns = getColumnsKeys([primaryColumn, ...fixedColumns]),
+  sortingColumn,
+  sortableColumns,
+  isHeaderFixed = false,
+  isHorizontallyScrollable = false,
+  pinnedColumnKeys = [],
+  isRowsExpandable = false,
+  expandedRowIds = [],
   onChangeSorting = () => {},
   onToggleRowSelection = () => {},
   onToggleAllRowsSelection = () => {},
+  onToggleRowExpansion = () => {},
+  onToggleAllRowsExpansion = () => {},
 }) => {
-  const [hoveredColumn, setHoveredColumn] = useState<string | null>(null);
-  const [hoveredRow, setHoveredRow] = useState<number | null>(null);
+  const primaryColumns: Column[] = useMemo(
+    () => (Array.isArray(primaryColumnsInput) ? primaryColumnsInput : [primaryColumnsInput]),
+    [primaryColumnsInput],
+  );
 
-  const columns: (PrimaryColumn | FixedColumn)[] = useMemo(() => {
-    return [{ ...primaryColumn, primary: true }, ...fixedColumns];
-  }, [primaryColumn, fixedColumns]);
+  const defaultSortingColumn = sortingColumn ?? primaryColumns[0];
+  const defaultSortableColumns =
+    sortableColumns ?? getColumnsKeys([...primaryColumns, ...fixedColumns]);
+
+  const { pinnedColumns, scrollableColumns } = useTableColumns({
+    primaryColumns,
+    fixedColumns,
+    pinnedColumnKeys,
+  });
+
+  const {
+    hoveredColumn,
+    hoveredRow,
+    handleColumnMouseEnter,
+    handleColumnMouseLeave,
+    handleRowMouseEnter,
+    handleRowMouseLeave,
+  } = useTableHover();
+
+  const { columnWidthsRef, setCellRef } = useColumnWidths();
+
+  const { handleToggleRowExpansion, isCellExpanded } = useTableExpansion({
+    primaryColumns,
+    fixedColumns,
+    expandedRowIds,
+    onToggleRowExpansion,
+  });
 
   const handleSort = (key: string) => {
-    if (!sortableColumns.includes(key)) return;
+    if (!defaultSortableColumns.includes(key)) return;
     onChangeSorting({ key, direction: sortingDirection });
   };
 
-  const getCellStyle = (column: FixedColumn): CSSProperties => {
-    return {
-      width: column.width,
-      textAlign: column.align,
-    };
-  };
-
-  const handleMouseEnter = (key: string) => {
-    setHoveredColumn(key);
-  };
-
-  const handleMouseLeave = () => {
-    setHoveredColumn(null);
-  };
-
-  const handleRowMouseEnter = (index: number) => {
-    setHoveredRow(index);
-  };
-
-  const handleRowMouseLeave = () => {
-    setHoveredRow(null);
-  };
-
-  const handleRowCheck = (id: number | string) => {
+  const handleSingleRowSelection = (id: number | string) => {
     onToggleRowSelection(id);
   };
 
-  const handleCheckAll = () => {
+  const handleSelectAllRows = () => {
     onToggleAllRowsSelection();
   };
 
-  const isAllChecked: boolean = data.every((item) => selectedRowIds.includes(item.id));
-  const isAnyChecked: boolean = data.some((item) => selectedRowIds.includes(item.id));
-  const isAnyRowSelected = selectedRowIds?.length > 0;
-
-  const getSizeClassName = (item: RowData): string => {
-    const size = item.rowConfigs?.size ?? 'default';
-    return `size-${size}`;
+  const handleToggleAllRowsExpansion = () => {
+    onToggleAllRowsExpansion();
   };
 
   const getSortIcon = (columnKey: string) => {
-    if (!sortableColumns.includes(columnKey)) return;
-    if (sortingColumn?.key === columnKey) {
+    if (!defaultSortableColumns.includes(columnKey)) return null;
+
+    if (defaultSortingColumn?.key === columnKey) {
       return isAsc(sortingDirection) ? <ArrowUpIcon /> : <ArrowDownIcon />;
     }
+
     return <ArrowUpIcon />;
   };
 
+  const isAllRowsSelected: boolean = data.every((row) => selectedRowIds.includes(row.id));
+  const isAnyRowSelected: boolean = data.some((row) => selectedRowIds.includes(row.id));
+  const hasSelectedRows = selectedRowIds?.length > 0;
+
+  const isAllRowsExpanded: boolean = data.every((row) => expandedRowIds.includes(row.id));
+
+  const gridTemplateColumns = getGridTemplateColumns(
+    pinnedColumns,
+    scrollableColumns,
+    isRowsExpandable,
+    selectable,
+    !!renderRowActions,
+    false,
+  );
+
+  const headerGridTemplateColumns = getGridTemplateColumns(
+    pinnedColumns,
+    scrollableColumns,
+    isRowsExpandable,
+    selectable,
+    !!renderRowActions,
+    true,
+  );
+
   return (
-    <div className={cx('table', className)}>
-      <div className={cx('table-header', headerClassName)}>
+    <div
+      className={cx(
+        'table',
+        {
+          'fixed-header': isHeaderFixed,
+          'horizontally-scrollable-container': isHeaderFixed && isHorizontallyScrollable,
+        },
+        className,
+      )}
+    >
+      <div
+        className={cx(
+          'table-header',
+          {
+            'sticky-header': isHeaderFixed,
+            'horizontally-scrollable': isHorizontallyScrollable,
+          },
+          headerClassName,
+        )}
+        style={{ gridTemplateColumns: headerGridTemplateColumns }}
+      >
         {selectable && (
-          <div className={cx('table-header-cell', 'checkbox-cell')}>
-            {isAnyRowSelected && (
+          <div
+            className={cx('table-header-cell', 'checkbox-cell')}
+            style={{ left: isRowsExpandable ? `${EXPANDABLE_CHECKBOX_COLUMN_WIDTH}px` : '0' }}
+          >
+            {hasSelectedRows && (
               <Checkbox
-                value={isAllChecked}
-                partiallyChecked={isAnyChecked}
-                onChange={handleCheckAll}
+                value={isAllRowsSelected}
+                partiallyChecked={isAnyRowSelected}
+                onChange={handleSelectAllRows}
                 className={cx('checkbox-cell')}
               />
             )}
           </div>
         )}
-        {columns.map((column) => (
+        {isRowsExpandable && (
+          <div className={cx('table-header-cell', 'expand-cell')} style={{ left: '0' }}>
+            <button onClick={handleToggleAllRowsExpansion} aria-label="Toggle all rows expansion">
+              <span className={cx('expand-icon', { expanded: isAllRowsExpanded })}>
+                <ChevronDownDropdownIcon />
+              </span>
+            </button>
+          </div>
+        )}
+        {pinnedColumns.map((column, index) => (
           <button
             key={column.key}
-            className={cx('table-header-cell', {
+            className={cx('table-header-cell', 'pinned-column', {
               [`align-${(column as FixedColumn).align}`]: 'align' in column,
-              'primary-cell': 'primary' in column && column.primary,
-              'sortable-cell': sortableColumns.includes(column.key),
+              'primary-cell': isPrimaryColumn(column),
+              'sortable-cell': defaultSortableColumns.includes(column.key),
             })}
-            style={getCellStyle(column as FixedColumn)}
+            style={getCellStyle(
+              column,
+              true,
+              index,
+              pinnedColumns,
+              columnWidthsRef,
+              isRowsExpandable,
+              selectable,
+            )}
           >
             <div
               className={cx('label')}
               onClick={() => handleSort(column.key)}
-              onMouseEnter={() => handleMouseEnter(column.key)}
-              onMouseLeave={handleMouseLeave}
+              onMouseEnter={() => handleColumnMouseEnter(column.key)}
+              onMouseLeave={handleColumnMouseLeave}
             >
               <span>{column.header}</span>
-              {(hoveredColumn === column.key || sortingColumn?.key === column.key) &&
+              {(hoveredColumn === column.key || defaultSortingColumn?.key === column.key) &&
+                getSortIcon(column.key)}
+            </div>
+          </button>
+        ))}
+        {scrollableColumns.map((column) => (
+          <button
+            key={column.key}
+            className={cx('table-header-cell', {
+              [`align-${(column as FixedColumn).align}`]: 'align' in column,
+              'primary-cell': isPrimaryColumn(column),
+              'sortable-cell': defaultSortableColumns.includes(column.key),
+            })}
+            style={getCellStyle(
+              column,
+              false,
+              undefined,
+              pinnedColumns,
+              columnWidthsRef,
+              isRowsExpandable,
+              selectable,
+            )}
+          >
+            <div
+              className={cx('label')}
+              onClick={() => handleSort(column.key)}
+              onMouseEnter={() => handleColumnMouseEnter(column.key)}
+              onMouseLeave={handleColumnMouseLeave}
+            >
+              <span>{column.header}</span>
+              {(hoveredColumn === column.key || defaultSortingColumn?.key === column.key) &&
                 getSortIcon(column.key)}
             </div>
           </button>
@@ -126,43 +234,113 @@ export const Table: FC<TableComponentProps> = ({
         {renderRowActions && <div className={cx('table-header-cell', 'action-menu-cell')} />}
       </div>
 
-      <div className={cx('table-body')}>
+      <div
+        className={cx('table-body', {
+          'scrollable-body': isHeaderFixed,
+          'horizontally-scrollable': isHorizontallyScrollable,
+        })}
+      >
         {data.map((item, index) => (
           <div
             key={item.id}
-            className={cx('table-row', getSizeClassName(item), rowClassName)}
+            className={cx('table-row', getRowSizeClassName(item), rowClassName, {
+              selectable: selectable,
+            })}
             onMouseEnter={() => handleRowMouseEnter(index)}
             onMouseLeave={handleRowMouseLeave}
           >
             {selectable && (
-              <div className={cx('table-cell', 'checkbox-cell')}>
-                {(isAnyRowSelected || hoveredRow === index) && (
+              <div
+                className={cx('table-cell', 'checkbox-cell')}
+                style={{ left: isRowsExpandable ? `${EXPANDABLE_CHECKBOX_COLUMN_WIDTH}px` : '0' }}
+              >
+                {(hasSelectedRows || hoveredRow === index) && (
                   <Checkbox
                     value={selectedRowIds.includes(item.id)}
-                    onChange={() => handleRowCheck(item.id)}
+                    onChange={() => handleSingleRowSelection(item.id)}
                     className={cx('checkbox-cell')}
                   />
                 )}
               </div>
             )}
-            <div className={cx('table-row-content')}>
-              {columns.map((column) => (
-                <div
-                  key={column.key}
-                  className={cx('table-cell', {
-                    'primary-cell': 'primary' in column && column.primary,
-                  })}
-                  style={getCellStyle(column as FixedColumn)}
-                >
-                  {item[column.key].component || item[column.key].content || item[column.key]}
-                </div>
-              ))}
+            <div className={cx('row-content-wrapper')}>
+              <div className={cx('table-row-content')} style={{ gridTemplateColumns }}>
+                {isRowsExpandable && (
+                  <div className={cx('table-cell', 'expand-cell')} style={{ left: '0' }}>
+                    <button
+                      onClick={() => handleToggleRowExpansion(item.id)}
+                      aria-label={expandedRowIds.includes(item.id) ? 'Collapse row' : 'Expand row'}
+                      aria-expanded={expandedRowIds.includes(item.id)}
+                    >
+                      <span
+                        className={cx('expand-icon', {
+                          expanded: expandedRowIds.includes(item.id),
+                        })}
+                      >
+                        <ChevronDownDropdownIcon />
+                      </span>
+                    </button>
+                  </div>
+                )}
+                {pinnedColumns.map((column, colIndex) => {
+                  const isExpanded = isCellExpanded(item.id, column.key);
+                  const isPrimary = isPrimaryColumn(column);
 
-              {renderRowActions && (
-                <div className={cx('table-cell', 'action-menu-cell')}>
-                  {renderRowActions(item.metaData)}
-                </div>
-              )}
+                  return (
+                    <div
+                      key={column.key}
+                      ref={isPrimary ? setCellRef(column.key) : undefined}
+                      className={cx('table-cell', 'pinned-column', {
+                        'primary-cell': isPrimary,
+                        'expanded-cell': isExpanded,
+                      })}
+                      style={getCellStyle(
+                        column,
+                        true,
+                        colIndex,
+                        pinnedColumns,
+                        columnWidthsRef,
+                        isRowsExpandable,
+                        selectable,
+                      )}
+                    >
+                      {item[column.key].component || item[column.key].content || item[column.key]}
+                    </div>
+                  );
+                })}
+                {scrollableColumns.map((column) => {
+                  const isExpanded = isCellExpanded(item.id, column.key);
+                  const isPrimary = isPrimaryColumn(column);
+
+                  return (
+                    <div
+                      key={column.key}
+                      ref={isPrimary ? setCellRef(column.key) : undefined}
+                      className={cx('table-cell', {
+                        'primary-cell': isPrimary,
+                        'expanded-cell': isExpanded,
+                      })}
+                      style={getCellStyle(
+                        column,
+                        false,
+                        undefined,
+                        pinnedColumns,
+                        columnWidthsRef,
+                        isRowsExpandable,
+                        selectable,
+                      )}
+                    >
+                      {item[column.key].component || item[column.key].content || item[column.key]}
+                    </div>
+                  );
+                })}
+
+                {renderRowActions && (
+                  <div className={cx('table-cell', 'action-menu-cell')}>
+                    {renderRowActions(item.metaData)}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         ))}

@@ -83,9 +83,9 @@ export const useFileProcessing = ({
   }, []);
 
   return {
-    onDrop,
-    handleFileInputChange,
     error,
+    handleFileInputChange,
     clearError,
+    onDrop,
   };
 };

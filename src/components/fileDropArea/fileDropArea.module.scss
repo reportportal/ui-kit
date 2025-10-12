@@ -26,6 +26,7 @@
   border-radius: 8px;
   background-color: var(--rp-ui-base-bg-200);
   cursor: pointer;
+  box-sizing: border-box;
 
   &--active,
   &:hover {

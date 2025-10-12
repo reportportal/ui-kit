@@ -14,15 +14,6 @@
  * limitations under the License.
  */
 
-.attached-files-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 8px;
-  max-width: 100%;
-  margin-top: 16px;
-  padding-bottom: 3px;
-
-  &:has(> *:only-child) {
-    grid-template-columns: 1fr;
-  }
-}
+export const isString = (value: unknown): value is string => {
+  return typeof value === 'string';
+};
