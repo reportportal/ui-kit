@@ -14,6 +14,7 @@ export { default as ClearIcon } from './svg/clear.svg';
 export { default as CloseEyeIcon } from './svg/closeEye.svg';
 export { default as CloseIcon } from './svg/close.svg';
 export { default as CopyIcon } from './svg/copy.svg';
+export { default as CoveredManuallyIcon } from './svg/coveredManually.svg';
 export { default as CsvIcon } from './svg/csv.svg';
 export { default as DeleteIcon } from './svg/delete.svg';
 export { default as DragAndDropIcon } from './svg/dragAndDrop.svg';
