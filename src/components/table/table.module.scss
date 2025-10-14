@@ -245,11 +245,14 @@ $PADDING_VERTICAL-LARGE: 30px;
     position: sticky;
     left: 0;
     z-index: 10;
-    background-color: var(--rp-ui-base-bg-000);
 
     label {
       height: 18px;
       width: 16px;
+
+      span {
+        background-color: var(--rp-ui-base-bg-000);
+      }
     }
   }
 
