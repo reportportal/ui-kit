@@ -51,7 +51,7 @@ export interface SingleAutocompleteProps<T> {
   isRequired: boolean;
   error: string;
   touched: boolean;
-  setTouch: (value: boolean) => void;
+  setTouch?: (value: boolean) => void;
   createWithoutConfirmation: boolean;
   menuClassName: string;
   icon?: ReactNode;
@@ -190,7 +190,7 @@ export const SingleAutocomplete = <T,>(componentProps: SingleAutocompleteProps<T
                   isOptionUnique?.(
                     hasValue ? !options.some((v) => parseValueToString(v) === trimmed) : null,
                   );
-                  setTouch(true);
+                  setTouch?.(true);
                 },
                 disabled,
                 defaultWidth: false,

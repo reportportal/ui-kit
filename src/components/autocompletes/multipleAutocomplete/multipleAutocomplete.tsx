@@ -68,7 +68,7 @@ export interface MultipleAutocompleteProps<T> {
     | ((newSelectedItems: DownshiftStore<T>, prevSelectedItems: DownshiftStore<T>) => void)
     | null;
   dataAutomationId: string;
-  existingItemsMap: { [key: string | number]: boolean };
+  existingItemsMap: Record<string | number, boolean>;
   optionVariant: ComponentProps<typeof AutocompleteMenu>['optionVariant'];
   customizeNewSelectedValue: (value: T) => T;
   renderCustomSelectedItem?: (item: T) => ReactNode;
