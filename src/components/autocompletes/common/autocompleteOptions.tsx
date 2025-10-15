@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Component, ReactNode } from 'react';
+import { ReactNode, useCallback } from 'react';
 import classNames from 'classnames/bind';
 import { Scrollbars } from 'rc-scrollbars';
 
@@ -25,6 +25,7 @@ import { AutocompleteOption } from './autocompleteOption';
 import { GetItemPropsT } from '../types';
 
 import styles from './autocompleteOptions.module.scss';
+import { isEmpty } from 'es-toolkit/compat';
 
 const cx = classNames.bind(styles);
 
@@ -49,9 +50,24 @@ export interface AutocompleteOptionsProps<T> {
   newItemButtonText: string;
 }
 
-export class AutocompleteOptions<T> extends Component<AutocompleteOptionsProps<T>> {
-  filterStaticOptions = () => {
-    const { options, inputValue, parseValueToString } = this.props;
+export const AutocompleteOptions = <T,>(props: AutocompleteOptionsProps<T>) => {
+  const {
+    options,
+    async,
+    inputValue,
+    loading,
+    createWithoutConfirmation,
+    customEmptyListMessage,
+    customNoMatchesMessage,
+    optionVariant,
+    newItemButtonText,
+    renderOption,
+    getUniqKey,
+    getItemProps,
+    parseValueToString,
+  } = props;
+
+  const filterStaticOptions = useCallback(() => {
     return (options || []).filter((option) => {
       return (
         parseValueToString(option)
@@ -59,87 +75,91 @@ export class AutocompleteOptions<T> extends Component<AutocompleteOptionsProps<T
           .indexOf((inputValue.toUpperCase() || '').trim()) > -1
       );
     });
-  };
+  }, [inputValue, options, parseValueToString]);
 
-  getPrompt = (options: T[]) => {
-    const { loading, createWithoutConfirmation } = this.props;
-    if (loading) {
-      return (
-        <>
-          <AutocompletePrompt>
-            <BubblesLoader />
-          </AutocompletePrompt>
-          {!createWithoutConfirmation && this.renderNewItem(options)}
-        </>
-      );
-    }
-    return '';
-  };
-
-  renderItem = (item: T, index: number, isNew = false) => {
-    const { getItemProps, renderOption, optionVariant } = this.props;
-
-    return renderOption ? (
-      renderOption(item, index, isNew, getItemProps)
-    ) : (
-      <AutocompleteOption
-        key={this.props.getUniqKey?.(item) || this.props.parseValueToString(item)}
-        optionVariant={optionVariant}
-        {...getItemProps({ item, index })}
-        isNew={isNew}
-        newItemButtonText={this.props.newItemButtonText}
-      >
-        {this.props.parseValueToString(item)}
-      </AutocompleteOption>
-    );
-  };
-
-  renderItems = (options: T[]) => {
-    return options.length ? options.map((item, index) => this.renderItem(item, index)) : '';
-  };
-
-  renderNewItem = (options: T[]) => {
-    const { inputValue, getItemProps, parseValueToString, optionVariant } = this.props;
-
-    const index = options.length;
-
-    return (
-      <div className={cx({ container: !index })}>
+  const renderItem = useCallback(
+    (item: T, index: number, isNew = false) => {
+      return renderOption ? (
+        renderOption(item, index, isNew, getItemProps)
+      ) : (
         <AutocompleteOption
-          key={parseValueToString(inputValue as T)}
+          key={getUniqKey?.(item) || parseValueToString(item)}
           optionVariant={optionVariant}
-          isNew
-          {...getItemProps({ item: inputValue as T, index })}
+          {...getItemProps({ item, index })}
+          isNew={isNew}
+          newItemButtonText={newItemButtonText}
         >
-          {parseValueToString(inputValue as T)}
+          {parseValueToString(item)}
         </AutocompleteOption>
-      </div>
-    );
-  };
+      );
+    },
+    [getItemProps, getUniqKey, newItemButtonText, optionVariant, parseValueToString, renderOption],
+  );
 
-  renderEmptyList = () => {
+  const renderItems = useCallback(
+    (items: T[]) => {
+      return items.length ? items.map((item, index) => renderItem(item, index)) : '';
+    },
+    [renderItem],
+  );
+
+  const renderNewItem = useCallback(
+    (items: T[]) => {
+      const index = items.length;
+
+      return (
+        <div className={cx({ container: !index })}>
+          <AutocompleteOption
+            key={parseValueToString(inputValue as T)}
+            optionVariant={optionVariant}
+            isNew
+            {...getItemProps({ item: inputValue as T, index })}
+          >
+            {parseValueToString(inputValue as T)}
+          </AutocompleteOption>
+        </div>
+      );
+    },
+    [getItemProps, inputValue, optionVariant, parseValueToString],
+  );
+
+  const getPrompt = useCallback(
+    (items: T[]) => {
+      if (loading) {
+        return (
+          <>
+            <AutocompletePrompt>
+              <BubblesLoader />
+            </AutocompletePrompt>
+            {!createWithoutConfirmation && renderNewItem(items)}
+          </>
+        );
+      }
+      return '';
+    },
+    [createWithoutConfirmation, loading, renderNewItem],
+  );
+
+  const renderEmptyList = useCallback(() => {
     const message =
-      this.props.options?.length === 0
-        ? this.props.customEmptyListMessage || 'No available options'
-        : this.props.customNoMatchesMessage || 'No matches found';
+      options?.length === 0
+        ? customEmptyListMessage || 'No available options'
+        : customNoMatchesMessage || 'No matches found';
 
     return <div className={cx('empty-list-message')}>{message}</div>;
-  };
+  }, [customEmptyListMessage, customNoMatchesMessage, options?.length]);
 
-  render() {
-    const { async, options, createWithoutConfirmation } = this.props;
-    const availableOptions = async ? options : this.filterStaticOptions();
-    const prompt = this.getPrompt(options);
+  const availableOptions = async ? options : filterStaticOptions();
+  const prompt = getPrompt(options);
 
-    if (prompt) return prompt;
+  if (prompt) return prompt;
 
-    return (
-      <div className={cx({ container: options.length })}>
-        <Scrollbars autoHeight autoHeightMax={216} hideTracksWhenNotNeeded>
-          {this.renderItems(availableOptions)}
-        </Scrollbars>
-        {!createWithoutConfirmation && this.renderNewItem(availableOptions)}
-      </div>
-    );
-  }
-}
+  return (
+    <div className={cx({ container: options.length })}>
+      <Scrollbars autoHeight autoHeightMax={216} hideTracksWhenNotNeeded>
+        {!isEmpty(availableOptions) ? renderItems(availableOptions) : renderEmptyList()}
+      </Scrollbars>
+      {!createWithoutConfirmation && renderNewItem(availableOptions)}
+    </div>
+  );
+};
