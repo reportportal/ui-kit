@@ -15,6 +15,7 @@
  */
 
 import { ReactNode, useCallback } from 'react';
+import { isEmpty } from 'es-toolkit/compat';
 import classNames from 'classnames/bind';
 import { Scrollbars } from 'rc-scrollbars';
 
@@ -25,7 +26,6 @@ import { AutocompleteOption } from './autocompleteOption';
 import { GetItemPropsT } from '../types';
 
 import styles from './autocompleteOptions.module.scss';
-import { isEmpty } from 'es-toolkit/compat';
 
 const cx = classNames.bind(styles);
 
