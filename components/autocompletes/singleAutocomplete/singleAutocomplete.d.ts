@@ -1,0 +1,40 @@
+import { ComponentProps, FocusEvent, ReactNode, Ref } from '../../../../node_modules/react';
+import { default as Downshift, DownshiftState, StateChangeOptions } from 'downshift';
+import { default as FieldText } from '../../fieldText';
+import { AutocompleteMenu } from '../common/autocompleteMenu';
+
+export interface SingleAutocompleteProps<T> {
+    options: T[];
+    loading: boolean;
+    onStateChange: ComponentProps<typeof Downshift<T>>['onStateChange'];
+    value: T | null;
+    placeholder: string;
+    onChange: ComponentProps<typeof Downshift<T>>['onChange'];
+    onFocus: () => void;
+    onBlur: (e: FocusEvent<HTMLInputElement>) => void;
+    disabled: boolean;
+    inputProps: ComponentProps<typeof FieldText>;
+    parseValueToString: (value: T | null) => string;
+    renderOption: (value: T) => ReactNode;
+    minLength: number;
+    maxLength: number | null;
+    async: boolean;
+    optionVariant: ComponentProps<typeof AutocompleteMenu>['optionVariant'];
+    isRequired: boolean;
+    error: string;
+    touched: boolean;
+    setTouch?: (value: boolean) => void;
+    createWithoutConfirmation: boolean;
+    menuClassName: string;
+    icon?: ReactNode;
+    skipOptionCreation?: boolean;
+    isOptionUnique?: (value: boolean | null) => void;
+    refFunction?: Ref<HTMLInputElement>;
+    stateReducer?: (state: DownshiftState<T>, changes: StateChangeOptions<T>) => Partial<StateChangeOptions<T>>;
+    useFixedPositioning: boolean;
+    getUniqKey?: (item: T) => string;
+    customEmptyListMessage?: string;
+    customNoMatchesMessage?: string;
+    newItemButtonText?: string;
+}
+export declare const SingleAutocomplete: <T>(componentProps: SingleAutocompleteProps<T>) => import("react/jsx-runtime").JSX.Element;

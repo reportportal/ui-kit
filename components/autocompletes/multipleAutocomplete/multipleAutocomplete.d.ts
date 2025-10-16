@@ -1,0 +1,46 @@
+import { ComponentProps, ReactNode } from '../../../../node_modules/react';
+import { ControllerStateAndHelpers } from 'downshift';
+import { default as FieldText } from '../../fieldText';
+import { AutocompleteMenu } from '../common/autocompleteMenu';
+import { DownshiftStore, MultipleDownshiftProps } from './multipleDownshift';
+
+export interface MultipleAutocompleteProps<T> {
+    options: T[];
+    loading: boolean;
+    onStateChange: MultipleDownshiftProps<T>['onStateChange'];
+    value: T[];
+    placeholder: string;
+    error: string | boolean;
+    touched: boolean;
+    creatable: boolean;
+    editable: boolean;
+    onChange: (selectedItems: T | T[] | null, downshift: ControllerStateAndHelpers<T> | null) => void;
+    onFocus: () => void;
+    onBlur: () => void;
+    disabled: boolean;
+    mobileDisabled: boolean;
+    inputProps: ComponentProps<typeof FieldText>;
+    parseValueToString: (value: T | null) => string;
+    minLength: number | null;
+    maxLength: number | null;
+    async: boolean;
+    customClass: string;
+    createWithoutConfirmation: boolean;
+    getItemValidationErrorType?: (item: T) => string;
+    clearItemsError: () => void;
+    getAdditionalCreationCondition: (value: string) => boolean;
+    highlightUnStoredItem: boolean;
+    parseInputValueFn: ((value: string) => T[]) | null;
+    handleUnStoredItemCb: ((newSelectedItems: DownshiftStore<T>, prevSelectedItems: DownshiftStore<T>) => void) | null;
+    dataAutomationId: string;
+    existingItemsMap: Record<string | number, boolean>;
+    optionVariant: ComponentProps<typeof AutocompleteMenu>['optionVariant'];
+    customizeNewSelectedValue: (value: T) => T;
+    renderCustomSelectedItem?: (item: T) => ReactNode;
+    getUniqKey?: (item: T) => string;
+    customEmptyListMessage?: string;
+    customNoMatchesMessage?: string;
+    useFixedPositioning?: boolean;
+    newItemButtonText?: string;
+}
+export declare const MultipleAutocomplete: <T>(componentsProps: MultipleAutocompleteProps<T>) => import("react/jsx-runtime").JSX.Element;

@@ -1,4 +1,4 @@
-import { ChangeEventHandler, ReactNode, InputHTMLAttributes } from '../../../node_modules/react';
+import { ChangeEventHandler, ReactElement, ReactNode, InputHTMLAttributes } from '../../../node_modules/react';
 
 type InputType = 'password' | 'text' | 'email';
 export interface FieldTextProps extends InputHTMLAttributes<HTMLInputElement> {
@@ -28,5 +28,5 @@ export interface FieldTextProps extends InputHTMLAttributes<HTMLInputElement> {
     collapsible?: boolean;
     loading?: boolean;
 }
-export declare const FieldText: import('../../../node_modules/react').ForwardRefExoticComponent<FieldTextProps & import('../../../node_modules/react').RefAttributes<HTMLInputElement>>;
+export declare const FieldText: (props: FieldTextProps & import('../../../node_modules/react').RefAttributes<HTMLInputElement>) => ReactElement<any, string | import('../../../node_modules/react').JSXElementConstructor<any>> | null;
 export {};

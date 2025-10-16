@@ -13,4 +13,4 @@ export interface FieldTextFlexProps extends ComponentPropsWithRef<'textarea'> {
     onBlur?: FocusEventHandler<HTMLTextAreaElement>;
     onKeyUp?: KeyboardEventHandler<HTMLTextAreaElement>;
 }
-export declare const FieldTextFlex: import('../../../node_modules/react').ForwardRefExoticComponent<Omit<FieldTextFlexProps, "ref"> & import('../../../node_modules/react').RefAttributes<HTMLTextAreaElement>>;
+export declare const FieldTextFlex: (props: FieldTextFlexProps & import('../../../node_modules/react').RefAttributes<HTMLTextAreaElement>) => import('../../../node_modules/react').ReactElement<any, string | import('../../../node_modules/react').JSXElementConstructor<any>> | null;

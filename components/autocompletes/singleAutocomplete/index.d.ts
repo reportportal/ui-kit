@@ -1,0 +1,1 @@
+export { SingleAutocomplete } from './singleAutocomplete';

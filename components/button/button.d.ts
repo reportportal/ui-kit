@@ -15,5 +15,5 @@ export interface ButtonProps extends ComponentPropsWithRef<'button'> {
     className?: string;
     variant?: ButtonVariant;
 }
-export declare const Button: import('../../../node_modules/react').ForwardRefExoticComponent<Omit<ButtonProps, "ref"> & import('../../../node_modules/react').RefAttributes<HTMLButtonElement>>;
+export declare const Button: (props: ButtonProps & import('../../../node_modules/react').RefAttributes<HTMLButtonElement>) => import('../../../node_modules/react').ReactElement<any, string | import('../../../node_modules/react').JSXElementConstructor<any>> | null;
 export {};
