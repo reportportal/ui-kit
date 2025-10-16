@@ -1,0 +1,154 @@
+/*
+ * Copyright 2025 EPAM Systems
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+$SCREEN_XS_MAX: 767px;
+
+@mixin container($borderColor, $backgroundColor) {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-height: 36px;
+  padding: 3px 12px;
+  box-sizing: border-box;
+  border: 1px solid $borderColor;
+  border-radius: 3px;
+  background-color: $backgroundColor;
+  transition: border-color 200ms linear;
+}
+
+@mixin hover-state($borderColor) {
+  &:hover:not(.disabled) {
+    border-color: $borderColor;
+  }
+}
+
+@mixin focus-state($borderColor) {
+  &:focus-within:not(.error.touched) {
+    padding: 2px 11px;
+    border: 2px solid $borderColor;
+  }
+}
+
+@mixin error-state($borderColor) {
+  border-color: $borderColor;
+}
+
+@mixin fill-svg($color) {
+  svg {
+    & > rect {
+      fill: $color;
+    }
+  }
+}
+
+.autocomplete {
+  &-wrapper {
+    position: relative;
+    width: max-content;
+  }
+
+  @include container(var(--rp-ui-color-field-border), var(--rp-ui-color-bg));
+  @include hover-state(var(--rp-ui-color-field-hover));
+  @include focus-state(var(--rp-ui-color-primary-focused));
+
+  &.disabled {
+    background-color: var(--rp-ui-color-bg-2);
+  }
+
+  &.error.touched {
+    @include error-state(var(--rp-ui-color-error));
+  }
+}
+
+.clear-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  padding-left: 14px;
+  outline: none;
+  border: none;
+  background-color: transparent;
+
+  &--disabled {
+    cursor: default;
+  }
+}
+
+.autocomplete-input {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+  box-sizing: border-box;
+
+  &.mobile-disabled {
+    @media (max-width: $SCREEN_XS_MAX) {
+      padding-right: 0;
+    }
+  }
+}
+
+.input {
+  flex-grow: 1;
+  padding: 0;
+  margin-top: 2px;
+  border: 0;
+  font-family: var(--rp-ui-base-font-family);
+  font-size: 13px;
+  line-height: 20px;
+  text-indent: 1px;
+  color: var(--rp-ui-color-text);
+  box-sizing: border-box;
+  outline: none;
+  background-color: transparent;
+
+  &::placeholder {
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+    text-indent: inherit;
+    color: var(--rp-ui-color-field-hover);
+  }
+
+  &:-webkit-autofill {
+    box-shadow: 0 0 0 1000px #fdffeb inset; /* stylelint-disable-line color-no-hex */
+  }
+
+  &.type-number::-webkit-inner-spin-button,
+  &.type-number::-webkit-outer-spin-button {
+    appearance: none;
+    margin: 0;
+  }
+
+  &.mobile-disabled {
+    @media (max-width: $SCREEN_XS_MAX) {
+      // TODO: replace with themable color
+      background-color: var(--rp-ui-base-e-91);
+      pointer-events: none;
+    }
+  }
+}
+
+.error-text {
+  display: inline-block;
+  margin-top: 4px;
+  font-family: var(--rp-ui-base-font-family);
+  font-size: 11px;
+  line-height: 16px;
+  color: var(--rp-ui-color-error);
+}

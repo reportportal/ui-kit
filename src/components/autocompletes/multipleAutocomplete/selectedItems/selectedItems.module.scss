@@ -1,0 +1,120 @@
+/*
+ * Copyright 2025 EPAM Systems
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+$SCREEN_XS_MAX: 767px;
+
+@mixin fill-svg($color) {
+  svg {
+    fill: $color;
+
+    & > path {
+      fill: $color;
+    }
+  }
+}
+
+@mixin disabled {
+  color: var(--rp-ui-color-field-hover);
+  padding-right: 10px;
+}
+
+.selected-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-width: 0;
+  padding: 3px 8px;
+  background-color: var(--rp-ui-autocomplete-selected-item-bg-color);
+  border-radius: 6px;
+  border: 1px solid transparent;
+  font-family: var(--rp-ui-base-font-family);
+  font-size: 13px;
+  line-height: 20px;
+  text-indent: 1px;
+  font-weight: var(--rp-ui-base-fw-medium);
+  color: var(--rp-ui-color-text);
+  box-sizing: border-box;
+  word-break: break-word;
+  cursor: default;
+
+  &.validation-error {
+    border-color: var(--rp-ui-validation-error-border);
+    color: var(--rp-ui-color-error);
+    background-color: var(--rp-ui-autocomplete-selected-item-bg-color);
+  }
+
+  &.highlight-un-stored-item {
+    border-color: var(--rp-ui-highlight-unstored-item);
+  }
+
+  &.disabled {
+    @include disabled;
+  }
+
+  &.mobile-disabled {
+    @media (max-width: $SCREEN_XS_MAX) {
+      @include disabled;
+    }
+  }
+}
+
+.cross-icon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 8px;
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  outline: none;
+  border: none;
+  padding: 0;
+  background-color: transparent;
+
+  @include fill-svg(var(--rp-ui-color-text));
+
+  &.validation-error {
+    @include fill-svg(var(--rp-ui-color-error));
+  }
+
+  &:hover:not(.validation-error) {
+    @include fill-svg(var(--rp-ui-color-text));
+  }
+
+  &:active:not(.validation-error) {
+    @include fill-svg(var(--rp-ui-color-text));
+  }
+
+  svg {
+    width: 8px;
+    height: 8px;
+  }
+}
+
+.input {
+  width: 240px;
+  padding: 0;
+  margin-top: 2px;
+  border: 0;
+  font-family: var(--rp-ui-base-font-family);
+  font-size: 13px;
+  line-height: 20px;
+  text-indent: 1px;
+  color: var(--rp-ui-color-text);
+  box-sizing: border-box;
+  outline: none;
+}

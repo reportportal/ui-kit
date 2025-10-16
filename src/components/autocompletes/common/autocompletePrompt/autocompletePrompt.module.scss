@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,8 +14,13 @@
  * limitations under the License.
  */
 
-export const getFileExtension = (fileName: string): string => {
-  const parts = fileName.split('.');
-
-  return parts.length > 1 ? parts.pop()?.toLowerCase() || '' : '';
-};
+.prompt {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 36px;
+  background-color: var(--rp-ui-autocomplete-prompt-bg);
+  border-radius: 3px;
+  padding-right: 42px;
+  box-sizing: border-box;
+}
