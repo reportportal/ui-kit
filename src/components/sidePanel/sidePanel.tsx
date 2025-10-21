@@ -40,12 +40,23 @@ export const SidePanel = ({
   return (
     <aside
       className={cx('side-panel', `side-${side}`, { active: isOpen }, className)}
-      style={{ top }}
+      role="dialog"
+      aria-modal="true"
+      aria-hidden={!isOpen}
+      aria-labelledby={title ? 'side-panel-title' : undefined}
+      style={{ top, height: `calc(100vh - ${top}px)` }}
+      tabIndex={-1}
     >
       <div className={cx('header-section')}>
         {(headerComponent || title) && (
           <div className={cx('header')}>
-            {title ? <span className={cx('title')}>{title}</span> : headerComponent}
+            {title ? (
+              <span id="side-panel-title" className={cx('title')}>
+                {title}
+              </span>
+            ) : (
+              headerComponent
+            )}
 
             <BaseIconButton
               className={cx('close-button')}

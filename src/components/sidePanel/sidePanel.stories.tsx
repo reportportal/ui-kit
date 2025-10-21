@@ -473,9 +473,12 @@ export const Example2 = {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const [filters, setFilters] = useState(INITIAL_FILTERS);
 
-    const updateFilter = (key: keyof typeof INITIAL_FILTERS) => (value: any) => {
-      setFilters((prev) => ({ ...prev, [key]: String(value) }));
-    };
+    type Filters = typeof INITIAL_FILTERS;
+    const updateFilter =
+      <K extends keyof Filters>(key: K) =>
+      (value: string | number | boolean | (string | number | boolean)[]) => {
+        setFilters((prev) => ({ ...prev, [key]: String(value) }));
+      };
 
     const handleClearFilters = () => setFilters(INITIAL_FILTERS);
 
