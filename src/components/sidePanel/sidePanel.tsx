@@ -34,9 +34,7 @@ export const SidePanel = ({
   const titleId = useId();
 
   const handleClose = () => {
-    if (onClose) {
-      onClose();
-    }
+    onClose?.();
   };
 
   return (
@@ -60,13 +58,15 @@ export const SidePanel = ({
               headerComponent
             )}
 
-            <BaseIconButton
-              className={cx('close-button')}
-              onClick={handleClose}
-              aria-label="Close panel"
-            >
-              <CloseIcon />
-            </BaseIconButton>
+            {onClose && (
+              <BaseIconButton
+                className={cx('close-button')}
+                onClick={handleClose}
+                aria-label="Close panel"
+              >
+                <CloseIcon />
+              </BaseIconButton>
+            )}
           </div>
         )}
         {descriptionComponent}
