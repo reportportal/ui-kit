@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { ReactNode, useId } from 'react';
 import classNames from 'classnames/bind';
 import { CloseIcon } from '@components/icons';
 import { BaseIconButton } from '@components/baseIconButton';
@@ -31,6 +31,8 @@ export const SidePanel = ({
   isOpen = true,
   onClose,
 }: SidePanelProps) => {
+  const titleId = useId();
+
   const handleClose = () => {
     if (onClose) {
       onClose();
@@ -43,7 +45,7 @@ export const SidePanel = ({
       role="dialog"
       aria-modal="true"
       aria-hidden={!isOpen}
-      aria-labelledby={title ? 'side-panel-title' : undefined}
+      aria-labelledby={title ? titleId : undefined}
       style={{ top, height: `calc(100vh - ${top}px)` }}
       tabIndex={-1}
     >
@@ -51,7 +53,7 @@ export const SidePanel = ({
         {(headerComponent || title) && (
           <div className={cx('header')}>
             {title ? (
-              <span id="side-panel-title" className={cx('title')}>
+              <span id={titleId} className={cx('title')}>
                 {title}
               </span>
             ) : (
