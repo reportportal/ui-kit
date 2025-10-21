@@ -25,4 +25,5 @@ export { Table } from './table';
 export { ThemeProvider } from './themeProvider';
 export { Toggle } from './toggle';
 export { Tooltip } from './tooltip';
+export { SidePanel } from './sidePanel';
 export * from './icons';

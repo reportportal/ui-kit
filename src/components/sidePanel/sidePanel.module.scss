@@ -1,0 +1,102 @@
+@import 'src/assets/styles/mixins/font-scale';
+
+.side-panel {
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    width: max-content;
+    min-width: 320px;
+    max-width: 700px;
+    height: 100vh;
+    background-color: var(--rp-ui-base-bg-100);
+    box-shadow: var(--rp-ui-base-shadow-secondary);
+    overflow: hidden;
+    transition: transform 0.3s ease-in-out;
+    pointer-events: none;
+
+    &.active {
+        pointer-events: auto;
+    }
+}
+
+.side-right {
+    right: 0;
+    transform: translateX(100%);
+
+    &.active {
+        transform: translateX(0);
+    }
+}
+
+.side-left {
+    left: 0;
+    transform: translateX(-100%);
+
+    &.active {
+        transform: translateX(0);
+    }
+}
+
+.header-section {
+    flex-shrink: 0;
+}
+
+.header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 24px 20px 16px 24px;
+    border-bottom: 1px solid var(--rp-ui-base-border-100);
+
+    &>:first-child {
+        flex: 1;
+    }
+}
+
+.header-content {
+    flex: 1;
+}
+
+.close-button {
+    flex-shrink: 0;
+}
+
+.title {
+    @include font-scale('x4-medium');
+    font-family: var(--rp-ui-base-font-family-heading);
+    color: var(--rp-ui-base-almost-black);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    max-width: 100%;
+}
+
+.description {
+    margin: 8px 0 0;
+    font-family: var(--rp-ui-base-font-family);
+    font-weight: var(--rp-ui-base-fw-regular);
+    font-size: var(--rp-ui-base-font-size-md);
+    line-height: var(--rp-ui-base-lh-md);
+    color: var(--rp-ui-base-almost-black);
+}
+
+.content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px 24px 24px 24px;
+    min-height: 0;
+}
+
+.footer {
+    flex-shrink: 0;
+    padding: 16px 24px;
+    border-top: 1px solid var(--rp-ui-base-border-100);
+}
+
+.divider {
+    flex-shrink: 0;
+    height: 1px;
+    margin: 8px 0;
+    background-color: var(--rp-ui-base-e-100);
+}
