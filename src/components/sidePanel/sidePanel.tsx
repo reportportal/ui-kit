@@ -17,6 +17,7 @@ export interface SidePanelProps {
   side?: 'left' | 'right';
   isOpen?: boolean;
   onClose?: () => void;
+  closeButtonAriaLabel?: string;
 }
 
 export const SidePanel = ({
@@ -30,6 +31,7 @@ export const SidePanel = ({
   side = 'right',
   isOpen = true,
   onClose,
+  closeButtonAriaLabel = 'Close panel',
 }: SidePanelProps) => {
   const titleId = useId();
 
@@ -62,7 +64,7 @@ export const SidePanel = ({
               <BaseIconButton
                 className={cx('close-button')}
                 onClick={handleClose}
-                aria-label="Close panel"
+                aria-label={closeButtonAriaLabel}
               >
                 <CloseIcon />
               </BaseIconButton>
