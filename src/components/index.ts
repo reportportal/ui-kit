@@ -10,7 +10,7 @@ export { FieldLabel } from './fieldLabel';
 export { FieldNumber } from './fieldNumber';
 export { FieldText } from './fieldText';
 export { FieldTextFlex } from './fieldTextFlex';
-export { FileDropArea, MIME_TYPES } from './fileDropArea';
+export { FileDropArea } from './fileDropArea';
 export { Modal } from './modal';
 export { MultipleAutocomplete } from './autocompletes/multipleAutocomplete';
 export { Pagination } from './pagination';

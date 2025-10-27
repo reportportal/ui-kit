@@ -25,6 +25,7 @@ export interface FieldTextFlexProps extends ComponentPropsWithRef<'textarea'> {
   label?: string;
   helpText?: string;
   maxLengthDisplay?: number;
+  minHeight?: number;
   onChange?: ChangeEventHandler<HTMLTextAreaElement>;
   onFocus?: FocusEventHandler<HTMLTextAreaElement>;
   onBlur?: FocusEventHandler<HTMLTextAreaElement>;
@@ -47,6 +48,7 @@ export const FieldTextFlex = forwardRef(
       className = '',
       label = '',
       helpText = '',
+      minHeight = HEIGHT,
       maxLengthDisplay,
       onChange,
       onFocus,
@@ -60,7 +62,7 @@ export const FieldTextFlex = forwardRef(
     const hasError = error && touched;
 
     const resizeHeight = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-      event.target.style.height = `${HEIGHT}px`;
+      event.target.style.height = `${minHeight}px`;
       event.target.style.height = `${event.target.scrollHeight + BORDER}px`;
     };
 
@@ -79,6 +81,7 @@ export const FieldTextFlex = forwardRef(
             error,
             touched,
           })}
+          style={{ minHeight, height: minHeight }}
           value={value}
           placeholder={placeholder}
           disabled={disabled}

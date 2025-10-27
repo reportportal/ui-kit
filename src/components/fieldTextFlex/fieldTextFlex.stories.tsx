@@ -61,6 +61,10 @@ export const WithMaxLengthDisplay: Story = {
   args: { maxLengthDisplay: 60 },
 };
 
+export const WithCustomMinHeight: Story = {
+  args: { minHeight: 36 },
+};
+
 export const FullyDescribed: Story = {
   args: {
     label: 'Label',
