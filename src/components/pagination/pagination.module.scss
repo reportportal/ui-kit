@@ -13,3 +13,8 @@
   @include font-scale();
   color: var(--rp-ui-base-almost-black);
 }
+
+.pagination_with_controls {
+  justify-content: center;
+  gap: 24px;
+}

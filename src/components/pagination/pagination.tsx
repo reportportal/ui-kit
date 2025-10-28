@@ -40,9 +40,10 @@ export const Pagination: FC<PaginationProps> = ({
 }): ReactElement => {
   const ofText = captions?.of || 'of';
   const pageText = captions?.page || 'Page';
+  const isMoreThanOnePages = totalPages > 1;
 
   return (
-    <div className={cx('pagination')}>
+    <div className={cx('pagination', isMoreThanOnePages ? 'pagination_with_controls' : '')}>
       <ItemCounter
         activePage={activePage}
         pageSize={pageSize}
@@ -50,7 +51,7 @@ export const Pagination: FC<PaginationProps> = ({
         ofText={ofText}
         itemsText={captions?.items || 'items'}
       />
-      {totalPages > 1 && (
+      {isMoreThanOnePages && (
         <PageControls
           activePage={activePage}
           totalPages={totalPages}
