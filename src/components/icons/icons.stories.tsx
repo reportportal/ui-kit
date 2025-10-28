@@ -1,9 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
 import { BaseIconButton } from '@components/baseIconButton/baseIconButton';
-import { CloseIcon, DeleteIcon, DropdownIcon, MinusIcon, PlusIcon, SearchIcon } from './index';
-
-const icons = [CloseIcon, PlusIcon, MinusIcon, DeleteIcon, DropdownIcon, SearchIcon];
+import * as icons from './index';
+import styles from './icons.stories.module.scss';
 
 const meta: Meta<typeof BaseIconButton> = {
   title: 'Icons/Icons',
@@ -18,18 +17,28 @@ export default meta;
 
 type Story = StoryObj<typeof BaseIconButton>;
 
-export const Icons: Story = {
+export const IconsGrid: Story = {
   render: () => {
+    const handleCopyName = (name: string) => {
+      navigator.clipboard.writeText(name);
+    };
+
     return (
-      <>
-        {icons.map((Icon) => {
-          return (
+      <div className={styles.grid}>
+        {Object.entries(icons).map(([name, Icon]) => (
+          <div
+            key={name}
+            className={styles['icon-item']}
+            onClick={() => handleCopyName(name)}
+            title={`Click to copy: ${name}`}
+          >
             <BaseIconButton>
               <Icon />
             </BaseIconButton>
-          );
-        })}
-      </>
+            <div className={styles['icon-name']}>{name}</div>
+          </div>
+        ))}
+      </div>
     );
   },
 };
