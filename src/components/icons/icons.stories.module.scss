@@ -15,11 +15,38 @@
  */
 
 .grid {
+  position: relative;
   display: grid;
   max-width: 900px;
   padding: 20px;
   grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
   gap: 16px;
+}
+
+.copy-notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+  padding: 12px 20px;
+  border-radius: 8px;
+  background-color: var(--rp-ui-color-bg-success, #4caf50);
+  color: #fff;
+  font-family: var(--rp-ui-base-font-family);
+  font-size: 14px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
 }
 
 .icon-item {
@@ -41,6 +68,11 @@
 
   &:active {
     transform: translateY(0);
+  }
+
+  &:focus-within {
+    border: 1px solid var(--rp-ui-color-primary-text);
+    color: var(--rp-ui-color-primary-text);
   }
 }
 
