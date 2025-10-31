@@ -15,9 +15,14 @@
  */
 
 import { FileDropArea } from './fileDropArea';
-import { MIME_TYPES } from './types';
-import type { FileWithValidation } from './types';
+import {
+  MIME_TYPES,
+  FileValidationError,
+  type MimeType,
+  type FileWithValidation,
+  type FileValidationMessages,
+} from './types';
 
 export { FileDropArea };
-export { MIME_TYPES };
-export type { FileWithValidation };
+export { MIME_TYPES, FileValidationError };
+export type { MimeType, FileWithValidation, FileValidationMessages };
