@@ -27,10 +27,15 @@
       "import": "./dist/index.js",
       "default": "./dist/index.js"
     },
-    "./fileDropArea": {
-      "types": "./dist/components/fileDropArea/index.d.ts",
-      "import": "./dist/fileDropArea.js",
-      "default": "./dist/fileDropArea.js"
+    "./style.css": "./dist/style.css",
+    "./common": {
+      "types": "./dist/common/types.d.ts",
+      "default": "./dist/common/types.d.ts"
+    },
+    "./*": {
+      "types": "./dist/components/*/index.d.ts",
+      "import": "./dist/*.js",
+      "default": "./dist/*.js"
     }
   },
   "peerDependencies": {
