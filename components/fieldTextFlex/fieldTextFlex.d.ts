@@ -8,6 +8,7 @@ export interface FieldTextFlexProps extends ComponentPropsWithRef<'textarea'> {
     label?: string;
     helpText?: string;
     maxLengthDisplay?: number;
+    minHeight?: number;
     onChange?: ChangeEventHandler<HTMLTextAreaElement>;
     onFocus?: FocusEventHandler<HTMLTextAreaElement>;
     onBlur?: FocusEventHandler<HTMLTextAreaElement>;
