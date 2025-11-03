@@ -42,11 +42,8 @@ jobs:
 
       - name: Publish to NPM
         run: |
-          npm config set //registry.npmjs.org/:_authToken=$NODE_AUTH_TOKEN
           npm config list
           npm publish --access public --tag alpha
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_ACCESS_TOKEN }}
 
       - name: Push version update back to repository
         run: |
