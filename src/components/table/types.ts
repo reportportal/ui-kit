@@ -4,9 +4,11 @@ import { ASC, DESC } from './constants';
 export interface Column {
   key: string;
   header: string;
+  showTooltip?: boolean;
 }
 export interface PrimaryColumn extends Column {
   primary: boolean;
+  width?: string | number;
 }
 export interface FixedColumn extends Column {
   width: string | number;

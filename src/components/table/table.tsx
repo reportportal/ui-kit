@@ -195,7 +195,7 @@ export const Table: FC<TableComponentProps> = ({
               onMouseEnter={() => handleColumnMouseEnter(column.key)}
               onMouseLeave={handleColumnMouseLeave}
             >
-              <span>{column.header}</span>
+              <span title={column.showTooltip ? column.header : undefined}>{column.header}</span>
               {(hoveredColumn === column.key || defaultSortingColumn?.key === column.key) &&
                 getSortIcon(column.key)}
             </div>
@@ -225,7 +225,7 @@ export const Table: FC<TableComponentProps> = ({
               onMouseEnter={() => handleColumnMouseEnter(column.key)}
               onMouseLeave={handleColumnMouseLeave}
             >
-              <span>{column.header}</span>
+              <span title={column.showTooltip ? column.header : undefined}>{column.header}</span>
               {(hoveredColumn === column.key || defaultSortingColumn?.key === column.key) &&
                 getSortIcon(column.key)}
             </div>
