@@ -43,7 +43,7 @@ export interface SingleAutocompleteProps<T> {
   disabled: boolean;
   inputProps: ComponentProps<typeof FieldText>;
   parseValueToString: (value: T | null) => string;
-  renderOption: (
+  renderOption?: (
     value: T,
     index: number,
     isNew: boolean,

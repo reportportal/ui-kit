@@ -47,7 +47,7 @@ export interface MultipleAutocompleteProps<T> {
   touched: boolean;
   creatable: boolean;
   editable: boolean;
-  renderOption: (
+  renderOption?: (
     value: T,
     index: number,
     isNew: boolean,
