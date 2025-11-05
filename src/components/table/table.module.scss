@@ -312,6 +312,14 @@ $PADDING_VERTICAL-LARGE: 30px;
   .label {
     display: flex;
     align-items: center;
+    min-width: 0;
+
+    > span {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      min-width: 0;
+    }
   }
 
   &.sortable-cell > .label {

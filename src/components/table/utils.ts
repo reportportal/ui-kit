@@ -130,7 +130,13 @@ export const getGridTemplateColumns = (
 
   const addColumnWidth = (column: PrimaryColumn | FixedColumn) => {
     if (isPrimaryColumn(column)) {
-      columns.push(`minmax(${PRIMARY_COLUMN_DEFAULT_WIDTH}px, 1fr)`);
+      const primaryColumn = column as PrimaryColumn;
+      const minWidth = primaryColumn.width
+        ? isString(primaryColumn.width)
+          ? primaryColumn.width
+          : `${primaryColumn.width}px`
+        : `${PRIMARY_COLUMN_DEFAULT_WIDTH}px`;
+      columns.push(`minmax(${minWidth}, 1fr)`);
     } else {
       const fixedColumn = column as FixedColumn;
       const width = isString(fixedColumn.width) ? fixedColumn.width : `${fixedColumn.width}px`;

@@ -7,6 +7,7 @@ export interface Column {
 }
 export interface PrimaryColumn extends Column {
   primary: boolean;
+  width?: string | number;
 }
 export interface FixedColumn extends Column {
   width: string | number;

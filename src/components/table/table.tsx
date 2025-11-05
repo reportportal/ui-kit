@@ -1,8 +1,8 @@
-import { useMemo, FC } from 'react';
+import { useMemo, FC, useEffect, useRef, useState } from 'react';
 import styles from './table.module.scss';
 import classNames from 'classnames/bind';
 import { ArrowDownIcon, ArrowUpIcon, ChevronDownDropdownIcon } from '@components/icons';
-import { TableComponentProps, FixedColumn, Column } from './types';
+import { TableComponentProps, FixedColumn, Column, PrimaryColumn } from './types';
 import { Checkbox } from '@components/checkbox';
 import {
   getColumnsKeys,
@@ -16,6 +16,25 @@ import { ASC, EXPANDABLE_CHECKBOX_COLUMN_WIDTH } from './constants';
 import { useTableColumns, useTableHover, useTableExpansion, useColumnWidths } from './hooks';
 
 const cx = classNames.bind(styles);
+
+const ColumnHeaderText: FC<{ column: PrimaryColumn | FixedColumn }> = ({ column }) => {
+  const spanRef = useRef<HTMLSpanElement>(null);
+  const [showTitle, setShowTitle] = useState(false);
+
+  useEffect(() => {
+    if (spanRef.current) {
+      const width = spanRef.current.offsetWidth;
+      const scrollWidth = spanRef.current.scrollWidth;
+      setShowTitle(scrollWidth > width);
+    }
+  }, [column.header]);
+
+  return (
+    <span ref={spanRef} title={showTitle ? column.header : undefined}>
+      {column.header}
+    </span>
+  );
+};
 
 export const Table: FC<TableComponentProps> = ({
   data,
@@ -195,7 +214,7 @@ export const Table: FC<TableComponentProps> = ({
               onMouseEnter={() => handleColumnMouseEnter(column.key)}
               onMouseLeave={handleColumnMouseLeave}
             >
-              <span>{column.header}</span>
+              <ColumnHeaderText column={column} />
               {(hoveredColumn === column.key || defaultSortingColumn?.key === column.key) &&
                 getSortIcon(column.key)}
             </div>
@@ -225,7 +244,7 @@ export const Table: FC<TableComponentProps> = ({
               onMouseEnter={() => handleColumnMouseEnter(column.key)}
               onMouseLeave={handleColumnMouseLeave}
             >
-              <span>{column.header}</span>
+              <ColumnHeaderText column={column} />
               {(hoveredColumn === column.key || defaultSortingColumn?.key === column.key) &&
                 getSortIcon(column.key)}
             </div>
