@@ -2,6 +2,7 @@ import { ComponentProps, FocusEvent, ReactNode, Ref } from '../../../../node_mod
 import { default as Downshift, DownshiftState, StateChangeOptions } from 'downshift';
 import { default as FieldText } from '../../fieldText';
 import { AutocompleteMenu } from '../common/autocompleteMenu';
+import { GetItemPropsT } from '../types';
 
 export interface SingleAutocompleteProps<T> {
     options: T[];
@@ -15,7 +16,7 @@ export interface SingleAutocompleteProps<T> {
     disabled: boolean;
     inputProps: ComponentProps<typeof FieldText>;
     parseValueToString: (value: T | null) => string;
-    renderOption: (value: T) => ReactNode;
+    renderOption?: (value: T, index: number, isNew: boolean, getItemProps: GetItemPropsT<T>) => ReactNode;
     minLength: number;
     maxLength: number | null;
     async: boolean;

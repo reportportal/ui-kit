@@ -3,6 +3,7 @@ import { ControllerStateAndHelpers } from 'downshift';
 import { default as FieldText } from '../../fieldText';
 import { AutocompleteMenu } from '../common/autocompleteMenu';
 import { DownshiftStore, MultipleDownshiftProps } from './multipleDownshift';
+import { GetItemPropsT } from '../types';
 
 export interface MultipleAutocompleteProps<T> {
     options: T[];
@@ -14,6 +15,7 @@ export interface MultipleAutocompleteProps<T> {
     touched: boolean;
     creatable: boolean;
     editable: boolean;
+    renderOption?: (value: T, index: number, isNew: boolean, getItemProps: GetItemPropsT<T>) => ReactNode;
     onChange: (selectedItems: T | T[] | null, downshift: ControllerStateAndHelpers<T> | null) => void;
     onFocus: () => void;
     onBlur: () => void;
