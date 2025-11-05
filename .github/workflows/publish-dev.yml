@@ -7,20 +7,24 @@ on:
 #      - develop
   workflow_dispatch:
 
+permissions:
+  id-token: write  # Required for NPM OIDC
+  contents: write
+
 jobs:
   publish_dev:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
-          node-version: 20
-          cache: 'npm'
-
+          node-version: 24
+          registry-url: 'https://registry.npmjs.org'
+      
       - name: Install dependencies
         run: npm ci
 
@@ -38,11 +42,9 @@ jobs:
 
       - name: Publish to NPM
         run: |
-          npm config set //registry.npmjs.org/:_authToken=$NODE_AUTH_TOKEN
+          npm -v
           npm config list
           npm publish --access public --tag alpha
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_ACCESS_TOKEN }}
 
       - name: Push version update back to repository
         run: |

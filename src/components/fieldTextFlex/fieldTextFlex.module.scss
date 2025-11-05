@@ -11,7 +11,6 @@
 .text-area {
   @include font-scale();
   width: 100%;
-  min-height: 72px;
   padding: 7px 12px;
   outline: none;
   border: 1px solid var(--rp-ui-color-field-border-3);
