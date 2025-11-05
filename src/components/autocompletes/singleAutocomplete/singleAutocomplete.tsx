@@ -43,7 +43,12 @@ export interface SingleAutocompleteProps<T> {
   disabled: boolean;
   inputProps: ComponentProps<typeof FieldText>;
   parseValueToString: (value: T | null) => string;
-  renderOption: (value: T) => ReactNode;
+  renderOption?: (
+    value: T,
+    index: number,
+    isNew: boolean,
+    getItemProps: GetItemPropsT<T>,
+  ) => ReactNode;
   minLength: number;
   maxLength: number | null;
   async: boolean;

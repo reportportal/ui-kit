@@ -47,6 +47,12 @@ export interface MultipleAutocompleteProps<T> {
   touched: boolean;
   creatable: boolean;
   editable: boolean;
+  renderOption?: (
+    value: T,
+    index: number,
+    isNew: boolean,
+    getItemProps: GetItemPropsT<T>,
+  ) => ReactNode;
   onChange: (selectedItems: T | T[] | null, downshift: ControllerStateAndHelpers<T> | null) => void;
   onFocus: () => void;
   onBlur: () => void;
