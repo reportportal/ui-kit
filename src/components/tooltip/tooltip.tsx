@@ -26,14 +26,13 @@ import {
   offset,
   autoUpdate,
 } from '@floating-ui/react';
+import { TRIANGLE_WIDTH, TRIANGLE_HEIGHT, allPlacements } from '@common/constants/floatingUi';
+import { getAlignmentAxisOffset } from '@common/utils';
 import styles from './tooltip.module.scss';
 
 const cx = classNames.bind(styles);
 const TOOLTIP_DELAY_MS = 300;
 const SAFE_ZONE = 100;
-const TRIANGLE_WIDTH = 16;
-const TRIANGLE_HEIGHT = 8;
-const placements: Placement[] = ['top', 'right', 'bottom', 'left'];
 
 interface TooltipProps {
   content: ReactNode;
@@ -80,14 +79,15 @@ export const Tooltip: FC<TooltipProps> = ({
     open: isOpened,
     placement,
     middleware: [
-      offset({
+      offset(({ rects, placement: currentPlacement }) => ({
         mainAxis: safeZone + TRIANGLE_HEIGHT,
-      }),
+        alignmentAxis: getAlignmentAxisOffset(rects, currentPlacement),
+      })),
       isFloating &&
         flip({
           mainAxis,
           fallbackAxisSideDirection: 'start',
-          fallbackPlacements: placements,
+          fallbackPlacements: allPlacements,
         }),
       arrow({
         element: arrowRef,
