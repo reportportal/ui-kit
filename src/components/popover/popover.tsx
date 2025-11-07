@@ -31,34 +31,17 @@ import {
   ElementRects,
 } from '@floating-ui/react';
 import classNames from 'classnames/bind';
+import {
+  TRIANGLE_WIDTH,
+  TRIANGLE_HEIGHT,
+  middlePlacements,
+  allPlacements,
+  ARROW_OFFSET,
+} from '@common/constants/floatingUi';
+import { getAlignmentAxisOffset } from '@common/utils';
 import styles from './popover.module.scss';
 
 const cx = classNames.bind(styles);
-const TRIANGLE_WIDTH = 16;
-const TRIANGLE_HEIGHT = 8;
-const middlePlacements: Placement[] = ['top', 'right', 'bottom', 'left'];
-const verticalPlacements: Placement[] = [
-  'right',
-  'right-start',
-  'right-end',
-  'left',
-  'left-start',
-  'left-end',
-];
-const allPlacements: Placement[] = [
-  'top',
-  'top-start',
-  'top-end',
-  'right',
-  'right-start',
-  'right-end',
-  'bottom',
-  'bottom-start',
-  'bottom-end',
-  'left',
-  'left-start',
-  'left-end',
-];
 
 export interface PopoverProps {
   className?: string;
@@ -83,7 +66,7 @@ export const Popover: FC<PopoverProps> = ({
   placement: initialPlacement = 'bottom',
   fallbackPlacements = allPlacements,
   title,
-  arrowOffset = 16,
+  arrowOffset = ARROW_OFFSET,
   safeZone = 4,
   arrowColor = 'white',
   dataAutomationId,
@@ -106,17 +89,7 @@ export const Popover: FC<PopoverProps> = ({
 
   const getAlignment = useCallback(
     (rects: ElementRects, currentPlacement: Placement) => {
-      if (isCentered)
-        return (
-          ((verticalPlacements.includes(currentPlacement)
-            ? rects.reference.height
-            : rects.reference.width) -
-            TRIANGLE_WIDTH) /
-            2 -
-          arrowOffset
-        );
-
-      return -arrowOffset;
+      return getAlignmentAxisOffset(rects, currentPlacement, arrowOffset, isCentered);
     },
     [arrowOffset, isCentered],
   );
