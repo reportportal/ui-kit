@@ -29,7 +29,8 @@ const isReadyForSearch = (minLength: number | null, inputValue: string) =>
 type AutocompleteMenuProps<T> = {
   isOpen?: boolean;
   style?: React.CSSProperties;
-  minLength: number | null;
+  isDropdownMode?: boolean;
+  minLength?: number | null;
   inputValue?: string;
   className?: string;
 } & AutocompleteOptionsProps<T>;
@@ -40,18 +41,24 @@ export const AutocompleteMenu = forwardRef(
       isOpen = false,
       style = {},
       minLength = 1,
+      isDropdownMode,
       inputValue = '',
       className = '',
       ...props
     }: AutocompleteMenuProps<T>,
     ref: ForwardedRef<HTMLUListElement>,
   ) => {
+    console.log({
+      isDropdownMode,
+      isOpen,
+      opened: isOpen && (isDropdownMode || isReadyForSearch(minLength, inputValue)),
+    });
     return (
       <ul
         ref={ref}
         className={cx(
           'menu',
-          { opened: isOpen && isReadyForSearch(minLength, inputValue) },
+          { opened: isOpen && (isDropdownMode || isReadyForSearch(minLength, inputValue)) },
           className,
         )}
         style={style}

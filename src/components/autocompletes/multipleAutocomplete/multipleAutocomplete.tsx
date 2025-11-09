@@ -60,9 +60,9 @@ export interface MultipleAutocompleteProps<T> {
   mobileDisabled: boolean;
   inputProps: ComponentProps<typeof FieldText>;
   parseValueToString: (value: T | null) => string;
-  minLength: number | null;
-  maxLength: number | null;
-  async: boolean;
+  minLength?: number | null;
+  maxLength?: number | null;
+  async?: boolean;
   customClass: string;
   createWithoutConfirmation: boolean;
   getItemValidationErrorType?: (item: T) => string;
@@ -73,7 +73,7 @@ export interface MultipleAutocompleteProps<T> {
   handleUnStoredItemCb:
     | ((newSelectedItems: DownshiftStore<T>, prevSelectedItems: DownshiftStore<T>) => void)
     | null;
-  dataAutomationId: string;
+  dataAutomationId?: string;
   existingItemsMap: Record<string | number, boolean>;
   optionVariant: ComponentProps<typeof AutocompleteMenu>['optionVariant'];
   customizeNewSelectedValue: (value: T) => T;
