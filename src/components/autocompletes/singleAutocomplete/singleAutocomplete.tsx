@@ -206,15 +206,13 @@ export const SingleAutocomplete = <T,>(componentProps: SingleAutocompleteProps<T
                 isRequired,
                 touched,
                 error,
-
                 ...inputProps,
-                endIcon: isDropdownMode ? (
+                endIcon: icon,
+                additionalIcon: isDropdownMode ? (
                   <button className={cx('dropdown-button')} onClick={() => toggleMenu()}>
                     {isOpen ? <ArrowUpIcon /> : <ArrowDownIcon />}
                   </button>
-                ) : (
-                  icon
-                ),
+                ) : null,
                 minLength: isDropdownMode ? 0 : minLength,
               })}
             />

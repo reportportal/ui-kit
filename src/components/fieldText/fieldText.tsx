@@ -41,6 +41,7 @@ export interface FieldTextProps extends InputHTMLAttributes<HTMLInputElement> {
   defaultWidth?: boolean;
   startIcon?: ReactNode;
   endIcon?: ReactNode;
+  additionalIcon?: ReactNode;
   clearable?: boolean;
   onClear?: (prevValue?: string) => void;
   isRequired?: boolean;
@@ -69,6 +70,7 @@ export const FieldText = forwardRef<HTMLInputElement, FieldTextProps>(
       defaultWidth = true,
       startIcon,
       endIcon,
+      additionalIcon,
       clearable = false,
       onClear,
       isRequired = false,
@@ -218,6 +220,11 @@ export const FieldText = forwardRef<HTMLInputElement, FieldTextProps>(
               >
                 <ClearIcon />
               </button>
+            </span>
+          )}
+          {additionalIcon && (
+            <span className={cx('icon-container-additional')}>
+              <span className={cx('icon')}>{additionalIcon}</span>
             </span>
           )}
         </div>
