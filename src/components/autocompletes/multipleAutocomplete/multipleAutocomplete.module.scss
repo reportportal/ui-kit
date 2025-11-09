@@ -57,7 +57,7 @@ $SCREEN_XS_MAX: 767px;
 .autocomplete {
   &-wrapper {
     position: relative;
-    width: max-content;
+    width: 100%;
   }
 
   @include container(var(--rp-ui-color-field-border), var(--rp-ui-color-bg));
