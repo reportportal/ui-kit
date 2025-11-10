@@ -209,7 +209,13 @@ export const SingleAutocomplete = <T,>(componentProps: SingleAutocompleteProps<T
                 ...inputProps,
                 endIcon: icon,
                 additionalIcon: isDropdownMode ? (
-                  <button className={cx('dropdown-button')} onClick={() => toggleMenu()}>
+                  <button
+                    type="button"
+                    className={cx('dropdown-button')}
+                    onClick={() => toggleMenu()}
+                    aria-label="Toggle dropdown"
+                    aria-expanded={isOpen}
+                  >
                     {isOpen ? <ArrowUpIcon /> : <ArrowDownIcon />}
                   </button>
                 ) : null,
