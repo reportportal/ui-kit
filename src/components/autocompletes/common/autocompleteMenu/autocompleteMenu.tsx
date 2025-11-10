@@ -48,11 +48,6 @@ export const AutocompleteMenu = forwardRef(
     }: AutocompleteMenuProps<T>,
     ref: ForwardedRef<HTMLUListElement>,
   ) => {
-    console.log({
-      isDropdownMode,
-      isOpen,
-      opened: isOpen && (isDropdownMode || isReadyForSearch(minLength, inputValue)),
-    });
     return (
       <ul
         ref={ref}
