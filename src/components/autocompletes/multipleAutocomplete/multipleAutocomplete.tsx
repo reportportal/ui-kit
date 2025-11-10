@@ -101,7 +101,7 @@ export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompletePr
     onFocus = () => {},
     onBlur = () => {},
     disabled = false,
-    isDropdownMode,
+    isDropdownMode = false,
     mobileDisabled = false,
     inputProps = {},
     parseValueToString = ((item: T) =>

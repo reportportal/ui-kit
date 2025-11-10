@@ -98,7 +98,7 @@ export const SingleAutocomplete = <T,>(componentProps: SingleAutocompleteProps<T
     createWithoutConfirmation = false,
     menuClassName = '',
     icon,
-    isDropdownMode = true,
+    isDropdownMode = false,
     isOptionUnique,
     refFunction,
     stateReducer,
