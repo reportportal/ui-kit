@@ -45,6 +45,10 @@
         gap: 16px;
         margin-bottom: 12px;
         flex-wrap: wrap;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
     }
 
     .info-group {
