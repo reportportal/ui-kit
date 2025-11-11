@@ -62,5 +62,5 @@ export { default as TreeIcon } from './svg/tree.svg';
 export { default as WarningIcon } from './svg/warning.svg';
 export { default as XlsIcon } from './svg/xls.svg';
 export { default as TestPlanIcon } from './svg/testPlan.svg';
-export { default as OwnerIcon } from './svg/owner.svg';
+export { default as UserIcon } from './svg/userIcon.svg';
 export { default as LaunchTypeIcon } from './svg/launchType.svg';
