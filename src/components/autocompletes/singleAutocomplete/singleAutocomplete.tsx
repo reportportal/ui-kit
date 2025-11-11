@@ -207,18 +207,20 @@ export const SingleAutocomplete = <T,>(componentProps: SingleAutocompleteProps<T
                 touched,
                 error,
                 ...inputProps,
-                endIcon: icon,
-                additionalIcon: isDropdownMode ? (
-                  <button
-                    type="button"
-                    className={cx('dropdown-button', { ['icon-reversed']: isOpen })}
-                    onClick={() => toggleMenu()}
-                    aria-label="Toggle dropdown"
-                    aria-expanded={isOpen}
-                  >
-                    <DropdownIcon />
-                  </button>
-                ) : null,
+                endIcon:
+                  isDropdownMode && !icon ? (
+                    <button
+                      type="button"
+                      className={cx('dropdown-button', { ['icon-reversed']: isOpen })}
+                      onClick={() => toggleMenu()}
+                      aria-label="Toggle dropdown"
+                      aria-expanded={isOpen}
+                    >
+                      <DropdownIcon />
+                    </button>
+                  ) : (
+                    icon
+                  ),
                 minLength: isDropdownMode ? 0 : minLength,
               })}
             />

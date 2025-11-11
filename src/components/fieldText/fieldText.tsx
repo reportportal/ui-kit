@@ -41,7 +41,6 @@ export interface FieldTextProps extends InputHTMLAttributes<HTMLInputElement> {
   defaultWidth?: boolean;
   startIcon?: ReactNode;
   endIcon?: ReactNode;
-  additionalIcon?: ReactNode;
   clearable?: boolean;
   onClear?: (prevValue?: string) => void;
   isRequired?: boolean;
@@ -70,7 +69,6 @@ export const FieldText = forwardRef<HTMLInputElement, FieldTextProps>(
       defaultWidth = true,
       startIcon,
       endIcon,
-      additionalIcon,
       clearable = false,
       onClear,
       isRequired = false,
@@ -205,11 +203,6 @@ export const FieldText = forwardRef<HTMLInputElement, FieldTextProps>(
             value={value.length}
             maxValue={maxLengthDisplay}
           />
-          {endIcon && (
-            <span className={cx('icon-container-end')}>
-              <span className={cx('icon')}>{endIcon}</span>
-            </span>
-          )}
           {clearable && value.length > 0 && (
             <span className={cx('icon-container-end')}>
               <button
@@ -222,9 +215,9 @@ export const FieldText = forwardRef<HTMLInputElement, FieldTextProps>(
               </button>
             </span>
           )}
-          {additionalIcon && (
-            <span className={cx('icon-container-additional')}>
-              <span className={cx('icon')}>{additionalIcon}</span>
+          {endIcon && (
+            <span className={cx('icon-container-end')}>
+              <span className={cx('icon')}>{endIcon}</span>
             </span>
           )}
         </div>
