@@ -152,3 +152,17 @@ $SCREEN_XS_MAX: 767px;
   line-height: 16px;
   color: var(--rp-ui-color-error);
 }
+
+.dropdown-button {
+  outline: none;
+  background: transparent;
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+.icon-reversed {
+  svg {
+    transform: rotateZ(180deg);
+  }
+}

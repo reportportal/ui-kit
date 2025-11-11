@@ -63,7 +63,7 @@ const TEST_DATA_STRINGS: Partial<
   >
 > = {
   options: OPTIONS_STRINGS,
-  loading: true,
+  loading: false,
   async: true,
   createWithoutConfirmation: true,
   creatable: false,
@@ -82,6 +82,7 @@ const TEST_DATA_STRINGS: Partial<
     clearable: true,
   },
   minLength: 1,
+  isDropdownMode: true,
   placeholder: 'Test placeholder',
   disabled: false,
   mobileDisabled: false,

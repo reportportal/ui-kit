@@ -20,13 +20,13 @@ import Downshift, { DownshiftState, StateChangeOptions } from 'downshift';
 import { autoUpdate, useFloating } from '@floating-ui/react';
 
 import { default as FieldText } from '@/components/fieldText';
+import { DropdownIcon } from '@/components/icons';
 
 import { AutocompleteMenu } from '../common/autocompleteMenu';
 import { ENTER_KEY_NAME, TAB_KEY_NAME } from '../constants';
 import { GetItemPropsT } from '../types';
 
 import styles from './singleAutocomplete.module.scss';
-import { ArrowDownIcon, ArrowUpIcon } from '@/components/icons';
 
 const cx = classNames.bind(styles);
 
@@ -211,12 +211,12 @@ export const SingleAutocomplete = <T,>(componentProps: SingleAutocompleteProps<T
                 additionalIcon: isDropdownMode ? (
                   <button
                     type="button"
-                    className={cx('dropdown-button')}
+                    className={cx('dropdown-button', { ['icon-reversed']: isOpen })}
                     onClick={() => toggleMenu()}
                     aria-label="Toggle dropdown"
                     aria-expanded={isOpen}
                   >
-                    {isOpen ? <ArrowUpIcon /> : <ArrowDownIcon />}
+                    <DropdownIcon />
                   </button>
                 ) : null,
                 minLength: isDropdownMode ? 0 : minLength,

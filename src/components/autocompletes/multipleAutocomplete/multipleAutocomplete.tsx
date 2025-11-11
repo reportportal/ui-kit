@@ -18,7 +18,7 @@ import { ComponentProps, KeyboardEvent, ReactNode, useEffect, useRef } from 'rea
 import classNames from 'classnames/bind';
 import { ControllerStateAndHelpers } from 'downshift';
 
-import { ArrowDownIcon, ArrowUpIcon, ClearIcon } from '@/components/icons';
+import { ClearIcon, DropdownIcon } from '@/components/icons';
 import { default as FieldText } from '@/components/fieldText';
 import { useFloating, autoUpdate } from '@floating-ui/react';
 
@@ -322,8 +322,14 @@ export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompletePr
                   </button>
                 )}
                 {isDropdownMode && (
-                  <button onClick={() => toggleMenu()}>
-                    {isOpen ? <ArrowUpIcon /> : <ArrowDownIcon />}
+                  <button
+                    type="button"
+                    className={cx('dropdown-button', { ['icon-reversed']: isOpen })}
+                    onClick={() => toggleMenu()}
+                    aria-label="Toggle dropdown"
+                    aria-expanded={isOpen}
+                  >
+                    <DropdownIcon />
                   </button>
                 )}
               </div>
