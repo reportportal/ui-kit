@@ -3,12 +3,12 @@ import { GetItemPropsT } from '../types';
 
 export interface AutocompleteOptionsProps<T> {
     options: T[];
-    loading: boolean;
+    loading?: boolean;
     inputValue: string;
     parseValueToString: (value: T | null) => string;
     getItemProps: GetItemPropsT<T>;
     renderOption?: (item: T, index: number, isNew: boolean, getItemProps: GetItemPropsT<T>) => ReactNode;
-    async: boolean;
+    async?: boolean;
     optionVariant: 'key-variant' | 'value-variant' | '';
     createWithoutConfirmation: boolean;
     customEmptyListMessage?: string;
