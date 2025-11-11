@@ -42,6 +42,11 @@
   margin-left: 4px;
 }
 
+.icon-container-additional {
+  @extend .icon-container;
+  margin-left: 4px;
+}
+
 .field {
   display: flex;
   align-items: center;

@@ -18,7 +18,7 @@ import { ComponentProps, KeyboardEvent, ReactNode, useEffect, useRef } from 'rea
 import classNames from 'classnames/bind';
 import { ControllerStateAndHelpers } from 'downshift';
 
-import { ClearIcon } from '@/components/icons';
+import { ClearIcon, DropdownIcon } from '@/components/icons';
 import { default as FieldText } from '@/components/fieldText';
 import { useFloating, autoUpdate } from '@floating-ui/react';
 
@@ -60,20 +60,21 @@ export interface MultipleAutocompleteProps<T> {
   mobileDisabled: boolean;
   inputProps: ComponentProps<typeof FieldText>;
   parseValueToString: (value: T | null) => string;
-  minLength: number | null;
-  maxLength: number | null;
-  async: boolean;
+  minLength?: number | null;
+  maxLength?: number | null;
+  async?: boolean;
   customClass: string;
   createWithoutConfirmation: boolean;
   getItemValidationErrorType?: (item: T) => string;
   clearItemsError: () => void;
+  isDropdownMode?: boolean;
   getAdditionalCreationCondition: (value: string) => boolean;
   highlightUnStoredItem: boolean;
   parseInputValueFn: ((value: string) => T[]) | null;
   handleUnStoredItemCb:
     | ((newSelectedItems: DownshiftStore<T>, prevSelectedItems: DownshiftStore<T>) => void)
     | null;
-  dataAutomationId: string;
+  dataAutomationId?: string;
   existingItemsMap: Record<string | number, boolean>;
   optionVariant: ComponentProps<typeof AutocompleteMenu>['optionVariant'];
   customizeNewSelectedValue: (value: T) => T;
@@ -100,6 +101,7 @@ export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompletePr
     onFocus = () => {},
     onBlur = () => {},
     disabled = false,
+    isDropdownMode = false,
     mobileDisabled = false,
     inputProps = {},
     parseValueToString = ((item: T) =>
@@ -229,6 +231,7 @@ export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompletePr
           openMenu,
           selectItem,
           clearSelection,
+          toggleMenu,
           storedItemsMap,
           getRootProps,
         }: GetStateAndHelpersT<T>) => (
@@ -318,6 +321,17 @@ export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompletePr
                     <ClearIcon />
                   </button>
                 )}
+                {isDropdownMode && (
+                  <button
+                    type="button"
+                    className={cx('dropdown-button', { ['icon-reversed']: isOpen })}
+                    onClick={() => toggleMenu()}
+                    aria-label="Toggle dropdown"
+                    aria-expanded={isOpen}
+                  >
+                    <DropdownIcon />
+                  </button>
+                )}
               </div>
               {error && touched && <span className={cx('error-text')}>{error}</span>}
             </>
@@ -327,6 +341,7 @@ export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompletePr
               async={async}
               ref={refs.setFloating}
               newItemButtonText={newItemButtonText}
+              isDropdownMode={isDropdownMode}
               style={floatingStyles}
               inputValue={(inputValue || '').trim()}
               getItemProps={getOptionProps(getItemProps, highlightedIndex, value)}

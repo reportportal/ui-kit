@@ -203,11 +203,6 @@ export const FieldText = forwardRef<HTMLInputElement, FieldTextProps>(
             value={value.length}
             maxValue={maxLengthDisplay}
           />
-          {endIcon && (
-            <span className={cx('icon-container-end')}>
-              <span className={cx('icon')}>{endIcon}</span>
-            </span>
-          )}
           {clearable && value.length > 0 && (
             <span className={cx('icon-container-end')}>
               <button
@@ -218,6 +213,11 @@ export const FieldText = forwardRef<HTMLInputElement, FieldTextProps>(
               >
                 <ClearIcon />
               </button>
+            </span>
+          )}
+          {endIcon && (
+            <span className={cx('icon-container-end')}>
+              <span className={cx('icon')}>{endIcon}</span>
             </span>
           )}
         </div>

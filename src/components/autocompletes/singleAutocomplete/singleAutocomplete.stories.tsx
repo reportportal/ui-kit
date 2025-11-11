@@ -27,7 +27,7 @@ const TEST_DATA_OBJECTS: Partial<
   >
 > = {
   options: OPTIONS_OBJECTS,
-  loading: true,
+  loading: false,
   async: true,
   createWithoutConfirmation: true,
   parseValueToString: (value) => {
@@ -38,6 +38,7 @@ const TEST_DATA_OBJECTS: Partial<
   touched: true,
   minLength: 1,
   placeholder: 'Test placeholder',
+  isDropdownMode: true,
   disabled: false,
   inputProps: {
     clearable: true,

@@ -20,6 +20,7 @@ import Downshift, { DownshiftState, StateChangeOptions } from 'downshift';
 import { autoUpdate, useFloating } from '@floating-ui/react';
 
 import { default as FieldText } from '@/components/fieldText';
+import { DropdownIcon } from '@/components/icons';
 
 import { AutocompleteMenu } from '../common/autocompleteMenu';
 import { ENTER_KEY_NAME, TAB_KEY_NAME } from '../constants';
@@ -33,15 +34,15 @@ const DEFAULT_OPTIONS_INDEX = 0;
 
 export interface SingleAutocompleteProps<T> {
   options: T[];
-  loading: boolean;
+  loading?: boolean;
   onStateChange: ComponentProps<typeof Downshift<T>>['onStateChange'];
   value: T | null;
   placeholder: string;
   onChange: ComponentProps<typeof Downshift<T>>['onChange'];
   onFocus: () => void;
   onBlur: (e: FocusEvent<HTMLInputElement>) => void;
-  disabled: boolean;
-  inputProps: ComponentProps<typeof FieldText>;
+  disabled?: boolean;
+  inputProps?: ComponentProps<typeof FieldText>;
   parseValueToString: (value: T | null) => string;
   renderOption?: (
     value: T,
@@ -49,17 +50,18 @@ export interface SingleAutocompleteProps<T> {
     isNew: boolean,
     getItemProps: GetItemPropsT<T>,
   ) => ReactNode;
-  minLength: number;
-  maxLength: number | null;
-  async: boolean;
+  minLength?: number;
+  maxLength?: number | null;
+  async?: boolean;
   optionVariant: ComponentProps<typeof AutocompleteMenu>['optionVariant'];
-  isRequired: boolean;
+  isRequired?: boolean;
   error: string;
-  touched: boolean;
+  touched?: boolean;
   setTouch?: (value: boolean) => void;
   createWithoutConfirmation: boolean;
-  menuClassName: string;
+  menuClassName?: string;
   icon?: ReactNode;
+  isDropdownMode?: boolean;
   skipOptionCreation?: boolean;
   isOptionUnique?: (value: boolean | null) => void;
   refFunction?: Ref<HTMLInputElement>;
@@ -96,6 +98,7 @@ export const SingleAutocomplete = <T,>(componentProps: SingleAutocompleteProps<T
     createWithoutConfirmation = false,
     menuClassName = '',
     icon,
+    isDropdownMode = false,
     isOptionUnique,
     refFunction,
     stateReducer,
@@ -149,6 +152,7 @@ export const SingleAutocomplete = <T,>(componentProps: SingleAutocompleteProps<T
         getInputProps,
         getItemProps,
         setHighlightedIndex,
+        toggleMenu,
         isOpen,
         inputValue,
         highlightedIndex,
@@ -202,12 +206,27 @@ export const SingleAutocomplete = <T,>(componentProps: SingleAutocompleteProps<T
                 isRequired,
                 touched,
                 error,
-                endIcon: icon,
                 ...inputProps,
+                endIcon:
+                  isDropdownMode && !icon ? (
+                    <button
+                      type="button"
+                      className={cx('dropdown-button', { ['icon-reversed']: isOpen })}
+                      onClick={() => toggleMenu()}
+                      aria-label="Toggle dropdown"
+                      aria-expanded={isOpen}
+                    >
+                      <DropdownIcon />
+                    </button>
+                  ) : (
+                    icon
+                  ),
+                minLength: isDropdownMode ? 0 : minLength,
               })}
             />
             <AutocompleteMenu
               isOpen={isOpen}
+              isDropdownMode={isDropdownMode}
               style={floatingStyles}
               ref={refs.setFloating}
               minLength={minLength}

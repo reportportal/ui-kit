@@ -1,4 +1,18 @@
 .input-wrapper {
   position: relative;
-  width: max-content;
+  width: 100%;
+}
+
+.dropdown-button {
+  outline: none;
+  background: transparent;
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+.icon-reversed {
+  svg {
+    transform: rotateZ(180deg);
+  }
 }
