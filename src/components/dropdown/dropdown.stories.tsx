@@ -5,6 +5,31 @@ import { DropdownValue } from '@components/dropdown/types';
 import { Button } from '@components/button';
 import './stories.scss';
 
+const nestedOptions = [
+  { value: 'option-1', label: 'Option 1' },
+  { value: 'option-2', label: 'Option 2' },
+  {
+    value: 'group-a',
+    label: 'Group A',
+    children: [
+      { value: 'group-a-option-1', label: 'Group A Option 1' },
+      { value: 'group-a-option-2', label: 'Group A Option 2' },
+      { value: 'group-a-option-3', label: 'Group A Option 3' },
+    ],
+  },
+  {
+    value: 'group-b',
+    label: 'Group B',
+    children: [
+      { value: 'group-b-option-1', label: 'Group B Option 1' },
+      { value: 'group-b-option-2', label: 'Group B Option 2' },
+      { value: 'group-b-option-3', label: 'Group B Option 3' },
+    ],
+  },
+  { value: 'option-3', label: 'Option 3' },
+  { value: 'option-4', label: 'Option 4' },
+];
+
 const meta: Meta<typeof Dropdown> = {
   title: 'Controls/Dropdown',
   component: Dropdown,
@@ -49,8 +74,26 @@ const FooterApply: FC<FooterApplyProps> = ({ selected, total, onApply }) => {
 };
 
 export const Default: Story = {
+  render: (args: DropdownProps) => {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const [selectedValue, setSelectedValue] = useState<DropdownValue>(
+      (args.value as DropdownValue) ?? (args.options[0]?.value as DropdownValue) ?? '',
+    );
+
+    return (
+      <Dropdown
+        {...args}
+        value={selectedValue}
+        onChange={(nextValue) => {
+          if (!Array.isArray(nextValue)) {
+            setSelectedValue(nextValue);
+          }
+        }}
+      />
+    );
+  },
   args: {
-    value: 1,
+    placeholder: 'Select value',
   },
 };
 
@@ -96,6 +139,8 @@ export const MultiSelect: Story = {
     placeholder: 'Select value',
     isOptionAllVisible: true,
     optionAll: { value: 'all', label: 'All' },
+    clearable: true,
+    onClear: () => {},
   },
 };
 
@@ -110,5 +155,39 @@ export const Disabled: Story = {
   args: {
     value: 3,
     disabled: true,
+  },
+};
+
+export const NestedMultiSelect: Story = {
+  render: (args: DropdownProps) => {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const [selectedValues, setSelectedValues] = useState<DropdownValue | DropdownValue[]>([]);
+
+    return (
+      <div className="dropdown-default">
+        <Dropdown
+          {...args}
+          onChange={(nextValue) => {
+            setSelectedValues(nextValue);
+          }}
+          value={selectedValues}
+        />
+      </div>
+    );
+  },
+  args: {
+    options: nestedOptions,
+    multiSelect: true,
+    placeholder: 'Select value',
+    isOptionAllVisible: false,
+    includeGroupValue: false,
+    variant: 'default',
+    isListWidthLimited: false,
+    optionAll: {
+      label: 'all',
+      value: 'all',
+    },
+    clearable: true,
+    onClear: () => {},
   },
 };

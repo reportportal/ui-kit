@@ -17,6 +17,8 @@ export const DropdownOption: FC<DropdownOptionProps> = forwardRef(
       onMouseEnter,
       multiSelect,
       isPartiallyChecked = false,
+      depth = 0,
+      hasChildren = false,
     } = props;
     const onChangeHandler: MouseEventHandler<HTMLDivElement | HTMLInputElement> = (e) => {
       if (e.target instanceof HTMLDivElement || e.target instanceof HTMLInputElement) {
@@ -32,6 +34,8 @@ export const DropdownOption: FC<DropdownOptionProps> = forwardRef(
           hidden,
           hover: highlightHovered,
           'multi-select': multiSelect,
+          'has-children': hasChildren,
+          [`depth-${depth}`]: depth > 0,
         })}
         title={title}
         onClick={onChangeHandler}
@@ -39,7 +43,11 @@ export const DropdownOption: FC<DropdownOptionProps> = forwardRef(
         onMouseEnter={onMouseEnter}
       >
         {multiSelect && <Checkbox value={!!selected} partiallyChecked={isPartiallyChecked} />}
-        <div className={cx('single-option', { 'sub-option': !!groupRef })}>
+        <div
+          className={cx('single-option', {
+            'sub-option': !!groupRef,
+          })}
+        >
           {render ? render(props) : label}
         </div>
       </div>
