@@ -528,25 +528,31 @@ export const Dropdown: FC<DropdownProps> = ({
     );
   };
 
+  const toggleButtonProps = getToggleButtonProps({
+    className: cx('dropdown', variant, toggleButtonClassName, {
+      'transparent-background': transparentBackground,
+      opened,
+      disabled,
+      error,
+      touched,
+      'mobile-disabled': mobileDisabled,
+    }),
+    onClick: onDropdownClick,
+    onKeyDown: handleToggleButtonKeyDown,
+    ref: refs.setReference,
+  });
+
+  const { type: toggleButtonType, ...restToggleButtonProps } = toggleButtonProps;
+  void toggleButtonType;
+
   return (
     <div ref={containerRef} className={cx('container', className)} title={title}>
       {label && <FieldLabel {...getLabelProps()}>{label}</FieldLabel>}
-      <button
-        disabled={disabled}
-        {...getToggleButtonProps({
-          className: cx('dropdown', variant, toggleButtonClassName, {
-            'transparent-background': transparentBackground,
-            opened,
-            disabled,
-            error,
-            touched,
-            'mobile-disabled': mobileDisabled,
-          }),
-          onClick: onDropdownClick,
-          onKeyDown: handleToggleButtonKeyDown,
-          ref: refs.setReference,
-        })}
-        type="button"
+      <div
+        {...restToggleButtonProps}
+        role="button"
+        aria-disabled={disabled}
+        tabIndex={disabled ? -1 : (restToggleButtonProps.tabIndex ?? 0)}
       >
         {icon && <span className={cx('icon')}>{icon}</span>}
         <div className={cx('value-wrapper')}>{renderValue()}</div>
@@ -555,7 +561,8 @@ export const Dropdown: FC<DropdownProps> = ({
             className={cx('clear-button')}
             onClick={handleClear}
             onKeyDown={(event) => {
-              if (event.keyCode === KeyCodes.ENTER_KEY_CODE) {
+              const { keyCode } = event;
+              if (keyCode === KeyCodes.ENTER_KEY_CODE || keyCode === KeyCodes.SPACE_KEY_CODE) {
                 event.preventDefault();
                 event.stopPropagation();
                 performClear();
@@ -566,10 +573,10 @@ export const Dropdown: FC<DropdownProps> = ({
             <ClearIcon />
           </BaseIconButton>
         )}
-        <BaseIconButton className={cx('arrow')} tabIndex={-1}>
+        <span className={cx('arrow')} aria-hidden="true">
           <DropdownIcon />
-        </BaseIconButton>
-      </button>
+        </span>
+      </div>
       {opened && (
         <div
           style={floatingStyles}
