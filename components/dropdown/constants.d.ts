@@ -6,3 +6,4 @@ export declare enum EventName {
     ON_KEY_DOWN = "onKeyDown",
     ON_CLICK = "onClick"
 }
+export declare const SCROLLBARS_AUTO_HEIGHT_MAX = 216;

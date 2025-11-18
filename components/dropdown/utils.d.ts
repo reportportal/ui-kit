@@ -1,5 +1,8 @@
-import { DropdownValue, DropdownOptionType } from './types';
+import { DropdownValue, DropdownOptionType, FlattenedDropdownOption } from './types';
 
 export declare const calculateDefaultIndex: (options: DropdownOptionType[], selectedValue: DropdownValue | DropdownValue[]) => number;
 export declare const calculateNextIndex: (options: DropdownOptionType[], index?: number) => number;
 export declare const calculatePrevIndex: (options: DropdownOptionType[], index?: number) => number;
+export declare const flattenOptions: (options: DropdownOptionType[], depth?: number, parent?: DropdownOptionType) => FlattenedDropdownOption[];
+export declare const getLeafOptions: (options: DropdownOptionType[]) => DropdownOptionType[];
+export declare const getOptionLeafValues: (option: DropdownOptionType) => DropdownValue[];

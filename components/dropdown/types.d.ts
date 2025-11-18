@@ -10,6 +10,7 @@ export type DropdownOptionType = {
     hidden?: boolean;
     title?: string;
     groupRef?: string;
+    children?: DropdownOptionType[];
 };
 export interface DropdownOptionProps {
     selected?: boolean;
@@ -19,5 +20,12 @@ export interface DropdownOptionProps {
     onMouseEnter?: MouseEventHandler<HTMLDivElement>;
     multiSelect?: boolean;
     isPartiallyChecked?: boolean;
+    depth?: number;
+    hasChildren?: boolean;
     option: DropdownOptionType;
 }
+export type FlattenedDropdownOption = {
+    option: DropdownOptionType;
+    depth: number;
+    parent?: DropdownOptionType;
+};
