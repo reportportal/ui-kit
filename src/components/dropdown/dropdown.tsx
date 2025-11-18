@@ -405,9 +405,13 @@ export const Dropdown: FC<DropdownProps> = ({
     }
   }, [displayedValue]);
 
-  const handleToggleButtonKeyDown: KeyboardEventHandler<HTMLButtonElement> = (event) => {
+  const handleToggleButtonKeyDown: KeyboardEventHandler<HTMLDivElement> = (event) => {
     const { keyCode } = event;
     if (!OPEN_DROPDOWN_KEY_CODES.includes(keyCode)) {
+      return;
+    }
+
+    if (event.target !== event.currentTarget) {
       return;
     }
 
@@ -546,7 +550,7 @@ export const Dropdown: FC<DropdownProps> = ({
       'mobile-disabled': mobileDisabled,
     }),
     onClick: onDropdownClick,
-    onKeyDown: handleToggleButtonKeyDown,
+    onKeyDown: handleToggleButtonKeyDown as unknown as KeyboardEventHandler<HTMLButtonElement>,
     ref: refs.setReference,
   });
 
