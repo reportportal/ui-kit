@@ -236,12 +236,12 @@ export const Dropdown: FC<DropdownProps> = ({
     onChange(clearedValue);
     onClear();
     closeHandler();
-    setTimeout(() => {
+    requestAnimationFrame(() => {
       const referenceElement = refs.reference.current;
       if (referenceElement && referenceElement instanceof HTMLElement) {
         referenceElement.focus();
       }
-    }, 0);
+    });
   }, [disabled, multiSelect, onChange, onClear, closeHandler, refs]);
 
   const handleClear = useCallback(
@@ -407,18 +407,26 @@ export const Dropdown: FC<DropdownProps> = ({
 
   const handleToggleButtonKeyDown: KeyboardEventHandler<HTMLButtonElement> = (event) => {
     const { keyCode } = event;
-    if (OPEN_DROPDOWN_KEY_CODES.includes(keyCode) && !opened) {
-      event.preventDefault();
-      setHighlightedIndex(defaultHighlightedIndex);
-      setOpened(true);
-      onFocus?.();
-      setEventName(EventName.ON_KEY_DOWN);
+    if (!OPEN_DROPDOWN_KEY_CODES.includes(keyCode)) {
+      return;
     }
+
+    event.preventDefault();
+    event.stopPropagation();
+
+    if (opened) {
+      return;
+    }
+
+    setHighlightedIndex(defaultHighlightedIndex);
+    setOpened(true);
+    onFocus?.();
+    setEventName(EventName.ON_KEY_DOWN);
   };
 
   const handleKeyDownMenu: KeyboardEventHandler<HTMLDivElement> = (event) => {
     const { keyCode } = event;
-    if (keyCode === KeyCodes.ENTER_KEY_CODE) {
+    if (keyCode === KeyCodes.ENTER_KEY_CODE || keyCode === KeyCodes.SPACE_KEY_CODE) {
       const option = selectableOptions[highlightedIndex];
       if (!option) {
         return;
