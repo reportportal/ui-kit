@@ -501,6 +501,33 @@ export const Dropdown: FC<DropdownProps> = ({
     </div>
   );
 
+  const renderValue = () => {
+    const formattedValue = formatDisplayedValue
+      ? formatDisplayedValue(displayedValue)
+      : displayedValue;
+    const contentNode = (
+      <span
+        ref={valueRef}
+        className={cx('value', {
+          placeholder: displayedValue === placeholder,
+        })}
+      >
+        {formattedValue}
+      </span>
+    );
+    const shouldShowTooltip = hasSelectedValue && !!formattedValue && isValueOverflowed;
+
+    if (!shouldShowTooltip) {
+      return contentNode;
+    }
+
+    return (
+      <Tooltip content={formattedValue} placement="top" wrapperClassName={cx('value-tooltip')}>
+        {contentNode}
+      </Tooltip>
+    );
+  };
+
   return (
     <div ref={containerRef} className={cx('container', className)} title={title}>
       {label && <FieldLabel {...getLabelProps()}>{label}</FieldLabel>}
@@ -522,36 +549,7 @@ export const Dropdown: FC<DropdownProps> = ({
         type="button"
       >
         {icon && <span className={cx('icon')}>{icon}</span>}
-        <div className={cx('value-wrapper')}>
-          {(() => {
-            const formattedValue = formatDisplayedValue
-              ? formatDisplayedValue(displayedValue)
-              : displayedValue;
-            const contentNode = (
-              <span
-                ref={valueRef}
-                className={cx('value', {
-                  placeholder: displayedValue === placeholder,
-                })}
-              >
-                {formattedValue}
-              </span>
-            );
-            const canShowTooltip = hasSelectedValue && !!formattedValue && isValueOverflowed;
-
-            return canShowTooltip ? (
-              <Tooltip
-                content={formattedValue}
-                placement="top"
-                wrapperClassName={cx('value-tooltip')}
-              >
-                {contentNode}
-              </Tooltip>
-            ) : (
-              contentNode
-            );
-          })()}
-        </div>
+        <div className={cx('value-wrapper')}>{renderValue()}</div>
         {shouldShowClearButton && (
           <BaseIconButton
             className={cx('clear-button')}
