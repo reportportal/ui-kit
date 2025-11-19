@@ -11,6 +11,7 @@ export { FieldNumber } from './fieldNumber';
 export { FieldText } from './fieldText';
 export { FieldTextFlex } from './fieldTextFlex';
 export { FileDropArea } from './fileDropArea';
+export { FiltersButton } from './filtersButton';
 export { Modal } from './modal';
 export { MultipleAutocomplete } from './autocompletes/multipleAutocomplete';
 export { Pagination } from './pagination';
