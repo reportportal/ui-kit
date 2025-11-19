@@ -1,0 +1,116 @@
+.filters-icon-container {
+  all: unset;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  height: 36px;
+  min-width: 40px;
+  border-radius: 20px;
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: 2px solid var(--rp-ui-base-topaz-focused);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+
+  &:not(:disabled):hover {
+    .filter-icon {
+      svg {
+        path {
+          fill: var(--rp-ui-base-e-400);
+        }
+      }
+    }
+  }
+
+  &.opened {
+    .filter-icon {
+      svg {
+        path {
+          fill: var(--rp-ui-base-topaz-pressed);
+        }
+      }
+    }
+
+    &:not(:disabled):hover {
+      .filter-icon {
+        svg {
+          path {
+            fill: var(--rp-ui-base-topaz-hover);
+          }
+        }
+      }
+    }
+  }
+
+  &.with-applied {
+    gap: 8px;
+    padding: 8px 12px;
+    background-color: var(--rp-ui-base-bg-200);
+
+    .filter-icon {
+      svg {
+        path {
+          fill: var(--rp-ui-base-topaz);
+          stroke: var(--rp-ui-base-topaz);
+        }
+      }
+    }
+
+    .filters-count {
+      font-size: 13px;
+      line-height: 20px;
+      color: var(--rp-ui-base-topaz);
+      font-family: var(--rp-ui-base-font-family);
+      font-weight: var(--rp-ui-base-fw-medium);
+    }
+
+    &.opened {
+      .filter-icon {
+        svg {
+          path {
+            fill: var(--rp-ui-base-topaz-pressed);
+            stroke: var(--rp-ui-base-topaz-pressed);
+          }
+        }
+      }
+
+      .filters-count {
+        color: var(--rp-ui-base-topaz-pressed);
+      }
+    }
+
+    &:not(:disabled):hover {
+      .filter-icon {
+        svg {
+          path {
+            fill: var(--rp-ui-base-topaz-hover);
+            stroke: var(--rp-ui-base-topaz-hover);
+          }
+        }
+      }
+
+      .filters-count {
+        color: var(--rp-ui-base-topaz-hover);
+      }
+    }
+  }
+}
+
+.filter-icon {
+  display: block;
+
+  svg {
+    width: 16px;
+    height: 16px;
+
+    path {
+      fill: var(--rp-ui-base-e-300);
+    }
+  }
+}
