@@ -18,6 +18,7 @@ import { FC } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 
 import { Tooltip } from './tooltip';
+import { allPlacements } from '@/common/constants/floatingUi';
 
 const Hello: FC<ContentProps> = ({ isTooltipOpen }) => (
   <div style={{ width: '150px', height: '20px' }}>
@@ -27,7 +28,7 @@ const Hello: FC<ContentProps> = ({ isTooltipOpen }) => (
 interface ContentProps {
   isTooltipOpen?: boolean;
 }
-const Content = () => <div style={{ width: '100px', height: '100px' }}>Hello!</div>;
+const Content = () => <div style={{ width: '100px', height: '50px' }}>Hello!</div>;
 
 const meta: Meta<typeof Tooltip> = {
   title: 'Modals & Notification/Tooltip',
@@ -36,6 +37,12 @@ const meta: Meta<typeof Tooltip> = {
     layout: 'centered',
   },
   tags: ['autodocs'],
+  argTypes: {
+    placement: {
+      control: 'select',
+      options: allPlacements,
+    },
+  },
 };
 
 export default meta;
@@ -47,17 +54,24 @@ div.id = 'tooltip-root';
 document.body.appendChild(div);
 
 export const Default: Story = {
-  args: {},
-  render: () => (
-    <Tooltip content={<Content />}>
+  args: {
+    content: <Content />,
+  },
+  render: (args) => (
+    <Tooltip {...args}>
       <Hello />
     </Tooltip>
   ),
 };
 
 export const WithDocumentId: Story = {
-  args: {},
-  render: () => (
+  args: {
+    content: <Content />,
+    portalRoot: div,
+    isFloating: false,
+    placement: 'right',
+  },
+  render: (args) => (
     <div
       style={{
         width: 120,
@@ -66,7 +80,7 @@ export const WithDocumentId: Story = {
         overflow: 'hidden',
       }}
     >
-      <Tooltip content={<Content />} portalRoot={div} isFloating={false} placement={'right'}>
+      <Tooltip {...args}>
         <Hello />
       </Tooltip>
     </div>
