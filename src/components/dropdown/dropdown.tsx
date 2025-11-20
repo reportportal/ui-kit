@@ -81,6 +81,10 @@ export interface DropdownProps {
   onClear?: () => void;
   /** ARIA label for the clear button */
   clearButtonAriaLabel?: string;
+  /** Portal root element for tooltip rendering (e.g., document.body to prevent clipping) */
+  tooltipPortalRoot?: Element;
+  /** Z-index for tooltip when rendered in portal (default: 9) */
+  tooltipZIndex?: number;
 }
 
 // DS link - https://www.figma.com/file/gjYQPbeyf4YsH3wZiVKoaj/%F0%9F%9B%A0-RP-DS-6?type=design&node-id=3424-12207&mode=design&t=dDq6moPaTzQLviS1-0
@@ -116,6 +120,8 @@ export const Dropdown: FC<DropdownProps> = ({
   clearable = false,
   onClear = () => {},
   clearButtonAriaLabel = 'Clear selection',
+  tooltipPortalRoot,
+  tooltipZIndex,
 }): ReactElement => {
   const [opened, setOpened] = useState(false);
   const containerRef = useRef(null);
@@ -534,7 +540,13 @@ export const Dropdown: FC<DropdownProps> = ({
     }
 
     return (
-      <Tooltip content={formattedValue} placement="top" wrapperClassName={cx('value-tooltip')}>
+      <Tooltip
+        content={formattedValue}
+        placement="top"
+        wrapperClassName={cx('value-tooltip')}
+        portalRoot={tooltipPortalRoot}
+        zIndex={tooltipZIndex}
+      >
         {contentNode}
       </Tooltip>
     );
