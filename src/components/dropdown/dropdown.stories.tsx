@@ -191,3 +191,79 @@ export const NestedMultiSelect: Story = {
     onClear: () => {},
   },
 };
+
+export const WithTooltipPortal: Story = {
+  render: (args: DropdownProps) => {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const [selectedValues, setSelectedValues] = useState<DropdownValue | DropdownValue[]>([]);
+
+    return (
+      <div className="dropdown-default" style={{ width: '300px' }}>
+        <p style={{ marginBottom: '16px' }}>
+          This example demonstrates tooltip rendering in a portal to prevent clipping when the
+          dropdown is inside a container with overflow hidden (e.g., SidePanel).
+        </p>
+        <Dropdown
+          {...args}
+          onChange={(nextValue) => {
+            setSelectedValues(nextValue);
+          }}
+          value={selectedValues}
+          tooltipPortalRoot={document.body}
+        />
+      </div>
+    );
+  },
+  args: {
+    options: [
+      {
+        value: 'very-long-option-1',
+        label:
+          'Product bug, Critical, Automation bug, Kotlin, Automation bug with very-very long defect type name',
+      },
+      {
+        value: 'very-long-option-2',
+        label: 'Another extremely long option name that will be truncated and show tooltip',
+      },
+      { value: 'option-3', label: 'Option 3' },
+      { value: 'option-4', label: 'Option 4' },
+    ],
+    multiSelect: true,
+    placeholder: 'Select value',
+    clearable: true,
+    onClear: () => {},
+  },
+  parameters: {
+    docs: {
+      source: {
+        code: `const [selectedValues, setSelectedValues] = useState([]);
+
+return (
+  <div style={{ width: '300px' }}>
+    <Dropdown
+      options={[
+        {
+          value: 'very-long-option-1',
+          label: 'Product bug, Critical, Automation bug, Kotlin, Automation bug with very-very long defect type name',
+        },
+        {
+          value: 'very-long-option-2',
+          label: 'Another extremely long option name that will be truncated and show tooltip',
+        },
+        { value: 'option-3', label: 'Option 3' },
+        { value: 'option-4', label: 'Option 4' },
+      ]}
+      multiSelect
+      placeholder="Select value"
+      clearable
+      value={selectedValues}
+      onChange={(nextValue) => setSelectedValues(nextValue)}
+      tooltipPortalRoot={document.body}
+    />
+  </div>
+);`,
+        language: 'tsx',
+      },
+    },
+  },
+};
