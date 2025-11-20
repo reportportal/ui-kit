@@ -1,5 +1,6 @@
-import { ReactNode, useId } from 'react';
+import { ReactNode, useEffect, useId } from 'react';
 import classNames from 'classnames/bind';
+import { KeyCodes } from '@common/constants/keyCodes';
 import { CloseIcon } from '@components/icons';
 import { BaseIconButton } from '@components/baseIconButton';
 import styles from './sidePanel.module.scss';
@@ -39,6 +40,28 @@ export const SidePanel = ({
     onClose?.();
   };
 
+  useEffect(() => {
+    if (!isOpen || !onClose) {
+      return;
+    }
+
+    const onKeydown = (event: KeyboardEvent) => {
+      const { keyCode } = event;
+
+      if (keyCode === KeyCodes.ESCAPE_KEY_CODE) {
+        onClose();
+      }
+    };
+
+    document.addEventListener('keydown', onKeydown, false);
+
+    return () => {
+      document.removeEventListener('keydown', onKeydown, false);
+    };
+  }, [isOpen, onClose]);
+
+  const hasHeaderOrDescription = !!(headerComponent || descriptionComponent);
+
   return (
     <aside
       className={cx('side-panel', `side-${side}`, { active: isOpen }, className)}
@@ -49,7 +72,7 @@ export const SidePanel = ({
       style={{ top, height: `calc(100vh - ${top}px)` }}
       tabIndex={-1}
     >
-      <div className={cx('header-section')}>
+      <div className={cx('header-section', { compact: !hasHeaderOrDescription })}>
         {(headerComponent || title) && (
           <div className={cx('header')}>
             {title ? (
