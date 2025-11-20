@@ -40,5 +40,9 @@ export interface DropdownProps {
     onClear?: () => void;
     /** ARIA label for the clear button */
     clearButtonAriaLabel?: string;
+    /** Portal root element for tooltip rendering (e.g., document.body to prevent clipping) */
+    tooltipPortalRoot?: Element;
+    /** Z-index for tooltip when rendered in portal (default: 9) */
+    tooltipZIndex?: number;
 }
 export declare const Dropdown: FC<DropdownProps>;
