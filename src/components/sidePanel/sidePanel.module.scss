@@ -40,6 +40,10 @@
 .header-section {
     flex-shrink: 0;
     margin-bottom: 16px;
+
+    &.compact {
+        margin-bottom: 8px;
+    }
 }
 
 .header {
