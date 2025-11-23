@@ -16,6 +16,7 @@
 
 import { ComponentProps, KeyboardEvent, ReactNode, useEffect, useRef } from 'react';
 import classNames from 'classnames/bind';
+import { isEmpty } from 'es-toolkit/compat';
 import { ControllerStateAndHelpers } from 'downshift';
 
 import { ClearIcon, DropdownIcon } from '@/components/icons';
@@ -34,7 +35,6 @@ import { isEqual } from '../utils';
 import { GetItemPropsT } from '../types';
 
 import styles from './multipleAutocomplete.module.scss';
-import { isEmpty } from 'es-toolkit/compat';
 import { ENTER_KEY_NAME } from '../constants';
 
 const cx = classNames.bind(styles);

@@ -16,6 +16,7 @@
 
 import { ComponentProps, FocusEvent, KeyboardEvent, ReactNode, Ref } from 'react';
 import classNames from 'classnames/bind';
+import { isEmpty } from 'es-toolkit/compat';
 import Downshift, { DownshiftState, StateChangeOptions } from 'downshift';
 import { autoUpdate, useFloating } from '@floating-ui/react';
 
@@ -169,6 +170,8 @@ export const SingleAutocomplete = <T,>(componentProps: SingleAutocompleteProps<T
           },
         };
 
+        const downshiftValue = inputValue ?? '';
+
         return (
           <>
             <div className={cx('input-wrapper')} {...modifiedRootProps}>
@@ -194,8 +197,8 @@ export const SingleAutocomplete = <T,>(componentProps: SingleAutocompleteProps<T
                     }
                   },
                   onBlur: (e: FocusEvent<HTMLInputElement>) => {
-                    const trimmed = (inputValue ?? '').trim();
-                    const hasValue = !!trimmed;
+                    const trimmed = downshiftValue.trim();
+                    const hasValue = isEmpty(trimmed);
                     const matched = hasValue
                       ? options.find((v) => parseValueToString(v) === trimmed)
                       : undefined;
@@ -208,7 +211,9 @@ export const SingleAutocomplete = <T,>(componentProps: SingleAutocompleteProps<T
                     }
                     onBlur(e);
                     isOptionUnique?.(
-                      hasValue ? !options.some((v) => parseValueToString(v) === trimmed) : null,
+                      hasValue
+                        ? !options.some((option) => parseValueToString(option) === trimmed)
+                        : null,
                     );
                     if (isDropdownMode && isOpen) {
                       toggleMenu();
@@ -225,7 +230,7 @@ export const SingleAutocomplete = <T,>(componentProps: SingleAutocompleteProps<T
                     isDropdownMode && !icon ? (
                       <button
                         type="button"
-                        className={cx('dropdown-button', { ['icon-reversed']: isOpen })}
+                        className={cx('dropdown-button', { 'icon-reversed': isOpen })}
                         onClick={() => toggleMenu()}
                         aria-label="Toggle dropdown"
                         aria-expanded={isOpen}
