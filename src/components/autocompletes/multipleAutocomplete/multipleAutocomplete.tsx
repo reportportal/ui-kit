@@ -34,6 +34,8 @@ import { isEqual } from '../utils';
 import { GetItemPropsT } from '../types';
 
 import styles from './multipleAutocomplete.module.scss';
+import { isEmpty } from 'es-toolkit/compat';
+import { ENTER_KEY_NAME } from '../constants';
 
 const cx = classNames.bind(styles);
 
@@ -224,7 +226,7 @@ export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompletePr
           getInputProps,
           getItemProps,
           isOpen,
-          inputValue,
+          inputValue = '',
           highlightedIndex,
           removeItem,
           editItem,
@@ -243,6 +245,9 @@ export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompletePr
               return rootProps.ref(node);
             },
           };
+
+          const downshiftValue = inputValue ?? '';
+
           return (
             <div {...modifiedRootProps} className={cx('autocomplete-wrapper')}>
               <>
@@ -286,7 +291,7 @@ export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompletePr
                         },
                         onKeyDown: (event: KeyboardEvent<HTMLInputElement>) => {
                           const creationCondition =
-                            event.key === 'Enter' &&
+                            event.key === ENTER_KEY_NAME &&
                             inputValue &&
                             creatable &&
                             getAdditionalCreationCondition(inputValue);
@@ -320,10 +325,12 @@ export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompletePr
                       data-automation-id={dataAutomationId}
                     />
                   </div>
-                  {inputProps?.clearable && value?.length > 0 && (
+                  {inputProps?.clearable && !isEmpty(value?.length) && (
                     <button
+                      type="button"
                       className={cx('clear-icon', { 'clear-icon--disabled': disabled })}
                       onClick={() => !disabled && inputProps?.onClear?.()}
+                      onMouseDown={(e) => e.preventDefault()}
                     >
                       <ClearIcon />
                     </button>
@@ -331,7 +338,7 @@ export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompletePr
                   {isDropdownMode && (
                     <button
                       type="button"
-                      className={cx('dropdown-button', { ['icon-reversed']: isOpen })}
+                      className={cx('dropdown-button', { 'icon-reversed': isOpen })}
                       onClick={() => toggleMenu()}
                       aria-label="Toggle dropdown"
                       aria-expanded={isOpen}
@@ -350,7 +357,7 @@ export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompletePr
                 newItemButtonText={newItemButtonText}
                 isDropdownMode={isDropdownMode}
                 style={floatingStyles}
-                inputValue={(inputValue || '').trim()}
+                inputValue={downshiftValue.trim()}
                 getItemProps={getOptionProps(getItemProps, highlightedIndex, value)}
                 parseValueToString={parseValueToString}
                 createWithoutConfirmation={createWithoutConfirmation}
