@@ -325,7 +325,7 @@ export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompletePr
                       data-automation-id={dataAutomationId}
                     />
                   </div>
-                  {inputProps?.clearable && !isEmpty(value?.length) && (
+                  {inputProps?.clearable && !isEmpty(value) && (
                     <button
                       type="button"
                       className={cx('clear-icon', { 'clear-icon--disabled': disabled })}
