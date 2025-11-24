@@ -198,7 +198,7 @@ export const SingleAutocomplete = <T,>(componentProps: SingleAutocompleteProps<T
                   },
                   onBlur: (e: FocusEvent<HTMLInputElement>) => {
                     const trimmed = downshiftValue.trim();
-                    const hasValue = isEmpty(trimmed);
+                    const hasValue = !isEmpty(trimmed);
                     const matched = hasValue
                       ? options.find((v) => parseValueToString(v) === trimmed)
                       : undefined;
