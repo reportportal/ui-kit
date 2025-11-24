@@ -330,7 +330,7 @@ export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompletePr
                       type="button"
                       className={cx('clear-icon', { 'clear-icon--disabled': disabled })}
                       onClick={() => !disabled && inputProps?.onClear?.()}
-                      onMouseDown={(e) => e.preventDefault()}
+                      onMouseDown={(event) => event.preventDefault()}
                     >
                       <ClearIcon />
                     </button>
