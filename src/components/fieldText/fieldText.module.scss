@@ -87,8 +87,8 @@
   }
 
   &:focus-within:not(.error.touched) {
-    padding: 6px 11px;
-    border: 2px solid var(--rp-ui-color-primary-focused);
+    border-color: var(--rp-ui-color-primary-focused);
+    box-shadow: inset 0 0 0 1px var(--rp-ui-color-primary-focused);
   }
 
   &.error.touched {
