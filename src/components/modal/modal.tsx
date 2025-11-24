@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useRef, useState, FC } from 'react';
+import { ReactNode, useEffect, useMemo, useRef, useState, FC } from 'react';
 import { Scrollbars } from 'rc-scrollbars';
 import { motion, AnimatePresence } from 'framer-motion';
 import classNames from 'classnames/bind';
@@ -116,9 +116,14 @@ export const Modal: FC<ModalProps> = ({
     return () => document.removeEventListener('keydown', onKeydown, false);
   }, []);
 
-  useOnClickOutside(modalRef, allowCloseOutside ? closeModal : undefined, {
-    ignoreSelectors: [`[${DROPDOWN_PORTAL_MENU_ATTR}]`],
-  });
+  const clickOutsideOptions = useMemo(
+    () => ({
+      ignoreSelectors: [`[${DROPDOWN_PORTAL_MENU_ATTR}]`],
+    }),
+    [],
+  );
+
+  useOnClickOutside(modalRef, allowCloseOutside ? closeModal : undefined, clickOutsideOptions);
 
   return (
     <AnimatePresence onExitComplete={onClose}>
