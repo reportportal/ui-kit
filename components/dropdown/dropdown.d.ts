@@ -44,5 +44,12 @@ export interface DropdownProps {
     tooltipPortalRoot?: Element;
     /** Z-index for tooltip when rendered in portal (default: 9) */
     tooltipZIndex?: number;
+    /**
+     * Portal root element for dropdown menu rendering.
+     * When provided, the menu will be rendered in this element using React Portal.
+     * Useful for preventing clipping in containers with overflow: hidden (e.g., Modal, SidePanel).
+     * @example menuPortalRoot={document.body}
+     */
+    menuPortalRoot?: Element;
 }
 export declare const Dropdown: FC<DropdownProps>;

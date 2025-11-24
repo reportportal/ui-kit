@@ -1,1 +1,0 @@
-import{r as o}from"./index-d33a4676.js";function s(t,e){o.useEffect(()=>{if(!e)return;const n=r=>{t&&t.current&&!t.current.contains(r.target)&&e(r)};return document.addEventListener("pointerdown",n),()=>{document.removeEventListener("pointerdown",n)}},[t,e])}export{s as u};
