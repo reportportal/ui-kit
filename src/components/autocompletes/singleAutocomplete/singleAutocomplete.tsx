@@ -16,6 +16,7 @@
 
 import { ComponentProps, FocusEvent, KeyboardEvent, ReactNode, Ref } from 'react';
 import classNames from 'classnames/bind';
+import { isEmpty } from 'es-toolkit/compat';
 import Downshift, { DownshiftState, StateChangeOptions } from 'downshift';
 import { autoUpdate, useFloating } from '@floating-ui/react';
 
@@ -53,7 +54,7 @@ export interface SingleAutocompleteProps<T> {
   minLength?: number;
   maxLength?: number | null;
   async?: boolean;
-  optionVariant: ComponentProps<typeof AutocompleteMenu>['optionVariant'];
+  optionVariant?: ComponentProps<typeof AutocompleteMenu>['optionVariant'];
   isRequired?: boolean;
   error: string;
   touched?: boolean;
@@ -153,96 +154,115 @@ export const SingleAutocomplete = <T,>(componentProps: SingleAutocompleteProps<T
         getItemProps,
         setHighlightedIndex,
         toggleMenu,
+        openMenu,
         isOpen,
         inputValue,
         highlightedIndex,
         getRootProps,
         selectItem,
-      }) => (
-        <>
-          <div
-            className={cx('input-wrapper')}
-            {...getRootProps(undefined, { suppressRefError: true })}
-            ref={refs.setReference}
-          >
-            <FieldText
-              {...getInputProps({
-                placeholder: !disabled ? placeholder : '',
-                maxLength: maxLength || undefined,
-                onFocus: () => {
-                  onFocus();
-                },
-                refFunction,
-                onKeyDown: (event) => {
-                  if (event.key === ENTER_KEY_NAME) {
-                    event.preventDefault();
-                  }
+      }) => {
+        const rootProps = getRootProps(undefined, { suppressRefError: true });
+        const modifiedRootProps = {
+          ...rootProps,
+          ref: (node: HTMLDivElement | null) => {
+            refs.setReference(node);
+            return rootProps.ref(node);
+          },
+        };
 
-                  if (inputValue && isOpen) {
-                    handleKeyDown(event, setHighlightedIndex);
-                  }
-                },
-                onBlur: (e: FocusEvent<HTMLInputElement>) => {
-                  const trimmed = (inputValue ?? '').trim();
-                  const hasValue = !!trimmed;
-                  const matched = hasValue
-                    ? options.find((v) => parseValueToString(v) === trimmed)
-                    : undefined;
-                  if (matched) {
-                    selectItem(matched);
-                  } else if (!skipOptionCreation && createWithoutConfirmation && hasValue) {
-                    selectItem(trimmed as unknown as T);
-                  } else {
-                    selectItem(null as T);
-                  }
-                  onBlur(e);
-                  isOptionUnique?.(
-                    hasValue ? !options.some((v) => parseValueToString(v) === trimmed) : null,
-                  );
-                  setTouch?.(true);
-                },
-                disabled,
-                defaultWidth: false,
-                isRequired,
-                touched,
-                error,
-                ...inputProps,
-                endIcon:
-                  isDropdownMode && !icon ? (
-                    <button
-                      type="button"
-                      className={cx('dropdown-button', { ['icon-reversed']: isOpen })}
-                      onClick={() => toggleMenu()}
-                      aria-label="Toggle dropdown"
-                      aria-expanded={isOpen}
-                    >
-                      <DropdownIcon />
-                    </button>
-                  ) : (
-                    icon
-                  ),
-                minLength: isDropdownMode ? 0 : minLength,
-              })}
-            />
-            <AutocompleteMenu
-              isOpen={isOpen}
-              isDropdownMode={isDropdownMode}
-              style={floatingStyles}
-              ref={refs.setFloating}
-              minLength={minLength}
-              inputValue={(inputValue || '').trim()}
-              getItemProps={getOptionProps(getItemProps, highlightedIndex, value)}
-              parseValueToString={parseValueToString}
-              optionVariant={optionVariant}
-              createWithoutConfirmation={createWithoutConfirmation}
-              className={menuClassName}
-              options={options}
-              newItemButtonText={newItemButtonText}
-              {...props}
-            />
-          </div>
-        </>
-      )}
+        const downshiftValue = inputValue ?? '';
+
+        return (
+          <>
+            <div className={cx('input-wrapper')} {...modifiedRootProps}>
+              <FieldText
+                {...getInputProps({
+                  placeholder: !disabled ? placeholder : '',
+                  maxLength: maxLength || undefined,
+                  onFocus: () => {
+                    if (isDropdownMode && !isOpen) {
+                      openMenu();
+                      setTouch?.(true);
+                    }
+                    onFocus();
+                  },
+                  refFunction,
+                  onKeyDown: (event) => {
+                    if (event.key === ENTER_KEY_NAME) {
+                      event.preventDefault();
+                    }
+
+                    if (inputValue && isOpen) {
+                      handleKeyDown(event, setHighlightedIndex);
+                    }
+                  },
+                  onBlur: (e: FocusEvent<HTMLInputElement>) => {
+                    const trimmed = downshiftValue.trim();
+                    const hasValue = !isEmpty(trimmed);
+                    const matched = hasValue
+                      ? options.find((v) => parseValueToString(v) === trimmed)
+                      : undefined;
+                    if (matched) {
+                      selectItem(matched);
+                    } else if (!skipOptionCreation && createWithoutConfirmation && hasValue) {
+                      selectItem(trimmed as unknown as T);
+                    } else {
+                      selectItem(null as T);
+                    }
+                    onBlur(e);
+                    isOptionUnique?.(
+                      hasValue
+                        ? !options.some((option) => parseValueToString(option) === trimmed)
+                        : null,
+                    );
+                    if (isDropdownMode && isOpen) {
+                      toggleMenu();
+                    }
+                    setTouch?.(true);
+                  },
+                  disabled,
+                  defaultWidth: false,
+                  isRequired,
+                  touched,
+                  error,
+                  ...inputProps,
+                  endIcon:
+                    isDropdownMode && !icon ? (
+                      <button
+                        type="button"
+                        className={cx('dropdown-button', { 'icon-reversed': isOpen })}
+                        onClick={() => toggleMenu()}
+                        aria-label="Toggle dropdown"
+                        aria-expanded={isOpen}
+                      >
+                        <DropdownIcon />
+                      </button>
+                    ) : (
+                      icon
+                    ),
+                  minLength: isDropdownMode ? 0 : minLength,
+                })}
+              />
+              <AutocompleteMenu
+                isOpen={isOpen}
+                isDropdownMode={isDropdownMode}
+                style={floatingStyles}
+                ref={refs.setFloating}
+                minLength={minLength}
+                inputValue={(inputValue || '').trim()}
+                getItemProps={getOptionProps(getItemProps, highlightedIndex, value)}
+                parseValueToString={parseValueToString}
+                optionVariant={optionVariant}
+                createWithoutConfirmation={createWithoutConfirmation}
+                className={menuClassName}
+                options={options}
+                newItemButtonText={newItemButtonText}
+                {...props}
+              />
+            </div>
+          </>
+        );
+      }}
     </Downshift>
   );
 };
