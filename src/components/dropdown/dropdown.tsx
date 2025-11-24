@@ -11,11 +11,11 @@ import {
   MouseEvent,
   useEffect,
 } from 'react';
+import { createPortal } from 'react-dom';
 import classNames from 'classnames/bind';
-import { useFloating, offset, flip } from '@floating-ui/react-dom';
+import { useFloating, offset, flip, size, autoUpdate } from '@floating-ui/react-dom';
 import { useSelect } from 'downshift';
 import { Scrollbars } from 'rc-scrollbars';
-import { useOnClickOutside } from '@common/hooks';
 import { KeyCodes } from '@common/constants/keyCodes';
 import { BaseIconButton } from '@components/baseIconButton';
 import { ClearIcon, DropdownIcon } from '@components/icons';
@@ -85,6 +85,13 @@ export interface DropdownProps {
   tooltipPortalRoot?: Element;
   /** Z-index for tooltip when rendered in portal (default: 9) */
   tooltipZIndex?: number;
+  /**
+   * Portal root element for dropdown menu rendering.
+   * When provided, the menu will be rendered in this element using React Portal.
+   * Useful for preventing clipping in containers with overflow: hidden (e.g., Modal, SidePanel).
+   * @example menuPortalRoot={document.body}
+   */
+  menuPortalRoot?: Element;
 }
 
 // DS link - https://www.figma.com/file/gjYQPbeyf4YsH3wZiVKoaj/%F0%9F%9B%A0-RP-DS-6?type=design&node-id=3424-12207&mode=design&t=dDq6moPaTzQLviS1-0
@@ -122,9 +129,11 @@ export const Dropdown: FC<DropdownProps> = ({
   clearButtonAriaLabel = 'Clear selection',
   tooltipPortalRoot,
   tooltipZIndex,
+  menuPortalRoot,
 }): ReactElement => {
   const [opened, setOpened] = useState(false);
-  const containerRef = useRef(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const menuRef = useRef<HTMLDivElement | null>(null);
   const scrollbarsRef = useRef<Scrollbars | null>(null);
   const scrollPositionRef = useRef(0);
   const valueRef = useRef<HTMLSpanElement>(null);
@@ -204,9 +213,33 @@ export const Dropdown: FC<DropdownProps> = ({
       offset(5),
       flip({
         fallbackPlacements: ['bottom-start', 'top-start', 'bottom', 'top'],
+        ...(menuPortalRoot && {
+          boundary: document.documentElement,
+          rootBoundary: 'viewport',
+        }),
       }),
-    ],
+      menuPortalRoot
+        ? size({
+            apply({ rects, elements }) {
+              const referenceWidth = rects.reference.width;
+              Object.assign(elements.floating.style, {
+                width: `${referenceWidth}px`,
+                minWidth: `${referenceWidth}px`,
+                maxWidth: `${referenceWidth}px`,
+              });
+            },
+          })
+        : null,
+    ].filter(Boolean),
+    whileElementsMounted:
+      opened && menuPortalRoot
+        ? (reference, floating, update) =>
+            autoUpdate(reference, floating, update, {
+              animationFrame: true,
+            })
+        : undefined,
   });
+
   const handleSelectAll = () => {
     if (!isOptionAllVisible) {
       return;
@@ -259,12 +292,42 @@ export const Dropdown: FC<DropdownProps> = ({
     [performClear],
   );
 
-  const handleClickOutside = () => {
-    if (opened) {
-      closeHandler();
+  const handleClickOutside = useCallback(
+    (event?: Event) => {
+      if (!opened) {
+        return;
+      }
+
+      const target = event?.target as Node | null;
+      if (!target) {
+        return;
+      }
+
+      const isClickInsideContainer = containerRef.current?.contains(target);
+      const isClickInsideMenu = menuRef.current?.contains(target);
+
+      if (!isClickInsideContainer && !isClickInsideMenu) {
+        closeHandler();
+      }
+    },
+    [opened, closeHandler],
+  );
+
+  useEffect(() => {
+    if (!opened) {
+      return undefined;
     }
-  };
-  useOnClickOutside(containerRef, handleClickOutside);
+
+    const listener = (event: Event) => {
+      handleClickOutside(event);
+    };
+
+    document.addEventListener('pointerdown', listener);
+
+    return () => {
+      document.removeEventListener('pointerdown', listener);
+    };
+  }, [opened, handleClickOutside]);
 
   const handleChange = (option: DropdownOptionType) => {
     if (option.disabled) {
@@ -306,7 +369,7 @@ export const Dropdown: FC<DropdownProps> = ({
   const {
     getToggleButtonProps,
     getLabelProps,
-    getMenuProps,
+    getMenuProps: getMenuPropsOriginal,
     getItemProps,
     setHighlightedIndex,
     highlightedIndex,
@@ -336,6 +399,33 @@ export const Dropdown: FC<DropdownProps> = ({
     },
   });
 
+  const setFloatingRef = useCallback(
+    (node: HTMLDivElement | null) => {
+      menuRef.current = node;
+      refs.setFloating(node);
+    },
+    [refs],
+  );
+
+  const getMenuProps = useCallback(
+    (props: Parameters<typeof getMenuPropsOriginal>[0] = {}) => {
+      const menuProps = getMenuPropsOriginal(props);
+      const originalRef = menuProps.ref;
+      return {
+        ...menuProps,
+        ref: (node: HTMLDivElement | null) => {
+          setFloatingRef(node);
+          if (typeof originalRef === 'function') {
+            originalRef(node);
+          } else if (originalRef) {
+            (originalRef as { current: HTMLDivElement | null }).current = node;
+          }
+        },
+      };
+    },
+    [getMenuPropsOriginal, setFloatingRef],
+  );
+
   useEffect(() => {
     if (
       multiSelect &&
@@ -353,6 +443,73 @@ export const Dropdown: FC<DropdownProps> = ({
       });
     }
   }, [multiSelect, opened, value, selectableOptions.length, setHighlightedIndex, notScrollable]);
+
+  // Prevent page scrolling only during initial dropdown opening when rendered in a portal
+  // Scroll lock is active for a short period (300ms) to prevent browser auto-scroll behavior
+  // After that, normal scrolling is allowed while dropdown remains open
+  useLayoutEffect(() => {
+    if (!opened || !menuPortalRoot) {
+      return;
+    }
+
+    let savedScrollY = window.scrollY;
+    let isLockActive = true;
+    const LOCK_DURATION = 300;
+
+    const preventScroll = () => {
+      if (!isLockActive) {
+        return;
+      }
+      const currentScrollY = window.scrollY;
+      if (currentScrollY !== savedScrollY) {
+        window.scrollTo(0, savedScrollY);
+      }
+    };
+
+    const handleScroll = (event: Event) => {
+      if (!isLockActive) {
+        return;
+      }
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      preventScroll();
+    };
+
+    savedScrollY = window.scrollY;
+    window.addEventListener('scroll', handleScroll, { passive: false, capture: true });
+
+    requestAnimationFrame(() => {
+      savedScrollY = window.scrollY;
+      preventScroll();
+    });
+
+    const timeoutId = setTimeout(() => {
+      isLockActive = false;
+    }, LOCK_DURATION);
+
+    return () => {
+      clearTimeout(timeoutId);
+      window.removeEventListener('scroll', handleScroll, { capture: true });
+    };
+  }, [opened, menuPortalRoot]);
+
+  // Close dropdown on window resize when menu is rendered in portal
+  // This prevents menu from being positioned incorrectly after layout changes
+  useEffect(() => {
+    if (!opened || !menuPortalRoot) {
+      return;
+    }
+
+    const handleResize = () => {
+      closeHandler();
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [opened, menuPortalRoot, closeHandler]);
 
   const onDropdownClick = () => {
     if (!disabled) {
@@ -601,36 +758,51 @@ export const Dropdown: FC<DropdownProps> = ({
           <DropdownIcon />
         </span>
       </div>
-      {opened && (
-        <div
-          style={floatingStyles}
-          className={cx(
-            'select-list',
-            { opened, 'limited-width': isListWidthLimited },
-            selectListClassName,
-          )}
-          {...getMenuProps({
-            onKeyDown: handleKeyDownMenu,
-            ref: refs.setFloating,
-          })}
-        >
-          {notScrollable ? (
-            renderOptions()
-          ) : (
-            <Scrollbars
-              autoHeight
-              autoHeightMax={SCROLLBARS_AUTO_HEIGHT_MAX}
-              hideTracksWhenNotNeeded
-              ref={(instance) => {
-                scrollbarsRef.current = instance;
-              }}
-              onScrollFrame={handleScrollFrame}
+      {opened &&
+        (() => {
+          const referenceWidth = refs.reference.current?.getBoundingClientRect().width;
+          const menuStyle =
+            menuPortalRoot && referenceWidth
+              ? {
+                  ...floatingStyles,
+                  width: `${referenceWidth}px`,
+                  minWidth: `${referenceWidth}px`,
+                  maxWidth: `${referenceWidth}px`,
+                }
+              : floatingStyles;
+
+          const menuContent = (
+            <div
+              style={menuStyle}
+              className={cx(
+                'select-list',
+                { opened, 'limited-width': isListWidthLimited },
+                selectListClassName,
+              )}
+              {...getMenuProps({
+                onKeyDown: handleKeyDownMenu,
+              })}
             >
-              {renderOptions()}
-            </Scrollbars>
-          )}
-        </div>
-      )}
+              {notScrollable ? (
+                renderOptions()
+              ) : (
+                <Scrollbars
+                  autoHeight
+                  autoHeightMax={SCROLLBARS_AUTO_HEIGHT_MAX}
+                  hideTracksWhenNotNeeded
+                  ref={(instance) => {
+                    scrollbarsRef.current = instance;
+                  }}
+                  onScrollFrame={handleScrollFrame}
+                >
+                  {renderOptions()}
+                </Scrollbars>
+              )}
+            </div>
+          );
+
+          return menuPortalRoot ? createPortal(menuContent, menuPortalRoot) : menuContent;
+        })()}
     </div>
   );
 };
