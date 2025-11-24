@@ -267,3 +267,72 @@ return (
     },
   },
 };
+
+export const WithMenuPortal: Story = {
+  render: (args: DropdownProps) => {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const [selectedValue, setSelectedValue] = useState<DropdownValue | DropdownValue[]>('');
+
+    return (
+      <div className="dropdown-default" style={{ width: '300px' }}>
+        <p style={{ marginBottom: '16px' }}>
+          This example demonstrates dropdown menu rendering in a portal to prevent clipping and
+          overflow issues when the dropdown is inside a container with overflow hidden (e.g., Modal,
+          SidePanel).
+        </p>
+        <p style={{ marginBottom: '16px', fontSize: '14px', color: '#666' }}>
+          <strong>When to use:</strong> Use <code>menuPortalRoot</code> when the dropdown is inside
+          a container with <code>overflow: hidden</code> (e.g., Modal, SidePanel) to prevent menu
+          clipping. The scroll position is automatically preserved when opening the dropdown in a
+          portal.
+        </p>
+        <Dropdown
+          {...args}
+          onChange={(nextValue) => {
+            setSelectedValue(nextValue);
+          }}
+          value={selectedValue}
+          menuPortalRoot={document.body}
+        />
+      </div>
+    );
+  },
+  args: {
+    options: [
+      { value: 'option-1', label: 'Option 1' },
+      { value: 'option-2', label: 'Option 2' },
+      { value: 'option-3', label: 'Option 3' },
+      { value: 'option-4', label: 'Option 4' },
+      { value: 'option-5', label: 'Option 5' },
+      { value: 'option-6', label: 'Option 6' },
+    ],
+    placeholder: 'Select value',
+  },
+  parameters: {
+    docs: {
+      source: {
+        code: `const [selectedValue, setSelectedValue] = useState('');
+
+return (
+  <div style={{ width: '300px' }}>
+    <Dropdown
+      options={[
+        { value: 'option-1', label: 'Option 1' },
+        { value: 'option-2', label: 'Option 2' },
+        { value: 'option-3', label: 'Option 3' },
+        { value: 'option-4', label: 'Option 4' },
+        { value: 'option-5', label: 'Option 5' },
+        { value: 'option-6', label: 'Option 6' },
+      ]}
+      placeholder="Select value"
+      value={selectedValue}
+      onChange={(nextValue) => setSelectedValue(nextValue)}
+      menuPortalRoot={document.body}
+    />
+  </div>
+);`,
+        language: 'tsx',
+      },
+    },
+  },
+};
