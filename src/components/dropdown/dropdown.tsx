@@ -13,7 +13,7 @@ import {
 } from 'react';
 import { createPortal } from 'react-dom';
 import classNames from 'classnames/bind';
-import { useFloating, offset, flip, size } from '@floating-ui/react-dom';
+import { useFloating, offset, flip, size, autoUpdate } from '@floating-ui/react-dom';
 import { useSelect } from 'downshift';
 import { Scrollbars } from 'rc-scrollbars';
 import { KeyCodes } from '@common/constants/keyCodes';
@@ -231,6 +231,13 @@ export const Dropdown: FC<DropdownProps> = ({
           })
         : null,
     ].filter(Boolean),
+    whileElementsMounted:
+      opened && menuPortalRoot
+        ? (reference, floating, update) =>
+            autoUpdate(reference, floating, update, {
+              animationFrame: true,
+            })
+        : undefined,
   });
 
   const handleSelectAll = () => {
@@ -437,16 +444,22 @@ export const Dropdown: FC<DropdownProps> = ({
     }
   }, [multiSelect, opened, value, selectableOptions.length, setHighlightedIndex, notScrollable]);
 
-  // Prevent page scrolling when dropdown menu is rendered in a portal
-  // Re-run effect if menuPortalRoot changes while dropdown is open
+  // Prevent page scrolling only during initial dropdown opening when rendered in a portal
+  // Scroll lock is active for a short period (300ms) to prevent browser auto-scroll behavior
+  // After that, normal scrolling is allowed while dropdown remains open
   useLayoutEffect(() => {
     if (!opened || !menuPortalRoot) {
       return;
     }
 
     let savedScrollY = window.scrollY;
+    let isLockActive = true;
+    const LOCK_DURATION = 300;
 
     const preventScroll = () => {
+      if (!isLockActive) {
+        return;
+      }
       const currentScrollY = window.scrollY;
       if (currentScrollY !== savedScrollY) {
         window.scrollTo(0, savedScrollY);
@@ -454,6 +467,9 @@ export const Dropdown: FC<DropdownProps> = ({
     };
 
     const handleScroll = (event: Event) => {
+      if (!isLockActive) {
+        return;
+      }
       event.preventDefault();
       event.stopImmediatePropagation();
       preventScroll();
@@ -461,15 +477,39 @@ export const Dropdown: FC<DropdownProps> = ({
 
     savedScrollY = window.scrollY;
     window.addEventListener('scroll', handleScroll, { passive: false, capture: true });
+
     requestAnimationFrame(() => {
       savedScrollY = window.scrollY;
       preventScroll();
     });
 
+    const timeoutId = setTimeout(() => {
+      isLockActive = false;
+    }, LOCK_DURATION);
+
     return () => {
+      clearTimeout(timeoutId);
       window.removeEventListener('scroll', handleScroll, { capture: true });
     };
   }, [opened, menuPortalRoot]);
+
+  // Close dropdown on window resize when menu is rendered in portal
+  // This prevents menu from being positioned incorrectly after layout changes
+  useEffect(() => {
+    if (!opened || !menuPortalRoot) {
+      return;
+    }
+
+    const handleResize = () => {
+      closeHandler();
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [opened, menuPortalRoot, closeHandler]);
 
   const onDropdownClick = () => {
     if (!disabled) {
