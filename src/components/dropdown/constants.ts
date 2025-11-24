@@ -14,3 +14,5 @@ export enum EventName {
 }
 
 export const SCROLLBARS_AUTO_HEIGHT_MAX = 216;
+
+export const DROPDOWN_PORTAL_MENU_ATTR = 'data-dropdown-portal-menu';

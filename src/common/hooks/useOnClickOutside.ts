@@ -1,8 +1,13 @@
 import { useEffect, RefObject } from 'react';
 
+export interface UseOnClickOutsideOptions {
+  ignoreSelectors?: string[];
+}
+
 export function useOnClickOutside<T extends HTMLElement = HTMLDivElement>(
   ref: RefObject<T>,
   handler?: (e?: MouseEvent) => void,
+  options?: UseOnClickOutsideOptions,
 ) {
   useEffect(() => {
     if (!handler) {
@@ -11,7 +16,14 @@ export function useOnClickOutside<T extends HTMLElement = HTMLDivElement>(
 
     const listener = (event: MouseEvent) => {
       if (ref && ref.current && !ref.current.contains(event.target as Node)) {
-        handler(event);
+        const target = event.target as HTMLElement;
+        const shouldIgnore = options?.ignoreSelectors?.some((selector) =>
+          target?.closest(selector),
+        );
+
+        if (!shouldIgnore) {
+          handler(event);
+        }
       }
     };
 
@@ -20,5 +32,5 @@ export function useOnClickOutside<T extends HTMLElement = HTMLDivElement>(
     return () => {
       document.removeEventListener('pointerdown', listener);
     };
-  }, [ref, handler]);
+  }, [ref, handler, options]);
 }

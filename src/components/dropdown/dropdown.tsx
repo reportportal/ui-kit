@@ -28,6 +28,7 @@ import {
   CLOSE_DROPDOWN_KEY_CODES,
   EventName,
   SCROLLBARS_AUTO_HEIGHT_MAX,
+  DROPDOWN_PORTAL_MENU_ATTR,
 } from './constants';
 import {
   calculateDefaultIndex,
@@ -447,6 +448,7 @@ export const Dropdown: FC<DropdownProps> = ({
   // Prevent page scrolling only during initial dropdown opening when rendered in a portal
   // Scroll lock is active for a short period (300ms) to prevent browser auto-scroll behavior
   // After that, normal scrolling is allowed while dropdown remains open
+
   useLayoutEffect(() => {
     if (!opened || !menuPortalRoot) {
       return;
@@ -776,9 +778,13 @@ export const Dropdown: FC<DropdownProps> = ({
               style={menuStyle}
               className={cx(
                 'select-list',
-                { opened, 'limited-width': isListWidthLimited },
+                {
+                  opened,
+                  'limited-width': isListWidthLimited,
+                },
                 selectListClassName,
               )}
+              {...(menuPortalRoot && { [DROPDOWN_PORTAL_MENU_ATTR]: '' })}
               {...getMenuProps({
                 onKeyDown: handleKeyDownMenu,
               })}

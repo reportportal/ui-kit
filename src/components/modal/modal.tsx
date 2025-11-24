@@ -3,6 +3,7 @@ import { Scrollbars } from 'rc-scrollbars';
 import { motion, AnimatePresence } from 'framer-motion';
 import classNames from 'classnames/bind';
 import { useOnClickOutside, useWindowResize } from '@common/hooks';
+import { DROPDOWN_PORTAL_MENU_ATTR } from '@components/dropdown';
 import { KeyCodes } from '@common/constants/keyCodes';
 import { ButtonProps } from '@components/button';
 import { ModalContent } from './modalContent';
@@ -115,7 +116,9 @@ export const Modal: FC<ModalProps> = ({
     return () => document.removeEventListener('keydown', onKeydown, false);
   }, []);
 
-  useOnClickOutside(modalRef, allowCloseOutside ? closeModal : undefined);
+  useOnClickOutside(modalRef, allowCloseOutside ? closeModal : undefined, {
+    ignoreSelectors: [`[${DROPDOWN_PORTAL_MENU_ATTR}]`],
+  });
 
   return (
     <AnimatePresence onExitComplete={onClose}>
