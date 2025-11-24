@@ -33,9 +33,9 @@ import {
 } from './multipleDownshift';
 import { isEqual } from '../utils';
 import { GetItemPropsT } from '../types';
+import { ENTER_KEY_NAME } from '../constants';
 
 import styles from './multipleAutocomplete.module.scss';
-import { ENTER_KEY_NAME } from '../constants';
 
 const cx = classNames.bind(styles);
 
