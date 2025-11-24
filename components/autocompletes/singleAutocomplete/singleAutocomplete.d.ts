@@ -20,7 +20,7 @@ export interface SingleAutocompleteProps<T> {
     minLength?: number;
     maxLength?: number | null;
     async?: boolean;
-    optionVariant: ComponentProps<typeof AutocompleteMenu>['optionVariant'];
+    optionVariant?: ComponentProps<typeof AutocompleteMenu>['optionVariant'];
     isRequired?: boolean;
     error: string;
     touched?: boolean;
