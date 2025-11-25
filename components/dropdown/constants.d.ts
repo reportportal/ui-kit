@@ -7,3 +7,4 @@ export declare enum EventName {
     ON_CLICK = "onClick"
 }
 export declare const SCROLLBARS_AUTO_HEIGHT_MAX = 216;
+export declare const DROPDOWN_PORTAL_MENU_ATTR = "data-dropdown-portal-menu";

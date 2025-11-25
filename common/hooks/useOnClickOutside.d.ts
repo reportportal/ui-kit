@@ -1,3 +1,6 @@
 import { RefObject } from '../../../node_modules/react';
 
-export declare function useOnClickOutside<T extends HTMLElement = HTMLDivElement>(ref: RefObject<T>, handler?: (e?: MouseEvent) => void): void;
+export interface UseOnClickOutsideOptions {
+    ignoreSelectors?: string[];
+}
+export declare function useOnClickOutside<T extends HTMLElement = HTMLDivElement>(ref: RefObject<T>, handler?: (e?: MouseEvent) => void, options?: UseOnClickOutsideOptions): void;
