@@ -374,7 +374,6 @@ export const Dropdown: FC<DropdownProps> = ({
     getItemProps,
     setHighlightedIndex,
     highlightedIndex,
-    selectedItem,
   } = useSelect<DropdownOptionType>({
     items: selectableOptions,
     itemToString: (item): string => (item?.label ? String(item.label) : placeholder) || '',
@@ -655,9 +654,7 @@ export const Dropdown: FC<DropdownProps> = ({
               index,
             })}
             multiSelect={multiSelect}
-            selected={
-              multiSelect ? isMultiChecked : option.value === (selectedItem?.value ?? selectedItem)
-            }
+            selected={multiSelect ? isMultiChecked : option.value === value}
             option={{ title: option.label, ...option }}
             highlightHovered={highlightedIndex === index && eventName !== EventName.ON_CLICK}
             render={renderOption}
@@ -730,7 +727,15 @@ export const Dropdown: FC<DropdownProps> = ({
 
   return (
     <div ref={containerRef} className={cx('container', className)} title={title}>
-      {label && <FieldLabel {...getLabelProps()}>{label}</FieldLabel>}
+      {label && (
+        <FieldLabel
+          {...getLabelProps()}
+          onClick={() => !disabled && onDropdownClick()}
+          style={{ cursor: disabled ? 'default' : 'pointer' }}
+        >
+          {label}
+        </FieldLabel>
+      )}
       <div
         {...restToggleButtonProps}
         role="button"

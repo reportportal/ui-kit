@@ -24,13 +24,11 @@
   justify-content: center;
   align-items: center;
   flex-shrink: 0;
-  width: 22px;
-  height: 22px;
 }
 
 .icon-container-start {
   @extend .icon-container;
-  margin-right: 4px;
+  margin-right: 12px;
 
   .collapsed & {
     cursor: pointer;
@@ -39,12 +37,12 @@
 
 .icon-container-end {
   @extend .icon-container;
-  margin-left: 4px;
+  margin-left: 12px;
 }
 
 .icon-container-additional {
   @extend .icon-container;
-  margin-left: 4px;
+  margin-left: 12px;
 }
 
 .field {
