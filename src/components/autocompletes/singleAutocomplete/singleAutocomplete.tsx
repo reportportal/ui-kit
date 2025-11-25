@@ -186,7 +186,7 @@ export const SingleAutocomplete = <T,>(componentProps: SingleAutocompleteProps<T
                     }
                     onFocus();
                   },
-                  refFunction,
+                  ref: refFunction,
                   onKeyDown: (event) => {
                     if (event.key === ENTER_KEY_NAME) {
                       event.preventDefault();
