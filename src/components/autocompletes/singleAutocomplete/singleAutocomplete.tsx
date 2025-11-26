@@ -172,6 +172,16 @@ export const SingleAutocomplete = <T,>(componentProps: SingleAutocompleteProps<T
 
         const downshiftValue = inputValue ?? '';
 
+        const { onClear: inputOnClear, clearable: inputClearable, ...restInputProps } = inputProps;
+
+        const hasSelectedValue = value !== null;
+        const shouldShowClear = inputClearable && hasSelectedValue;
+
+        const handleClear = () => {
+          selectItem(null as T);
+          inputOnClear?.();
+        };
+
         return (
           <>
             <div className={cx('input-wrapper')} {...modifiedRootProps}>
@@ -225,7 +235,9 @@ export const SingleAutocomplete = <T,>(componentProps: SingleAutocompleteProps<T
                   isRequired,
                   touched,
                   error,
-                  ...inputProps,
+                  ...restInputProps,
+                  clearable: shouldShowClear,
+                  onClear: shouldShowClear ? handleClear : inputOnClear,
                   endIcon:
                     isDropdownMode && !icon ? (
                       <button
