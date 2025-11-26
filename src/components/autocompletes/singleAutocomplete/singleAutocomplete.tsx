@@ -177,9 +177,9 @@ export const SingleAutocomplete = <T,>(componentProps: SingleAutocompleteProps<T
         const hasSelectedValue = value !== null;
         const shouldShowClear = inputClearable && hasSelectedValue;
 
-        const handleClear = () => {
+        const handleClear: ComponentProps<typeof FieldText>['onClear'] = (...args) => {
           selectItem(null as T);
-          inputOnClear?.();
+          inputOnClear?.(...args);
         };
 
         return (
