@@ -45,5 +45,6 @@ export interface MultipleAutocompleteProps<T> {
     customNoMatchesMessage?: string;
     useFixedPositioning?: boolean;
     newItemButtonText?: string;
+    menuClassName?: string;
 }
 export declare const MultipleAutocomplete: <T>(componentsProps: MultipleAutocompleteProps<T>) => import("react/jsx-runtime").JSX.Element;
