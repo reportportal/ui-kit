@@ -52,6 +52,7 @@ const TEST_DATA_OBJECTS: Partial<
   },
   maxLength: null,
   customClass: '',
+  menuClassName: '',
   parseInputValueFn: null,
   dataAutomationId: '',
 };
@@ -88,6 +89,7 @@ const TEST_DATA_STRINGS: Partial<
   mobileDisabled: false,
   maxLength: null,
   customClass: '',
+  menuClassName: '',
   parseInputValueFn: null,
   dataAutomationId: '',
 };
