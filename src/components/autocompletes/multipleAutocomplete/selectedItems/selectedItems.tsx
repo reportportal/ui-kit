@@ -50,10 +50,8 @@ interface SelectedItemProps<T> {
   storedOption?: boolean;
   highlightUnStoredItem?: boolean;
   variant?: VariantType;
-  // newly added props
   getItemName?: (item: T) => string;
   changeItemHandler?: (item: T, value: string) => T;
-  // new props for text truncation and tooltip
   singleLine?: boolean;
   showTooltipOnTruncate?: boolean;
   className?: string;
@@ -215,7 +213,6 @@ type SelectedItemsProps<T> = Omit<SelectedItemProps<T>, 'item' | 'editItem'> & {
   variant?: VariantType;
   getItemValidationErrorType?: ((item: T) => string) | null;
   renderCustomSelectedItem?: (item: T) => ReactNode;
-  // new props for text truncation and tooltip (with selectedItem prefix)
   selectedItemSingleLine?: boolean;
   selectedItemShowTooltipOnTruncate?: boolean;
   selectedItemClassName?: string;
