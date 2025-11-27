@@ -86,6 +86,7 @@ export interface MultipleAutocompleteProps<T> {
   customNoMatchesMessage?: string;
   useFixedPositioning?: boolean;
   newItemButtonText?: string;
+  menuClassName?: string;
 }
 
 export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompleteProps<T>) => {
@@ -125,6 +126,7 @@ export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompletePr
     renderCustomSelectedItem,
     useFixedPositioning,
     newItemButtonText = '',
+    menuClassName = '',
     ...props
   } = componentsProps;
 
@@ -362,6 +364,7 @@ export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompletePr
                 parseValueToString={parseValueToString}
                 createWithoutConfirmation={createWithoutConfirmation}
                 options={filteredOptions}
+                className={menuClassName}
                 {...props}
               />
             </div>
