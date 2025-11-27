@@ -71,6 +71,17 @@ $SCREEN_XS_MAX: 767px;
   }
 }
 
+.selected-item-text {
+  min-width: 0;
+  flex: 1;
+
+  &.single-line {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
 .cross-icon {
   flex-shrink: 0;
   display: flex;
@@ -117,4 +128,18 @@ $SCREEN_XS_MAX: 767px;
   color: var(--rp-ui-color-text);
   box-sizing: border-box;
   outline: none;
+}
+
+.tooltip-wrapper {
+  align-self: center;
+  max-width: 100%;
+  min-width: 0;
+
+  .selected-item-text {
+    display: block;
+    min-width: 0;
+    max-width: 100%;
+    width: 100%;
+    line-height: inherit;
+  }
 }
