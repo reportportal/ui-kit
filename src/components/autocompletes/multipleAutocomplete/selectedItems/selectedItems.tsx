@@ -120,10 +120,12 @@ const SelectedItem = <T,>({
       };
       checkTruncation();
 
-      const resizeObserver = new ResizeObserver(checkTruncation);
-      resizeObserver.observe(textRef.current);
+      if (typeof ResizeObserver !== 'undefined') {
+        const resizeObserver = new ResizeObserver(checkTruncation);
+        resizeObserver.observe(textRef.current);
 
-      return () => resizeObserver.disconnect();
+        return () => resizeObserver.disconnect();
+      }
     } else {
       setIsTruncated(false);
     }
