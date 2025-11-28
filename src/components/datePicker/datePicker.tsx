@@ -12,7 +12,7 @@ const DEFAULT_LANGUAGE = 'en';
 const DEFAULT_DATE_FORMAT = 'MM-dd-yyyy';
 
 interface DatePickerProps {
-  onChange?: (date: Date | any) => void;
+  onChange?: (date: Date | null) => void;
   onBlur?: () => void;
   onFocus?: () => void;
   headerNodes?: ReactNode;

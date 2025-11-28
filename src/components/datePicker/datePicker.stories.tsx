@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { useState } from 'react';
 import { ru } from 'date-fns/locale';
 import { DatePicker } from './datePicker';
-import { registerDatePickerLocale, getYearsFrom } from './utils';
+import { registerDatePickerLocale } from './utils';
 
 const meta: Meta<typeof DatePicker> = {
   title: 'Controls/DatePicker',
