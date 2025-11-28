@@ -16,7 +16,7 @@ const meta: Meta<typeof DatePicker> = {
     onChange: {
       control: false,
       description: 'Callback function called when the date value changes.',
-      table: { type: { summary: '(date: Date | any) => void' } },
+      table: { type: { summary: '(date: Date | null) => void' } },
     },
     onBlur: {
       control: false,
