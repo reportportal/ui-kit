@@ -129,17 +129,3 @@ $SCREEN_XS_MAX: 767px;
   box-sizing: border-box;
   outline: none;
 }
-
-.tooltip-wrapper {
-  align-self: center;
-  max-width: 100%;
-  min-width: 0;
-
-  .selected-item-text {
-    display: block;
-    min-width: 0;
-    max-width: 100%;
-    width: 100%;
-    line-height: inherit;
-  }
-}

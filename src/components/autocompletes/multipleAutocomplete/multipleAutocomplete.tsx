@@ -88,10 +88,8 @@ export interface MultipleAutocompleteProps<T> {
   newItemButtonText?: string;
   menuClassName?: string;
   selectedItemSingleLine?: boolean;
-  selectedItemShowTooltipOnTruncate?: boolean;
   selectedItemClassName?: string;
   selectedItemTextClassName?: string;
-  selectedItemTooltipPortalRoot?: Element;
 }
 
 export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompleteProps<T>) => {
@@ -133,10 +131,8 @@ export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompletePr
     newItemButtonText = '',
     menuClassName = '',
     selectedItemSingleLine,
-    selectedItemShowTooltipOnTruncate,
     selectedItemClassName,
     selectedItemTextClassName,
-    selectedItemTooltipPortalRoot,
     ...props
   } = componentsProps;
 
@@ -291,10 +287,8 @@ export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompletePr
                       storedItemsMap={storedItemsMap}
                       highlightUnStoredItem={highlightUnStoredItem}
                       selectedItemSingleLine={selectedItemSingleLine}
-                      selectedItemShowTooltipOnTruncate={selectedItemShowTooltipOnTruncate}
                       selectedItemClassName={selectedItemClassName}
                       selectedItemTextClassName={selectedItemTextClassName}
-                      selectedItemTooltipPortalRoot={selectedItemTooltipPortalRoot}
                     />
                     <input
                       {...getInputProps({

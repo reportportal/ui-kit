@@ -27,7 +27,6 @@ import classNames from 'classnames/bind';
 
 import styles from './selectedItems.module.scss';
 import { CloseIcon } from '@/components/icons';
-import { Tooltip } from '@/components/tooltip';
 
 const cx = classNames.bind(styles);
 
@@ -53,10 +52,8 @@ interface SelectedItemProps<T> {
   getItemName?: (item: T) => string;
   changeItemHandler?: (item: T, value: string) => T;
   singleLine?: boolean;
-  showTooltipOnTruncate?: boolean;
   className?: string;
   textClassName?: string;
-  tooltipPortalRoot?: Element;
 }
 
 const SelectedItem = <T,>({
@@ -74,10 +71,8 @@ const SelectedItem = <T,>({
   variant = 'light',
   getItemName,
   singleLine = false,
-  showTooltipOnTruncate = false,
   className,
   textClassName,
-  tooltipPortalRoot,
 }: SelectedItemProps<T>) => {
   const [editMode, setEditMode] = useState(false);
   const [value, setValue] = useState<string>('');
@@ -117,7 +112,7 @@ const SelectedItem = <T,>({
   const parsedValue = parseValueToString?.(item) || '';
 
   useEffect(() => {
-    if (textRef.current && showTooltipOnTruncate && singleLine) {
+    if (textRef.current && singleLine) {
       const checkTruncation = () => {
         if (textRef.current) {
           setIsTruncated(isTextTruncated(textRef.current));
@@ -127,7 +122,7 @@ const SelectedItem = <T,>({
     } else {
       setIsTruncated(false);
     }
-  }, [parsedValue, showTooltipOnTruncate, singleLine]);
+  }, [parsedValue, singleLine]);
 
   const textClasses = cx(
     'selected-item-text',
@@ -149,28 +144,6 @@ const SelectedItem = <T,>({
     className,
   );
 
-  const renderText = () => {
-    const textElement = (
-      <span ref={textRef} className={textClasses}>
-        {parsedValue}
-      </span>
-    );
-
-    if (showTooltipOnTruncate && isTruncated) {
-      return (
-        <Tooltip
-          content={parsedValue}
-          portalRoot={tooltipPortalRoot}
-          wrapperClassName={cx('tooltip-wrapper')}
-        >
-          {textElement}
-        </Tooltip>
-      );
-    }
-
-    return textElement;
-  };
-
   return editMode ? (
     <input
       autoFocus
@@ -182,7 +155,13 @@ const SelectedItem = <T,>({
     />
   ) : (
     <div className={itemClasses} onClick={changeEditMode}>
-      {renderText()}
+      <span
+        ref={textRef}
+        className={textClasses}
+        title={singleLine && isTruncated ? parsedValue : undefined}
+      >
+        {parsedValue}
+      </span>
       {!disabled && (
         <button
           type="button"
@@ -214,10 +193,8 @@ type SelectedItemsProps<T> = Omit<SelectedItemProps<T>, 'item' | 'editItem'> & {
   getItemValidationErrorType?: ((item: T) => string) | null;
   renderCustomSelectedItem?: (item: T) => ReactNode;
   selectedItemSingleLine?: boolean;
-  selectedItemShowTooltipOnTruncate?: boolean;
   selectedItemClassName?: string;
   selectedItemTextClassName?: string;
-  selectedItemTooltipPortalRoot?: Element;
 };
 
 export const SelectedItems = <T,>({
@@ -228,10 +205,8 @@ export const SelectedItems = <T,>({
   highlightUnStoredItem = false,
   renderCustomSelectedItem,
   selectedItemSingleLine,
-  selectedItemShowTooltipOnTruncate,
   selectedItemClassName,
   selectedItemTextClassName,
-  selectedItemTooltipPortalRoot,
   ...props
 }: SelectedItemsProps<T>) => {
   return items.map((item) => {
@@ -246,10 +221,8 @@ export const SelectedItems = <T,>({
         storedOption={!!storedItemsMap[parseValueToString(item)]}
         highlightUnStoredItem={highlightUnStoredItem}
         singleLine={selectedItemSingleLine}
-        showTooltipOnTruncate={selectedItemShowTooltipOnTruncate}
         className={selectedItemClassName}
         textClassName={selectedItemTextClassName}
-        tooltipPortalRoot={selectedItemTooltipPortalRoot}
         {...props}
       />
     );
