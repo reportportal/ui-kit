@@ -1,0 +1,27 @@
+.drag-preview {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  width: 376px;
+  height: 52px;
+  padding-left: 12px;
+  background-color: var(--rp-ui-base-bg-000);
+  border: 1px solid var(--rp-ui-color-field-border);
+  border-radius: 4px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--rp-ui-base-almost-black);
+  white-space: nowrap;
+
+  svg {
+    width: 16px;
+    height: 16px;
+
+    path {
+      fill: var(--rp-ui-color-field-icon);
+    }
+  }
+}
+
