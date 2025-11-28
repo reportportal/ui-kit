@@ -16,6 +16,9 @@ interface SelectedItemProps<T> {
     variant?: VariantType;
     getItemName?: (item: T) => string;
     changeItemHandler?: (item: T, value: string) => T;
+    singleLine?: boolean;
+    className?: string;
+    textClassName?: string;
 }
 type SelectedItemsProps<T> = Omit<SelectedItemProps<T>, 'item' | 'editItem'> & {
     items?: T[];
@@ -30,6 +33,9 @@ type SelectedItemsProps<T> = Omit<SelectedItemProps<T>, 'item' | 'editItem'> & {
     variant?: VariantType;
     getItemValidationErrorType?: ((item: T) => string) | null;
     renderCustomSelectedItem?: (item: T) => ReactNode;
+    selectedItemSingleLine?: boolean;
+    selectedItemClassName?: string;
+    selectedItemTextClassName?: string;
 };
-export declare const SelectedItems: <T>({ items, parseValueToString, getItemValidationErrorType, storedItemsMap, highlightUnStoredItem, renderCustomSelectedItem, ...props }: SelectedItemsProps<T>) => (string | number | boolean | import("react/jsx-runtime").JSX.Element | Iterable<ReactNode> | null | undefined)[];
+export declare const SelectedItems: <T>({ items, parseValueToString, getItemValidationErrorType, storedItemsMap, highlightUnStoredItem, renderCustomSelectedItem, selectedItemSingleLine, selectedItemClassName, selectedItemTextClassName, ...props }: SelectedItemsProps<T>) => (string | number | boolean | import("react/jsx-runtime").JSX.Element | Iterable<ReactNode> | null | undefined)[];
 export {};
