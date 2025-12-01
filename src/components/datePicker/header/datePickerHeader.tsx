@@ -52,7 +52,7 @@ export const DatePickerHeader: FC<DatePickerHeaderProps> = ({
         label: monthValue,
       });
     }, []);
-  }, []);
+  }, [locale, year]);
 
   const yearDropdownOptions: DropdownOptionType[] = useMemo(() => {
     const yearValues = yearsOptions.length > 0 ? yearsOptions : getYearsFrom(year);
