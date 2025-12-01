@@ -8,7 +8,7 @@ export const useSortable = ({
   id,
   index,
   type = DEFAULT_SORTABLE_TYPE,
-  disabled = false,
+  isDisabled = false,
   onDrop,
   hideDefaultPreview = false,
 }: UseSortableOptions): UseSortableReturn => {
@@ -19,9 +19,9 @@ export const useSortable = ({
       collect: (monitor: DragSourceMonitor) => ({
         isDragging: monitor.isDragging(),
       }),
-      canDrag: () => !disabled,
+      canDrag: () => !isDisabled,
     }),
-    [id, index, type, disabled],
+    [id, index, type, isDisabled],
   );
 
   // Hide the default browser drag preview when using custom DragLayer

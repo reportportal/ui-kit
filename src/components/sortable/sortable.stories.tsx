@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, CSSProperties, Ref } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
@@ -32,7 +32,7 @@ interface ListItem {
   name: string;
 }
 
-const itemStyle: React.CSSProperties = {
+const itemStyle: CSSProperties = {
   display: 'flex',
   alignItems: 'center',
   gap: '12px',
@@ -44,7 +44,7 @@ const itemStyle: React.CSSProperties = {
   cursor: 'grab',
 };
 
-const dragHandleStyle: React.CSSProperties = {
+const dragHandleStyle: CSSProperties = {
   cursor: 'grab',
   color: '#9ca3af',
   display: 'flex',
@@ -118,7 +118,7 @@ export const WithDragHandle: Story = {
           <SortableItem key={item.id} id={item.id} index={index} onDrop={handleDrop}>
             {({ dragRef }) => (
               <div style={itemStyle}>
-                <span ref={dragRef as React.Ref<HTMLSpanElement>} style={dragHandleStyle}>
+                <span ref={dragRef as Ref<HTMLSpanElement>} style={dragHandleStyle}>
                   <DragHandleIcon />
                 </span>
                 <span>{item.name}</span>
@@ -152,7 +152,7 @@ export const UsingSortableList: Story = {
           onReorder={setItems}
           renderItem={(item, _index, dragRef) => (
             <div style={itemStyle}>
-              <span ref={dragRef as React.Ref<HTMLSpanElement>} style={dragHandleStyle}>
+              <span ref={dragRef as Ref<HTMLSpanElement>} style={dragHandleStyle}>
                 <DragHandleIcon />
               </span>
               <span>{item.name}</span>
@@ -164,7 +164,7 @@ export const UsingSortableList: Story = {
   },
 };
 
-const previewStyle: React.CSSProperties = {
+const previewStyle: CSSProperties = {
   display: 'flex',
   alignItems: 'center',
   gap: '8px',
@@ -222,7 +222,7 @@ export const WithCustomDragPreview: Story = {
           >
             {({ dragRef, isDragging }) => (
               <div style={{ ...itemStyle, opacity: isDragging ? 0.5 : 1 }}>
-                <span ref={dragRef as React.Ref<HTMLSpanElement>} style={dragHandleStyle}>
+                <span ref={dragRef as Ref<HTMLSpanElement>} style={dragHandleStyle}>
                   <DragHandleIcon />
                 </span>
                 <span>{item.name}</span>
@@ -244,7 +244,7 @@ export const DisabledState: Story = {
       { id: 3, name: 'Disabled item' },
     ]);
 
-    const disabledStyle: React.CSSProperties = {
+    const disabledStyle: CSSProperties = {
       ...itemStyle,
       opacity: 0.5,
       cursor: 'not-allowed',
@@ -256,7 +256,7 @@ export const DisabledState: Story = {
           Disabled sortable items
         </h3>
         {items.map((item, index) => (
-          <SortableItem key={item.id} id={item.id} index={index} disabled>
+          <SortableItem key={item.id} id={item.id} index={index} isDisabled>
             <div style={disabledStyle}>{item.name}</div>
           </SortableItem>
         ))}

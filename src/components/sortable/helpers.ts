@@ -1,6 +1,7 @@
+import { CSSProperties } from 'react';
 import type { XYCoord } from 'react-dnd';
 
-export const getItemStyles = (clientOffset: XYCoord | null): React.CSSProperties => {
+export const getItemStyles = (clientOffset: XYCoord | null): CSSProperties => {
   if (!clientOffset) {
     return {
       display: 'none',

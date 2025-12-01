@@ -13,7 +13,7 @@ A wrapper component that makes its children draggable and droppable.
 - **id**: _string | number_, required - Unique identifier for the item
 - **index**: _number_, required - Position index of the item
 - **type**: _string_, optional, default = "SORTABLE_ITEM" - DnD type for grouping
-- **disabled**: _boolean_, optional, default = false - Disables drag functionality
+- **isDisabled**: _boolean_, optional, default = false - Disables drag functionality
 - **className**: _string_, optional - Additional CSS class
 - **draggingClassName**: _string_, optional - CSS class applied when dragging
 - **dropTargetClassName**: _string_, optional - CSS class applied when item is a drop target
@@ -29,7 +29,7 @@ A container component for rendering a list of sortable items.
 
 - **items**: _T[]_, required - Array of items to render
 - **type**: _string_, optional, default = "SORTABLE_ITEM" - DnD type for grouping
-- **disabled**: _boolean_, optional, default = false - Disables drag functionality
+- **isDisabled**: _boolean_, optional, default = false - Disables drag functionality
 - **className**: _string_, optional - Container CSS class
 - **itemClassName**: _string_, optional - CSS class for each item
 - **onReorder**: _(reorderedItems: T[]) => void_, required - Callback with reordered items
@@ -56,7 +56,7 @@ A reusable hook for implementing drag and drop sortable functionality.
 - **id**: _string | number_, required - Unique identifier
 - **index**: _number_, required - Position index
 - **type**: _string_, optional - DnD type
-- **disabled**: _boolean_, optional - Disables drag
+- **isDisabled**: _boolean_, optional - Disables drag
 - **onDrop**: _(fromIndex: number, toIndex: number) => void_, optional - Drop callback
 - **hideDefaultPreview**: _boolean_, optional - Hide default preview
 

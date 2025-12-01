@@ -14,7 +14,7 @@ export interface UseSortableOptions {
   id: string | number;
   index: number;
   type?: string;
-  disabled?: boolean;
+  isDisabled?: boolean;
   onDrop?: (fromIndex: number, toIndex: number) => void;
   hideDefaultPreview?: boolean;
 }
@@ -39,7 +39,7 @@ export interface SortableItemProps {
   id: string | number;
   index: number;
   type?: string;
-  disabled?: boolean;
+  isDisabled?: boolean;
   className?: string;
   draggingClassName?: string;
   dropTargetClassName?: string;
@@ -51,7 +51,7 @@ export interface SortableItemProps {
 export interface SortableListProps<T extends { id: string | number }> {
   items: T[];
   type?: string;
-  disabled?: boolean;
+  isDisabled?: boolean;
   className?: string;
   itemClassName?: string;
   onReorder: (reorderedItems: T[]) => void;

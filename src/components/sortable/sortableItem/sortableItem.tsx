@@ -10,7 +10,7 @@ export const SortableItem = ({
   id,
   index,
   type = DEFAULT_SORTABLE_TYPE,
-  disabled = false,
+  isDisabled = false,
   className,
   draggingClassName,
   dropTargetClassName,
@@ -22,7 +22,7 @@ export const SortableItem = ({
     id,
     index,
     type,
-    disabled,
+    isDisabled,
     onDrop,
     hideDefaultPreview,
   });
