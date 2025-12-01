@@ -1,7 +1,9 @@
 import type { Ref } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { screen } from '@testing-library/react';
+
 import { renderWithDnd } from '@common/utils/testUtils';
+
 import { SortableList } from './sortableList';
 
 interface TestItem {

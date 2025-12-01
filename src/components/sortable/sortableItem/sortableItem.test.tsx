@@ -1,9 +1,12 @@
+import type { Ref } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { screen } from '@testing-library/react';
+
 import { renderWithDnd } from '@common/utils/testUtils';
+
 import { SortableItem } from './sortableItem';
 
-describe('SortableItem Component', () => {
+describe('SortableItem', () => {
   it('should render with children as ReactNode', () => {
     renderWithDnd(
       <SortableItem id={1} index={0}>
@@ -20,7 +23,7 @@ describe('SortableItem Component', () => {
       <SortableItem id={1} index={0}>
         {({ dragRef }) => (
           <div data-testid="item-content">
-            <span ref={dragRef as React.Ref<HTMLSpanElement>} data-testid="drag-handle">
+            <span ref={dragRef as Ref<HTMLSpanElement>} data-testid="drag-handle">
               Handle
             </span>
             <span>Content</span>
