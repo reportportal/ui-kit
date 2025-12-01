@@ -1,13 +1,13 @@
 ## Sortable Components
 
-A set of components for implementing drag and drop sortable functionality using `react-dnd`.
+A set of components for implementing drag-and-drop sortable functionality using `react-dnd`.
 
 ### Components
 
 #### SortableItem
 
 A wrapper component that makes its children draggable and droppable.
-
+ 
 ##### Props:
 
 - **id**: _string | number_, required - Unique identifier for the item
@@ -52,7 +52,7 @@ Custom drag layer for rendering a custom preview while dragging.
 
 #### useSortable
 
-A reusable hook for implementing drag and drop sortable functionality.
+A reusable hook for implementing drag-and-drop sortable functionality.
 
 ##### Options:
 
