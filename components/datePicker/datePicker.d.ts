@@ -1,7 +1,7 @@
 import { FC, ReactNode, ReactElement } from '../../../node_modules/react';
 
 interface DatePickerProps {
-    onChange?: (date: Date | any) => void;
+    onChange?: (date: Date | null) => void;
     onBlur?: () => void;
     onFocus?: () => void;
     headerNodes?: ReactNode;
