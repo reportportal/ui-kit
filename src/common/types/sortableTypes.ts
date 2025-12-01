@@ -1,5 +1,5 @@
 import type { ReactNode, Ref } from 'react';
-import type { XYCoord } from 'react-dnd';
+import type { XYCoord, ConnectDragSource, ConnectDropTarget, ConnectDragPreview } from 'react-dnd';
 
 export interface SortableItemData {
   id: string | number;
@@ -24,9 +24,9 @@ export interface UseSortableReturn {
   isOver: boolean;
   draggedItemIndex: number | null;
   dropPosition: 'top' | 'bottom' | null;
-  dragRef: Ref<HTMLElement>;
-  dropRef: Ref<HTMLElement>;
-  previewRef: Ref<HTMLElement>;
+  dragRef: ConnectDragSource;
+  dropRef: ConnectDropTarget;
+  previewRef: ConnectDragPreview;
 }
 
 export interface SortableItemRenderProps {
