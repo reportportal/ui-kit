@@ -41,9 +41,12 @@ A container component for rendering a list of sortable items.
 Custom drag layer for rendering a custom preview while dragging.
 
 ##### Props:
-
+ 
 - **type**: _string_, required - DnD type to match
 - **renderPreview**: _(item: DragItem) => ReactNode_, required - Function to render drag preview
+- **className**: _string_, optional - CSS class for the layer container
+- **previewClassName**: _string_, optional - CSS class for the preview wrapper
+- **portalTarget**: _Element | null_, optional, default = document.body - DOM element to render the portal into
 
 ### Hook
 

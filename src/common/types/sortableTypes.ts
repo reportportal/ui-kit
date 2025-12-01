@@ -62,6 +62,9 @@ export interface SortableListProps<T extends { id: string | number }> {
 export interface DragLayerProps {
   type: string;
   renderPreview: (item: DragItem) => ReactNode;
+  className?: string;
+  previewClassName?: string;
+  portalTarget?: Element | null;
 }
 
 export interface DragLayerCollectedProps {
