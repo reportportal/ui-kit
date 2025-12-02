@@ -11,6 +11,7 @@ import {
   MouseEvent,
   useEffect,
 } from 'react';
+import { isEmpty } from 'es-toolkit/compat';
 import { createPortal } from 'react-dom';
 import classNames from 'classnames/bind';
 import { useFloating, offset, flip, size, autoUpdate } from '@floating-ui/react-dom';
@@ -74,7 +75,7 @@ export interface DropdownProps {
   footer?: ReactNode | ((closeHandler: () => void) => ReactNode);
   /**
    * For nested options: whether to include parent group values in the onChange callback
-   * when all children are selected. Default: false (only leaf values are includeDropdownOptiond)
+   * when all children are selected. Default: false (only leaf values are included)
    */
   includeGroupValue?: boolean;
   /** Whether to show a clear button to reset the selection */
@@ -706,7 +707,7 @@ export const Dropdown: FC<DropdownProps> = ({
         onChange(Array.from(normalizedValues));
       };
 
-      if (selectedLabels.length === 0) {
+      if (isEmpty(selectedLabels)) {
         return (
           <span
             ref={valueRef}
