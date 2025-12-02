@@ -37,5 +37,5 @@ type SelectedItemsProps<T> = Omit<SelectedItemProps<T>, 'item' | 'editItem'> & {
     selectedItemClassName?: string;
     selectedItemTextClassName?: string;
 };
-export declare const SelectedItems: <T>({ items, parseValueToString, getItemValidationErrorType, storedItemsMap, highlightUnStoredItem, renderCustomSelectedItem, selectedItemSingleLine, selectedItemClassName, selectedItemTextClassName, ...props }: SelectedItemsProps<T>) => (string | number | boolean | import("react/jsx-runtime").JSX.Element | Iterable<ReactNode> | null | undefined)[];
+export declare const SelectedItems: <T>({ items, parseValueToString, getItemValidationErrorType, storedItemsMap, highlightUnStoredItem, renderCustomSelectedItem, selectedItemSingleLine, selectedItemClassName, selectedItemTextClassName, ...props }: SelectedItemsProps<T>) => (string | number | boolean | Iterable<ReactNode> | import("react/jsx-runtime").JSX.Element | null | undefined)[];
 export {};
