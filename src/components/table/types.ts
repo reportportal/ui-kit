@@ -57,6 +57,8 @@ export interface TableComponentProps {
   isRowsExpandable?: boolean;
   expandedRowIds?: (string | number)[];
   setExpandedRowIds?: Dispatch<SetStateAction<Set<string | number>>>;
+  isAllExpandedByDefault?: boolean;
+  expandAllTooltip?: ReactNode;
   onChangeSorting?: (sortConfig?: SortConfig) => void;
   onToggleRowSelection?: (id: string | number) => void;
   onToggleAllRowsSelection?: () => void;

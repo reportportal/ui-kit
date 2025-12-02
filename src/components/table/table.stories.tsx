@@ -621,6 +621,140 @@ export const ExpandableRows: Story = {
             }
             setExpandedRows(newExpandedRows);
           }}
+          onToggleAllRowsExpansion={() => {
+            if (expandedRows.size === expandableData.length) {
+              setExpandedRows(new Set());
+            } else {
+              const allRows = new Set(expandableData.map((item) => item.id));
+              setExpandedRows(allRows);
+            }
+          }}
+          selectedRowIds={[...checkedRows]}
+          onToggleRowSelection={(id) => {
+            const newCheckedRows = new Set(checkedRows);
+            if (newCheckedRows.has(id)) {
+              newCheckedRows.delete(id);
+            } else {
+              newCheckedRows.add(id);
+            }
+            setCheckedRows(newCheckedRows);
+          }}
+          onToggleAllRowsSelection={() => {
+            if (checkedRows.size === expandableData.length) {
+              setCheckedRows(new Set());
+            } else {
+              const allRows = new Set(expandableData.map((item) => item.id));
+              setCheckedRows(allRows);
+            }
+          }}
+        />
+      </div>
+    );
+  },
+  args: {
+    selectable: true,
+  },
+};
+
+export const ExpandableRowsWithDefaultState: Story = {
+  render: (args: TableComponentProps) => {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const [expandedRows, setExpandedRows] = useState<Set<number | string>>(new Set([1, 2, 3, 4]));
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const [isAllExpandedByDefault, setIsAllExpandedByDefault] = useState<boolean>(true);
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const [checkedRows, setCheckedRows] = useState<Set<number | string>>(new Set([]));
+
+    const expandableData: RowData[] = [
+      {
+        id: 1,
+        name: 'Anna Smith',
+        age: 25,
+        city: 'New York',
+        department: 'Engineering',
+        email: 'anna.smith@example.com',
+      },
+      {
+        id: 2,
+        name: 'Mike Davis',
+        age: 32,
+        city: 'San Francisco',
+        department: 'Design',
+        email: 'mike.davis@example.com',
+      },
+      {
+        id: 3,
+        name: 'Sarah Wilson',
+        age: 28,
+        city: 'Los Angeles',
+        department: 'Marketing',
+        email: 'sarah.wilson@example.com',
+      },
+      {
+        id: 4,
+        name: 'John Brown',
+        age: 35,
+        city: 'Chicago',
+        department: 'Sales',
+        email: 'john.brown@example.com',
+      },
+    ];
+
+    const expandableFixedColumns: FixedColumn[] = [
+      { key: 'age', header: 'Age', align: 'right', width: 80 },
+      { key: 'department', header: 'Department', width: 120 },
+      { key: 'city', header: 'City', width: 120 },
+    ];
+    const expandablePrimaryColumns: Column[] = [
+      {
+        key: 'name',
+        header: 'Name',
+      },
+    ];
+
+    const expandAllTooltip = isAllExpandedByDefault
+      ? 'Expanded by default'
+      : 'Collapsed by default';
+
+    return (
+      <div style={{ minWidth: '800px', maxWidth: '1300px' }}>
+        <h3 style={{ margin: '0 0 16px 0', fontSize: '16px', color: '#333' }}>
+          Expandable Rows with Default State
+        </h3>
+        <p style={{ margin: '0 0 16px 0', fontSize: '14px', color: '#666' }}>
+          Demonstrates <strong>isAllExpandedByDefault</strong> and <strong>expandAllTooltip</strong>{' '}
+          props. The expandAll icon shows the default state regardless of individual row states.
+          Hover over the expandAll icon to see the tooltip.
+        </p>
+        <Table
+          {...args}
+          data={expandableData}
+          primaryColumn={expandablePrimaryColumns}
+          fixedColumns={expandableFixedColumns}
+          isRowsExpandable={true}
+          selectable={true}
+          expandedRowIds={[...expandedRows]}
+          isAllExpandedByDefault={isAllExpandedByDefault}
+          expandAllTooltip={expandAllTooltip}
+          onToggleRowExpansion={(id) => {
+            const newExpandedRows = new Set(expandedRows);
+            if (newExpandedRows.has(id)) {
+              newExpandedRows.delete(id);
+            } else {
+              newExpandedRows.add(id);
+            }
+            setExpandedRows(newExpandedRows);
+          }}
+          onToggleAllRowsExpansion={() => {
+            const newIsAllExpandedByDefault = !isAllExpandedByDefault;
+            setIsAllExpandedByDefault(newIsAllExpandedByDefault);
+
+            if (newIsAllExpandedByDefault) {
+              setExpandedRows(new Set(expandableData.map((item) => item.id)));
+            } else {
+              setExpandedRows(new Set());
+            }
+          }}
           selectedRowIds={[...checkedRows]}
           onToggleRowSelection={(id) => {
             const newCheckedRows = new Set(checkedRows);
@@ -763,6 +897,14 @@ export const CellExpansion: Story = {
                 newExpandedRows.add(id);
               }
               setExpandedRows(newExpandedRows);
+            }}
+            onToggleAllRowsExpansion={() => {
+              if (expandedRows.size === longTextData.length) {
+                setExpandedRows(new Set());
+              } else {
+                const allRows = new Set(longTextData.map((item) => item.id));
+                setExpandedRows(allRows);
+              }
             }}
           />
         </div>

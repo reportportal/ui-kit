@@ -216,7 +216,7 @@ $PADDING_VERTICAL-LARGE: 30px;
     padding: 0 16px;
   }
 
-  &:not(.action-menu-cell) {
+  &:not(.action-menu-cell):not(.expand-cell) {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -272,8 +272,22 @@ $PADDING_VERTICAL-LARGE: 30px;
       background: none;
       border: none;
       padding: 0;
-      width: 32px;
+      width: 16px;
+      margin-left: 16px;
       cursor: pointer;
+    }
+
+    .expand-all-tooltip-wrapper {
+      width: 16px;
+      margin-left: 16px;
+
+      button {
+        margin-left: 0;
+      }
+    }
+
+    .expand-all-tooltip-content {
+      width: max-content;
     }
 
     svg {
@@ -368,6 +382,5 @@ $PADDING_VERTICAL-LARGE: 30px;
     position: sticky;
     z-index: 1;
     background: var(--rp-ui-color-field-bg);
-
   }
 }
