@@ -21,6 +21,7 @@ import { BaseIconButton } from '@components/baseIconButton';
 import { ClearIcon, DropdownIcon } from '@components/icons';
 import { Tooltip } from '@components/tooltip';
 import { FieldLabel } from '@components/fieldLabel';
+import { AdaptiveTagList } from '@components/adaptiveTagList';
 import { DropdownOption } from './dropdownOption';
 import { DropdownVariant, RenderDropdownOption, DropdownOptionType, DropdownValue } from './types';
 import {
@@ -73,7 +74,7 @@ export interface DropdownProps {
   footer?: ReactNode | ((closeHandler: () => void) => ReactNode);
   /**
    * For nested options: whether to include parent group values in the onChange callback
-   * when all children are selected. Default: false (only leaf values are included)
+   * when all children are selected. Default: false (only leaf values are includeDropdownOptiond)
    */
   includeGroupValue?: boolean;
   /** Whether to show a clear button to reset the selection */
@@ -93,6 +94,8 @@ export interface DropdownProps {
    * @example menuPortalRoot={document.body}
    */
   menuPortalRoot?: Element;
+  /** Whether to render selected values as tags using AdaptiveTagList (only for multiSelect mode) */
+  multiSelectWithTags?: boolean;
 }
 
 // DS link - https://www.figma.com/file/gjYQPbeyf4YsH3wZiVKoaj/%F0%9F%9B%A0-RP-DS-6?type=design&node-id=3424-12207&mode=design&t=dDq6moPaTzQLviS1-0
@@ -131,6 +134,7 @@ export const Dropdown: FC<DropdownProps> = ({
   tooltipPortalRoot,
   tooltipZIndex,
   menuPortalRoot,
+  multiSelectWithTags = false,
 }): ReactElement => {
   const [opened, setOpened] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -676,6 +680,56 @@ export const Dropdown: FC<DropdownProps> = ({
   );
 
   const renderValue = () => {
+    // Render as tags when multiSelectWithTags is enabled
+    if (multiSelectWithTags && multiSelect && Array.isArray(value)) {
+      const selectedLabels = selectableOptions.reduce<string[]>((labels, option) => {
+        if (value.includes(option.value)) {
+          labels.push(option.label);
+        }
+        return labels;
+      }, []);
+
+      const handleRemoveTag = (tagLabel: string) => {
+        const optionToRemove = selectableOptions.find((opt) => opt.label === tagLabel);
+        if (!optionToRemove) {
+          return;
+        }
+
+        const currentValue = Array.isArray(value) ? value : [];
+        const newValueSet = new Set<DropdownValue>(currentValue);
+        newValueSet.delete(optionToRemove.value);
+
+        const normalizedValues = normalizeSelectedValues(newValueSet);
+        onChange(Array.from(normalizedValues));
+      };
+
+      if (selectedLabels.length === 0) {
+        return (
+          <span
+            ref={valueRef}
+            className={cx('value', {
+              placeholder: true,
+            })}
+          >
+            {placeholder}
+          </span>
+        );
+      }
+
+      return (
+        <div className={cx('tags-wrapper')}>
+          <AdaptiveTagList
+            tags={selectedLabels}
+            onRemoveTag={handleRemoveTag}
+            isShowAllView={true}
+            defaultVisibleLines={999}
+            removeTagAriaLabel={(tag) => `Remove ${tag}`}
+          />
+        </div>
+      );
+    }
+
+    // Default text rendering
     const formattedValue = formatDisplayedValue
       ? formatDisplayedValue(displayedValue)
       : displayedValue;
