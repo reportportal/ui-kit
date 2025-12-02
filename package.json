@@ -51,6 +51,8 @@
     "framer-motion": "^10.15.2",
     "rc-scrollbars": "^1.1.6",
     "react-datepicker": "^7.6.0",
+    "react-dnd": "^16.0.1",
+    "react-dnd-html5-backend": "^16.0.1",
     "react-dropzone": "^14.3.8"
   },
   "devDependencies": {
