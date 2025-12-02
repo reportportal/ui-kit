@@ -691,15 +691,18 @@ export const Dropdown: FC<DropdownProps> = ({
 
       const handleRemoveTag = (tagLabel: string) => {
         const optionToRemove = selectableOptions.find((opt) => opt.label === tagLabel);
+
         if (!optionToRemove) {
           return;
         }
 
         const currentValue = Array.isArray(value) ? value : [];
         const newValueSet = new Set<DropdownValue>(currentValue);
+
         newValueSet.delete(optionToRemove.value);
 
         const normalizedValues = normalizeSelectedValues(newValueSet);
+
         onChange(Array.from(normalizedValues));
       };
 
