@@ -1,3 +1,4 @@
+export { AdaptiveTagList } from './adaptiveTagList';
 export { AttachedFile } from './attachedFile';
 export { BaseIconButton } from './baseIconButton';
 export { Breadcrumbs } from './breadcrumbs';
