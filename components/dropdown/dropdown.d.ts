@@ -51,5 +51,7 @@ export interface DropdownProps {
      * @example menuPortalRoot={document.body}
      */
     menuPortalRoot?: Element;
+    /** Whether to render selected values as tags using AdaptiveTagList (only for multiSelect mode) */
+    isMultiSelectWithTags?: boolean;
 }
 export declare const Dropdown: FC<DropdownProps>;

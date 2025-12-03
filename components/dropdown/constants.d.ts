@@ -8,3 +8,4 @@ export declare enum EventName {
 }
 export declare const SCROLLBARS_AUTO_HEIGHT_MAX = 216;
 export declare const DROPDOWN_PORTAL_MENU_ATTR = "data-dropdown-portal-menu";
+export declare const DEFAULT_VISIBLE_TAG_LINES = 10;
