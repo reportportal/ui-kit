@@ -144,6 +144,53 @@ export const MultiSelect: Story = {
   },
 };
 
+export const MultiSelectWithTags: Story = {
+  render: (args: DropdownProps) => {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const [selectedValues, setSelectedValues] = useState<DropdownValue | DropdownValue[]>([]);
+
+    return (
+      <div>
+        <Dropdown
+          {...args}
+          onChange={(value) => {
+            setSelectedValues(value);
+          }}
+          value={selectedValues}
+          footer={
+            <FooterApply
+              selected={Array.isArray(selectedValues) ? selectedValues.length : 0}
+              total={args.options.length}
+              onApply={() => {}}
+            />
+          }
+        />
+      </div>
+    );
+  },
+  args: {
+    options: [
+      { value: 1, label: 'Product Bug' },
+      { value: 2, label: 'Automation Bug' },
+      { value: 3, label: 'System Issue' },
+      { value: 4, label: 'To Investigate' },
+      { value: 5, label: 'No Defect' },
+      { value: 6, label: 'Performance' },
+      { value: 7, label: 'Security' },
+      { value: 8, label: 'UI/UX Issue' },
+      { value: 9, label: 'Documentation' },
+    ],
+    className: 'dropdown-default',
+    multiSelect: true,
+    isMultiSelectWithTags: true,
+    placeholder: 'Select defect types',
+    isOptionAllVisible: true,
+    optionAll: { value: 'all', label: 'All' },
+    clearable: true,
+    onClear: () => {},
+  },
+};
+
 export const Ghost: Story = {
   args: {
     value: 2,
@@ -179,6 +226,41 @@ export const NestedMultiSelect: Story = {
     options: nestedOptions,
     multiSelect: true,
     placeholder: 'Select value',
+    isOptionAllVisible: false,
+    includeGroupValue: false,
+    variant: 'default',
+    isListWidthLimited: false,
+    optionAll: {
+      label: 'all',
+      value: 'all',
+    },
+    clearable: true,
+    onClear: () => {},
+  },
+};
+
+export const NestedMultiSelectWithTags: Story = {
+  render: (args: DropdownProps) => {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const [selectedValues, setSelectedValues] = useState<DropdownValue | DropdownValue[]>([]);
+
+    return (
+      <div className="dropdown-default">
+        <Dropdown
+          {...args}
+          onChange={(nextValue) => {
+            setSelectedValues(nextValue);
+          }}
+          value={selectedValues}
+        />
+      </div>
+    );
+  },
+  args: {
+    options: nestedOptions,
+    multiSelect: true,
+    isMultiSelectWithTags: true,
+    placeholder: 'Select options',
     isOptionAllVisible: false,
     includeGroupValue: false,
     variant: 'default',

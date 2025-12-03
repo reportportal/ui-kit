@@ -11,6 +11,7 @@ import {
   MouseEvent,
   useEffect,
 } from 'react';
+import { isEmpty } from 'es-toolkit/compat';
 import { createPortal } from 'react-dom';
 import classNames from 'classnames/bind';
 import { useFloating, offset, flip, size, autoUpdate } from '@floating-ui/react-dom';
@@ -21,6 +22,7 @@ import { BaseIconButton } from '@components/baseIconButton';
 import { ClearIcon, DropdownIcon } from '@components/icons';
 import { Tooltip } from '@components/tooltip';
 import { FieldLabel } from '@components/fieldLabel';
+import { AdaptiveTagList } from '@components/adaptiveTagList';
 import { DropdownOption } from './dropdownOption';
 import { DropdownVariant, RenderDropdownOption, DropdownOptionType, DropdownValue } from './types';
 import {
@@ -29,6 +31,7 @@ import {
   EventName,
   SCROLLBARS_AUTO_HEIGHT_MAX,
   DROPDOWN_PORTAL_MENU_ATTR,
+  DEFAULT_VISIBLE_TAG_LINES,
 } from './constants';
 import {
   calculateDefaultIndex,
@@ -93,6 +96,8 @@ export interface DropdownProps {
    * @example menuPortalRoot={document.body}
    */
   menuPortalRoot?: Element;
+  /** Whether to render selected values as tags using AdaptiveTagList (only for multiSelect mode) */
+  isMultiSelectWithTags?: boolean;
 }
 
 // DS link - https://www.figma.com/file/gjYQPbeyf4YsH3wZiVKoaj/%F0%9F%9B%A0-RP-DS-6?type=design&node-id=3424-12207&mode=design&t=dDq6moPaTzQLviS1-0
@@ -131,6 +136,7 @@ export const Dropdown: FC<DropdownProps> = ({
   tooltipPortalRoot,
   tooltipZIndex,
   menuPortalRoot,
+  isMultiSelectWithTags = false,
 }): ReactElement => {
   const [opened, setOpened] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -675,7 +681,63 @@ export const Dropdown: FC<DropdownProps> = ({
     </div>
   );
 
+  const renderMultiSelectTags = () => {
+    const selectedLabels = selectableOptions.reduce<string[]>((labels, option) => {
+      if (Array.isArray(value) && value.includes(option.value)) {
+        labels.push(option.label);
+      }
+      return labels;
+    }, []);
+
+    const handleRemoveTag = (tagLabel: string) => {
+      const optionToRemove = selectableOptions.find(
+        ({ label: optionLabel }) => optionLabel === tagLabel,
+      );
+
+      if (!optionToRemove) {
+        return;
+      }
+
+      const currentValue = Array.isArray(value) ? value : [];
+      const newValueSet = new Set<DropdownValue>(currentValue);
+
+      newValueSet.delete(optionToRemove.value);
+
+      const normalizedValues = normalizeSelectedValues(newValueSet);
+
+      onChange(Array.from(normalizedValues));
+    };
+
+    if (isEmpty(selectedLabels)) {
+      return (
+        <span
+          ref={valueRef}
+          className={cx('value', {
+            placeholder: true,
+          })}
+        >
+          {placeholder}
+        </span>
+      );
+    }
+
+    return (
+      <div className={cx('tags-wrapper')}>
+        <AdaptiveTagList
+          tags={selectedLabels}
+          onRemoveTag={handleRemoveTag}
+          isShowAllView
+          defaultVisibleLines={DEFAULT_VISIBLE_TAG_LINES}
+        />
+      </div>
+    );
+  };
+
   const renderValue = () => {
+    if (isMultiSelectWithTags && multiSelect && Array.isArray(value)) {
+      return renderMultiSelectTags();
+    }
+
     const formattedValue = formatDisplayedValue
       ? formatDisplayedValue(displayedValue)
       : displayedValue;
