@@ -143,6 +143,31 @@ $Z-INDEX-POPUP: 10;
   width: 100%;
   min-width: 0;
   margin: -3px 0;
+
+  &.with-search {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    align-items: center;
+  }
+}
+
+.search-input {
+  flex: 1 1 60px;
+  min-width: 60px;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: var(--rp-ui-base-font-family);
+  font-weight: var(--rp-ui-base-fw-regular);
+  @include font-scale();
+  color: var(--rp-ui-color-text-3);
+  padding: 0;
+  margin: 0;
+
+  &::placeholder {
+    color: var(--rp-ui-color-field-placeholder-3);
+  }
 }
 
 .value-tooltip {

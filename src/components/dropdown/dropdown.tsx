@@ -10,6 +10,9 @@ import {
   useLayoutEffect,
   MouseEvent,
   useEffect,
+  KeyboardEvent,
+  ChangeEvent,
+  FocusEvent,
 } from 'react';
 import { isEmpty } from 'es-toolkit/compat';
 import { createPortal } from 'react-dom';
@@ -139,18 +142,35 @@ export const Dropdown: FC<DropdownProps> = ({
   isMultiSelectWithTags = false,
 }): ReactElement => {
   const [opened, setOpened] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
   const containerRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement | null>(null);
   const scrollbarsRef = useRef<Scrollbars | null>(null);
   const scrollPositionRef = useRef(0);
   const valueRef = useRef<HTMLSpanElement>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const prevSearchTermRef = useRef('');
   const [isValueOverflowed, setIsValueOverflowed] = useState(false);
   const [eventName, setEventName] = useState<string | null>(null);
   const savedHighlightedIndexRef = useRef<number | null>(null);
-  const flattenedOptions = useMemo(() => flattenOptions(options), [options]);
+  const allFlattenedOptions = useMemo(() => flattenOptions(options), [options]);
+  const flattenedOptions = useMemo(() => {
+    if (!isMultiSelectWithTags || !searchTerm.trim()) {
+      return allFlattenedOptions;
+    }
+    const lowerSearch = searchTerm.toLowerCase();
+
+    return allFlattenedOptions.filter(({ option }) =>
+      option.label.toLowerCase().includes(lowerSearch),
+    );
+  }, [allFlattenedOptions, searchTerm, isMultiSelectWithTags]);
   const selectableOptions = useMemo(
     () => flattenedOptions.map(({ option }) => option),
     [flattenedOptions],
+  );
+  const allSelectableOptions = useMemo(
+    () => allFlattenedOptions.map(({ option }) => option),
+    [allFlattenedOptions],
   );
   const groupOptions = useMemo(() => {
     return flattenedOptions
@@ -271,6 +291,8 @@ export const Dropdown: FC<DropdownProps> = ({
 
   const closeHandler = useCallback(() => {
     setOpened(false);
+    setSearchTerm('');
+    prevSearchTermRef.current = '';
     onBlur?.();
   }, [onBlur]);
 
@@ -449,6 +471,24 @@ export const Dropdown: FC<DropdownProps> = ({
       });
     }
   }, [multiSelect, opened, value, selectableOptions.length, setHighlightedIndex, notScrollable]);
+
+  useEffect(() => {
+    if (opened && isMultiSelectWithTags) {
+      requestAnimationFrame(() => {
+        searchInputRef.current?.focus();
+      });
+    }
+  }, [opened, isMultiSelectWithTags]);
+
+  useEffect(() => {
+    if (isMultiSelectWithTags && opened && searchTerm !== prevSearchTermRef.current) {
+      prevSearchTermRef.current = searchTerm;
+
+      if (searchTerm) {
+        setHighlightedIndex(0);
+      }
+    }
+  }, [searchTerm, isMultiSelectWithTags, opened]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Prevent page scrolling only during initial dropdown opening when rendered in a portal
   // Scroll lock is active for a short period (300ms) to prevent browser auto-scroll behavior
@@ -682,7 +722,7 @@ export const Dropdown: FC<DropdownProps> = ({
   );
 
   const renderMultiSelectTags = () => {
-    const selectedLabels = selectableOptions.reduce<string[]>((labels, option) => {
+    const selectedLabels = allSelectableOptions.reduce<string[]>((labels, option) => {
       if (Array.isArray(value) && value.includes(option.value)) {
         labels.push(option.label);
       }
@@ -690,7 +730,7 @@ export const Dropdown: FC<DropdownProps> = ({
     }, []);
 
     const handleRemoveTag = (tagLabel: string) => {
-      const optionToRemove = selectableOptions.find(
+      const optionToRemove = allSelectableOptions.find(
         ({ label: optionLabel }) => optionLabel === tagLabel,
       );
 
@@ -708,27 +748,74 @@ export const Dropdown: FC<DropdownProps> = ({
       onChange(Array.from(normalizedValues));
     };
 
+    const handleSearchInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+      const input = e.target;
+
+      setSearchTerm(e.target.value);
+
+      if (!opened) {
+        setOpened(true);
+        onFocus?.();
+
+        requestAnimationFrame(() => {
+          input.focus();
+        });
+      }
+    };
+
+    const handleSearchInputKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+      if (e.keyCode === KeyCodes.ESCAPE_KEY_CODE) {
+        e.stopPropagation();
+        closeHandler();
+        return;
+      }
+      if (e.keyCode === KeyCodes.ENTER_KEY_CODE || e.keyCode === KeyCodes.SPACE_KEY_CODE) {
+        return;
+      }
+      if (e.keyCode === KeyCodes.ARROW_DOWN_KEY_CODE || e.keyCode === KeyCodes.ARROW_UP_KEY_CODE) {
+        e.preventDefault();
+
+        if (!opened) {
+          setOpened(true);
+          onFocus?.();
+        }
+      }
+    };
+
+    const searchInput = (
+      <input
+        ref={searchInputRef}
+        type="text"
+        className={cx('search-input')}
+        value={searchTerm}
+        onChange={handleSearchInputChange}
+        onKeyDown={handleSearchInputKeyDown}
+        onClick={(e) => {
+          e.stopPropagation();
+
+          if (!opened) {
+            setOpened(true);
+            onFocus?.();
+          }
+        }}
+        placeholder={isEmpty(selectedLabels) ? placeholder : ''}
+        autoComplete="off"
+      />
+    );
+
     if (isEmpty(selectedLabels)) {
-      return (
-        <span
-          ref={valueRef}
-          className={cx('value', {
-            placeholder: true,
-          })}
-        >
-          {placeholder}
-        </span>
-      );
+      return <div className={cx('tags-wrapper', 'with-search')}>{searchInput}</div>;
     }
 
     return (
-      <div className={cx('tags-wrapper')}>
+      <div className={cx('tags-wrapper', 'with-search')}>
         <AdaptiveTagList
           tags={selectedLabels}
           onRemoveTag={handleRemoveTag}
           isShowAllView
           defaultVisibleLines={DEFAULT_VISIBLE_TAG_LINES}
         />
+        {searchInput}
       </div>
     );
   };
@@ -854,6 +941,13 @@ export const Dropdown: FC<DropdownProps> = ({
               {...(menuPortalRoot && { [DROPDOWN_PORTAL_MENU_ATTR]: '' })}
               {...getMenuProps({
                 onKeyDown: handleKeyDownMenu,
+                ...(isMultiSelectWithTags && {
+                  tabIndex: -1,
+                  onFocus: (e: FocusEvent<HTMLElement>) => {
+                    e.preventDefault();
+                    searchInputRef.current?.focus();
+                  },
+                }),
               })}
             >
               {notScrollable ? (
