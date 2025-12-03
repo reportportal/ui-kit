@@ -16,6 +16,7 @@
 
 import { useEffect, useRef, useState, useMemo, useCallback, MouseEvent } from 'react';
 import classNames from 'classnames/bind';
+import { isEmpty } from 'es-toolkit/compat';
 
 import { Button } from '../button';
 import { CloseIcon } from '../icons';
@@ -41,7 +42,6 @@ export interface AdaptiveTagListProps {
   showAllText?: string;
   hideAllText?: string;
   showLessText?: string;
-  removeTagAriaLabel?: (tag: string) => string;
 }
 
 export const AdaptiveTagList = ({
@@ -53,7 +53,6 @@ export const AdaptiveTagList = ({
   showAllText = 'Show all',
   hideAllText = 'Hide all',
   showLessText = 'Show less',
-  removeTagAriaLabel = (tag: string) => `Remove ${tag}`,
 }: AdaptiveTagListProps) => {
   const listRef = useRef<HTMLDivElement>(null);
   const [count, setCount] = useState(0);
@@ -248,7 +247,7 @@ export const AdaptiveTagList = ({
     }
   }, []);
 
-  if (tags.length === 0) {
+  if (isEmpty(tags)) {
     return (
       <div className={cx('tag-list-wrapper')}>
         <div className={cx('tag-list', 'tag-list--no-tags', 'tag-list--full-width')}>
@@ -292,7 +291,6 @@ export const AdaptiveTagList = ({
                   type="button"
                   className={cx('tag-list__item-remove')}
                   onClick={(event) => handleRemoveTag(event, tag)}
-                  aria-label={removeTagAriaLabel(tag)}
                 >
                   <CloseIcon />
                 </button>

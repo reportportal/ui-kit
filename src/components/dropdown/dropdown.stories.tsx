@@ -182,7 +182,7 @@ export const MultiSelectWithTags: Story = {
     ],
     className: 'dropdown-default',
     multiSelect: true,
-    multiSelectWithTags: true,
+    isMultiSelectWithTags: true,
     placeholder: 'Select defect types',
     isOptionAllVisible: true,
     optionAll: { value: 'all', label: 'All' },
@@ -259,7 +259,7 @@ export const NestedMultiSelectWithTags: Story = {
   args: {
     options: nestedOptions,
     multiSelect: true,
-    multiSelectWithTags: true,
+    isMultiSelectWithTags: true,
     placeholder: 'Select options',
     isOptionAllVisible: false,
     includeGroupValue: false,
