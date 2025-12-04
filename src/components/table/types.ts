@@ -46,6 +46,7 @@ export interface TableComponentProps {
   selectable?: boolean;
   className?: string;
   headerClassName?: string;
+  bodyClassName?: string;
   rowClassName?: string;
   selectedRowIds?: (string | number)[];
   sortingDirection?: SortingDirection;

@@ -140,6 +140,13 @@ A flexible table component with support for:
         type: { summary: 'string' },
       },
     },
+    bodyClassName: {
+      description:
+        'Custom CSS class for the table body. Use this to customize row gap, padding, etc.',
+      table: {
+        type: { summary: 'string' },
+      },
+    },
     rowClassName: {
       description: 'Custom CSS class for table rows.',
       table: {
