@@ -1170,10 +1170,10 @@ export const RowSizesWithExpand: Story = {
             setExpandedRows(newExpandedRows);
           }}
           onToggleAllRowsExpansion={() => {
-            if (expandedRows.size === data.length) {
+            if (expandedRows.size === rowData.length) {
               setExpandedRows(new Set());
             } else {
-              const allRows = new Set(data.map((item) => item.id));
+              const allRows = new Set(rowData.map((item) => item.id));
               setExpandedRows(allRows);
             }
           }}
