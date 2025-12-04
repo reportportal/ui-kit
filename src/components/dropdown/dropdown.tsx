@@ -158,6 +158,7 @@ export const Dropdown: FC<DropdownProps> = ({
     if (!isMultiSelectWithTags || !searchTerm.trim()) {
       return allFlattenedOptions;
     }
+
     const lowerSearch = searchTerm.toLowerCase();
 
     return allFlattenedOptions.filter(({ option }) =>
@@ -288,6 +289,13 @@ export const Dropdown: FC<DropdownProps> = ({
     onChange(Array.from(normalizedValues));
     onSelectAll();
   };
+
+  const openDropdown = useCallback(() => {
+    if (!opened) {
+      setOpened(true);
+      onFocus?.();
+    }
+  }, [opened, onFocus]);
 
   const closeHandler = useCallback(() => {
     setOpened(false);
@@ -633,8 +641,7 @@ export const Dropdown: FC<DropdownProps> = ({
     }
 
     setHighlightedIndex(defaultHighlightedIndex);
-    setOpened(true);
-    onFocus?.();
+    openDropdown();
     setEventName(EventName.ON_KEY_DOWN);
   };
 
@@ -748,14 +755,13 @@ export const Dropdown: FC<DropdownProps> = ({
       onChange(Array.from(normalizedValues));
     };
 
-    const handleSearchInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-      const input = e.target;
+    const handleSearchInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+      const input = event.target;
 
-      setSearchTerm(e.target.value);
+      setSearchTerm(input.value);
 
       if (!opened) {
-        setOpened(true);
-        onFocus?.();
+        openDropdown();
 
         requestAnimationFrame(() => {
           input.focus();
@@ -763,22 +769,22 @@ export const Dropdown: FC<DropdownProps> = ({
       }
     };
 
-    const handleSearchInputKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-      if (e.keyCode === KeyCodes.ESCAPE_KEY_CODE) {
-        e.stopPropagation();
+    const handleSearchInputKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+      if (event.keyCode === KeyCodes.ESCAPE_KEY_CODE) {
+        event.stopPropagation();
         closeHandler();
-        return;
-      }
-      if (e.keyCode === KeyCodes.ENTER_KEY_CODE || e.keyCode === KeyCodes.SPACE_KEY_CODE) {
-        return;
-      }
-      if (e.keyCode === KeyCodes.ARROW_DOWN_KEY_CODE || e.keyCode === KeyCodes.ARROW_UP_KEY_CODE) {
-        e.preventDefault();
 
-        if (!opened) {
-          setOpened(true);
-          onFocus?.();
-        }
+        return;
+      }
+      if (event.keyCode === KeyCodes.ENTER_KEY_CODE || event.keyCode === KeyCodes.SPACE_KEY_CODE) {
+        return;
+      }
+      if (
+        event.keyCode === KeyCodes.ARROW_DOWN_KEY_CODE ||
+        event.keyCode === KeyCodes.ARROW_UP_KEY_CODE
+      ) {
+        event.preventDefault();
+        openDropdown();
       }
     };
 
@@ -792,11 +798,7 @@ export const Dropdown: FC<DropdownProps> = ({
         onKeyDown={handleSearchInputKeyDown}
         onClick={(e) => {
           e.stopPropagation();
-
-          if (!opened) {
-            setOpened(true);
-            onFocus?.();
-          }
+          openDropdown();
         }}
         placeholder={isEmpty(selectedLabels) ? placeholder : ''}
         autoComplete="off"
@@ -943,8 +945,8 @@ export const Dropdown: FC<DropdownProps> = ({
                 onKeyDown: handleKeyDownMenu,
                 ...(isMultiSelectWithTags && {
                   tabIndex: -1,
-                  onFocus: (e: FocusEvent<HTMLElement>) => {
-                    e.preventDefault();
+                  onFocus: (event: FocusEvent<HTMLElement>) => {
+                    event.preventDefault();
                     searchInputRef.current?.focus();
                   },
                 }),
