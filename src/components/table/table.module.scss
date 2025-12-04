@@ -33,6 +33,7 @@ $PADDING_VERTICAL-LARGE: 30px;
   width: 100%;
   height: 32px;
   align-items: center;
+  background-color: var(--rp-ui-base-bg-000);
 
   &.sticky-header {
     position: sticky;
@@ -40,7 +41,6 @@ $PADDING_VERTICAL-LARGE: 30px;
     top: 0;
     left: 0;
     z-index: 5;
-    background-color: var(--rp-ui-base-bg-000);
     border-bottom: 1px solid var(--rp-ui-base-e-100);
     flex-shrink: 0;
     box-sizing: border-box;
@@ -65,8 +65,8 @@ $PADDING_VERTICAL-LARGE: 30px;
   height: $HEIGHT-DEFAULT;
 
   &:has(.expanded-cell) {
-    height: max-content;
-    min-height: $HEIGHT-DEFAULT;
+    height: auto;
+    min-height: unset;
   }
 
   &.selectable {
@@ -76,8 +76,12 @@ $PADDING_VERTICAL-LARGE: 30px;
 
   .row-content-wrapper {
     display: grid;
-    padding: 2px;
     width: 100%;
+    height: 100%;
+
+    &:has(.expanded-cell) {
+      height: auto;
+    }
   }
 
   .table-row-content {
@@ -93,8 +97,6 @@ $PADDING_VERTICAL-LARGE: 30px;
 
     &:has(.expanded-cell) {
       align-items: flex-start;
-      height: auto;
-      min-height: $HEIGHT-DEFAULT;
     }
 
     .expand-cell {
@@ -103,6 +105,8 @@ $PADDING_VERTICAL-LARGE: 30px;
   }
 
   &.size-small {
+    height: $HEIGHT-SMALL;
+
     .table-row-content {
       padding-top: $PADDING_VERTICAL-SMALL;
       padding-bottom: $PADDING_VERTICAL-SMALL;
@@ -110,11 +114,7 @@ $PADDING_VERTICAL-LARGE: 30px;
 
     &:has(.expanded-cell) {
       height: auto;
-      min-height: $HEIGHT-SMALL;
-    }
-
-    .table-row-content:has(.expanded-cell) {
-      min-height: $HEIGHT-SMALL;
+      min-height: unset;
     }
   }
 
@@ -128,11 +128,7 @@ $PADDING_VERTICAL-LARGE: 30px;
 
     &:has(.expanded-cell) {
       height: auto;
-      min-height: $HEIGHT-LARGE;
-    }
-
-    .table-row-content:has(.expanded-cell) {
-      min-height: $HEIGHT-LARGE;
+      min-height: unset;
     }
   }
 }
@@ -159,6 +155,10 @@ $PADDING_VERTICAL-LARGE: 30px;
 
       &.size-large {
         min-height: $HEIGHT-LARGE;
+      }
+
+      &:has(.expanded-cell) {
+        min-height: unset;
       }
     }
   }
@@ -208,7 +208,6 @@ $PADDING_VERTICAL-LARGE: 30px;
   font-family: var(--rp-ui-base-font-family);
   font-weight: var(--rp-ui-base-fw-regular);
   box-sizing: border-box;
-  align-self: flex-start;
   padding: 0 16px;
 
   &.action-menu-cell {
@@ -263,7 +262,7 @@ $PADDING_VERTICAL-LARGE: 30px;
     align-items: center;
     position: sticky;
     z-index: 10;
-    background-color: var(--rp-ui-base-bg-000);
+    background-color: inherit;
 
     button {
       display: flex;
@@ -355,7 +354,7 @@ $PADDING_VERTICAL-LARGE: 30px;
   &.pinned-column {
     position: sticky;
     z-index: 12;
-    background-color: var(--rp-ui-base-bg-000);
+    background-color: inherit;
 
     &::after {
       content: '';

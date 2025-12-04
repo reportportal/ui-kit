@@ -45,6 +45,7 @@ export const Table: FC<TableComponentProps> = ({
   className = '',
   rowClassName = '',
   headerClassName = '',
+  bodyClassName = '',
   selectable = false,
   selectedRowIds = [],
   sortingDirection = ASC,
@@ -274,10 +275,14 @@ export const Table: FC<TableComponentProps> = ({
       </div>
 
       <div
-        className={cx('table-body', {
-          'scrollable-body': isHeaderFixed,
-          'horizontally-scrollable': isHorizontallyScrollable,
-        })}
+        className={cx(
+          'table-body',
+          {
+            'scrollable-body': isHeaderFixed,
+            'horizontally-scrollable': isHorizontallyScrollable,
+          },
+          bodyClassName,
+        )}
       >
         {data.map((item, index) => (
           <div
