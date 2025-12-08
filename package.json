@@ -2,7 +2,6 @@
   "name": "@reportportal/ui-kit",
   "version": "0.0.1-alpha.140",
   "description": "The UI-kit library for ReportPortal Design System.",
-  "type": "module",
   "scripts": {
     "start": "storybook dev -p 6006",
     "build": "tsc && vite build",
@@ -18,14 +17,13 @@
   "files": [
     "dist"
   ],
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
+  "main": "./dist/index.cjs",
   "types": "./dist/components/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/components/index.d.ts",
-      "import": "./dist/index.js",
-      "default": "./dist/index.js"
+      "require": "./dist/index.cjs",
+      "default": "./dist/index.cjs"
     },
     "./style.css": "./dist/style.css",
     "./common": {
@@ -34,8 +32,8 @@
     },
     "./*": {
       "types": "./dist/components/*/index.d.ts",
-      "import": "./dist/*.js",
-      "default": "./dist/*.js"
+      "require": "./dist/*.cjs",
+      "default": "./dist/*.cjs"
     }
   },
   "peerDependencies": {

@@ -47,7 +47,8 @@ export default defineConfig(() => ({
     lib: {
       entry: generateEntries(),
       name: 'ui-kit',
-      formats: ['es'] as LibraryFormats[],
+      formats: ['cjs'] as LibraryFormats[], // Changed from 'es' to 'cjs' for Module Federation + SRI compatibility
+      fileName: (format, entryName) => `${entryName}.${format === 'cjs' ? 'cjs' : 'js'}`,
     },
     rollupOptions: {
       external: [
