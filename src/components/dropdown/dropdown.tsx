@@ -10,7 +10,11 @@ import {
   useLayoutEffect,
   MouseEvent,
   useEffect,
+  KeyboardEvent,
+  ChangeEvent,
+  FocusEvent,
 } from 'react';
+import { isEmpty } from 'es-toolkit/compat';
 import { createPortal } from 'react-dom';
 import classNames from 'classnames/bind';
 import { useFloating, offset, flip, size, autoUpdate } from '@floating-ui/react-dom';
@@ -21,6 +25,7 @@ import { BaseIconButton } from '@components/baseIconButton';
 import { ClearIcon, DropdownIcon } from '@components/icons';
 import { Tooltip } from '@components/tooltip';
 import { FieldLabel } from '@components/fieldLabel';
+import { AdaptiveTagList } from '@components/adaptiveTagList';
 import { DropdownOption } from './dropdownOption';
 import { DropdownVariant, RenderDropdownOption, DropdownOptionType, DropdownValue } from './types';
 import {
@@ -29,6 +34,7 @@ import {
   EventName,
   SCROLLBARS_AUTO_HEIGHT_MAX,
   DROPDOWN_PORTAL_MENU_ATTR,
+  DEFAULT_VISIBLE_TAG_LINES,
 } from './constants';
 import {
   calculateDefaultIndex,
@@ -93,6 +99,8 @@ export interface DropdownProps {
    * @example menuPortalRoot={document.body}
    */
   menuPortalRoot?: Element;
+  /** Whether to render selected values as tags using AdaptiveTagList (only for multiSelect mode) */
+  isMultiSelectWithTags?: boolean;
 }
 
 // DS link - https://www.figma.com/file/gjYQPbeyf4YsH3wZiVKoaj/%F0%9F%9B%A0-RP-DS-6?type=design&node-id=3424-12207&mode=design&t=dDq6moPaTzQLviS1-0
@@ -131,20 +139,39 @@ export const Dropdown: FC<DropdownProps> = ({
   tooltipPortalRoot,
   tooltipZIndex,
   menuPortalRoot,
+  isMultiSelectWithTags = false,
 }): ReactElement => {
   const [opened, setOpened] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
   const containerRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement | null>(null);
   const scrollbarsRef = useRef<Scrollbars | null>(null);
   const scrollPositionRef = useRef(0);
   const valueRef = useRef<HTMLSpanElement>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const prevSearchTermRef = useRef('');
   const [isValueOverflowed, setIsValueOverflowed] = useState(false);
   const [eventName, setEventName] = useState<string | null>(null);
   const savedHighlightedIndexRef = useRef<number | null>(null);
-  const flattenedOptions = useMemo(() => flattenOptions(options), [options]);
+  const allFlattenedOptions = useMemo(() => flattenOptions(options), [options]);
+  const flattenedOptions = useMemo(() => {
+    if (!isMultiSelectWithTags || !searchTerm.trim()) {
+      return allFlattenedOptions;
+    }
+
+    const lowerSearch = searchTerm.toLowerCase();
+
+    return allFlattenedOptions.filter(({ option }) =>
+      option.label.toLowerCase().includes(lowerSearch),
+    );
+  }, [allFlattenedOptions, searchTerm, isMultiSelectWithTags]);
   const selectableOptions = useMemo(
     () => flattenedOptions.map(({ option }) => option),
     [flattenedOptions],
+  );
+  const allSelectableOptions = useMemo(
+    () => allFlattenedOptions.map(({ option }) => option),
+    [allFlattenedOptions],
   );
   const groupOptions = useMemo(() => {
     return flattenedOptions
@@ -263,8 +290,17 @@ export const Dropdown: FC<DropdownProps> = ({
     onSelectAll();
   };
 
+  const openDropdown = useCallback(() => {
+    if (!opened) {
+      setOpened(true);
+      onFocus?.();
+    }
+  }, [opened, onFocus]);
+
   const closeHandler = useCallback(() => {
     setOpened(false);
+    setSearchTerm('');
+    prevSearchTermRef.current = '';
     onBlur?.();
   }, [onBlur]);
 
@@ -444,6 +480,24 @@ export const Dropdown: FC<DropdownProps> = ({
     }
   }, [multiSelect, opened, value, selectableOptions.length, setHighlightedIndex, notScrollable]);
 
+  useEffect(() => {
+    if (opened && isMultiSelectWithTags) {
+      requestAnimationFrame(() => {
+        searchInputRef.current?.focus();
+      });
+    }
+  }, [opened, isMultiSelectWithTags]);
+
+  useEffect(() => {
+    if (isMultiSelectWithTags && opened && searchTerm !== prevSearchTermRef.current) {
+      prevSearchTermRef.current = searchTerm;
+
+      if (searchTerm) {
+        setHighlightedIndex(0);
+      }
+    }
+  }, [searchTerm, isMultiSelectWithTags, opened]); // eslint-disable-line react-hooks/exhaustive-deps
+
   // Prevent page scrolling only during initial dropdown opening when rendered in a portal
   // Scroll lock is active for a short period (300ms) to prevent browser auto-scroll behavior
   // After that, normal scrolling is allowed while dropdown remains open
@@ -587,8 +641,7 @@ export const Dropdown: FC<DropdownProps> = ({
     }
 
     setHighlightedIndex(defaultHighlightedIndex);
-    setOpened(true);
-    onFocus?.();
+    openDropdown();
     setEventName(EventName.ON_KEY_DOWN);
   };
 
@@ -675,7 +728,105 @@ export const Dropdown: FC<DropdownProps> = ({
     </div>
   );
 
+  const renderMultiSelectTags = () => {
+    const selectedLabels = allSelectableOptions.reduce<string[]>((labels, option) => {
+      if (Array.isArray(value) && value.includes(option.value)) {
+        labels.push(option.label);
+      }
+      return labels;
+    }, []);
+
+    const handleRemoveTag = (tagLabel: string) => {
+      const optionToRemove = allSelectableOptions.find(
+        ({ label: optionLabel }) => optionLabel === tagLabel,
+      );
+
+      if (!optionToRemove) {
+        return;
+      }
+
+      const currentValue = Array.isArray(value) ? value : [];
+      const newValueSet = new Set<DropdownValue>(currentValue);
+
+      newValueSet.delete(optionToRemove.value);
+
+      const normalizedValues = normalizeSelectedValues(newValueSet);
+
+      onChange(Array.from(normalizedValues));
+    };
+
+    const handleSearchInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+      const input = event.target;
+
+      setSearchTerm(input.value);
+
+      if (!opened) {
+        openDropdown();
+
+        requestAnimationFrame(() => {
+          input.focus();
+        });
+      }
+    };
+
+    const handleSearchInputKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+      if (event.keyCode === KeyCodes.ESCAPE_KEY_CODE) {
+        event.stopPropagation();
+        closeHandler();
+
+        return;
+      }
+      if (event.keyCode === KeyCodes.ENTER_KEY_CODE || event.keyCode === KeyCodes.SPACE_KEY_CODE) {
+        return;
+      }
+      if (
+        event.keyCode === KeyCodes.ARROW_DOWN_KEY_CODE ||
+        event.keyCode === KeyCodes.ARROW_UP_KEY_CODE
+      ) {
+        event.preventDefault();
+        openDropdown();
+      }
+    };
+
+    const searchInput = (
+      <input
+        ref={searchInputRef}
+        type="text"
+        className={cx('search-input')}
+        value={searchTerm}
+        onChange={handleSearchInputChange}
+        onKeyDown={handleSearchInputKeyDown}
+        onClick={(e) => {
+          e.stopPropagation();
+          openDropdown();
+        }}
+        placeholder={isEmpty(selectedLabels) ? placeholder : ''}
+        autoComplete="off"
+      />
+    );
+
+    if (isEmpty(selectedLabels)) {
+      return <div className={cx('tags-wrapper', 'with-search')}>{searchInput}</div>;
+    }
+
+    return (
+      <div className={cx('tags-wrapper', 'with-search')}>
+        <AdaptiveTagList
+          tags={selectedLabels}
+          onRemoveTag={handleRemoveTag}
+          isShowAllView
+          defaultVisibleLines={DEFAULT_VISIBLE_TAG_LINES}
+        />
+        {searchInput}
+      </div>
+    );
+  };
+
   const renderValue = () => {
+    if (isMultiSelectWithTags && multiSelect && Array.isArray(value)) {
+      return renderMultiSelectTags();
+    }
+
     const formattedValue = formatDisplayedValue
       ? formatDisplayedValue(displayedValue)
       : displayedValue;
@@ -792,6 +943,13 @@ export const Dropdown: FC<DropdownProps> = ({
               {...(menuPortalRoot && { [DROPDOWN_PORTAL_MENU_ATTR]: '' })}
               {...getMenuProps({
                 onKeyDown: handleKeyDownMenu,
+                ...(isMultiSelectWithTags && {
+                  tabIndex: -1,
+                  onFocus: (event: FocusEvent<HTMLElement>) => {
+                    event.preventDefault();
+                    searchInputRef.current?.focus();
+                  },
+                }),
               })}
             >
               {notScrollable ? (

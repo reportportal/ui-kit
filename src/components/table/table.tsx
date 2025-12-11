@@ -4,6 +4,7 @@ import classNames from 'classnames/bind';
 import { ArrowDownIcon, ArrowUpIcon, ChevronDownDropdownIcon } from '@components/icons';
 import { TableComponentProps, FixedColumn, Column, PrimaryColumn } from './types';
 import { Checkbox } from '@components/checkbox';
+import { Tooltip } from '@components/tooltip';
 import {
   getColumnsKeys,
   isPrimaryColumn,
@@ -44,6 +45,7 @@ export const Table: FC<TableComponentProps> = ({
   className = '',
   rowClassName = '',
   headerClassName = '',
+  bodyClassName = '',
   selectable = false,
   selectedRowIds = [],
   sortingDirection = ASC,
@@ -54,6 +56,8 @@ export const Table: FC<TableComponentProps> = ({
   pinnedColumnKeys = [],
   isRowsExpandable = false,
   expandedRowIds = [],
+  isAllExpandedByDefault,
+  expandAllTooltip,
   onChangeSorting = () => {},
   onToggleRowSelection = () => {},
   onToggleAllRowsSelection = () => {},
@@ -125,6 +129,8 @@ export const Table: FC<TableComponentProps> = ({
   const hasSelectedRows = selectedRowIds?.length > 0;
 
   const isAllRowsExpanded: boolean = data.every((row) => expandedRowIds.includes(row.id));
+  const expandAllIconState =
+    isAllExpandedByDefault !== undefined ? isAllExpandedByDefault : isAllRowsExpanded;
 
   const gridTemplateColumns = getGridTemplateColumns(
     pinnedColumns,
@@ -142,6 +148,14 @@ export const Table: FC<TableComponentProps> = ({
     selectable,
     !!renderRowActions,
     true,
+  );
+
+  const expandAllButton = (
+    <button onClick={handleToggleAllRowsExpansion} aria-label="Toggle all rows expansion">
+      <span className={cx('expand-icon', { expanded: expandAllIconState })}>
+        <ChevronDownDropdownIcon />
+      </span>
+    </button>
   );
 
   return (
@@ -183,11 +197,18 @@ export const Table: FC<TableComponentProps> = ({
         )}
         {isRowsExpandable && (
           <div className={cx('table-header-cell', 'expand-cell')} style={{ left: '0' }}>
-            <button onClick={handleToggleAllRowsExpansion} aria-label="Toggle all rows expansion">
-              <span className={cx('expand-icon', { expanded: isAllRowsExpanded })}>
-                <ChevronDownDropdownIcon />
-              </span>
-            </button>
+            {expandAllTooltip ? (
+              <Tooltip
+                content={expandAllTooltip}
+                placement="top"
+                wrapperClassName={cx('expand-all-tooltip-wrapper')}
+                contentClassName={cx('expand-all-tooltip-content')}
+              >
+                {expandAllButton}
+              </Tooltip>
+            ) : (
+              expandAllButton
+            )}
           </div>
         )}
         {pinnedColumns.map((column, index) => (
@@ -254,10 +275,14 @@ export const Table: FC<TableComponentProps> = ({
       </div>
 
       <div
-        className={cx('table-body', {
-          'scrollable-body': isHeaderFixed,
-          'horizontally-scrollable': isHorizontallyScrollable,
-        })}
+        className={cx(
+          'table-body',
+          {
+            'scrollable-body': isHeaderFixed,
+            'horizontally-scrollable': isHorizontallyScrollable,
+          },
+          bodyClassName,
+        )}
       >
         {data.map((item, index) => (
           <div

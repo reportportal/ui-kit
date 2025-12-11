@@ -71,6 +71,17 @@ $SCREEN_XS_MAX: 767px;
   }
 }
 
+.selected-item-text {
+  min-width: 0;
+  flex: 1;
+
+  &.single-line {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
 .cross-icon {
   flex-shrink: 0;
   display: flex;
