@@ -142,14 +142,18 @@ export const Modal: FC<ModalProps> = ({
           >
             <ModalHeader title={title} onClose={closeModal} withDescription={!!description} />
             {scrollable ? (
-              <Scrollbars autoHeight autoHeightMax={getContentMaxHeight()} hideTracksWhenNotNeeded>
-                {description && (
-                  <span className={cx('description', { scrollable: scrollable })}>
-                    {description}
-                  </span>
-                )}
-                <ModalContent scrollable>{children}</ModalContent>
-              </Scrollbars>
+              <div className={cx('scrollable-wrapper')}>
+                <Scrollbars
+                  autoHeight
+                  autoHeightMax={getContentMaxHeight()}
+                  hideTracksWhenNotNeeded
+                >
+                  <div className={cx('scrollable-content')}>
+                    {description && <span className={cx('description')}>{description}</span>}
+                    <ModalContent>{children}</ModalContent>
+                  </div>
+                </Scrollbars>
+              </div>
             ) : (
               <>
                 {description && <span className={cx('description')}>{description}</span>}
