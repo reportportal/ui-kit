@@ -113,6 +113,7 @@ export const AutocompleteOptions = <T,>(props: AutocompleteOptionsProps<T>) => {
             key={parseValueToString(inputValue as T)}
             optionVariant={optionVariant}
             isNew
+            newItemButtonText={newItemButtonText}
             {...getItemProps({ item: inputValue as T, index })}
           >
             {parseValueToString(inputValue as T)}
@@ -120,7 +121,7 @@ export const AutocompleteOptions = <T,>(props: AutocompleteOptionsProps<T>) => {
         </div>
       );
     },
-    [getItemProps, inputValue, optionVariant, parseValueToString],
+    [getItemProps, inputValue, newItemButtonText, optionVariant, parseValueToString],
   );
 
   const getPrompt = useCallback(
