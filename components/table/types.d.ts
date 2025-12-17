@@ -60,9 +60,13 @@ export interface TableComponentProps {
     setExpandedRowIds?: Dispatch<SetStateAction<Set<string | number>>>;
     isAllExpandedByDefault?: boolean;
     expandAllTooltip?: ReactNode;
+    isResizable?: boolean;
+    minColumnWidth?: number;
+    maxColumnWidth?: number;
     onChangeSorting?: (sortConfig?: SortConfig) => void;
     onToggleRowSelection?: (id: string | number) => void;
     onToggleAllRowsSelection?: () => void;
     onToggleRowExpansion?: (id: string | number) => void;
     onToggleAllRowsExpansion?: () => void;
+    onColumnResize?: (columnKey: string, width: number) => void;
 }
