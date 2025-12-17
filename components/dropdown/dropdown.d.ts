@@ -53,5 +53,7 @@ export interface DropdownProps {
     menuPortalRoot?: Element;
     /** Whether to render selected values as tags using AdaptiveTagList (only for multiSelect mode) */
     isMultiSelectWithTags?: boolean;
+    /** Message to display when no options match the search term */
+    noMatchesMessage?: string;
 }
 export declare const Dropdown: FC<DropdownProps>;
