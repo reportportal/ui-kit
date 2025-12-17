@@ -72,15 +72,11 @@ export const useSortable = ({
         const hoverClientY = clientOffset.y - hoverBoundingRect.top;
         const isTopHalf = hoverClientY < hoverMiddleY;
 
-        // Show TOP line when in top half of any item
-        // Show BOTTOM line only for LAST item when in bottom half
+        // Show TOP line when in top half, BOTTOM line when in bottom half
         if (isTopHalf) {
           setDropPosition('top');
-        } else if (isLast) {
-          setDropPosition('bottom');
         } else {
-          // Not last item and bottom half -> next item's top line will show
-          setDropPosition(null);
+          setDropPosition('bottom');
         }
       },
       drop: (dragObject: DragItem, monitor: DropTargetMonitor) => {
