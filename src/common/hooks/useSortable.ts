@@ -1,17 +1,21 @@
-import { useEffect } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import { useDrag, useDrop, DragSourceMonitor, DropTargetMonitor } from 'react-dnd';
 import { getEmptyImage } from 'react-dnd-html5-backend';
 import { DEFAULT_SORTABLE_TYPE } from '@common/constants/sortable';
-import type { UseSortableOptions, UseSortableReturn, DragItem } from '@common/types';
+import type { UseSortableOptions, UseSortableReturn, DragItem, DropPosition } from '@common/types';
 
 export const useSortable = ({
   id,
   index,
   type = DEFAULT_SORTABLE_TYPE,
   isDisabled = false,
+  isLast = false,
   onDrop,
   hideDefaultPreview = false,
 }: UseSortableOptions): UseSortableReturn => {
+  const elementRef = useRef<HTMLElement | null>(null);
+  const [dropPosition, setDropPosition] = useState<DropPosition>(null);
+
   const [{ isDragging }, dragRef, previewRef] = useDrag(
     () => ({
       type,
@@ -31,7 +35,7 @@ export const useSortable = ({
     }
   }, [hideDefaultPreview, previewRef]);
 
-  const [{ isOver, draggedItemIndex }, dropRef] = useDrop(
+  const [{ isOver, draggedItemIndex }, connectDropRef] = useDrop(
     () => ({
       accept: type,
       collect: (monitor: DropTargetMonitor) => {
@@ -44,23 +48,95 @@ export const useSortable = ({
           draggedItemIndex: isCurrentlyOver ? (draggedItem?.index ?? null) : null,
         };
       },
-      drop: (dragObject: DragItem) => {
-        if (dragObject.id !== id && onDrop) {
-          onDrop(dragObject.index, index);
+      hover: (dragObject: DragItem, monitor: DropTargetMonitor) => {
+        if (dragObject.id === id) {
+          setDropPosition(null);
+          return;
         }
+
+        const element = elementRef.current;
+        if (!element) {
+          setDropPosition(null);
+          return;
+        }
+
+        const hoverBoundingRect = element.getBoundingClientRect();
+        const hoverMiddleY = (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
+        const clientOffset = monitor.getClientOffset();
+
+        if (!clientOffset) {
+          setDropPosition(null);
+          return;
+        }
+
+        const hoverClientY = clientOffset.y - hoverBoundingRect.top;
+        const isTopHalf = hoverClientY < hoverMiddleY;
+
+        // Show TOP line when in top half of any item
+        // Show BOTTOM line only for LAST item when in bottom half
+        if (isTopHalf) {
+          setDropPosition('top');
+        } else if (isLast) {
+          setDropPosition('bottom');
+        } else {
+          // Not last item and bottom half -> next item's top line will show
+          setDropPosition(null);
+        }
+      },
+      drop: (dragObject: DragItem, monitor: DropTargetMonitor) => {
+        if (dragObject.id === id || !onDrop) {
+          return;
+        }
+
+        const element = elementRef.current;
+        if (!element) {
+          return;
+        }
+
+        const hoverBoundingRect = element.getBoundingClientRect();
+        const hoverMiddleY = (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
+        const clientOffset = monitor.getClientOffset();
+
+        if (!clientOffset) {
+          return;
+        }
+
+        const hoverClientY = clientOffset.y - hoverBoundingRect.top;
+        const isTopHalf = hoverClientY < hoverMiddleY;
+
+        // Calculate the correct toIndex based on cursor position
+        let toIndex = index;
+        const fromIndex = dragObject.index;
+
+        if (isTopHalf) {
+          // Dropping in top half: insert BEFORE this item
+          toIndex = fromIndex < index ? index - 1 : index;
+        } else {
+          // Dropping in bottom half: insert AFTER this item
+          toIndex = fromIndex > index ? index + 1 : index;
+        }
+
+        onDrop(fromIndex, toIndex);
       },
     }),
     [id, index, type, onDrop],
   );
 
-  const getDropPosition = (): 'top' | 'bottom' | null => {
-    if (draggedItemIndex === null) {
-      return null;
-    }
-    return draggedItemIndex > index ? 'top' : 'bottom';
-  };
+  // Wrap dropRef to also store element reference
+  const dropRef = useCallback(
+    (node: Parameters<typeof connectDropRef>[0]) => {
+      elementRef.current = node as HTMLElement | null;
+      return connectDropRef(node);
+    },
+    [connectDropRef],
+  ) as typeof connectDropRef;
 
-  const dropPosition = getDropPosition();
+  // Reset drop position when not hovering
+  useEffect(() => {
+    if (!isOver) {
+      setDropPosition(null);
+    }
+  }, [isOver]);
 
   return {
     isDragging,

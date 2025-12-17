@@ -3,28 +3,35 @@
   width: 100%;
   transition: opacity 0.2s ease;
 
+  // CSS variable for gap size, default 8px - consumers can override
+  --sortable-gap: 8px;
+
+  // Show line ABOVE this item (centered in the gap between this and previous item)
   &--drop-target-top::before {
     content: '';
     position: absolute;
-    top: -2px;
+    top: calc(var(--sortable-gap) / -2);
     left: 0;
     right: 0;
     height: 2px;
     background-color: var(--rp-ui-color-primary-focused);
     border-radius: 2px;
     z-index: 1;
+    transform: translateY(-50%);
   }
 
+  // Show line BELOW this item (centered in the gap between this and next item)
   &--drop-target-bottom::after {
     content: '';
     position: absolute;
-    bottom: -2px;
+    bottom: calc(var(--sortable-gap) / -2);
     left: 0;
     right: 0;
     height: 2px;
     background-color: var(--rp-ui-color-primary-focused);
     border-radius: 2px;
     z-index: 1;
+    transform: translateY(50%);
   }
 }
 
@@ -41,4 +48,3 @@
     opacity: 0.5;
   }
 }
-

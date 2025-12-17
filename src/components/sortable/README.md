@@ -19,6 +19,7 @@ A wrapper component that makes its children draggable and droppable.
 - **dropTargetClassName**: _string_, optional - CSS class applied when item is a drop target
 - **onDrop**: _(fromIndex: number, toIndex: number) => void_, optional - Callback when item is dropped
 - **hideDefaultPreview**: _boolean_, optional, default = false - Hide default browser drag preview (use with DragLayer)
+- **isLast**: _boolean_, optional, default = false - Marks item as last in list (shows bottom drop indicator)
 - **children**: _ReactNode | ((props: SortableItemRenderProps) => ReactNode)_, required - Content or render function
 
 #### SortableList
@@ -62,7 +63,8 @@ A reusable hook for implementing drag-and-drop sortable functionality.
 - **isDisabled**: _boolean_, optional - Disables drag
 - **onDrop**: _(fromIndex: number, toIndex: number) => void_, optional - Drop callback
 - **hideDefaultPreview**: _boolean_, optional - Hide default preview
-
+- **isLast**: _boolean_, optional - Marks item as last in list
+ 
 ##### Returns:
 
 - **isDragging**: _boolean_ - Whether item is being dragged

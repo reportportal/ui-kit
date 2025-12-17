@@ -16,6 +16,7 @@ export const SortableItem = ({
   dropTargetClassName,
   onDrop,
   hideDefaultPreview = false,
+  isLast = false,
   children,
 }: SortableItemProps) => {
   const { isDragging, dropPosition, dragRef, dropRef, previewRef } = useSortable({
@@ -25,6 +26,7 @@ export const SortableItem = ({
     isDisabled,
     onDrop,
     hideDefaultPreview,
+    isLast,
   });
 
   const isRenderFunction = typeof children === 'function';

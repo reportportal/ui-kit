@@ -10,11 +10,14 @@ export interface DragItem extends SortableItemData {
   type: string;
 }
 
+export type DropPosition = 'top' | 'bottom' | null;
+
 export interface UseSortableOptions {
   id: string | number;
   index: number;
   type?: string;
   isDisabled?: boolean;
+  isLast?: boolean;
   onDrop?: (fromIndex: number, toIndex: number) => void;
   hideDefaultPreview?: boolean;
 }
@@ -23,7 +26,7 @@ export interface UseSortableReturn {
   isDragging: boolean;
   isOver: boolean;
   draggedItemIndex: number | null;
-  dropPosition: 'top' | 'bottom' | null;
+  dropPosition: DropPosition;
   dragRef: ConnectDragSource;
   dropRef: ConnectDropTarget;
   previewRef: ConnectDragPreview;
@@ -40,6 +43,7 @@ export interface SortableItemProps {
   index: number;
   type?: string;
   isDisabled?: boolean;
+  isLast?: boolean;
   className?: string;
   draggingClassName?: string;
   dropTargetClassName?: string;
