@@ -57,6 +57,11 @@ $PADDING_VERTICAL-LARGE: 30px;
       min-height: 32px;
     }
   }
+
+  &.resizable:not(.horizontally-scrollable) {
+    min-width: fit-content;
+    padding: 0 3px;
+  }
 }
 
 .table-row {
@@ -178,6 +183,20 @@ $PADDING_VERTICAL-LARGE: 30px;
     }
   }
 
+  &.resizable:not(.horizontally-scrollable) {
+    min-width: fit-content;
+    padding: 3px;
+
+    .table-row {
+      min-width: fit-content;
+
+      .table-row-content {
+        min-width: fit-content;
+        overflow: visible;
+      }
+    }
+  }
+
   &.scrollable-body.horizontally-scrollable {
     overflow: visible;
 
@@ -216,10 +235,12 @@ $PADDING_VERTICAL-LARGE: 30px;
   }
 
   &:not(.action-menu-cell):not(.expand-cell) {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    min-width: 0;
+   &:not(.table-header-cell) {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      min-width: 0;
+    }
 
     &.expanded-cell {
       text-overflow: unset;
@@ -313,8 +334,10 @@ $PADDING_VERTICAL-LARGE: 30px;
 
 .table-header-cell {
   @include font-scale(s-small);
+  position: relative;
   color: var(--rp-ui-base-e-400);
   display: flex;
+  height: 100%;
   align-items: center;
   text-align: left;
   background: none;
@@ -326,6 +349,9 @@ $PADDING_VERTICAL-LARGE: 30px;
     display: flex;
     align-items: center;
     min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 
     > span {
       overflow: hidden;
@@ -342,7 +368,7 @@ $PADDING_VERTICAL-LARGE: 30px;
   &.align-right {
     justify-content: flex-end;
 
-    svg {
+    > .label svg {
       margin-right: -16px;
     }
   }
@@ -359,18 +385,28 @@ $PADDING_VERTICAL-LARGE: 30px;
     &::after {
       content: '';
       position: absolute;
-      top: -20px;
+      top: 50%;
       right: 0;
       width: 1px;
       height: 24px;
-      transform: translateY(50%);
+      transform: translateY(-50%);
       background-color: var(--rp-ui-base-e-200);
       z-index: 1;
     }
+  }
 
-    &:hover {
-      background-color: var(--rp-ui-base-e-050);
-    }
+  &.resizable:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: 0;
+    width: 1px;
+    height: 24px;
+    transform: translateY(-50%);
+    background-color: var(--rp-ui-base-e-400);
+    z-index: 1;
+    opacity: 1;
+    transition: opacity 0.15s ease-in-out;
   }
 }
 

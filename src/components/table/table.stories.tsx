@@ -1465,3 +1465,125 @@ const CustomHeaderDemo = () => {
 export const CustomHeaderStyle: Story = {
   render: () => <CustomHeaderDemo />,
 };
+
+/**
+ * Demonstrates resizable columns with default constraints.
+ *
+ * Users can drag the column borders in the header to adjust column widths.
+ * Initial widths are taken from column.width property.
+ */
+export const ResizableColumns: Story = {
+  render: (args: TableComponentProps) => (
+    <div style={{ minWidth: '600px' }}>
+      <Table {...args} primaryColumn={primaryColumns} data={data} fixedColumns={fixedColumns} />
+    </div>
+  ),
+  args: {
+    renderRowActions,
+    isResizable: true,
+  },
+};
+
+/**
+ * Demonstrates resizable columns without row actions.
+ */
+export const ResizableColumnsWithoutActions: Story = {
+  render: (args: TableComponentProps) => (
+    <div style={{ minWidth: '600px' }}>
+      <Table {...args} primaryColumn={primaryColumns} data={data} fixedColumns={fixedColumns} />
+    </div>
+  ),
+  args: {
+    isResizable: true,
+  },
+};
+
+/**
+ * Demonstrates resizable columns with custom min/max constraints.
+ */
+export const ResizableColumnsWithConstraints: Story = {
+  render: (args: TableComponentProps) => (
+    <div style={{ minWidth: '600px' }}>
+      <Table {...args} primaryColumn={primaryColumns} data={data} fixedColumns={fixedColumns} />
+    </div>
+  ),
+  args: {
+    renderRowActions,
+    isResizable: true,
+    minColumnWidth: 80,
+    maxColumnWidth: 300,
+  },
+};
+
+/**
+ * Demonstrates resizable columns with fixed header and horizontal scroll.
+ */
+export const ResizableColumnsWithFixedHeader: Story = {
+  render: (args: TableComponentProps) => (
+    <div style={{ width: '900px', height: '400px', border: '1px solid #ccc', padding: '16px' }}>
+      <div style={{ height: 'calc(100% - 16px)', position: 'relative' }}>
+        <Table
+          {...args}
+          data={largeDataSet}
+          primaryColumn={primaryColumns}
+          fixedColumns={scrollableFixedColumns}
+          // isHorizontallyScrollable
+        />
+      </div>
+    </div>
+  ),
+  args: {
+    renderRowActions,
+    isResizable: true,
+    isHeaderFixed: true,
+  },
+};
+
+/**
+ * Demonstrates resizable columns with horizontal scroll and fixed header.
+ */
+export const ResizableColumnsWithHorizontalScroll: Story = {
+  render: (args: TableComponentProps) => (
+    <div style={{ width: '600px', height: '500px', border: '1px solid #ccc', padding: '16px' }}>
+      <div style={{ height: 'calc(100% - 16px)', position: 'relative' }}>
+        <Table
+          {...args}
+          data={wideTableData}
+          primaryColumn={wideTablePrimaryColumns}
+          fixedColumns={wideTableFixedColumns}
+          isHorizontallyScrollable
+          isHeaderFixed
+        />
+      </div>
+    </div>
+  ),
+  args: {
+    renderRowActions,
+    isResizable: true,
+  },
+};
+
+/**
+ * Demonstrates resizable columns with pinned columns.
+ */
+export const ResizableColumnsWithPinnedColumns: Story = {
+  render: (args: TableComponentProps) => (
+    <div style={{ width: '900px', height: '500px', border: '1px solid #ccc', padding: '16px' }}>
+      <div style={{ height: 'calc(100% - 16px)', position: 'relative' }}>
+        <Table
+          {...args}
+          data={largeDataSet}
+          primaryColumn={primaryColumns}
+          fixedColumns={scrollableFixedColumns}
+          pinnedColumnKeys={['name', 'email']}
+          isHorizontallyScrollable
+          isHeaderFixed
+        />
+      </div>
+    </div>
+  ),
+  args: {
+    renderRowActions,
+    isResizable: true,
+  },
+};
