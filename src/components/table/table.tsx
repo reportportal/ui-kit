@@ -1,9 +1,11 @@
 import { useMemo, FC, useEffect, useRef, useState } from 'react';
+import { Resizable } from 'react-resizable';
 import styles from './table.module.scss';
 import classNames from 'classnames/bind';
 import { ArrowDownIcon, ArrowUpIcon, ChevronDownDropdownIcon } from '@components/icons';
 import { TableComponentProps, FixedColumn, Column, PrimaryColumn } from './types';
 import { Checkbox } from '@components/checkbox';
+import { Tooltip } from '@components/tooltip';
 import {
   getColumnsKeys,
   isPrimaryColumn,
@@ -13,7 +15,14 @@ import {
   isAsc,
 } from './utils';
 import { ASC, EXPANDABLE_CHECKBOX_COLUMN_WIDTH } from './constants';
-import { useTableColumns, useTableHover, useTableExpansion, useColumnWidths } from './hooks';
+import {
+  useTableColumns,
+  useTableHover,
+  useTableExpansion,
+  useColumnWidths,
+  useColumnResize,
+} from './hooks';
+import { ResizeHandle } from './resizeHandle';
 
 const cx = classNames.bind(styles);
 
@@ -44,6 +53,7 @@ export const Table: FC<TableComponentProps> = ({
   className = '',
   rowClassName = '',
   headerClassName = '',
+  bodyClassName = '',
   selectable = false,
   selectedRowIds = [],
   sortingDirection = ASC,
@@ -54,12 +64,18 @@ export const Table: FC<TableComponentProps> = ({
   pinnedColumnKeys = [],
   isRowsExpandable = false,
   expandedRowIds = [],
+  isAllExpandedByDefault,
+  expandAllTooltip,
+  isResizable = false,
+  minColumnWidth = 50,
+  maxColumnWidth = 500,
   isSelectAllCheckboxAlwaysVisible = false,
   onChangeSorting = () => {},
   onToggleRowSelection = () => {},
   onToggleAllRowsSelection = () => {},
   onToggleRowExpansion = () => {},
   onToggleAllRowsExpansion = () => {},
+  onColumnResize = () => {},
 }) => {
   const primaryColumns: Column[] = useMemo(
     () => (Array.isArray(primaryColumnsInput) ? primaryColumnsInput : [primaryColumnsInput]),
@@ -93,6 +109,34 @@ export const Table: FC<TableComponentProps> = ({
     expandedRowIds,
     onToggleRowExpansion,
   });
+
+  const { columnWidths, handleResize, handleResizeStop, handleResizeStart } = useColumnResize({
+    enabled: isResizable,
+    minWidth: minColumnWidth,
+    maxWidth: maxColumnWidth,
+    columnWidthsRef,
+    onColumnResize,
+  });
+
+  const wrapWithResizable = (column: PrimaryColumn | FixedColumn, headerCell: JSX.Element) => (
+    <Resizable
+      key={column.key}
+      width={
+        columnWidths[column.key] ??
+        (typeof column.width === 'number' ? column.width : minColumnWidth)
+      }
+      height={0}
+      axis="x"
+      handle={<ResizeHandle />}
+      onResizeStart={handleResizeStart}
+      onResize={handleResize(column.key)}
+      onResizeStop={handleResizeStop(column.key)}
+      minConstraints={[minColumnWidth, 0]}
+      maxConstraints={[maxColumnWidth, 0]}
+    >
+      {headerCell}
+    </Resizable>
+  );
 
   const handleSort = (key: string) => {
     if (!defaultSortableColumns.includes(key)) return;
@@ -129,6 +173,8 @@ export const Table: FC<TableComponentProps> = ({
     (isSelectAllCheckboxAlwaysVisible && hasRows) || hasSelectedRows;
 
   const isAllRowsExpanded: boolean = data.every((row) => expandedRowIds.includes(row.id));
+  const expandAllIconState =
+    isAllExpandedByDefault !== undefined ? isAllExpandedByDefault : isAllRowsExpanded;
 
   const gridTemplateColumns = getGridTemplateColumns(
     pinnedColumns,
@@ -137,6 +183,7 @@ export const Table: FC<TableComponentProps> = ({
     selectable,
     !!renderRowActions,
     false,
+    isResizable ? columnWidths : undefined,
   );
 
   const headerGridTemplateColumns = getGridTemplateColumns(
@@ -146,6 +193,15 @@ export const Table: FC<TableComponentProps> = ({
     selectable,
     !!renderRowActions,
     true,
+    isResizable ? columnWidths : undefined,
+  );
+
+  const expandAllButton = (
+    <button onClick={handleToggleAllRowsExpansion} aria-label="Toggle all rows expansion">
+      <span className={cx('expand-icon', { expanded: expandAllIconState })}>
+        <ChevronDownDropdownIcon />
+      </span>
+    </button>
   );
 
   return (
@@ -154,7 +210,8 @@ export const Table: FC<TableComponentProps> = ({
         'table',
         {
           'fixed-header': isHeaderFixed,
-          'horizontally-scrollable-container': isHeaderFixed && isHorizontallyScrollable,
+          'horizontally-scrollable-container':
+            isHeaderFixed && (isHorizontallyScrollable || isResizable),
         },
         className,
       )}
@@ -165,6 +222,7 @@ export const Table: FC<TableComponentProps> = ({
           {
             'sticky-header': isHeaderFixed,
             'horizontally-scrollable': isHorizontallyScrollable,
+            resizable: isResizable,
           },
           headerClassName,
         )}
@@ -187,81 +245,103 @@ export const Table: FC<TableComponentProps> = ({
         )}
         {isRowsExpandable && (
           <div className={cx('table-header-cell', 'expand-cell')} style={{ left: '0' }}>
-            <button onClick={handleToggleAllRowsExpansion} aria-label="Toggle all rows expansion">
-              <span className={cx('expand-icon', { expanded: isAllRowsExpanded })}>
-                <ChevronDownDropdownIcon />
-              </span>
-            </button>
+            {expandAllTooltip ? (
+              <Tooltip
+                content={expandAllTooltip}
+                placement="top"
+                wrapperClassName={cx('expand-all-tooltip-wrapper')}
+                contentClassName={cx('expand-all-tooltip-content')}
+              >
+                {expandAllButton}
+              </Tooltip>
+            ) : (
+              expandAllButton
+            )}
           </div>
         )}
-        {pinnedColumns.map((column, index) => (
-          <button
-            key={column.key}
-            className={cx('table-header-cell', 'pinned-column', {
-              [`align-${(column as FixedColumn).align}`]: 'align' in column,
-              'primary-cell': isPrimaryColumn(column),
-              'sortable-cell': defaultSortableColumns.includes(column.key),
-            })}
-            style={getCellStyle(
-              column,
-              true,
-              index,
-              pinnedColumns,
-              columnWidthsRef,
-              isRowsExpandable,
-              selectable,
-            )}
-          >
-            <div
-              className={cx('label')}
-              onClick={() => handleSort(column.key)}
-              onMouseEnter={() => handleColumnMouseEnter(column.key)}
-              onMouseLeave={handleColumnMouseLeave}
+        {pinnedColumns.map((column, index) => {
+          const headerCell = (
+            <button
+              key={column.key}
+              className={cx('table-header-cell', 'pinned-column', {
+                [`align-${(column as FixedColumn).align}`]: 'align' in column,
+                'primary-cell': isPrimaryColumn(column),
+                'sortable-cell': defaultSortableColumns.includes(column.key),
+                resizable: isResizable,
+              })}
+              style={getCellStyle(
+                column,
+                true,
+                index,
+                pinnedColumns,
+                columnWidthsRef,
+                isRowsExpandable,
+                selectable,
+              )}
             >
-              <ColumnHeaderText column={column} />
-              {(hoveredColumn === column.key || defaultSortingColumn?.key === column.key) &&
-                getSortIcon(column.key)}
-            </div>
-          </button>
-        ))}
-        {scrollableColumns.map((column) => (
-          <button
-            key={column.key}
-            className={cx('table-header-cell', {
-              [`align-${(column as FixedColumn).align}`]: 'align' in column,
-              'primary-cell': isPrimaryColumn(column),
-              'sortable-cell': defaultSortableColumns.includes(column.key),
-            })}
-            style={getCellStyle(
-              column,
-              false,
-              undefined,
-              pinnedColumns,
-              columnWidthsRef,
-              isRowsExpandable,
-              selectable,
-            )}
-          >
-            <div
-              className={cx('label')}
-              onClick={() => handleSort(column.key)}
-              onMouseEnter={() => handleColumnMouseEnter(column.key)}
-              onMouseLeave={handleColumnMouseLeave}
+              <div
+                className={cx('label')}
+                onClick={() => handleSort(column.key)}
+                onMouseEnter={() => handleColumnMouseEnter(column.key)}
+                onMouseLeave={handleColumnMouseLeave}
+              >
+                <ColumnHeaderText column={column} />
+                {(hoveredColumn === column.key || defaultSortingColumn?.key === column.key) &&
+                  getSortIcon(column.key)}
+              </div>
+            </button>
+          );
+
+          return isResizable ? wrapWithResizable(column, headerCell) : headerCell;
+        })}
+        {scrollableColumns.map((column) => {
+          const headerCell = (
+            <button
+              key={column.key}
+              className={cx('table-header-cell', {
+                [`align-${(column as FixedColumn).align}`]: 'align' in column,
+                'primary-cell': isPrimaryColumn(column),
+                'sortable-cell': defaultSortableColumns.includes(column.key),
+                resizable: isResizable,
+              })}
+              style={getCellStyle(
+                column,
+                false,
+                undefined,
+                pinnedColumns,
+                columnWidthsRef,
+                isRowsExpandable,
+                selectable,
+              )}
             >
-              <ColumnHeaderText column={column} />
-              {(hoveredColumn === column.key || defaultSortingColumn?.key === column.key) &&
-                getSortIcon(column.key)}
-            </div>
-          </button>
-        ))}
+              <div
+                className={cx('label')}
+                onClick={() => handleSort(column.key)}
+                onMouseEnter={() => handleColumnMouseEnter(column.key)}
+                onMouseLeave={handleColumnMouseLeave}
+              >
+                <ColumnHeaderText column={column} />
+                {(hoveredColumn === column.key || defaultSortingColumn?.key === column.key) &&
+                  getSortIcon(column.key)}
+              </div>
+            </button>
+          );
+
+          return isResizable ? wrapWithResizable(column, headerCell) : headerCell;
+        })}
         {renderRowActions && <div className={cx('table-header-cell', 'action-menu-cell')} />}
       </div>
 
       <div
-        className={cx('table-body', {
-          'scrollable-body': isHeaderFixed,
-          'horizontally-scrollable': isHorizontallyScrollable,
-        })}
+        className={cx(
+          'table-body',
+          {
+            'scrollable-body': isHeaderFixed,
+            'horizontally-scrollable': isHorizontallyScrollable,
+            resizable: isResizable,
+          },
+          bodyClassName,
+        )}
       >
         {data.map((item, index) => (
           <div

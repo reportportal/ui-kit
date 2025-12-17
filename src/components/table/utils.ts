@@ -117,6 +117,7 @@ export const getGridTemplateColumns = (
   selectable: boolean,
   renderRowActions: boolean,
   isHeader = false,
+  columnWidths?: Record<string, number>,
 ): string => {
   const columns: string[] = [];
 
@@ -129,6 +130,12 @@ export const getGridTemplateColumns = (
   }
 
   const addColumnWidth = (column: PrimaryColumn | FixedColumn) => {
+    // If the width is already fixed through resize, use the fixed value
+    if (columnWidths?.[column.key] !== undefined) {
+      columns.push(`${columnWidths[column.key]}px`);
+      return;
+    }
+
     if (isPrimaryColumn(column)) {
       const primaryColumn = column as PrimaryColumn;
       const minWidth = primaryColumn.width

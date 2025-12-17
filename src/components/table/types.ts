@@ -46,6 +46,7 @@ export interface TableComponentProps {
   selectable?: boolean;
   className?: string;
   headerClassName?: string;
+  bodyClassName?: string;
   rowClassName?: string;
   selectedRowIds?: (string | number)[];
   sortingDirection?: SortingDirection;
@@ -58,9 +59,15 @@ export interface TableComponentProps {
   expandedRowIds?: (string | number)[];
   isSelectAllCheckboxAlwaysVisible?: boolean;
   setExpandedRowIds?: Dispatch<SetStateAction<Set<string | number>>>;
+  isAllExpandedByDefault?: boolean;
+  expandAllTooltip?: ReactNode;
+  isResizable?: boolean;
+  minColumnWidth?: number;
+  maxColumnWidth?: number;
   onChangeSorting?: (sortConfig?: SortConfig) => void;
   onToggleRowSelection?: (id: string | number) => void;
   onToggleAllRowsSelection?: () => void;
   onToggleRowExpansion?: (id: string | number) => void;
   onToggleAllRowsExpansion?: () => void;
+  onColumnResize?: (columnKey: string, width: number) => void;
 }

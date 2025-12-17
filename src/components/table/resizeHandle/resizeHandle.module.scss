@@ -1,0 +1,32 @@
+.resize-handle {
+  position: absolute;
+  right: -5px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 11px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: col-resize;
+  z-index: 3;
+  opacity: 0;
+  background-color: var(--rp-ui-base-bg-000);
+
+  &:hover {
+    opacity: 1;
+
+    svg rect {
+      fill: var(--rp-ui-base-e-400);
+    }
+  }
+
+  &:active,
+  &:global(.react-draggable-dragging) {
+    opacity: 1;
+
+    svg rect {
+      fill: var(--rp-ui-base-topaz-pressed);
+    }
+  }
+}

@@ -28,6 +28,7 @@ vi.mock('@components/checkbox', () => ({
 vi.mock('@components/icons', () => ({
   ArrowDownIcon: () => <div data-testid="arrow-down-icon">↓</div>,
   ArrowUpIcon: () => <div data-testid="arrow-up-icon">↑</div>,
+  ChevronDownDropdownIcon: () => <div data-testid="chevron-down-dropdown-icon">▼</div>,
 }));
 
 describe('Table Component', () => {

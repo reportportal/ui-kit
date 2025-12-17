@@ -1,3 +1,4 @@
+export { AdaptiveTagList } from './adaptiveTagList';
 export { AttachedFile } from './attachedFile';
 export { BaseIconButton } from './baseIconButton';
 export { Breadcrumbs } from './breadcrumbs';
@@ -22,6 +23,7 @@ export { SpinLoader } from './spinLoader';
 export { SystemAlert } from './systemAlert';
 export { SystemMessage } from './systemMessage';
 export { SingleAutocomplete } from './autocompletes/singleAutocomplete';
+export { SortableItem, SortableList, DragLayer } from './sortable';
 export { Table } from './table';
 export { ThemeProvider } from './themeProvider';
 export { Toggle } from './toggle';

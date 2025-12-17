@@ -21,6 +21,13 @@ const OPTIONS_STRINGS = [
   'Demo Api Tests 3',
 ];
 
+const LONG_OPTIONS_STRINGS = [
+  'Very Long Option Name That Will Be Truncated When Single Line Mode Is Enabled',
+  'Another Very Long Option Name That Will Also Be Truncated',
+  'Short',
+  'Medium Length Option Name',
+];
+
 const TEST_DATA_OBJECTS: Partial<
   WithStorybookProps<
     ComponentProps<typeof MultipleAutocomplete<(typeof OPTIONS_OBJECTS)[number]>>,
@@ -52,6 +59,7 @@ const TEST_DATA_OBJECTS: Partial<
   },
   maxLength: null,
   customClass: '',
+  menuClassName: '',
   parseInputValueFn: null,
   dataAutomationId: '',
 };
@@ -88,6 +96,7 @@ const TEST_DATA_STRINGS: Partial<
   mobileDisabled: false,
   maxLength: null,
   customClass: '',
+  menuClassName: '',
   parseInputValueFn: null,
   dataAutomationId: '',
 };
@@ -156,6 +165,62 @@ export const Strings: Story<(typeof OPTIONS_STRINGS)[number]> = {
     return (
       <div style={{ width: '600px', height: '400px', display: 'flex', alignItems: 'center' }}>
         <MultipleAutocomplete {...modifiedArgs} onChange={onChange} value={state} />
+      </div>
+    );
+  },
+};
+
+export const WithSingleLineMode: Story<(typeof LONG_OPTIONS_STRINGS)[number]> = {
+  args: {
+    options: LONG_OPTIONS_STRINGS,
+    loading: false,
+    async: true,
+    createWithoutConfirmation: true,
+    creatable: false,
+    editable: true,
+    existingItemsMap: {},
+    parseValueToString: (value) => {
+      return value ? String(value) : '';
+    },
+    highlightUnStoredItem: false,
+    value: [LONG_OPTIONS_STRINGS[0], LONG_OPTIONS_STRINGS[1]],
+    error: '',
+    touched: false,
+    inputProps: {
+      clearable: true,
+    },
+    minLength: 1,
+    placeholder: 'Test placeholder',
+    disabled: false,
+    mobileDisabled: false,
+    maxLength: null,
+    customClass: '',
+    menuClassName: '',
+    parseInputValueFn: null,
+    dataAutomationId: '',
+    selectedItemSingleLine: true,
+  },
+  render: (args) => {
+    const [state, setState] = useState(args.value || []);
+
+    const modifiedArgs = {
+      ...args,
+      inputProps: { ...args.inputProps, onClear: () => setState([]) },
+    };
+
+    const onChange: ComponentProps<
+      typeof MultipleAutocomplete<(typeof LONG_OPTIONS_STRINGS)[number]>
+    >['onChange'] = (newState) => {
+      setState(newState as typeof LONG_OPTIONS_STRINGS);
+    };
+
+    return (
+      <div style={{ width: '300px', height: '400px', display: 'flex', alignItems: 'center' }}>
+        <MultipleAutocomplete<(typeof LONG_OPTIONS_STRINGS)[number]>
+          {...modifiedArgs}
+          onChange={onChange}
+          value={state}
+        />
       </div>
     );
   },
