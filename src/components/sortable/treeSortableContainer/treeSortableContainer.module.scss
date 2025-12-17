@@ -1,0 +1,36 @@
+.drop-confirmation-popover {
+  position: fixed;
+  transform: translateY(-50%);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  min-width: 120px;
+  padding: 4px;
+  background-color: var(--rp-ui-base-bg-000, #fff);
+  border: 1px solid var(--rp-ui-color-field-border, #e1e5e9);
+  border-radius: 4px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+
+  &__button {
+    display: block;
+    width: 100%;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 3px;
+    background: none;
+    font-size: 13px;
+    text-align: left;
+    cursor: pointer;
+    color: var(--rp-ui-base-almost-black, #1a1a1a);
+    transition: background-color 0.15s ease;
+
+    &:hover {
+      background-color: var(--rp-ui-color-primary-hover, #f0f4ff);
+    }
+
+    &--cancel {
+      color: var(--rp-ui-color-field-icon, #6b7280);
+    }
+  }
+}
+
