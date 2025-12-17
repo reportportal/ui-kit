@@ -61,7 +61,9 @@ export const useSortable = ({
         }
 
         const hoverBoundingRect = element.getBoundingClientRect();
-        const hoverMiddleY = (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
+        const elementHeight = hoverBoundingRect.bottom - hoverBoundingRect.top;
+        // Use 70% threshold - TOP line shows when in upper 70%, BOTTOM when in lower 30%
+        const hoverThresholdY = elementHeight * 0.7;
         const clientOffset = monitor.getClientOffset();
 
         if (!clientOffset) {
@@ -70,13 +72,17 @@ export const useSortable = ({
         }
 
         const hoverClientY = clientOffset.y - hoverBoundingRect.top;
-        const isTopHalf = hoverClientY < hoverMiddleY;
+        const isTopZone = hoverClientY < hoverThresholdY;
 
-        // Show TOP line when in top half, BOTTOM line when in bottom half
-        if (isTopHalf) {
+        // Show TOP line when in upper 70% of any item
+        // Show BOTTOM line only for LAST item when in lower 30%
+        if (isTopZone) {
           setDropPosition('top');
-        } else {
+        } else if (isLast) {
           setDropPosition('bottom');
+        } else {
+          // Not last item and bottom zone -> next item's top line will show
+          setDropPosition(null);
         }
       },
       drop: (dragObject: DragItem, monitor: DropTargetMonitor) => {
@@ -90,7 +96,9 @@ export const useSortable = ({
         }
 
         const hoverBoundingRect = element.getBoundingClientRect();
-        const hoverMiddleY = (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
+        const elementHeight = hoverBoundingRect.bottom - hoverBoundingRect.top;
+        // Use same 70% threshold as hover
+        const hoverThresholdY = elementHeight * 0.7;
         const clientOffset = monitor.getClientOffset();
 
         if (!clientOffset) {
@@ -98,17 +106,17 @@ export const useSortable = ({
         }
 
         const hoverClientY = clientOffset.y - hoverBoundingRect.top;
-        const isTopHalf = hoverClientY < hoverMiddleY;
+        const isTopZone = hoverClientY < hoverThresholdY;
 
         // Calculate the correct toIndex based on cursor position
         let toIndex = index;
         const fromIndex = dragObject.index;
 
-        if (isTopHalf) {
-          // Dropping in top half: insert BEFORE this item
+        if (isTopZone) {
+          // Dropping in top zone: insert BEFORE this item
           toIndex = fromIndex < index ? index - 1 : index;
         } else {
-          // Dropping in bottom half: insert AFTER this item
+          // Dropping in bottom zone: insert AFTER this item
           toIndex = fromIndex > index ? index + 1 : index;
         }
 
