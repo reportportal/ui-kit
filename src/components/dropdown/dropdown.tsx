@@ -259,13 +259,12 @@ export const Dropdown: FC<DropdownProps> = ({
           })
         : null,
     ].filter(Boolean),
-    whileElementsMounted:
-      opened && menuPortalRoot
-        ? (reference, floating, update) =>
-            autoUpdate(reference, floating, update, {
-              animationFrame: true,
-            })
-        : undefined,
+    whileElementsMounted: opened
+      ? (reference, floating, update) =>
+          autoUpdate(reference, floating, update, {
+            animationFrame: true,
+          })
+      : undefined,
   });
 
   const handleSelectAll = () => {
@@ -670,7 +669,7 @@ export const Dropdown: FC<DropdownProps> = ({
 
   const renderOptions = () => (
     <div className={cx('options-container')}>
-      {multiSelect && isOptionAllVisible && (
+      {multiSelect && isOptionAllVisible && !isEmpty(flattenedOptions) && (
         <>
           <DropdownOption
             option={optionAll}
@@ -689,36 +688,40 @@ export const Dropdown: FC<DropdownProps> = ({
           <div className={cx('divider')} />{' '}
         </>
       )}
-      {flattenedOptions.map(({ option, depth }, index) => {
-        const optionLeafValues = leafValuesByOption.get(option.value) ?? [option.value];
-        const isMultiChecked =
-          multiSelect && optionLeafValues.every((leafValue) => selectedValuesSet.has(leafValue));
-        const isPartiallyChecked =
-          multiSelect &&
-          option.children?.length &&
-          optionLeafValues.some((leafValue) => selectedValuesSet.has(leafValue)) &&
-          !isMultiChecked;
+      {!isEmpty(flattenedOptions) ? (
+        flattenedOptions.map(({ option, depth }, index) => {
+          const optionLeafValues = leafValuesByOption.get(option.value) ?? [option.value];
+          const isMultiChecked =
+            multiSelect && optionLeafValues.every((leafValue) => selectedValuesSet.has(leafValue));
+          const isPartiallyChecked =
+            multiSelect &&
+            option.children?.length &&
+            optionLeafValues.some((leafValue) => selectedValuesSet.has(leafValue)) &&
+            !isMultiChecked;
 
-        return (
-          <DropdownOption
-            key={option.value}
-            {...getItemProps({
-              item: option,
-              index,
-            })}
-            multiSelect={multiSelect}
-            selected={multiSelect ? isMultiChecked : option.value === value}
-            option={{ title: option.label, ...option }}
-            highlightHovered={highlightedIndex === index && eventName !== EventName.ON_CLICK}
-            render={renderOption}
-            onChange={option.disabled ? null : () => handleChange(option)}
-            onMouseEnter={() => setHighlightedIndex(index)}
-            depth={depth}
-            hasChildren={!!option.children?.length}
-            isPartiallyChecked={isPartiallyChecked}
-          />
-        );
-      })}
+          return (
+            <DropdownOption
+              key={option.value}
+              {...getItemProps({
+                item: option,
+                index,
+              })}
+              multiSelect={multiSelect}
+              selected={multiSelect ? isMultiChecked : option.value === value}
+              option={{ title: option.label, ...option }}
+              highlightHovered={highlightedIndex === index && eventName !== EventName.ON_CLICK}
+              render={renderOption}
+              onChange={option.disabled ? null : () => handleChange(option)}
+              onMouseEnter={() => setHighlightedIndex(index)}
+              depth={depth}
+              hasChildren={!!option.children?.length}
+              isPartiallyChecked={isPartiallyChecked}
+            />
+          );
+        })
+      ) : (
+        <div className={cx('empty-list-message')}>No matches found</div>
+      )}
       {footer && (
         <>
           <div className={cx('divider')} />
@@ -867,6 +870,7 @@ export const Dropdown: FC<DropdownProps> = ({
       error,
       touched,
       'mobile-disabled': mobileDisabled,
+      'multi-select-with-tags': isMultiSelectWithTags,
     }),
     onClick: onDropdownClick,
     onKeyDown: handleToggleButtonKeyDown as unknown as KeyboardEventHandler<HTMLButtonElement>,

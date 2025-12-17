@@ -114,22 +114,28 @@
       border: none;
       display: flex;
       align-items: center;
-      justify-content: center;
+      justify-content: flex-end;
       margin-right: 4px;
       z-index: 1;
       cursor: pointer;
-      opacity: 0.6;
       transition: opacity 0.2s ease;
-      min-width: 10px !important;
-
-      &:hover {
-        opacity: 1;
-      }
+      width: 16px;
+      height: 16px;
+      min-width: 16px !important;
 
       svg {
         width: 10px;
         height: 10px;
-        fill: var(--rp-ui-base-e-400);
+
+        path {
+          fill: var(--rp-ui-base-e-300);
+        }
+      }
+
+      &:hover {
+        svg path {
+          fill: var(--rp-ui-base-e-400);
+        }
       }
     }
 
