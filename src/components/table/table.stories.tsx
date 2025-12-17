@@ -1532,7 +1532,7 @@ export const ResizableColumnsWithConstraints: Story = {
 };
 
 /**
- * Demonstrates resizable columns with fixed header and horizontal scroll.
+ * Demonstrates resizable columns with fixed header.
  */
 export const ResizableColumnsWithFixedHeader: Story = {
   render: (args: TableComponentProps) => (
@@ -1543,7 +1543,6 @@ export const ResizableColumnsWithFixedHeader: Story = {
           data={largeDataSet}
           primaryColumn={primaryColumns}
           fixedColumns={scrollableFixedColumns}
-          // isHorizontallyScrollable
         />
       </div>
     </div>
