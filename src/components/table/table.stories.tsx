@@ -1467,7 +1467,7 @@ export const CustomHeaderStyle: Story = {
 };
 
 /**
- * Demonstrates resizable columns with default constraints.
+ * Demonstrates resizable columns with default constraints (min: 50px, max: 500px).
  *
  * Users can drag the column borders in the header to adjust column widths.
  * Initial widths are taken from column.width property.
@@ -1475,6 +1475,13 @@ export const CustomHeaderStyle: Story = {
 export const ResizableColumns: Story = {
   render: (args: TableComponentProps) => (
     <div style={{ minWidth: '600px' }}>
+      <h3 style={{ margin: '0 0 16px 0', fontSize: '16px', color: '#333' }}>
+        Resizable Columns (Default Constraints)
+      </h3>
+      <p style={{ margin: '0 0 16px 0', fontSize: '14px', color: '#666' }}>
+        Drag the column borders in the header to adjust widths. Default constraints:{' '}
+        <code>minColumnWidth=50</code>, <code>maxColumnWidth=500</code>
+      </p>
       <Table {...args} primaryColumn={primaryColumns} data={data} fixedColumns={fixedColumns} />
     </div>
   ),
@@ -1500,10 +1507,19 @@ export const ResizableColumnsWithoutActions: Story = {
 
 /**
  * Demonstrates resizable columns with custom min/max constraints.
+ *
+ * Columns can be resized between 80px and 300px.
  */
 export const ResizableColumnsWithConstraints: Story = {
   render: (args: TableComponentProps) => (
     <div style={{ minWidth: '600px' }}>
+      <h3 style={{ margin: '0 0 16px 0', fontSize: '16px', color: '#333' }}>
+        Resizable Columns (Custom Constraints)
+      </h3>
+      <p style={{ margin: '0 0 16px 0', fontSize: '14px', color: '#666' }}>
+        Columns can be resized between 80px and 300px. Custom constraints:{' '}
+        <code>minColumnWidth=80</code>, <code>maxColumnWidth=300</code>
+      </p>
       <Table {...args} primaryColumn={primaryColumns} data={data} fixedColumns={fixedColumns} />
     </div>
   ),
