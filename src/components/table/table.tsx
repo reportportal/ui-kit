@@ -54,6 +54,7 @@ export const Table: FC<TableComponentProps> = ({
   pinnedColumnKeys = [],
   isRowsExpandable = false,
   expandedRowIds = [],
+  isSelectAllCheckboxAlwaysVisible = false,
   onChangeSorting = () => {},
   onToggleRowSelection = () => {},
   onToggleAllRowsSelection = () => {},
@@ -123,6 +124,9 @@ export const Table: FC<TableComponentProps> = ({
   const isAllRowsSelected: boolean = data.every((row) => selectedRowIds.includes(row.id));
   const isAnyRowSelected: boolean = data.some((row) => selectedRowIds.includes(row.id));
   const hasSelectedRows = selectedRowIds?.length > 0;
+  const hasRows = data.length > 0;
+  const isSelectAllCheckboxVisible =
+    (isSelectAllCheckboxAlwaysVisible && hasRows) || hasSelectedRows;
 
   const isAllRowsExpanded: boolean = data.every((row) => expandedRowIds.includes(row.id));
 
@@ -171,7 +175,7 @@ export const Table: FC<TableComponentProps> = ({
             className={cx('table-header-cell', 'checkbox-cell')}
             style={{ left: isRowsExpandable ? `${EXPANDABLE_CHECKBOX_COLUMN_WIDTH}px` : '0' }}
           >
-            {hasSelectedRows && (
+            {isSelectAllCheckboxVisible && (
               <Checkbox
                 value={isAllRowsSelected}
                 partiallyChecked={isAnyRowSelected}

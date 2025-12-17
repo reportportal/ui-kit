@@ -375,6 +375,77 @@ describe('Table Component', () => {
       const afterHoverCheckboxes = screen.queryAllByTestId('checkbox');
       expect(afterHoverCheckboxes.length).toBeGreaterThanOrEqual(initialCount);
     });
+
+    describe('Select All Checkbox Visibility', () => {
+      it('renders header checkbox when isSelectAllCheckboxAlwaysVisible is true and data exists (even without selection)', () => {
+        const { container } = render(
+          <Table
+            {...defaultProps}
+            selectable={true}
+            selectedRowIds={[]}
+            isSelectAllCheckboxAlwaysVisible={true}
+          />,
+        );
+
+        const checkbox = container.querySelector(
+          '[class*="table-header"] [data-testid="checkbox"]',
+        );
+
+        expect(checkbox).toBeInTheDocument();
+      });
+
+      it('does NOT render header checkbox when isSelectAllCheckboxAlwaysVisible is true but data is EMPTY', () => {
+        const { container } = render(
+          <Table
+            {...defaultProps}
+            data={[]} // Пустая таблица
+            selectable={true}
+            selectedRowIds={[]}
+            isSelectAllCheckboxAlwaysVisible={true}
+          />,
+        );
+
+        const checkbox = container.querySelector(
+          '[class*="table-header"] [data-testid="checkbox"]',
+        );
+
+        expect(checkbox).not.toBeInTheDocument();
+      });
+
+      it('renders header checkbox when rows are selected (standard behavior)', () => {
+        const { container } = render(
+          <Table
+            {...defaultProps}
+            selectable={true}
+            selectedRowIds={[1]}
+            isSelectAllCheckboxAlwaysVisible={false}
+          />,
+        );
+
+        const checkbox = container.querySelector(
+          '[class*="table-header"] [data-testid="checkbox"]',
+        );
+
+        expect(checkbox).toBeInTheDocument();
+      });
+
+      it('does NOT render header checkbox when no rows selected and flag is false', () => {
+        const { container } = render(
+          <Table
+            {...defaultProps}
+            selectable={true}
+            selectedRowIds={[]}
+            isSelectAllCheckboxAlwaysVisible={false}
+          />,
+        );
+
+        const checkbox = container.querySelector(
+          '[class*="table-header"] [data-testid="checkbox"]',
+        );
+
+        expect(checkbox).not.toBeInTheDocument();
+      });
+    });
   });
 
   describe('Row and Cell Data Handling', () => {
