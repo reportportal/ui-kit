@@ -399,7 +399,7 @@ describe('Table Component', () => {
         const { container } = render(
           <Table
             {...defaultProps}
-            data={[]} // Пустая таблица
+            data={[]}
             selectable={true}
             selectedRowIds={[]}
             isSelectAllCheckboxAlwaysVisible={true}
