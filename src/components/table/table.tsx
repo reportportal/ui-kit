@@ -132,6 +132,7 @@ export const Table: FC<TableComponentProps> = ({
       onResizeStop={handleResizeStop(column.key)}
       minConstraints={[minColumnWidth, 0]}
       maxConstraints={[maxColumnWidth, 0]}
+      className={cx('resizable-column')}
     >
       {headerCell}
     </Resizable>
