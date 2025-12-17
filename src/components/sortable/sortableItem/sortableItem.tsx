@@ -16,6 +16,7 @@ export const SortableItem = ({
   dropTargetClassName,
   onDrop,
   hideDefaultPreview = false,
+  hidesDraggedItem = false,
   isLast = false,
   children,
 }: SortableItemProps) => {
@@ -26,6 +27,7 @@ export const SortableItem = ({
     isDisabled,
     onDrop,
     hideDefaultPreview,
+    hidesDraggedItem,
     isLast,
   });
 

@@ -20,6 +20,7 @@ export interface UseSortableOptions {
   isLast?: boolean;
   onDrop?: (fromIndex: number, toIndex: number) => void;
   hideDefaultPreview?: boolean;
+  hidesDraggedItem?: boolean;
 }
 
 export interface UseSortableReturn {
@@ -49,6 +50,9 @@ export interface SortableItemProps {
   dropTargetClassName?: string;
   onDrop?: (fromIndex: number, toIndex: number) => void;
   hideDefaultPreview?: boolean;
+  /** When true, uses cursor-based drop detection (for cases where dragged item disappears).
+   *  When false (default), uses index-based detection (original behavior). */
+  hidesDraggedItem?: boolean;
   children: ReactNode | ((props: SortableItemRenderProps) => ReactNode);
 }
 
