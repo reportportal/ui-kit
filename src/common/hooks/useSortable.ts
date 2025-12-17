@@ -119,7 +119,7 @@ export const useSortable = ({
         onDrop(fromIndex, toIndex);
       },
     }),
-    [id, index, type, onDrop],
+    [id, index, type, onDrop, isLast],
   );
 
   // Wrap dropRef to also store element reference
