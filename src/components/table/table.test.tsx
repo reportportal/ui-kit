@@ -376,6 +376,65 @@ describe('Table Component', () => {
       const afterHoverCheckboxes = screen.queryAllByTestId('checkbox');
       expect(afterHoverCheckboxes.length).toBeGreaterThanOrEqual(initialCount);
     });
+
+    describe('Select All Checkbox Visibility', () => {
+      it('renders header checkbox when isSelectAllCheckboxAlwaysVisible is true and data exists', () => {
+        render(
+          <Table
+            {...defaultProps}
+            selectable={true}
+            selectedRowIds={[]}
+            isSelectAllCheckboxAlwaysVisible={true}
+          />,
+        );
+
+        const checkboxes = screen.getAllByTestId('checkbox');
+
+        expect(checkboxes).toHaveLength(1);
+      });
+
+      it('does not render header checkbox when isSelectAllCheckboxAlwaysVisible is true but data is empty', () => {
+        render(
+          <Table
+            {...defaultProps}
+            data={[]}
+            selectable={true}
+            selectedRowIds={[]}
+            isSelectAllCheckboxAlwaysVisible={true}
+          />,
+        );
+
+        expect(screen.queryByTestId('checkbox')).not.toBeInTheDocument();
+      });
+
+      it('renders header checkbox when rows are selected (standard behavior)', () => {
+        render(
+          <Table
+            {...defaultProps}
+            selectable={true}
+            selectedRowIds={[1]}
+            isSelectAllCheckboxAlwaysVisible={false}
+          />,
+        );
+
+        const checkboxes = screen.getAllByTestId('checkbox');
+
+        expect(checkboxes).toHaveLength(4);
+      });
+
+      it('does not render header checkbox when no rows selected and flag is false', () => {
+        render(
+          <Table
+            {...defaultProps}
+            selectable={true}
+            selectedRowIds={[]}
+            isSelectAllCheckboxAlwaysVisible={false}
+          />,
+        );
+
+        expect(screen.queryByTestId('checkbox')).not.toBeInTheDocument();
+      });
+    });
   });
 
   describe('Row and Cell Data Handling', () => {
