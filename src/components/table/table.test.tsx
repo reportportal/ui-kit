@@ -378,7 +378,7 @@ describe('Table Component', () => {
     });
 
     describe('Select All Checkbox Visibility', () => {
-      it('renders header checkbox when isSelectAllCheckboxAlwaysVisible is true and data exists (without selection)', () => {
+      it('renders header checkbox when isSelectAllCheckboxAlwaysVisible is true and data exists', () => {
         render(
           <Table
             {...defaultProps}
