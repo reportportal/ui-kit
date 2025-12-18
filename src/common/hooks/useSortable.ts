@@ -4,7 +4,11 @@ import { getEmptyImage } from 'react-dnd-html5-backend';
 import { DEFAULT_SORTABLE_TYPE } from '@common/constants/sortable';
 import type { UseSortableOptions, UseSortableReturn, DragItem, DropPosition } from '@common/types';
 import { DROP_POSITIONS, DROP_DETECTION_MODE } from '@common/types';
-import { calculateCursorBasedDropIndex, isInTopZone } from '@components/sortable/helpers';
+import {
+  calculateCursorBasedDropIndex,
+  isInTopZone,
+  getDropZone,
+} from '@components/sortable/helpers';
 
 export const useSortable = ({
   id,
@@ -79,14 +83,16 @@ export const useSortable = ({
         }
 
         const hoverClientY = clientOffset.y - hoverBoundingRect.top;
-        const isTop = isInTopZone(hoverClientY, elementHeight);
 
-        if (isTop) {
-          setCursorDropPosition(DROP_POSITIONS.TOP);
-        } else if (isLast) {
-          setCursorDropPosition(DROP_POSITIONS.BOTTOM);
-        } else {
+        // Get drop zone with dead zones at edges (5% top/bottom)
+        const dropZone = getDropZone(hoverClientY, elementHeight);
+
+        if (dropZone === null) {
           setCursorDropPosition(null);
+        } else if (dropZone === 'top') {
+          setCursorDropPosition(DROP_POSITIONS.TOP);
+        } else {
+          setCursorDropPosition(DROP_POSITIONS.BOTTOM);
         }
       },
       drop: (dragObject: DragItem, monitor: DropTargetMonitor) => {

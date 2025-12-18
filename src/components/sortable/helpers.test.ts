@@ -3,23 +3,23 @@ import { calculateCursorBasedDropIndex, isInTopZone, getPreviewStyles } from './
 
 describe('sortable helpers', () => {
   describe('isInTopZone', () => {
-    it('should return true when cursor is in upper 70% of element', () => {
+    it('should return true when cursor is in upper 50% of element', () => {
       expect(isInTopZone(0, 100)).toBe(true); // at top
-      expect(isInTopZone(35, 100)).toBe(true); // middle of top zone
-      expect(isInTopZone(69, 100)).toBe(true); // just before threshold
+      expect(isInTopZone(25, 100)).toBe(true); // middle of top zone
+      expect(isInTopZone(49, 100)).toBe(true); // just before threshold
     });
 
-    it('should return false when cursor is in lower 30% of element', () => {
-      expect(isInTopZone(70, 100)).toBe(false); // exactly at threshold
-      expect(isInTopZone(85, 100)).toBe(false); // middle of bottom zone
+    it('should return false when cursor is in lower 50% of element', () => {
+      expect(isInTopZone(50, 100)).toBe(false); // exactly at threshold
+      expect(isInTopZone(75, 100)).toBe(false); // middle of bottom zone
       expect(isInTopZone(100, 100)).toBe(false); // at bottom
     });
 
     it('should handle different element heights', () => {
-      expect(isInTopZone(35, 50)).toBe(false); // 35 >= 50*0.7=35
-      expect(isInTopZone(34, 50)).toBe(true); // 34 < 35
-      expect(isInTopZone(140, 200)).toBe(false); // 140 >= 200*0.7=140
-      expect(isInTopZone(139, 200)).toBe(true); // 139 < 140
+      expect(isInTopZone(25, 50)).toBe(false); // 25 >= 50*0.5=25
+      expect(isInTopZone(24, 50)).toBe(true); // 24 < 25
+      expect(isInTopZone(100, 200)).toBe(false); // 100 >= 200*0.5=100
+      expect(isInTopZone(99, 200)).toBe(true); // 99 < 100
     });
   });
 
