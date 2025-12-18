@@ -3,6 +3,8 @@ import { useDrag, useDrop, DragSourceMonitor, DropTargetMonitor } from 'react-dn
 import { getEmptyImage } from 'react-dnd-html5-backend';
 import { DEFAULT_SORTABLE_TYPE } from '@common/constants/sortable';
 import type { UseSortableOptions, UseSortableReturn, DragItem, DropPosition } from '@common/types';
+import { DROP_POSITIONS, DROP_DETECTION_MODE } from '@common/types';
+import { calculateCursorBasedDropIndex, isInTopZone } from '@components/sortable/helpers';
 
 export const useSortable = ({
   id,
@@ -12,10 +14,9 @@ export const useSortable = ({
   isLast = false,
   onDrop,
   hideDefaultPreview = false,
-  // When true, uses cursor-based drop detection (for cases where dragged item disappears)
-  // When false (default), uses index-based detection (original behavior)
-  hidesDraggedItem = false,
+  dropDetectionMode = DROP_DETECTION_MODE.INDEX_BASED,
 }: UseSortableOptions): UseSortableReturn => {
+  const isHoverMode = dropDetectionMode === DROP_DETECTION_MODE.HOVER;
   const elementRef = useRef<HTMLElement | null>(null);
   const [cursorDropPosition, setCursorDropPosition] = useState<DropPosition>(null);
 
@@ -52,8 +53,8 @@ export const useSortable = ({
         };
       },
       hover: (dragObject: DragItem, monitor: DropTargetMonitor) => {
-        // Only track cursor position if using cursor-based detection
-        if (!hidesDraggedItem) {
+        // Only track cursor position if using hover detection mode
+        if (!isHoverMode) {
           return;
         }
 
@@ -70,8 +71,6 @@ export const useSortable = ({
 
         const hoverBoundingRect = element.getBoundingClientRect();
         const elementHeight = hoverBoundingRect.bottom - hoverBoundingRect.top;
-        // Use 70% threshold - TOP line shows when in upper 70%, BOTTOM when in lower 30%
-        const hoverThresholdY = elementHeight * 0.7;
         const clientOffset = monitor.getClientOffset();
 
         if (!clientOffset) {
@@ -80,16 +79,13 @@ export const useSortable = ({
         }
 
         const hoverClientY = clientOffset.y - hoverBoundingRect.top;
-        const isTopZone = hoverClientY < hoverThresholdY;
+        const isTop = isInTopZone(hoverClientY, elementHeight);
 
-        // Show TOP line when in upper 70% of any item
-        // Show BOTTOM line only for LAST item when in lower 30%
-        if (isTopZone) {
-          setCursorDropPosition('top');
+        if (isTop) {
+          setCursorDropPosition(DROP_POSITIONS.TOP);
         } else if (isLast) {
-          setCursorDropPosition('bottom');
+          setCursorDropPosition(DROP_POSITIONS.BOTTOM);
         } else {
-          // Not last item and bottom zone -> next item's top line will show
           setCursorDropPosition(null);
         }
       },
@@ -98,8 +94,8 @@ export const useSortable = ({
           return;
         }
 
-        // Use cursor-based drop calculation if hidesDraggedItem is true
-        if (hidesDraggedItem) {
+        // Use cursor-based drop calculation if hover mode
+        if (isHoverMode) {
           const element = elementRef.current;
           if (!element) {
             return;
@@ -107,7 +103,6 @@ export const useSortable = ({
 
           const hoverBoundingRect = element.getBoundingClientRect();
           const elementHeight = hoverBoundingRect.bottom - hoverBoundingRect.top;
-          const hoverThresholdY = elementHeight * 0.7;
           const clientOffset = monitor.getClientOffset();
 
           if (!clientOffset) {
@@ -115,16 +110,9 @@ export const useSortable = ({
           }
 
           const hoverClientY = clientOffset.y - hoverBoundingRect.top;
-          const isTopZone = hoverClientY < hoverThresholdY;
-
-          let toIndex = index;
+          const isTop = isInTopZone(hoverClientY, elementHeight);
           const fromIndex = dragObject.index;
-
-          if (isTopZone) {
-            toIndex = fromIndex < index ? index - 1 : index;
-          } else {
-            toIndex = fromIndex > index ? index + 1 : index;
-          }
+          const toIndex = calculateCursorBasedDropIndex(fromIndex, index, isTop);
 
           onDrop(fromIndex, toIndex);
         } else {
@@ -133,10 +121,10 @@ export const useSortable = ({
         }
       },
     }),
-    [id, index, type, onDrop, isLast, hidesDraggedItem],
+    [id, index, type, onDrop, isLast, isHoverMode],
   );
 
-  // Wrap dropRef to also store element reference (needed for cursor-based detection)
+  // Wrap dropRef to also store element reference (needed for hover detection mode)
   const dropRef = useCallback(
     (node: Parameters<typeof connectDropRef>[0]) => {
       elementRef.current = node as HTMLElement | null;
@@ -157,11 +145,11 @@ export const useSortable = ({
     if (draggedItemIndex === null) {
       return null;
     }
-    return draggedItemIndex > index ? 'top' : 'bottom';
+    return draggedItemIndex > index ? DROP_POSITIONS.TOP : DROP_POSITIONS.BOTTOM;
   };
 
-  // Use cursor-based position if hidesDraggedItem, otherwise use index-based
-  const dropPosition = hidesDraggedItem ? cursorDropPosition : getIndexBasedDropPosition();
+  // Use cursor-based position if hover mode, otherwise use index-based
+  const dropPosition = isHoverMode ? cursorDropPosition : getIndexBasedDropPosition();
 
   return {
     isDragging,
