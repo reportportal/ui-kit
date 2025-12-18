@@ -2,6 +2,7 @@ import classNames from 'classnames/bind';
 import { useSortable } from '@common/hooks';
 import { DEFAULT_SORTABLE_TYPE } from '@common/constants/sortable';
 import type { SortableItemProps } from '@common/types';
+import { DROP_POSITIONS, DROP_DETECTION_MODE } from '@common/types';
 import styles from './sortableItem.module.scss';
 
 const cx = classNames.bind(styles);
@@ -16,6 +17,8 @@ export const SortableItem = ({
   dropTargetClassName,
   onDrop,
   hideDefaultPreview = false,
+  dropDetectionMode = DROP_DETECTION_MODE.INDEX_BASED,
+  isLast = false,
   children,
 }: SortableItemProps) => {
   const { isDragging, dropPosition, dragRef, dropRef, previewRef } = useSortable({
@@ -25,14 +28,16 @@ export const SortableItem = ({
     isDisabled,
     onDrop,
     hideDefaultPreview,
+    dropDetectionMode,
+    isLast,
   });
 
   const isRenderFunction = typeof children === 'function';
 
   const itemClassName = cx('sortable-item', className, {
     'sortable-item--dragging': isDragging,
-    'sortable-item--drop-target-top': dropPosition === 'top',
-    'sortable-item--drop-target-bottom': dropPosition === 'bottom',
+    'sortable-item--drop-target-top': dropPosition === DROP_POSITIONS.TOP,
+    'sortable-item--drop-target-bottom': dropPosition === DROP_POSITIONS.BOTTOM,
     [draggingClassName || '']: isDragging && draggingClassName,
     [dropTargetClassName || '']: dropPosition && dropTargetClassName,
   });

@@ -21,7 +21,10 @@ function generateEntries() {
 
       return entries;
     },
-    { index: resolve(__dirname, 'src/components') },
+    {
+      index: resolve(__dirname, 'src/components'),
+      common: resolve(__dirname, 'src/common/types'),
+    },
   );
 }
 

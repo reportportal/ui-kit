@@ -78,4 +78,14 @@ describe('SortableItem', () => {
 
     expect(onDrop).not.toHaveBeenCalled();
   });
+
+  it('should accept isLast prop for last item indicator', () => {
+    renderWithDnd(
+      <SortableItem id={1} index={2} isLast>
+        <div data-testid="last-item">Last Item</div>
+      </SortableItem>,
+    );
+
+    expect(screen.getByTestId('last-item')).toBeInTheDocument();
+  });
 });

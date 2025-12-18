@@ -84,7 +84,13 @@ export const BasicSortableItem: Story = {
           Drag items to reorder
         </h3>
         {items.map((item, index) => (
-          <SortableItem key={item.id} id={item.id} index={index} onDrop={handleDrop}>
+          <SortableItem
+            key={item.id}
+            id={item.id}
+            index={index}
+            onDrop={handleDrop}
+            isLast={index === items.length - 1}
+          >
             <div style={itemStyle}>{item.name}</div>
           </SortableItem>
         ))}
@@ -115,7 +121,13 @@ export const WithDragHandle: Story = {
           Use the handle (⋮⋮) to drag items
         </h3>
         {items.map((item, index) => (
-          <SortableItem key={item.id} id={item.id} index={index} onDrop={handleDrop}>
+          <SortableItem
+            key={item.id}
+            id={item.id}
+            index={index}
+            onDrop={handleDrop}
+            isLast={index === items.length - 1}
+          >
             {({ dragRef }) => (
               <div style={itemStyle}>
                 <span ref={dragRef as Ref<HTMLSpanElement>} style={dragHandleStyle}>
@@ -219,6 +231,7 @@ export const WithCustomDragPreview: Story = {
             type={CUSTOM_TYPE}
             onDrop={handleDrop}
             hideDefaultPreview
+            isLast={index === items.length - 1}
           >
             {({ dragRef, isDragging }) => (
               <div style={{ ...itemStyle, opacity: isDragging ? 0.5 : 1 }}>
@@ -256,7 +269,13 @@ export const DisabledState: Story = {
           Disabled sortable items
         </h3>
         {items.map((item, index) => (
-          <SortableItem key={item.id} id={item.id} index={index} isDisabled>
+          <SortableItem
+            key={item.id}
+            id={item.id}
+            index={index}
+            isDisabled
+            isLast={index === items.length - 1}
+          >
             <div style={disabledStyle}>{item.name}</div>
           </SortableItem>
         ))}
