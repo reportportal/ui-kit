@@ -57,6 +57,7 @@ export interface TableComponentProps {
     pinnedColumnKeys?: string[];
     isRowsExpandable?: boolean;
     expandedRowIds?: (string | number)[];
+    isSelectAllCheckboxAlwaysVisible?: boolean;
     setExpandedRowIds?: Dispatch<SetStateAction<Set<string | number>>>;
     isAllExpandedByDefault?: boolean;
     expandAllTooltip?: ReactNode;
