@@ -419,7 +419,7 @@ describe('Table Component', () => {
 
         const checkboxes = screen.getAllByTestId('checkbox');
 
-        expect(checkboxes).toHaveLength(2);
+        expect(checkboxes).toHaveLength(4);
       });
 
       it('does not render header checkbox when no rows selected and flag is false', () => {
