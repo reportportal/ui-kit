@@ -19,49 +19,50 @@ export const getPreviewStyles = (clientOffset: XYCoord | null): CSSProperties =>
   };
 };
 
-export const calculateCursorBasedDropIndex = (
-  fromIndex: number,
-  targetIndex: number,
-  isTopZone: boolean,
-): number => {
+export const calculateCursorBasedDropIndex = ({
+  fromIndex,
+  targetIndex,
+  isTopZone,
+}: {
+  fromIndex: number;
+  targetIndex: number;
+  isTopZone: boolean;
+}) => {
   if (isTopZone) {
-    // Dropping in top zone: insert BEFORE this item
-    // If dragging forward (fromIndex < targetIndex)
-    return fromIndex < targetIndex ? targetIndex - 1 : targetIndex;
+    const isDraggingForward = fromIndex < targetIndex;
+
+    return isDraggingForward ? targetIndex - 1 : targetIndex;
   }
-  // Dropping in bottom zone: insert AFTER this item
-  // If dragging backward (fromIndex > targetIndex)
-  return fromIndex > targetIndex ? targetIndex + 1 : targetIndex;
+
+  const isDraggingBackward = fromIndex > targetIndex;
+
+  return isDraggingBackward ? targetIndex + 1 : targetIndex;
 };
 
-// Returns: DROP_POSITIONS.TOP | DROP_POSITIONS.BOTTOM | null (null = dead zone, no line)
 export const getDropZone = (cursorY: number, elementHeight: number): DropPosition => {
   const relativeY = cursorY / elementHeight;
 
-  // Dead zones at edges (5% top and bottom) to prevent jitter
+  // Dead zones at edges
   if (relativeY < 0.05 || relativeY > 0.95) {
     return null;
   }
 
-  // Top zone: 5% to 50%
   if (relativeY < 0.5) {
     return DROP_POSITIONS.TOP;
   }
 
-  // Bottom zone: 50% to 95%
   return DROP_POSITIONS.BOTTOM;
 };
 
-// Legacy function for compatibility
-export const isInTopZone = (cursorY: number, elementHeight: number): boolean => {
+export const isInTopZone = (cursorY: number, elementHeight: number) => {
   const threshold = elementHeight * 0.5;
+
   return cursorY < threshold;
 };
 
-// Check if cursor is in dead zone (top 5% or bottom 5% of element)
-// Returns true if in dead zone (should not show any line)
-export const isInDeadZone = (cursorY: number, elementHeight: number): boolean => {
+export const isInDeadZone = (cursorY: number, elementHeight: number) => {
   const topDeadZone = elementHeight * 0.05;
   const bottomDeadZone = elementHeight * 0.95;
+
   return cursorY < topDeadZone || cursorY > bottomDeadZone;
 };

@@ -57,7 +57,6 @@ export const useSortable = ({
         };
       },
       hover: (dragObject: DragItem, monitor: DropTargetMonitor) => {
-        // Only track cursor position if using hover detection mode
         if (!isHoverMode) {
           return;
         }
@@ -84,7 +83,6 @@ export const useSortable = ({
 
         const hoverClientY = clientOffset.y - hoverBoundingRect.top;
 
-        // Get drop zone with dead zones at edges (5% top/bottom)
         const dropZone = getDropZone(hoverClientY, elementHeight);
 
         if (dropZone === null) {
@@ -100,7 +98,6 @@ export const useSortable = ({
           return;
         }
 
-        // Use cursor-based drop calculation if hover mode
         if (isHoverMode) {
           const element = elementRef.current;
           if (!element) {
@@ -117,12 +114,14 @@ export const useSortable = ({
 
           const hoverClientY = clientOffset.y - hoverBoundingRect.top;
           const isTop = isInTopZone(hoverClientY, elementHeight);
-          const fromIndex = dragObject.index;
-          const toIndex = calculateCursorBasedDropIndex(fromIndex, index, isTop);
+          const toIndex = calculateCursorBasedDropIndex({
+            fromIndex: dragObject.index,
+            targetIndex: index,
+            isTopZone: isTop,
+          });
 
-          onDrop(fromIndex, toIndex);
+          onDrop(dragObject.index, toIndex);
         } else {
-          // Original behavior - simple index-based drop
           onDrop(dragObject.index, index);
         }
       },
@@ -146,15 +145,14 @@ export const useSortable = ({
     }
   }, [isOver]);
 
-  // Calculate drop position based on mode
   const getIndexBasedDropPosition = (): DropPosition => {
     if (draggedItemIndex === null) {
       return null;
     }
+
     return draggedItemIndex > index ? DROP_POSITIONS.TOP : DROP_POSITIONS.BOTTOM;
   };
 
-  // Use cursor-based position if hover mode, otherwise use index-based
   const dropPosition = isHoverMode ? cursorDropPosition : getIndexBasedDropPosition();
 
   return {

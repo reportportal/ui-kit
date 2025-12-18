@@ -3,10 +3,10 @@
   width: 100%;
   transition: opacity 0.2s ease;
 
-  // CSS variable for gap size, default 8px - consumers can override
+  // Gap size - consumers can override
   --sortable-gap: 8px;
 
-  // Show line ABOVE this item (centered in the gap between this and previous item)
+  // Show line ABOVE
   &--drop-target-top::before {
     content: '';
     position: absolute;
@@ -18,10 +18,10 @@
     border-radius: 2px;
     z-index: 1;
     transform: translateY(-50%);
-    pointer-events: none; // Don't interfere with hover detection
+    pointer-events: none;
   }
 
-  // Show line BELOW this item (centered in the gap between this and next item)
+  // Show line BELOW
   &--drop-target-bottom::after {
     content: '';
     position: absolute;
@@ -33,7 +33,7 @@
     border-radius: 2px;
     z-index: 1;
     transform: translateY(50%);
-    pointer-events: none; // Don't interfere with hover detection
+    pointer-events: none;
   }
 }
 

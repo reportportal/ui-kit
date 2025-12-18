@@ -26,73 +26,101 @@ describe('sortable helpers', () => {
   describe('calculateCursorBasedDropIndex', () => {
     describe('dragging forward in list (fromIndex < targetIndex)', () => {
       it('should return targetIndex-1 when dropping in top zone', () => {
-        // Dragging item 0 to position before item 2 -> lands at index 1
-        expect(calculateCursorBasedDropIndex(0, 2, true)).toBe(1);
-        // Dragging item 1 to position before item 4 -> lands at index 3
-        expect(calculateCursorBasedDropIndex(1, 4, true)).toBe(3);
+        expect(
+          calculateCursorBasedDropIndex({ fromIndex: 0, targetIndex: 2, isTopZone: true }),
+        ).toBe(1);
+        expect(
+          calculateCursorBasedDropIndex({ fromIndex: 1, targetIndex: 4, isTopZone: true }),
+        ).toBe(3);
       });
 
       it('should return targetIndex when dropping in bottom zone', () => {
-        // Dragging item 0 to position after item 2 -> lands at index 2
-        expect(calculateCursorBasedDropIndex(0, 2, false)).toBe(2);
-        // Dragging item 1 to position after item 4 -> lands at index 4
-        expect(calculateCursorBasedDropIndex(1, 4, false)).toBe(4);
+        expect(
+          calculateCursorBasedDropIndex({ fromIndex: 0, targetIndex: 2, isTopZone: false }),
+        ).toBe(2);
+        expect(
+          calculateCursorBasedDropIndex({ fromIndex: 1, targetIndex: 4, isTopZone: false }),
+        ).toBe(4);
       });
     });
 
     describe('dragging backward in list (fromIndex > targetIndex)', () => {
       it('should return targetIndex when dropping in top zone', () => {
-        // Dragging item 3 to position before item 1 -> lands at index 1
-        expect(calculateCursorBasedDropIndex(3, 1, true)).toBe(1);
-        // Dragging item 4 to position before item 0 -> lands at index 0
-        expect(calculateCursorBasedDropIndex(4, 0, true)).toBe(0);
+        expect(
+          calculateCursorBasedDropIndex({ fromIndex: 3, targetIndex: 1, isTopZone: true }),
+        ).toBe(1);
+        expect(
+          calculateCursorBasedDropIndex({ fromIndex: 4, targetIndex: 0, isTopZone: true }),
+        ).toBe(0);
       });
 
       it('should return targetIndex+1 when dropping in bottom zone', () => {
-        // Dragging item 3 to position after item 1 -> lands at index 2
-        expect(calculateCursorBasedDropIndex(3, 1, false)).toBe(2);
-        // Dragging item 4 to position after item 2 -> lands at index 3
-        expect(calculateCursorBasedDropIndex(4, 2, false)).toBe(3);
+        expect(
+          calculateCursorBasedDropIndex({ fromIndex: 3, targetIndex: 1, isTopZone: false }),
+        ).toBe(2);
+        expect(
+          calculateCursorBasedDropIndex({ fromIndex: 4, targetIndex: 2, isTopZone: false }),
+        ).toBe(3);
       });
     });
 
     describe('dragging to first position', () => {
       it('should return 0 when dropping before first item', () => {
-        expect(calculateCursorBasedDropIndex(2, 0, true)).toBe(0);
-        expect(calculateCursorBasedDropIndex(5, 0, true)).toBe(0);
+        expect(
+          calculateCursorBasedDropIndex({ fromIndex: 2, targetIndex: 0, isTopZone: true }),
+        ).toBe(0);
+        expect(
+          calculateCursorBasedDropIndex({ fromIndex: 5, targetIndex: 0, isTopZone: true }),
+        ).toBe(0);
       });
 
       it('should return 1 when dropping after first item', () => {
-        expect(calculateCursorBasedDropIndex(2, 0, false)).toBe(1);
-        expect(calculateCursorBasedDropIndex(5, 0, false)).toBe(1);
+        expect(
+          calculateCursorBasedDropIndex({ fromIndex: 2, targetIndex: 0, isTopZone: false }),
+        ).toBe(1);
+        expect(
+          calculateCursorBasedDropIndex({ fromIndex: 5, targetIndex: 0, isTopZone: false }),
+        ).toBe(1);
       });
     });
 
     describe('dragging to last position', () => {
       it('should handle dropping at last item from earlier position', () => {
-        // From index 0 to last item (index 4), top zone
-        expect(calculateCursorBasedDropIndex(0, 4, true)).toBe(3);
-        // From index 0 to last item (index 4), bottom zone
-        expect(calculateCursorBasedDropIndex(0, 4, false)).toBe(4);
+        expect(
+          calculateCursorBasedDropIndex({ fromIndex: 0, targetIndex: 4, isTopZone: true }),
+        ).toBe(3);
+        expect(
+          calculateCursorBasedDropIndex({ fromIndex: 0, targetIndex: 4, isTopZone: false }),
+        ).toBe(4);
       });
     });
 
     describe('edge cases', () => {
       it('should handle dragging to adjacent position forward', () => {
-        // Dragging item 1 to item 2 (adjacent)
-        expect(calculateCursorBasedDropIndex(1, 2, true)).toBe(1); // stays in place
-        expect(calculateCursorBasedDropIndex(1, 2, false)).toBe(2); // moves to 2
+        expect(
+          calculateCursorBasedDropIndex({ fromIndex: 1, targetIndex: 2, isTopZone: true }),
+        ).toBe(1);
+        expect(
+          calculateCursorBasedDropIndex({ fromIndex: 1, targetIndex: 2, isTopZone: false }),
+        ).toBe(2);
       });
 
       it('should handle dragging to adjacent position backward', () => {
-        // Dragging item 2 to item 1 (adjacent)
-        expect(calculateCursorBasedDropIndex(2, 1, true)).toBe(1); // moves to 1
-        expect(calculateCursorBasedDropIndex(2, 1, false)).toBe(2); // stays in place
+        expect(
+          calculateCursorBasedDropIndex({ fromIndex: 2, targetIndex: 1, isTopZone: true }),
+        ).toBe(1);
+        expect(
+          calculateCursorBasedDropIndex({ fromIndex: 2, targetIndex: 1, isTopZone: false }),
+        ).toBe(2);
       });
 
       it('should handle same index (should not happen but be safe)', () => {
-        expect(calculateCursorBasedDropIndex(2, 2, true)).toBe(2);
-        expect(calculateCursorBasedDropIndex(2, 2, false)).toBe(2);
+        expect(
+          calculateCursorBasedDropIndex({ fromIndex: 2, targetIndex: 2, isTopZone: true }),
+        ).toBe(2);
+        expect(
+          calculateCursorBasedDropIndex({ fromIndex: 2, targetIndex: 2, isTopZone: false }),
+        ).toBe(2);
       });
     });
   });
