@@ -58,9 +58,15 @@ $PADDING_VERTICAL-LARGE: 30px;
     }
   }
 
-  &.resizable:not(.horizontally-scrollable) {
-    min-width: fit-content;
-    padding: 0 3px;
+  &.resizable {
+    .resizable-column:last-child {
+      overflow-x: hidden;
+    }
+
+    &:not(.horizontally-scrollable) {
+      min-width: fit-content;
+      padding: 0 3px;
+    }
   }
 }
 
@@ -235,7 +241,7 @@ $PADDING_VERTICAL-LARGE: 30px;
   }
 
   &:not(.action-menu-cell):not(.expand-cell) {
-   &:not(.table-header-cell) {
+    &:not(.table-header-cell) {
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;

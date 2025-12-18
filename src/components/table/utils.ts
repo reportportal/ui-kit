@@ -47,6 +47,8 @@ export const getRowSizeClassName = (rowData: RowData): string => {
   return `size-${rowSize}`;
 };
 
+const formatWidth = (width: string | number): string => (isString(width) ? width : `${width}px`);
+
 export const calculatePinnedPosition = (
   columnIndex: number,
   columns: (PrimaryColumn | FixedColumn)[],
@@ -118,6 +120,7 @@ export const getGridTemplateColumns = (
   renderRowActions: boolean,
   isHeader = false,
   columnWidths?: Record<string, number>,
+  isResizable = false,
 ): string => {
   const columns: string[] = [];
 
@@ -138,15 +141,19 @@ export const getGridTemplateColumns = (
 
     if (isPrimaryColumn(column)) {
       const primaryColumn = column as PrimaryColumn;
+
+      if (isResizable && primaryColumn.width) {
+        columns.push(formatWidth(primaryColumn.width));
+        return;
+      }
+
       const minWidth = primaryColumn.width
-        ? isString(primaryColumn.width)
-          ? primaryColumn.width
-          : `${primaryColumn.width}px`
+        ? formatWidth(primaryColumn.width)
         : `${PRIMARY_COLUMN_DEFAULT_WIDTH}px`;
       columns.push(`minmax(${minWidth}, 1fr)`);
     } else {
       const fixedColumn = column as FixedColumn;
-      const width = isString(fixedColumn.width) ? fixedColumn.width : `${fixedColumn.width}px`;
+      const width = formatWidth(fixedColumn.width);
       columns.push(width);
     }
   };

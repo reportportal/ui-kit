@@ -48,7 +48,7 @@ $Z-INDEX-POPUP: 10;
   display: flex;
   align-items: flex-start;
   text-align: start;
-  padding: 9px 12px 7px;
+  padding: 7px 12px 7px;
   width: 100%;
   min-height: 36px;
   border: 1px solid var(--rp-ui-color-field-border);
@@ -57,6 +57,10 @@ $Z-INDEX-POPUP: 10;
   box-sizing: border-box;
   transition: border-color 200ms linear;
   cursor: pointer;
+
+  &.multi-select-with-tags {
+    padding: 12px 7px;
+  }
 
   &.transparent-background {
     background-color: transparent;
@@ -142,7 +146,7 @@ $Z-INDEX-POPUP: 10;
 .tags-wrapper {
   width: 100%;
   min-width: 0;
-  margin: -3px 0;
+  margin: 0;
 
   &.with-search {
     display: flex;
@@ -201,6 +205,14 @@ $Z-INDEX-POPUP: 10;
 .options-container {
   display: flex;
   flex-direction: column;
+}
+
+.empty-list-message {
+  font-family: var(--rp-ui-base-font-family);
+  color: var(--rp-ui-color-text-secondary);
+  font-size: 13px;
+  padding: 7px 12px;
+  text-align: center;
 }
 
 .ghost {

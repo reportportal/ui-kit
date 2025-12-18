@@ -134,6 +134,7 @@ export const Table: FC<TableComponentProps> = ({
       onResizeStop={handleResizeStop(column.key)}
       minConstraints={[minColumnWidth, 0]}
       maxConstraints={[maxColumnWidth, 0]}
+      className={cx('resizable-column')}
     >
       {headerCell}
     </Resizable>
@@ -185,6 +186,7 @@ export const Table: FC<TableComponentProps> = ({
     !!renderRowActions,
     false,
     isResizable ? columnWidths : undefined,
+    isResizable,
   );
 
   const headerGridTemplateColumns = getGridTemplateColumns(
@@ -195,6 +197,7 @@ export const Table: FC<TableComponentProps> = ({
     !!renderRowActions,
     true,
     isResizable ? columnWidths : undefined,
+    isResizable,
   );
 
   const expandAllButton = (

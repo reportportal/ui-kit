@@ -101,6 +101,8 @@ export interface DropdownProps {
   menuPortalRoot?: Element;
   /** Whether to render selected values as tags using AdaptiveTagList (only for multiSelect mode) */
   isMultiSelectWithTags?: boolean;
+  /** Message to display when no options match the search term */
+  noMatchesMessage?: string;
 }
 
 // DS link - https://www.figma.com/file/gjYQPbeyf4YsH3wZiVKoaj/%F0%9F%9B%A0-RP-DS-6?type=design&node-id=3424-12207&mode=design&t=dDq6moPaTzQLviS1-0
@@ -140,6 +142,7 @@ export const Dropdown: FC<DropdownProps> = ({
   tooltipZIndex,
   menuPortalRoot,
   isMultiSelectWithTags = false,
+  noMatchesMessage = 'No matches found',
 }): ReactElement => {
   const [opened, setOpened] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -259,13 +262,12 @@ export const Dropdown: FC<DropdownProps> = ({
           })
         : null,
     ].filter(Boolean),
-    whileElementsMounted:
-      opened && menuPortalRoot
-        ? (reference, floating, update) =>
-            autoUpdate(reference, floating, update, {
-              animationFrame: true,
-            })
-        : undefined,
+    whileElementsMounted: opened
+      ? (reference, floating, update) =>
+          autoUpdate(reference, floating, update, {
+            animationFrame: true,
+          })
+      : undefined,
   });
 
   const handleSelectAll = () => {
@@ -670,7 +672,7 @@ export const Dropdown: FC<DropdownProps> = ({
 
   const renderOptions = () => (
     <div className={cx('options-container')}>
-      {multiSelect && isOptionAllVisible && (
+      {multiSelect && isOptionAllVisible && !isEmpty(flattenedOptions) && (
         <>
           <DropdownOption
             option={optionAll}
@@ -689,36 +691,40 @@ export const Dropdown: FC<DropdownProps> = ({
           <div className={cx('divider')} />{' '}
         </>
       )}
-      {flattenedOptions.map(({ option, depth }, index) => {
-        const optionLeafValues = leafValuesByOption.get(option.value) ?? [option.value];
-        const isMultiChecked =
-          multiSelect && optionLeafValues.every((leafValue) => selectedValuesSet.has(leafValue));
-        const isPartiallyChecked =
-          multiSelect &&
-          option.children?.length &&
-          optionLeafValues.some((leafValue) => selectedValuesSet.has(leafValue)) &&
-          !isMultiChecked;
+      {!isEmpty(flattenedOptions) ? (
+        flattenedOptions.map(({ option, depth }, index) => {
+          const optionLeafValues = leafValuesByOption.get(option.value) ?? [option.value];
+          const isMultiChecked =
+            multiSelect && optionLeafValues.every((leafValue) => selectedValuesSet.has(leafValue));
+          const isPartiallyChecked =
+            multiSelect &&
+            option.children?.length &&
+            optionLeafValues.some((leafValue) => selectedValuesSet.has(leafValue)) &&
+            !isMultiChecked;
 
-        return (
-          <DropdownOption
-            key={option.value}
-            {...getItemProps({
-              item: option,
-              index,
-            })}
-            multiSelect={multiSelect}
-            selected={multiSelect ? isMultiChecked : option.value === value}
-            option={{ title: option.label, ...option }}
-            highlightHovered={highlightedIndex === index && eventName !== EventName.ON_CLICK}
-            render={renderOption}
-            onChange={option.disabled ? null : () => handleChange(option)}
-            onMouseEnter={() => setHighlightedIndex(index)}
-            depth={depth}
-            hasChildren={!!option.children?.length}
-            isPartiallyChecked={isPartiallyChecked}
-          />
-        );
-      })}
+          return (
+            <DropdownOption
+              key={option.value}
+              {...getItemProps({
+                item: option,
+                index,
+              })}
+              multiSelect={multiSelect}
+              selected={multiSelect ? isMultiChecked : option.value === value}
+              option={{ title: option.label, ...option }}
+              highlightHovered={highlightedIndex === index && eventName !== EventName.ON_CLICK}
+              render={renderOption}
+              onChange={option.disabled ? null : () => handleChange(option)}
+              onMouseEnter={() => setHighlightedIndex(index)}
+              depth={depth}
+              hasChildren={!!option.children?.length}
+              isPartiallyChecked={isPartiallyChecked}
+            />
+          );
+        })
+      ) : (
+        <div className={cx('empty-list-message')}>{noMatchesMessage}</div>
+      )}
       {footer && (
         <>
           <div className={cx('divider')} />
@@ -867,6 +873,7 @@ export const Dropdown: FC<DropdownProps> = ({
       error,
       touched,
       'mobile-disabled': mobileDisabled,
+      'multi-select-with-tags': isMultiSelectWithTags,
     }),
     onClick: onDropdownClick,
     onKeyDown: handleToggleButtonKeyDown as unknown as KeyboardEventHandler<HTMLButtonElement>,
