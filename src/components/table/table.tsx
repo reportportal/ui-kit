@@ -1,5 +1,6 @@
 import { useMemo, FC, useEffect, useRef, useState } from 'react';
 import { Resizable } from 'react-resizable';
+import { isEmpty } from 'es-toolkit/compat';
 import styles from './table.module.scss';
 import classNames from 'classnames/bind';
 import { ArrowDownIcon, ArrowUpIcon, ChevronDownDropdownIcon } from '@components/icons';
@@ -168,7 +169,7 @@ export const Table: FC<TableComponentProps> = ({
   const isAllRowsSelected: boolean = data.every((row) => selectedRowIds.includes(row.id));
   const isAnyRowSelected: boolean = data.some((row) => selectedRowIds.includes(row.id));
   const hasSelectedRows = selectedRowIds?.length > 0;
-  const hasRows = data.length > 0;
+  const hasRows = !isEmpty(data);
   const isSelectAllCheckboxVisible =
     (isSelectAllCheckboxAlwaysVisible && hasRows) || hasSelectedRows;
 

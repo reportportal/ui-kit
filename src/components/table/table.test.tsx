@@ -378,8 +378,8 @@ describe('Table Component', () => {
     });
 
     describe('Select All Checkbox Visibility', () => {
-      it('renders header checkbox when isSelectAllCheckboxAlwaysVisible is true and data exists (even without selection)', () => {
-        const { container } = render(
+      it('renders header checkbox when isSelectAllCheckboxAlwaysVisible is true and data exists (without selection)', () => {
+        render(
           <Table
             {...defaultProps}
             selectable={true}
@@ -388,15 +388,13 @@ describe('Table Component', () => {
           />,
         );
 
-        const checkbox = container.querySelector(
-          '[class*="table-header"] [data-testid="checkbox"]',
-        );
+        const checkboxes = screen.getAllByTestId('checkbox');
 
-        expect(checkbox).toBeInTheDocument();
+        expect(checkboxes).toHaveLength(1);
       });
 
-      it('does NOT render header checkbox when isSelectAllCheckboxAlwaysVisible is true but data is EMPTY', () => {
-        const { container } = render(
+      it('does not render header checkbox when isSelectAllCheckboxAlwaysVisible is true but data is empty', () => {
+        render(
           <Table
             {...defaultProps}
             data={[]}
@@ -406,15 +404,11 @@ describe('Table Component', () => {
           />,
         );
 
-        const checkbox = container.querySelector(
-          '[class*="table-header"] [data-testid="checkbox"]',
-        );
-
-        expect(checkbox).not.toBeInTheDocument();
+        expect(screen.queryByTestId('checkbox')).not.toBeInTheDocument();
       });
 
       it('renders header checkbox when rows are selected (standard behavior)', () => {
-        const { container } = render(
+        render(
           <Table
             {...defaultProps}
             selectable={true}
@@ -423,15 +417,13 @@ describe('Table Component', () => {
           />,
         );
 
-        const checkbox = container.querySelector(
-          '[class*="table-header"] [data-testid="checkbox"]',
-        );
+        const checkboxes = screen.getAllByTestId('checkbox');
 
-        expect(checkbox).toBeInTheDocument();
+        expect(checkboxes).toHaveLength(2);
       });
 
-      it('does NOT render header checkbox when no rows selected and flag is false', () => {
-        const { container } = render(
+      it('does not render header checkbox when no rows selected and flag is false', () => {
+        render(
           <Table
             {...defaultProps}
             selectable={true}
@@ -440,11 +432,7 @@ describe('Table Component', () => {
           />,
         );
 
-        const checkbox = container.querySelector(
-          '[class*="table-header"] [data-testid="checkbox"]',
-        );
-
-        expect(checkbox).not.toBeInTheDocument();
+        expect(screen.queryByTestId('checkbox')).not.toBeInTheDocument();
       });
     });
   });
