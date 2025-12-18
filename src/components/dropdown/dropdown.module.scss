@@ -59,7 +59,7 @@ $Z-INDEX-POPUP: 10;
   cursor: pointer;
 
   &.multi-select-with-tags {
-    padding: 12px 7px;
+    padding: 8px 10px 8px 12px;
   }
 
   &.transparent-background {
@@ -208,8 +208,12 @@ $Z-INDEX-POPUP: 10;
 }
 
 .empty-list-message {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-family: var(--rp-ui-base-font-family);
   color: var(--rp-ui-color-text-secondary);
+  height: 22px;
   font-size: 13px;
   padding: 7px 12px;
   text-align: center;
