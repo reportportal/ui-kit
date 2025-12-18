@@ -4,11 +4,7 @@ import { getEmptyImage } from 'react-dnd-html5-backend';
 import { DEFAULT_SORTABLE_TYPE } from '@common/constants/sortable';
 import type { UseSortableOptions, UseSortableReturn, DragItem, DropPosition } from '@common/types';
 import { DROP_POSITIONS, DROP_DETECTION_MODE } from '@common/types';
-import {
-  calculateCursorBasedDropIndex,
-  isInTopZone,
-  getDropZone,
-} from '@components/sortable/helpers';
+import { calculateCursorBasedDropIndex, getDropZone } from '@components/sortable/helpers';
 
 export const useSortable = ({
   id,
@@ -22,6 +18,7 @@ export const useSortable = ({
 }: UseSortableOptions): UseSortableReturn => {
   const isHoverMode = dropDetectionMode === DROP_DETECTION_MODE.HOVER;
   const elementRef = useRef<HTMLElement | null>(null);
+  const lastValidDropZoneRef = useRef<DropPosition>(null);
   const [cursorDropPosition, setCursorDropPosition] = useState<DropPosition>(null);
 
   const [{ isDragging }, dragRef, previewRef] = useDrag(
@@ -87,33 +84,27 @@ export const useSortable = ({
 
         if (dropZone === null) {
           setCursorDropPosition(null);
-        } else if (dropZone === 'top') {
+          lastValidDropZoneRef.current = null;
+        } else if (dropZone === DROP_POSITIONS.TOP) {
           setCursorDropPosition(DROP_POSITIONS.TOP);
+          lastValidDropZoneRef.current = DROP_POSITIONS.TOP;
         } else {
           setCursorDropPosition(DROP_POSITIONS.BOTTOM);
+          lastValidDropZoneRef.current = DROP_POSITIONS.BOTTOM;
         }
       },
-      drop: (dragObject: DragItem, monitor: DropTargetMonitor) => {
+      drop: (dragObject: DragItem) => {
         if (dragObject.id === id || !onDrop) {
           return;
         }
 
         if (isHoverMode) {
-          const element = elementRef.current;
-          if (!element) {
+          const dropZone = lastValidDropZoneRef.current;
+          if (!dropZone) {
             return;
           }
 
-          const hoverBoundingRect = element.getBoundingClientRect();
-          const elementHeight = hoverBoundingRect.bottom - hoverBoundingRect.top;
-          const clientOffset = monitor.getClientOffset();
-
-          if (!clientOffset) {
-            return;
-          }
-
-          const hoverClientY = clientOffset.y - hoverBoundingRect.top;
-          const isTop = isInTopZone(hoverClientY, elementHeight);
+          const isTop = dropZone === DROP_POSITIONS.TOP;
           const toIndex = calculateCursorBasedDropIndex({
             fromIndex: dragObject.index,
             targetIndex: index,

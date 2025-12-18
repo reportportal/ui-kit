@@ -53,16 +53,3 @@ export const getDropZone = (cursorY: number, elementHeight: number): DropPositio
 
   return DROP_POSITIONS.BOTTOM;
 };
-
-export const isInTopZone = (cursorY: number, elementHeight: number) => {
-  const threshold = elementHeight * 0.5;
-
-  return cursorY < threshold;
-};
-
-export const isInDeadZone = (cursorY: number, elementHeight: number) => {
-  const topDeadZone = elementHeight * 0.05;
-  const bottomDeadZone = elementHeight * 0.95;
-
-  return cursorY < topDeadZone || cursorY > bottomDeadZone;
-};
