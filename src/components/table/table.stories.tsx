@@ -10,7 +10,7 @@ import {
   SortingDirection,
   TableComponentProps,
 } from './types';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { sortTableData, toggleDirection } from '@components/table/utils';
 import { ASC } from './constants';
 
@@ -1600,5 +1600,139 @@ export const ResizableColumnsWithPinnedColumns: Story = {
   args: {
     renderRowActions,
     isResizable: true,
+  },
+};
+
+/**
+ * Demonstrates a table with both horizontal scrolling and fixed header functionality.
+ *
+ * This example shows:
+ * - Horizontal scrolling when table content is wider than the container
+ * - Fixed header that pins to the top when scrolling vertically
+ * - Pinned columns that stay visible during horizontal scroll
+ * - Gradient effects on pinned columns and right edge
+ *
+ * Scroll vertically to see the header pinning, and horizontally to see pinned columns and gradients.
+ */
+export const HorizontalScrollWithFixedHeader: Story = {
+  render: (args: TableComponentProps) => {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const scrollContainerRef = useRef<HTMLDivElement>(null);
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const [sortConfig, setSortConfig] = useState<SortConfig>({
+      key: wideTablePrimaryColumns[0].key,
+      direction: ASC,
+    });
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const [sortingColumn, setSortingColumn] = useState<Column>(wideTablePrimaryColumns[0]);
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const [sortingDirection, setSortingDirection] = useState<SortingDirection>(ASC);
+    // Generate more data for vertical scrolling demonstration
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const extendedWideTableData = useMemo(() => {
+      const baseData = [...wideTableData];
+      // Duplicate data to make table taller than container
+      for (let i = 0; i < 3; i++) {
+        baseData.push(
+          ...wideTableData.map((item) => ({
+            ...item,
+            id: `${item.id}-copy-${i + 1}`,
+          })),
+        );
+      }
+      return baseData;
+    }, []);
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const defaultSortedData = sortTableData(extendedWideTableData, sortConfig);
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const [tableData, setTableData] = useState(defaultSortedData);
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const [checkedRows, setCheckedRows] = useState<Set<number | string>>(new Set([]));
+
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    useEffect(() => {
+      const { key, direction } = sortConfig;
+      const column = [...wideTableFixedColumns, ...wideTablePrimaryColumns].find(
+        (col) => col.key === key,
+      );
+      setSortingDirection(direction);
+      setSortingColumn(column as Column);
+    }, [sortConfig]);
+
+    return (
+      <div style={{ width: '800px', height: '600px', border: '1px solid #ccc', padding: '16px' }}>
+        <h3 style={{ margin: '0 0 16px 0' }}>Table with Horizontal Scroll + Fixed Header</h3>
+        <p style={{ margin: '0 0 16px 0', fontSize: '14px', color: '#666' }}>
+          Scroll vertically to see the header pinning. Scroll horizontally to see pinned columns and
+          gradient effects.
+        </p>
+        <div
+          ref={scrollContainerRef}
+          style={{
+            height: 'calc(100% - 100px)',
+            overflowY: 'auto',
+            overflowX: 'hidden',
+            position: 'relative',
+          }}
+        >
+          <div style={{ padding: '16px', backgroundColor: '#f0f0f0', marginBottom: '16px' }}>
+            <h4 style={{ margin: '0 0 8px 0', fontSize: '16px' }}>Content Above Table</h4>
+            <p style={{ margin: '0', fontSize: '14px', color: '#666' }}>
+              This content is inside the scrollable container. When you scroll down, this text will
+              move up and disappear, but the table header will stick to the top.
+            </p>
+            <p style={{ margin: '8px 0 0', fontSize: '14px', color: '#666' }}>
+              Scroll down to see the header pinning effect. The table header will remain fixed at
+              the top while this content scrolls away.
+            </p>
+          </div>
+          <Table
+            {...args}
+            data={tableData}
+            primaryColumn={wideTablePrimaryColumns}
+            fixedColumns={wideTableFixedColumns}
+            isHeaderFixed={true}
+            isHorizontallyScrollable={true}
+            pinnedColumnKeys={['name', 'email']}
+            externalScrollContainerRef={scrollContainerRef}
+            sortableColumns={[wideTablePrimaryColumns[0].key, 'department', 'status']}
+            onChangeSorting={(sortConfigParam = sortConfig) => {
+              let { direction } = sortConfigParam;
+              const { key } = sortConfigParam;
+              direction = toggleDirection(direction);
+              const sortedData = sortTableData(tableData, { key, direction });
+              setSortConfig({ key, direction });
+              setTableData(sortedData);
+            }}
+            onToggleRowSelection={(id) => {
+              const newCheckedRows = new Set(checkedRows);
+              if (newCheckedRows.has(id)) {
+                newCheckedRows.delete(id);
+              } else {
+                newCheckedRows.add(id);
+              }
+              setCheckedRows(newCheckedRows);
+            }}
+            onToggleAllRowsSelection={() => {
+              if (checkedRows.size === extendedWideTableData.length) {
+                setCheckedRows(new Set());
+              } else {
+                const allRows = new Set(extendedWideTableData.map((item) => item.id));
+                setCheckedRows(allRows);
+              }
+            }}
+            selectedRowIds={[...checkedRows]}
+            sortingColumn={sortingColumn}
+            sortingDirection={sortingDirection}
+            className=""
+            bodyClassName=""
+          />
+        </div>
+      </div>
+    );
+  },
+  args: {
+    selectable: true,
+    renderRowActions,
   },
 };

@@ -1,4 +1,4 @@
-import { Dispatch, ReactNode, SetStateAction } from 'react';
+import { Dispatch, ReactNode, RefObject, SetStateAction } from 'react';
 import { ASC, DESC } from './constants';
 
 export interface Column {
@@ -70,4 +70,5 @@ export interface TableComponentProps {
   onToggleRowExpansion?: (id: string | number) => void;
   onToggleAllRowsExpansion?: () => void;
   onColumnResize?: (columnKey: string, width: number) => void;
+  externalScrollContainerRef?: RefObject<HTMLElement> | RefObject<Element> | null | undefined;
 }

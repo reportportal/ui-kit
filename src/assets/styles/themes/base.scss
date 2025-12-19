@@ -103,8 +103,9 @@
   --rp-ui-base-test-execution-status-skipped: #b8b8b8;
 
   /* shadows */
-  --rp-ui-base-shadow: 0px 1px 3px rgba(55, 67, 98, 0.1);
-  --rp-ui-base-shadow-hover: 0px 1px 3px rgba(55, 67, 98, 0.2);
+  --rp-ui-shadow-rgb: 55, 67, 98;
+  --rp-ui-base-shadow: 0px 1px 3px rgba(var(--rp-ui-shadow-rgb), 0.1);
+  --rp-ui-base-shadow-hover: 0px 1px 3px rgba(var(--rp-ui-shadow-rgb), 0.2);
   --rp-ui-base-shadow-secondary: 0 8px 40px rgba(0, 0, 0, 0.15);
 
   // TODO: discuss with UX

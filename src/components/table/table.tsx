@@ -77,6 +77,7 @@ export const Table: FC<TableComponentProps> = ({
   onToggleRowExpansion = () => {},
   onToggleAllRowsExpansion = () => {},
   onColumnResize = () => {},
+  externalScrollContainerRef,
 }) => {
   const primaryColumns: Column[] = useMemo(
     () => (Array.isArray(primaryColumnsInput) ? primaryColumnsInput : [primaryColumnsInput]),
@@ -139,6 +140,12 @@ export const Table: FC<TableComponentProps> = ({
       {headerCell}
     </Resizable>
   );
+  const tableRef = useRef<HTMLDivElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
+  const bodyRef = useRef<HTMLDivElement>(null);
+  const [isHeaderPinned, setIsHeaderPinned] = useState(false);
+  const isUnpinningRef = useRef(false);
+  const prevExpandedRowIdsRef = useRef<Set<string | number>>(new Set());
 
   const handleSort = (key: string) => {
     if (!defaultSortableColumns.includes(key)) return;
@@ -208,23 +215,422 @@ export const Table: FC<TableComponentProps> = ({
     </button>
   );
 
+  useEffect(() => {
+    if (!externalScrollContainerRef?.current || !tableRef.current || !headerRef.current) {
+      return undefined;
+    }
+
+    const scrollContainer = externalScrollContainerRef.current;
+    const table = tableRef.current;
+    const header = headerRef.current;
+
+    const updatePinnedState = () => {
+      const tableRect = table.getBoundingClientRect();
+      const containerRect = scrollContainer.getBoundingClientRect();
+      const headerHeight = header.offsetHeight;
+
+      const tableTop = tableRect.top - containerRect.top;
+      const tableBottom = tableRect.bottom - containerRect.top;
+      const { scrollTop } = scrollContainer;
+      const shouldPin = scrollTop > 0 && tableTop <= 0 && tableBottom > headerHeight;
+
+      setIsHeaderPinned(shouldPin);
+
+      if (shouldPin) {
+        const tableLeft = tableRect.left;
+        const topOffset = containerRect.top;
+
+        header.classList.add(cx('pinned-header'));
+        // Immediately hide overflow to prevent scrollbar flicker
+        if (isHorizontallyScrollable) {
+          header.style.overflow = 'hidden';
+          header.style.overflowX = 'hidden';
+        }
+        header.style.left = `${tableLeft}px`;
+        header.style.top = `${topOffset}px`;
+        header.style.width = `${tableRect.width}px`;
+      } else {
+        // Save table scroll position before unpinning to prevent loss
+        const savedScrollLeft = table.scrollLeft;
+
+        // Set flag to prevent scroll sync during unpinning
+        isUnpinningRef.current = true;
+
+        header.classList.remove(cx('pinned-header'));
+        // Reset header scroll to prevent sync conflicts
+        if (isHorizontallyScrollable) {
+          header.scrollLeft = 0;
+        }
+        header.style.left = '';
+        header.style.top = '';
+        header.style.width = '';
+        // Restore overflow when unpinned
+        if (isHorizontallyScrollable) {
+          header.style.overflow = '';
+          header.style.overflowX = '';
+        }
+
+        // Restore table scroll position after a brief delay to ensure DOM updates
+        if (isHorizontallyScrollable && savedScrollLeft > 0) {
+          requestAnimationFrame(() => {
+            table.scrollLeft = savedScrollLeft;
+            // Reset flag after scroll is restored
+            setTimeout(() => {
+              isUnpinningRef.current = false;
+            }, 0);
+          });
+        } else {
+          // Reset flag immediately if no scroll to restore
+          isUnpinningRef.current = false;
+        }
+      }
+    };
+
+    const timeoutId = setTimeout(() => {
+      updatePinnedState();
+    }, 200);
+
+    scrollContainer.addEventListener('scroll', updatePinnedState);
+    window.addEventListener('resize', updatePinnedState);
+
+    return () => {
+      clearTimeout(timeoutId);
+      scrollContainer.removeEventListener('scroll', updatePinnedState);
+      window.removeEventListener('resize', updatePinnedState);
+    };
+  }, [externalScrollContainerRef]);
+
+  useEffect(() => {
+    if (
+      !externalScrollContainerRef?.current ||
+      !tableRef.current ||
+      !headerRef.current ||
+      !isHeaderPinned
+    ) {
+      return undefined;
+    }
+
+    const scrollContainer = externalScrollContainerRef.current;
+    const table = tableRef.current;
+    const header = headerRef.current;
+
+    const updateHeaderPosition = () => {
+      const tableRect = table.getBoundingClientRect();
+      const containerRect = scrollContainer.getBoundingClientRect();
+
+      header.style.left = `${tableRect.left}px`;
+      header.style.top = `${containerRect.top}px`;
+      header.style.width = `${tableRect.width}px`;
+    };
+
+    const syncHorizontalScroll = (source: HTMLElement) => {
+      // Skip sync during unpinning to prevent scroll position loss
+      if (isUnpinningRef.current) {
+        return;
+      }
+      if (source === header) {
+        table.scrollLeft = header.scrollLeft;
+      } else {
+        header.scrollLeft = table.scrollLeft;
+      }
+    };
+
+    const handleTableScroll = () => {
+      syncHorizontalScroll(table);
+      updateHeaderPosition();
+    };
+
+    const handleHeaderScroll = () => {
+      syncHorizontalScroll(header);
+    };
+
+    const handleContainerScroll = () => {
+      updateHeaderPosition();
+    };
+
+    table.addEventListener('scroll', handleTableScroll);
+    if (isHorizontallyScrollable) {
+      header.addEventListener('scroll', handleHeaderScroll);
+    }
+    scrollContainer.addEventListener('scroll', handleContainerScroll);
+    window.addEventListener('resize', updateHeaderPosition);
+    syncHorizontalScroll(table);
+    updateHeaderPosition();
+
+    return () => {
+      table.removeEventListener('scroll', handleTableScroll);
+      if (isHorizontallyScrollable) {
+        header.removeEventListener('scroll', handleHeaderScroll);
+      }
+      scrollContainer.removeEventListener('scroll', handleContainerScroll);
+      window.removeEventListener('resize', updateHeaderPosition);
+    };
+  }, [isHeaderPinned, externalScrollContainerRef, isHorizontallyScrollable]);
+
+  useEffect(() => {
+    if (!tableRef.current || !isHorizontallyScrollable) {
+      return undefined;
+    }
+
+    const table = tableRef.current;
+    const header = headerRef.current;
+    const scrollContainer = externalScrollContainerRef?.current;
+
+    const updateTableGradients = () => {
+      const allElements = Array.from(table.querySelectorAll('*'));
+      const getElementClassName = (el: Element): string => {
+        const { className: elementClassName } = el as HTMLElement;
+        if (typeof elementClassName === 'string') return elementClassName;
+        if (typeof elementClassName === 'object' && elementClassName !== null) {
+          return Object.values(elementClassName).join(' ') || '';
+        }
+        return '';
+      };
+
+      const pinnedColumnElements = allElements.filter((el) => {
+        const elementClassName = getElementClassName(el);
+        return elementClassName.includes('pinned-column');
+      });
+
+      const hasLeftScroll = table.scrollLeft > 0;
+
+      if (hasLeftScroll && pinnedColumnElements.length > 0) {
+        // Group pinned columns by their index to find the last one
+        const pinnedByIndex = new Map<number, HTMLElement[]>();
+        pinnedColumnElements.forEach((col) => {
+          const htmlCol = col as HTMLElement;
+          const pinnedIndex = parseInt(htmlCol.getAttribute('data-pinned-index') || '-1', 10);
+          if (pinnedIndex >= 0) {
+            if (!pinnedByIndex.has(pinnedIndex)) {
+              pinnedByIndex.set(pinnedIndex, []);
+            }
+            const pinnedArray = pinnedByIndex.get(pinnedIndex);
+            if (pinnedArray) {
+              pinnedArray.push(htmlCol);
+            }
+          }
+        });
+
+        // Find the maximum index (last pinned column)
+        const maxIndex =
+          pinnedByIndex.size > 0 ? Math.max(...Array.from(pinnedByIndex.keys())) : -1;
+
+        // Add class only to elements with maximum index (last pinned column)
+        pinnedColumnElements.forEach((column) => {
+          const htmlCol = column as HTMLElement;
+          const pinnedIndex = parseInt(htmlCol.getAttribute('data-pinned-index') || '-1', 10);
+          if (pinnedIndex === maxIndex) {
+            htmlCol.classList.add(cx('has-scroll'));
+          } else {
+            htmlCol.classList.remove(cx('has-scroll'));
+          }
+        });
+      } else {
+        // Remove class from all pinned columns
+        pinnedColumnElements.forEach((column) => {
+          (column as HTMLElement).classList.remove(cx('has-scroll'));
+        });
+      }
+
+      const hasRightScroll = table.scrollLeft + table.clientWidth < table.scrollWidth;
+
+      if (hasRightScroll) {
+        const tableRect = table.getBoundingClientRect();
+        let gradientTop: number;
+        let gradientHeight: number;
+
+        if (isHeaderPinned && scrollContainer) {
+          const containerRect = scrollContainer.getBoundingClientRect();
+          const headerHeight = header?.offsetHeight || 0;
+          gradientTop = containerRect.top + headerHeight;
+          gradientHeight = containerRect.height - headerHeight;
+        } else {
+          gradientTop = tableRect.top + 36;
+          gradientHeight = tableRect.height - 24;
+        }
+
+        const gradientRight = window.innerWidth - tableRect.right - 18;
+
+        table.classList.add(cx('has-right-scroll'));
+        table.style.setProperty('--right-gradient-top', `${gradientTop}px`);
+        table.style.setProperty('--right-gradient-right', `${gradientRight}px`);
+        table.style.setProperty('--right-gradient-height', `${gradientHeight}px`);
+      } else {
+        table.classList.remove(cx('has-right-scroll'));
+        table.style.removeProperty('--right-gradient-top');
+        table.style.removeProperty('--right-gradient-right');
+        table.style.removeProperty('--right-gradient-height');
+      }
+    };
+
+    const handleTableScrollForGradients = () => {
+      updateTableGradients();
+    };
+
+    const handleContainerScrollForGradients = () => {
+      updateTableGradients();
+    };
+
+    table.addEventListener('scroll', handleTableScrollForGradients, { passive: true });
+    if (scrollContainer) {
+      scrollContainer.addEventListener('scroll', handleContainerScrollForGradients, {
+        passive: true,
+      });
+    }
+    window.addEventListener('resize', updateTableGradients);
+    updateTableGradients();
+
+    // Use ResizeObserver to track table size changes (e.g., when rows expand/collapse)
+    const resizeObserver = new ResizeObserver(() => {
+      updateTableGradients();
+    });
+
+    if (table) {
+      resizeObserver.observe(table);
+    }
+
+    return () => {
+      table.removeEventListener('scroll', handleTableScrollForGradients);
+      if (scrollContainer) {
+        scrollContainer.removeEventListener('scroll', handleContainerScrollForGradients);
+      }
+      window.removeEventListener('resize', updateTableGradients);
+      resizeObserver.disconnect();
+    };
+  }, [isHorizontallyScrollable, externalScrollContainerRef, isHeaderPinned, expandedRowIds]);
+
+  // Initialize all left-border-accent styles on mount and when data changes
+  useEffect(() => {
+    if (!tableRef.current) {
+      return undefined;
+    }
+
+    const table = tableRef.current;
+    const header = headerRef.current;
+
+    const updateLeftBorderAccentStyle = (element: HTMLElement) => {
+      // Exclude header cells
+      if (header && header.contains(element)) {
+        return;
+      }
+
+      const rowContent = element.parentElement as HTMLElement;
+      if (!rowContent) {
+        return;
+      }
+
+      const rowContentStyle = window.getComputedStyle(rowContent);
+      const paddingTop = parseFloat(rowContentStyle.paddingTop) || 0;
+      const paddingBottom = parseFloat(rowContentStyle.paddingBottom) || 0;
+
+      // Element height + padding from parent (rowContent) to cover full height
+      const elementHeight = element.offsetHeight;
+      const totalHeight = elementHeight + paddingTop + paddingBottom;
+
+      element.style.setProperty('--expand-cell-top', `${paddingTop}px`);
+      element.style.setProperty('--expand-cell-height', `${totalHeight}px`);
+    };
+
+    const updateAllLeftBorderAccentStyles = () => {
+      // Find all expand-cells by data attribute
+      // Can't use class selectors due to CSS Modules hashing
+      const expandCells = Array.from(table.querySelectorAll<HTMLElement>('[data-base-left="0"]'));
+      expandCells.forEach(updateLeftBorderAccentStyle);
+    };
+
+    // Use requestAnimationFrame to ensure DOM has updated
+    requestAnimationFrame(() => {
+      updateAllLeftBorderAccentStyles();
+    });
+  }, [isRowsExpandable, data]);
+
+  // Update only changed rows on expand/collapse
+  useEffect(() => {
+    if (!tableRef.current) {
+      return undefined;
+    }
+
+    const table = tableRef.current;
+    const header = headerRef.current;
+    const currentExpanded = new Set(expandedRowIds);
+    const prevExpanded = prevExpandedRowIdsRef.current;
+
+    // Find rows that changed (expanded or collapsed)
+    const changedRowIds = new Set<string | number>();
+    expandedRowIds.forEach((id) => {
+      if (!prevExpanded.has(id)) {
+        changedRowIds.add(id);
+      }
+    });
+    prevExpanded.forEach((id) => {
+      if (!currentExpanded.has(id)) {
+        changedRowIds.add(id);
+      }
+    });
+
+    if (changedRowIds.size === 0) {
+      prevExpandedRowIdsRef.current = currentExpanded;
+      return undefined;
+    }
+
+    const updateLeftBorderAccentStyle = (element: HTMLElement) => {
+      // Exclude header cells
+      if (header && header.contains(element)) {
+        return;
+      }
+
+      const rowContent = element.parentElement as HTMLElement;
+      if (!rowContent) {
+        return;
+      }
+
+      const rowContentStyle = window.getComputedStyle(rowContent);
+      const paddingTop = parseFloat(rowContentStyle.paddingTop) || 0;
+      const paddingBottom = parseFloat(rowContentStyle.paddingBottom) || 0;
+
+      // Element height + padding from parent (rowContent) to cover full height
+      const elementHeight = element.offsetHeight;
+      const totalHeight = elementHeight + paddingTop + paddingBottom;
+
+      element.style.setProperty('--expand-cell-top', `${paddingTop}px`);
+      element.style.setProperty('--expand-cell-height', `${totalHeight}px`);
+    };
+
+    // Update only changed rows
+    requestAnimationFrame(() => {
+      changedRowIds.forEach((rowId) => {
+        const expandCell = table.querySelector<HTMLElement>(
+          `[data-base-left="0"][data-row-id="${rowId}"]`,
+        );
+        if (expandCell) {
+          updateLeftBorderAccentStyle(expandCell);
+        }
+      });
+    });
+
+    prevExpandedRowIdsRef.current = currentExpanded;
+  }, [isRowsExpandable, expandedRowIds]);
+
   return (
     <div
+      ref={tableRef}
       className={cx(
         'table',
         {
           'fixed-header': isHeaderFixed,
           'horizontally-scrollable-container':
             isHeaderFixed && (isHorizontallyScrollable || isResizable),
+          'external-scroll-container': isHeaderFixed && !!externalScrollContainerRef,
         },
         className,
       )}
     >
       <div
+        ref={headerRef}
         className={cx(
           'table-header',
           {
-            'sticky-header': isHeaderFixed,
+            'sticky-header': isHeaderFixed && !isHeaderPinned,
             'horizontally-scrollable': isHorizontallyScrollable,
             resizable: isResizable,
           },
@@ -235,7 +641,7 @@ export const Table: FC<TableComponentProps> = ({
         {selectable && (
           <div
             className={cx('table-header-cell', 'checkbox-cell')}
-            style={{ left: isRowsExpandable ? `${EXPANDABLE_CHECKBOX_COLUMN_WIDTH}px` : '0' }}
+            data-base-left={isRowsExpandable ? EXPANDABLE_CHECKBOX_COLUMN_WIDTH : 0}
           >
             {isSelectAllCheckboxVisible && (
               <Checkbox
@@ -248,7 +654,10 @@ export const Table: FC<TableComponentProps> = ({
           </div>
         )}
         {isRowsExpandable && (
-          <div className={cx('table-header-cell', 'expand-cell')} style={{ left: '0' }}>
+          <div
+            className={cx('table-header-cell', 'expand-cell', 'left-border-accent')}
+            data-base-left="0"
+          >
             {expandAllTooltip ? (
               <Tooltip
                 content={expandAllTooltip}
@@ -267,6 +676,8 @@ export const Table: FC<TableComponentProps> = ({
           const headerCell = (
             <button
               key={column.key}
+              data-column-key={column.key}
+              data-pinned-index={index}
               className={cx('table-header-cell', 'pinned-column', {
                 [`align-${(column as FixedColumn).align}`]: 'align' in column,
                 'primary-cell': isPrimaryColumn(column),
@@ -337,6 +748,7 @@ export const Table: FC<TableComponentProps> = ({
       </div>
 
       <div
+        ref={bodyRef}
         className={cx(
           'table-body',
           {
@@ -359,7 +771,7 @@ export const Table: FC<TableComponentProps> = ({
             {selectable && (
               <div
                 className={cx('table-cell', 'checkbox-cell')}
-                style={{ left: isRowsExpandable ? `${EXPANDABLE_CHECKBOX_COLUMN_WIDTH}px` : '0' }}
+                data-base-left={isRowsExpandable ? EXPANDABLE_CHECKBOX_COLUMN_WIDTH : 0}
               >
                 {(hasSelectedRows || hoveredRow === index) && (
                   <Checkbox
@@ -373,7 +785,11 @@ export const Table: FC<TableComponentProps> = ({
             <div className={cx('row-content-wrapper')}>
               <div className={cx('table-row-content')} style={{ gridTemplateColumns }}>
                 {isRowsExpandable && (
-                  <div className={cx('table-cell', 'expand-cell')} style={{ left: '0' }}>
+                  <div
+                    className={cx('table-cell', 'expand-cell', 'left-border-accent')}
+                    data-base-left="0"
+                    data-row-id={item.id}
+                  >
                     <button
                       onClick={() => handleToggleRowExpansion(item.id)}
                       aria-label={expandedRowIds.includes(item.id) ? 'Collapse row' : 'Expand row'}
@@ -396,6 +812,8 @@ export const Table: FC<TableComponentProps> = ({
                   return (
                     <div
                       key={column.key}
+                      data-column-key={column.key}
+                      data-pinned-index={colIndex}
                       ref={isPrimary ? setCellRef(column.key) : undefined}
                       className={cx('table-cell', 'pinned-column', {
                         'primary-cell': isPrimary,
