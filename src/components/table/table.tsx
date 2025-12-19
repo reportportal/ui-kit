@@ -146,6 +146,7 @@ export const Table: FC<TableComponentProps> = ({
   const [isHeaderPinned, setIsHeaderPinned] = useState(false);
   const isUnpinningRef = useRef(false);
   const prevExpandedRowIdsRef = useRef<Set<string | number>>(new Set());
+  const updateTableGradientsRef = useRef<(() => void) | null>(null);
 
   const handleSort = (key: string) => {
     if (!defaultSortableColumns.includes(key)) return;
@@ -241,7 +242,6 @@ export const Table: FC<TableComponentProps> = ({
         const topOffset = containerRect.top;
 
         header.classList.add(cx('pinned-header'));
-        // Immediately hide overflow to prevent scrollbar flicker
         if (isHorizontallyScrollable) {
           header.style.overflow = 'hidden';
           header.style.overflowX = 'hidden';
@@ -250,37 +250,30 @@ export const Table: FC<TableComponentProps> = ({
         header.style.top = `${topOffset}px`;
         header.style.width = `${tableRect.width}px`;
       } else {
-        // Save table scroll position before unpinning to prevent loss
         const savedScrollLeft = table.scrollLeft;
 
-        // Set flag to prevent scroll sync during unpinning
         isUnpinningRef.current = true;
 
         header.classList.remove(cx('pinned-header'));
-        // Reset header scroll to prevent sync conflicts
         if (isHorizontallyScrollable) {
           header.scrollLeft = 0;
         }
         header.style.left = '';
         header.style.top = '';
         header.style.width = '';
-        // Restore overflow when unpinned
         if (isHorizontallyScrollable) {
           header.style.overflow = '';
           header.style.overflowX = '';
         }
 
-        // Restore table scroll position after a brief delay to ensure DOM updates
         if (isHorizontallyScrollable && savedScrollLeft > 0) {
           requestAnimationFrame(() => {
             table.scrollLeft = savedScrollLeft;
-            // Reset flag after scroll is restored
             setTimeout(() => {
               isUnpinningRef.current = false;
             }, 0);
           });
         } else {
-          // Reset flag immediately if no scroll to restore
           isUnpinningRef.current = false;
         }
       }
@@ -298,7 +291,7 @@ export const Table: FC<TableComponentProps> = ({
       scrollContainer.removeEventListener('scroll', updatePinnedState);
       window.removeEventListener('resize', updatePinnedState);
     };
-  }, [externalScrollContainerRef]);
+  }, [externalScrollContainerRef, isHorizontallyScrollable]);
 
   useEffect(() => {
     if (
@@ -324,7 +317,6 @@ export const Table: FC<TableComponentProps> = ({
     };
 
     const syncHorizontalScroll = (source: HTMLElement) => {
-      // Skip sync during unpinning to prevent scroll position loss
       if (isUnpinningRef.current) {
         return;
       }
@@ -332,6 +324,9 @@ export const Table: FC<TableComponentProps> = ({
         table.scrollLeft = header.scrollLeft;
       } else {
         header.scrollLeft = table.scrollLeft;
+      }
+      if (updateTableGradientsRef.current) {
+        updateTableGradientsRef.current();
       }
     };
 
@@ -373,7 +368,6 @@ export const Table: FC<TableComponentProps> = ({
     }
 
     const table = tableRef.current;
-    const header = headerRef.current;
     const scrollContainer = externalScrollContainerRef?.current;
 
     const updateTableGradients = () => {
@@ -411,11 +405,9 @@ export const Table: FC<TableComponentProps> = ({
           }
         });
 
-        // Find the maximum index (last pinned column)
         const maxIndex =
           pinnedByIndex.size > 0 ? Math.max(...Array.from(pinnedByIndex.keys())) : -1;
 
-        // Add class only to elements with maximum index (last pinned column)
         pinnedColumnElements.forEach((column) => {
           const htmlCol = column as HTMLElement;
           const pinnedIndex = parseInt(htmlCol.getAttribute('data-pinned-index') || '-1', 10);
@@ -426,7 +418,6 @@ export const Table: FC<TableComponentProps> = ({
           }
         });
       } else {
-        // Remove class from all pinned columns
         pinnedColumnElements.forEach((column) => {
           (column as HTMLElement).classList.remove(cx('has-scroll'));
         });
@@ -436,20 +427,28 @@ export const Table: FC<TableComponentProps> = ({
 
       if (hasRightScroll) {
         const tableRect = table.getBoundingClientRect();
+        const headerHeight = headerRef.current?.offsetHeight || 0;
+        const containerRect = scrollContainer?.getBoundingClientRect();
+
+        const visibleTableTop = Math.max(tableRect.top, containerRect?.top || 0);
+        const visibleTableBottom = Math.min(
+          tableRect.bottom,
+          containerRect?.bottom || Number.MAX_SAFE_INTEGER,
+        );
+        const visibleTableHeight = Math.max(0, visibleTableBottom - visibleTableTop);
+
         let gradientTop: number;
         let gradientHeight: number;
 
-        if (isHeaderPinned && scrollContainer) {
-          const containerRect = scrollContainer.getBoundingClientRect();
-          const headerHeight = header?.offsetHeight || 0;
-          gradientTop = containerRect.top + headerHeight;
-          gradientHeight = containerRect.height - headerHeight;
+        if (isHeaderPinned && scrollContainer && containerRect) {
+          gradientTop = containerRect.top - tableRect.top + headerHeight;
+          gradientHeight = visibleTableHeight - headerHeight - 16;
         } else {
-          gradientTop = tableRect.top + 36;
-          gradientHeight = tableRect.height - 24;
+          gradientTop = headerHeight;
+          gradientHeight = visibleTableHeight - headerHeight - 16 - gradientTop;
         }
 
-        const gradientRight = window.innerWidth - tableRect.right - 18;
+        const gradientRight = -table.scrollLeft;
 
         table.classList.add(cx('has-right-scroll'));
         table.style.setProperty('--right-gradient-top', `${gradientTop}px`);
@@ -463,12 +462,45 @@ export const Table: FC<TableComponentProps> = ({
       }
     };
 
+    let rafId: number | null = null;
+    let scrollTimeoutId: number | null = null;
+    const SCROLL_END_DELAY = 10;
+
+    const scheduleGradientUpdate = () => {
+      if (rafId === null) {
+        rafId = requestAnimationFrame(() => {
+          updateTableGradients();
+          rafId = null;
+        });
+      }
+    };
+
+    const hideGradient = () => {
+      table.classList.add(cx('gradient-hidden'));
+    };
+
+    const showGradient = () => {
+      table.classList.remove(cx('gradient-hidden'));
+    };
+
+    const handleScrollStart = () => {
+      hideGradient();
+      if (scrollTimeoutId !== null) {
+        clearTimeout(scrollTimeoutId);
+      }
+      scrollTimeoutId = window.setTimeout(() => {
+        showGradient();
+        scheduleGradientUpdate();
+        scrollTimeoutId = null;
+      }, SCROLL_END_DELAY);
+    };
+
     const handleTableScrollForGradients = () => {
-      updateTableGradients();
+      handleScrollStart();
     };
 
     const handleContainerScrollForGradients = () => {
-      updateTableGradients();
+      handleScrollStart();
     };
 
     table.addEventListener('scroll', handleTableScrollForGradients, { passive: true });
@@ -478,9 +510,9 @@ export const Table: FC<TableComponentProps> = ({
       });
     }
     window.addEventListener('resize', updateTableGradients);
+    updateTableGradientsRef.current = updateTableGradients;
     updateTableGradients();
 
-    // Use ResizeObserver to track table size changes (e.g., when rows expand/collapse)
     const resizeObserver = new ResizeObserver(() => {
       updateTableGradients();
     });
@@ -496,10 +528,17 @@ export const Table: FC<TableComponentProps> = ({
       }
       window.removeEventListener('resize', updateTableGradients);
       resizeObserver.disconnect();
+      if (rafId !== null) {
+        cancelAnimationFrame(rafId);
+        rafId = null;
+      }
+      if (scrollTimeoutId !== null) {
+        clearTimeout(scrollTimeoutId);
+        scrollTimeoutId = null;
+      }
     };
   }, [isHorizontallyScrollable, externalScrollContainerRef, isHeaderPinned, expandedRowIds]);
 
-  // Initialize all left-border-accent styles on mount and when data changes
   useEffect(() => {
     if (!tableRef.current) {
       return undefined;
@@ -509,7 +548,6 @@ export const Table: FC<TableComponentProps> = ({
     const header = headerRef.current;
 
     const updateLeftBorderAccentStyle = (element: HTMLElement) => {
-      // Exclude header cells
       if (header && header.contains(element)) {
         return;
       }
@@ -523,7 +561,6 @@ export const Table: FC<TableComponentProps> = ({
       const paddingTop = parseFloat(rowContentStyle.paddingTop) || 0;
       const paddingBottom = parseFloat(rowContentStyle.paddingBottom) || 0;
 
-      // Element height + padding from parent (rowContent) to cover full height
       const elementHeight = element.offsetHeight;
       const totalHeight = elementHeight + paddingTop + paddingBottom;
 
@@ -532,19 +569,15 @@ export const Table: FC<TableComponentProps> = ({
     };
 
     const updateAllLeftBorderAccentStyles = () => {
-      // Find all expand-cells by data attribute
-      // Can't use class selectors due to CSS Modules hashing
       const expandCells = Array.from(table.querySelectorAll<HTMLElement>('[data-base-left="0"]'));
       expandCells.forEach(updateLeftBorderAccentStyle);
     };
 
-    // Use requestAnimationFrame to ensure DOM has updated
     requestAnimationFrame(() => {
       updateAllLeftBorderAccentStyles();
     });
   }, [isRowsExpandable, data]);
 
-  // Update only changed rows on expand/collapse
   useEffect(() => {
     if (!tableRef.current) {
       return undefined;
@@ -555,7 +588,6 @@ export const Table: FC<TableComponentProps> = ({
     const currentExpanded = new Set(expandedRowIds);
     const prevExpanded = prevExpandedRowIdsRef.current;
 
-    // Find rows that changed (expanded or collapsed)
     const changedRowIds = new Set<string | number>();
     expandedRowIds.forEach((id) => {
       if (!prevExpanded.has(id)) {
@@ -574,7 +606,6 @@ export const Table: FC<TableComponentProps> = ({
     }
 
     const updateLeftBorderAccentStyle = (element: HTMLElement) => {
-      // Exclude header cells
       if (header && header.contains(element)) {
         return;
       }
@@ -588,7 +619,6 @@ export const Table: FC<TableComponentProps> = ({
       const paddingTop = parseFloat(rowContentStyle.paddingTop) || 0;
       const paddingBottom = parseFloat(rowContentStyle.paddingBottom) || 0;
 
-      // Element height + padding from parent (rowContent) to cover full height
       const elementHeight = element.offsetHeight;
       const totalHeight = elementHeight + paddingTop + paddingBottom;
 
@@ -596,7 +626,6 @@ export const Table: FC<TableComponentProps> = ({
       element.style.setProperty('--expand-cell-height', `${totalHeight}px`);
     };
 
-    // Update only changed rows
     requestAnimationFrame(() => {
       changedRowIds.forEach((rowId) => {
         const expandCell = table.querySelector<HTMLElement>(

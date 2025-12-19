@@ -11,6 +11,7 @@ $PADDING_VERTICAL-LARGE: 30px;
   width: 100%;
   max-width: 1200px;
   position: relative;
+  isolation: isolate;
 
   * {
     box-sizing: border-box;
@@ -35,24 +36,29 @@ $PADDING_VERTICAL-LARGE: 30px;
     }
   }
 
-  &.has-right-scroll::after {
-    content: '';
-    position: fixed;
-    top: var(--right-gradient-top, 0);
-    right: var(--right-gradient-right, 48);
-    width: 48px;
-    height: var(--right-gradient-height, 100%);
-    /*
-    background: linear-gradient(270deg, #f7f7f8 0%, rgb(247 247 248 / 0%) 100%);
-    */
-    background: linear-gradient(
-      270deg,
-      var(--rp-ui-base-bg-100) 0%,
-      color-mix(in srgb, var(--rp-ui-base-bg-100) 0%, transparent) 100%
-    );
-    pointer-events: none;
-    opacity: 0.8;
-    z-index: 10;
+  &.has-right-scroll {
+    overflow: visible;
+
+    &::after {
+      content: '';
+      position: absolute;
+      top: var(--right-gradient-top, 0);
+      right: var(--right-gradient-right, -48px);
+      width: 48px;
+      height: var(--right-gradient-height, 100%);
+      background: linear-gradient(
+        270deg,
+        var(--rp-ui-base-bg-100) 0%,
+        color-mix(in srgb, var(--rp-ui-base-bg-100) 0%, transparent) 100%
+      );
+      pointer-events: none;
+      opacity: 0.8;
+      z-index: 1000;
+    }
+
+    &.gradient-hidden::after {
+      opacity: 0;
+    }
   }
 }
 
@@ -78,11 +84,6 @@ $PADDING_VERTICAL-LARGE: 30px;
   &.pinned-header {
     position: fixed;
     z-index: 3;
-    /*
-    min-width: 0;
-    overflow: hidden;
-    z-index: 100;
-    */
 
     &.horizontally-scrollable {
       min-width: 0;
@@ -182,7 +183,6 @@ $PADDING_VERTICAL-LARGE: 30px;
         width: 3px;
         height: var(--expand-cell-height, 100%);
         pointer-events: none;
-        /* box-shadow: inset 0px 1px 3px rgba(55, 67, 98, 0.3); */
         border-left: 1px solid rgba(var(--rp-ui-shadow-rgb), .15);
       }
     }
@@ -482,26 +482,12 @@ $PADDING_VERTICAL-LARGE: 30px;
       background-color: var(--rp-ui-base-e-200);
       z-index: 1;
     }
-  }
 
     &.has-scroll {
       isolation: isolate;
 
       &::before {
         display: none;
-      }
-
-      &::after {
-        content: '';
-        position: absolute;
-        top: -12px;
-        right: -48px;
-        width: 48px;
-        height: calc(100% + 24px);
-        background: linear-gradient(90deg, #f7f7f8 0%, rgb(247 247 248 / 0%) 100%);
-        pointer-events: none;
-        opacity: 0.8;
-        z-index: 999;
       }
     }
   }
@@ -540,9 +526,6 @@ $PADDING_VERTICAL-LARGE: 30px;
         right: -48px;
         width: 48px;
         height: calc(100% + 24px);
-        /*
-        background: linear-gradient(90deg, #f7f7f8 0%, rgb(247 247 248 / 0%) 100%);
-        */
         background: linear-gradient(
           90deg,
           var(--rp-ui-base-bg-100) 0%,
@@ -550,7 +533,6 @@ $PADDING_VERTICAL-LARGE: 30px;
         );
         pointer-events: none;
         opacity: 0.8;
-        z-index: 999;
       }
     }
   }
