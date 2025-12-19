@@ -92,9 +92,8 @@ $Z-INDEX-POPUP: 10;
 
   &:active,
   &:focus-visible {
-    padding: 7px 11px;
-    border-width: 2px;
     border-color: var(--rp-ui-color-primary-focused);
+    box-shadow: 0 0 0 1px var(--rp-ui-color-primary-focused);
     outline: none;
 
     @include arrow-color(var(--rp-ui-color-field-hover-2));
@@ -242,10 +241,6 @@ $Z-INDEX-POPUP: 10;
     }
   }
 
-  &:active,
-  &:focus-visible {
-    padding: 7px 0;
-  }
 }
 
 .divider {
