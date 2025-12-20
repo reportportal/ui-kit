@@ -22,8 +22,11 @@ import {
   useTableExpansion,
   useColumnWidths,
   useColumnResize,
+  useRightGradientPosition,
+  usePinnedGradientPosition,
 } from './hooks';
 import { ResizeHandle } from './resizeHandle';
+import { GradientOverlay } from './gradientOverlay';
 
 const cx = classNames.bind(styles);
 
@@ -78,6 +81,9 @@ export const Table: FC<TableComponentProps> = ({
   onToggleAllRowsExpansion = () => {},
   onColumnResize = () => {},
   externalScrollContainerRef,
+  portalContainer = typeof document !== 'undefined' ? document.body : null,
+  rightGradientClassName,
+  pinnedGradientClassName,
 }) => {
   const primaryColumns: Column[] = useMemo(
     () => (Array.isArray(primaryColumnsInput) ? primaryColumnsInput : [primaryColumnsInput]),
@@ -144,9 +150,36 @@ export const Table: FC<TableComponentProps> = ({
   const headerRef = useRef<HTMLDivElement>(null);
   const bodyRef = useRef<HTMLDivElement>(null);
   const [isHeaderPinned, setIsHeaderPinned] = useState(false);
+  const [scrollLeft, setScrollLeft] = useState(0);
+  const [scrollTop, setScrollTop] = useState(0);
+  const [tableScrollWidth, setTableScrollWidth] = useState(0);
   const isUnpinningRef = useRef(false);
   const prevExpandedRowIdsRef = useRef<Set<string | number>>(new Set());
   const updateTableGradientsRef = useRef<(() => void) | null>(null);
+
+  const rightGradientPosition = useRightGradientPosition(
+    tableRef.current,
+    headerRef.current,
+    (externalScrollContainerRef?.current instanceof HTMLElement
+      ? externalScrollContainerRef.current
+      : null) || null,
+    isHeaderPinned,
+    scrollLeft,
+    scrollTop,
+    tableScrollWidth,
+  );
+
+  const pinnedGradientPosition = usePinnedGradientPosition(
+    tableRef.current,
+    scrollLeft,
+    headerRef.current,
+    (externalScrollContainerRef?.current instanceof HTMLElement
+      ? externalScrollContainerRef.current
+      : null) || null,
+    isHeaderPinned,
+    scrollTop,
+    tableScrollWidth,
+  );
 
   const handleSort = (key: string) => {
     if (!defaultSortableColumns.includes(key)) return;
@@ -232,8 +265,8 @@ export const Table: FC<TableComponentProps> = ({
 
       const tableTop = tableRect.top - containerRect.top;
       const tableBottom = tableRect.bottom - containerRect.top;
-      const { scrollTop } = scrollContainer;
-      const shouldPin = scrollTop > 0 && tableTop <= 0 && tableBottom > headerHeight;
+      const containerScrollTop = scrollContainer.scrollTop;
+      const shouldPin = containerScrollTop > 0 && tableTop <= 0 && tableBottom > headerHeight;
 
       setIsHeaderPinned(shouldPin);
 
@@ -370,101 +403,19 @@ export const Table: FC<TableComponentProps> = ({
     const table = tableRef.current;
     const scrollContainer = externalScrollContainerRef?.current;
 
+    setScrollLeft(table.scrollLeft);
+    setScrollTop(scrollContainer?.scrollTop || table.scrollTop || 0);
+    setTableScrollWidth(table.scrollWidth);
+
     const updateTableGradients = () => {
-      const allElements = Array.from(table.querySelectorAll('*'));
-      const getElementClassName = (el: Element): string => {
-        const { className: elementClassName } = el as HTMLElement;
-        if (typeof elementClassName === 'string') return elementClassName;
-        if (typeof elementClassName === 'object' && elementClassName !== null) {
-          return Object.values(elementClassName).join(' ') || '';
-        }
-        return '';
-      };
-
-      const pinnedColumnElements = allElements.filter((el) => {
-        const elementClassName = getElementClassName(el);
-        return elementClassName.includes('pinned-column');
-      });
-
-      const hasLeftScroll = table.scrollLeft > 0;
-
-      if (hasLeftScroll && pinnedColumnElements.length > 0) {
-        // Group pinned columns by their index to find the last one
-        const pinnedByIndex = new Map<number, HTMLElement[]>();
-        pinnedColumnElements.forEach((col) => {
-          const htmlCol = col as HTMLElement;
-          const pinnedIndex = parseInt(htmlCol.getAttribute('data-pinned-index') || '-1', 10);
-          if (pinnedIndex >= 0) {
-            if (!pinnedByIndex.has(pinnedIndex)) {
-              pinnedByIndex.set(pinnedIndex, []);
-            }
-            const pinnedArray = pinnedByIndex.get(pinnedIndex);
-            if (pinnedArray) {
-              pinnedArray.push(htmlCol);
-            }
-          }
-        });
-
-        const maxIndex =
-          pinnedByIndex.size > 0 ? Math.max(...Array.from(pinnedByIndex.keys())) : -1;
-
-        pinnedColumnElements.forEach((column) => {
-          const htmlCol = column as HTMLElement;
-          const pinnedIndex = parseInt(htmlCol.getAttribute('data-pinned-index') || '-1', 10);
-          if (pinnedIndex === maxIndex) {
-            htmlCol.classList.add(cx('has-scroll'));
-          } else {
-            htmlCol.classList.remove(cx('has-scroll'));
-          }
-        });
-      } else {
-        pinnedColumnElements.forEach((column) => {
-          (column as HTMLElement).classList.remove(cx('has-scroll'));
-        });
-      }
-
-      const hasRightScroll = table.scrollLeft + table.clientWidth < table.scrollWidth;
-
-      if (hasRightScroll) {
-        const tableRect = table.getBoundingClientRect();
-        const headerHeight = headerRef.current?.offsetHeight || 0;
-        const containerRect = scrollContainer?.getBoundingClientRect();
-
-        const visibleTableTop = Math.max(tableRect.top, containerRect?.top || 0);
-        const visibleTableBottom = Math.min(
-          tableRect.bottom,
-          containerRect?.bottom || Number.MAX_SAFE_INTEGER,
-        );
-        const visibleTableHeight = Math.max(0, visibleTableBottom - visibleTableTop);
-
-        let gradientTop: number;
-        let gradientHeight: number;
-
-        if (isHeaderPinned && scrollContainer && containerRect) {
-          gradientTop = containerRect.top - tableRect.top + headerHeight;
-          gradientHeight = visibleTableHeight - headerHeight - 16;
-        } else {
-          gradientTop = headerHeight;
-          gradientHeight = visibleTableHeight - headerHeight - 16 - gradientTop;
-        }
-
-        const gradientRight = -table.scrollLeft;
-
-        table.classList.add(cx('has-right-scroll'));
-        table.style.setProperty('--right-gradient-top', `${gradientTop}px`);
-        table.style.setProperty('--right-gradient-right', `${gradientRight}px`);
-        table.style.setProperty('--right-gradient-height', `${gradientHeight}px`);
-      } else {
-        table.classList.remove(cx('has-right-scroll'));
-        table.style.removeProperty('--right-gradient-top');
-        table.style.removeProperty('--right-gradient-right');
-        table.style.removeProperty('--right-gradient-height');
+      if (table) {
+        setScrollLeft(table.scrollLeft);
+        setScrollTop(scrollContainer?.scrollTop || table.scrollTop || 0);
+        setTableScrollWidth(table.scrollWidth);
       }
     };
 
     let rafId: number | null = null;
-    let scrollTimeoutId: number | null = null;
-    const SCROLL_END_DELAY = 10;
 
     const scheduleGradientUpdate = () => {
       if (rafId === null) {
@@ -475,32 +426,12 @@ export const Table: FC<TableComponentProps> = ({
       }
     };
 
-    const hideGradient = () => {
-      table.classList.add(cx('gradient-hidden'));
-    };
-
-    const showGradient = () => {
-      table.classList.remove(cx('gradient-hidden'));
-    };
-
-    const handleScrollStart = () => {
-      hideGradient();
-      if (scrollTimeoutId !== null) {
-        clearTimeout(scrollTimeoutId);
-      }
-      scrollTimeoutId = window.setTimeout(() => {
-        showGradient();
-        scheduleGradientUpdate();
-        scrollTimeoutId = null;
-      }, SCROLL_END_DELAY);
-    };
-
     const handleTableScrollForGradients = () => {
-      handleScrollStart();
+      scheduleGradientUpdate();
     };
 
     const handleContainerScrollForGradients = () => {
-      handleScrollStart();
+      scheduleGradientUpdate();
     };
 
     table.addEventListener('scroll', handleTableScrollForGradients, { passive: true });
@@ -532,12 +463,28 @@ export const Table: FC<TableComponentProps> = ({
         cancelAnimationFrame(rafId);
         rafId = null;
       }
-      if (scrollTimeoutId !== null) {
-        clearTimeout(scrollTimeoutId);
-        scrollTimeoutId = null;
-      }
     };
   }, [isHorizontallyScrollable, externalScrollContainerRef, isHeaderPinned, expandedRowIds]);
+
+  useEffect(() => {
+    if (!tableRef.current || !isHorizontallyScrollable) {
+      return;
+    }
+
+    const table = tableRef.current;
+    const scrollContainer = externalScrollContainerRef?.current;
+
+    requestAnimationFrame(() => {
+      if (table) {
+        setScrollLeft(table.scrollLeft);
+        setScrollTop(scrollContainer?.scrollTop || table.scrollTop || 0);
+        setTableScrollWidth(table.scrollWidth);
+        if (updateTableGradientsRef.current) {
+          updateTableGradientsRef.current();
+        }
+      }
+    });
+  }, [columnWidths, isHorizontallyScrollable, externalScrollContainerRef]);
 
   useEffect(() => {
     if (!tableRef.current) {
@@ -791,6 +738,7 @@ export const Table: FC<TableComponentProps> = ({
         {data.map((item, index) => (
           <div
             key={item.id}
+            data-row-index={index}
             className={cx('table-row', getRowSizeClassName(item), rowClassName, {
               selectable: selectable,
             })}
@@ -899,6 +847,28 @@ export const Table: FC<TableComponentProps> = ({
           </div>
         ))}
       </div>
+      {isHorizontallyScrollable && (
+        <>
+          <GradientOverlay
+            portalContainer={portalContainer}
+            visible={rightGradientPosition.visible}
+            position={rightGradientPosition.position}
+            size={rightGradientPosition.size}
+            direction="right"
+            className={rightGradientClassName}
+            dataTestId="right-gradient"
+          />
+          <GradientOverlay
+            portalContainer={portalContainer}
+            visible={pinnedGradientPosition.visible}
+            position={pinnedGradientPosition.position}
+            size={pinnedGradientPosition.size}
+            direction="left"
+            className={pinnedGradientClassName}
+            dataTestId="pinned-gradient"
+          />
+        </>
+      )}
     </div>
   );
 };

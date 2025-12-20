@@ -71,4 +71,7 @@ export interface TableComponentProps {
   onToggleAllRowsExpansion?: () => void;
   onColumnResize?: (columnKey: string, width: number) => void;
   externalScrollContainerRef?: RefObject<HTMLElement> | RefObject<Element> | null | undefined;
+  portalContainer?: HTMLElement | null;
+  rightGradientClassName?: string;
+  pinnedGradientClassName?: string;
 }

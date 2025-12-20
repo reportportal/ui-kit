@@ -1604,17 +1604,21 @@ export const ResizableColumnsWithPinnedColumns: Story = {
 };
 
 /**
- * Demonstrates a table with both horizontal scrolling and fixed header functionality.
+ * Demonstrates a table with pinned header when scrolling is handled by an external container.
  *
  * This example shows:
  * - Horizontal scrolling when table content is wider than the container
- * - Fixed header that pins to the top when scrolling vertically
+ * - Pinned header that pins to the top when scrolling vertically in the external container
  * - Pinned columns that stay visible during horizontal scroll
  * - Gradient effects on pinned columns and right edge
  *
- * Scroll vertically to see the header pinning, and horizontally to see pinned columns and gradients.
+ * Note: This is different from a fixed header with internal table scrolling. Here, the scroll
+ * container is external (parent div), and the header pins when scrolling reaches the table top.
+ *
+ * Scroll vertically in the external container to see the header pinning, and horizontally to see
+ * pinned columns and gradients.
  */
-export const HorizontalScrollWithFixedHeader: Story = {
+export const HorizontalScrollWithPinnedHeader: Story = {
   render: (args: TableComponentProps) => {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -1661,10 +1665,14 @@ export const HorizontalScrollWithFixedHeader: Story = {
 
     return (
       <div style={{ width: '800px', height: '600px', border: '1px solid #ccc', padding: '16px' }}>
-        <h3 style={{ margin: '0 0 16px 0' }}>Table with Horizontal Scroll + Fixed Header</h3>
+        <h3 style={{ margin: '0 0 16px 0' }}>
+          Table with Horizontal Scroll + Pinned Header (External Scroll Container)
+        </h3>
         <p style={{ margin: '0 0 16px 0', fontSize: '14px', color: '#666' }}>
-          Scroll vertically to see the header pinning. Scroll horizontally to see pinned columns and
-          gradient effects.
+          This example demonstrates a pinned header that activates when scrolling in an external
+          container. The table header pins to the top when the scroll position reaches it. Scroll
+          vertically in the container to see the header pinning, and horizontally to see pinned
+          columns and gradient effects.
         </p>
         <div
           ref={scrollContainerRef}
