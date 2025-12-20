@@ -21,6 +21,7 @@ export const useRightGradientPosition = (
   scrollLeft: number,
   scrollTop: number,
   tableScrollWidth: number,
+  windowResizeCounter: number,
 ): RightGradientPosition => {
   return useMemo(() => {
     if (!table) {
@@ -43,14 +44,11 @@ export const useRightGradientPosition = (
     const tableRect = table.getBoundingClientRect();
     const headerHeight = header?.offsetHeight || 0;
     const containerRect = scrollContainer?.getBoundingClientRect();
-    const currentScrollTop = scrollContainer?.scrollTop || table.scrollTop || scrollTop;
 
     const visibleTableBottom = Math.min(
       tableRect.bottom,
       containerRect?.bottom || Number.MAX_SAFE_INTEGER,
     );
-
-    void currentScrollTop;
 
     let gradientTop: number;
 
@@ -81,7 +79,19 @@ export const useRightGradientPosition = (
         height: gradientHeight,
       },
     };
-  }, [table, header, scrollContainer, isHeaderPinned, scrollLeft, scrollTop, tableScrollWidth]);
+    // scrollTop is needed for recalculation on vertical scroll, but values are read from DOM via getBoundingClientRect()
+    // windowResizeCounter forces recalculation on window resize
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    table,
+    header,
+    scrollContainer,
+    isHeaderPinned,
+    scrollLeft,
+    scrollTop,
+    tableScrollWidth,
+    windowResizeCounter,
+  ]);
 };
 
 export const usePinnedGradientPosition = (
@@ -92,6 +102,7 @@ export const usePinnedGradientPosition = (
   isHeaderPinned: boolean,
   scrollTop: number,
   tableScrollWidth: number,
+  windowResizeCounter: number,
 ): PinnedGradientPosition => {
   return useMemo(() => {
     if (!table) {
@@ -160,7 +171,6 @@ export const usePinnedGradientPosition = (
     const tableRect = table.getBoundingClientRect();
     const headerHeight = header?.offsetHeight || 0;
     const containerRect = scrollContainer?.getBoundingClientRect();
-    const currentScrollTop = scrollContainer?.scrollTop || table.scrollTop || scrollTop;
 
     const gradientLeft = columnRect.right;
 
@@ -168,9 +178,6 @@ export const usePinnedGradientPosition = (
       tableRect.bottom,
       containerRect?.bottom || Number.MAX_SAFE_INTEGER,
     );
-
-    void currentScrollTop;
-    void tableScrollWidth;
 
     let gradientTop: number;
 
@@ -196,5 +203,17 @@ export const usePinnedGradientPosition = (
         height: gradientHeight,
       },
     };
-  }, [table, scrollLeft, header, scrollContainer, isHeaderPinned, scrollTop, tableScrollWidth]);
+    // scrollTop and tableScrollWidth are needed for recalculation, but values are read from DOM via getBoundingClientRect()
+    // windowResizeCounter forces recalculation on window resize
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    table,
+    scrollLeft,
+    header,
+    scrollContainer,
+    isHeaderPinned,
+    scrollTop,
+    tableScrollWidth,
+    windowResizeCounter,
+  ]);
 };

@@ -1732,8 +1732,6 @@ export const HorizontalScrollWithPinnedHeader: Story = {
             selectedRowIds={[...checkedRows]}
             sortingColumn={sortingColumn}
             sortingDirection={sortingDirection}
-            className=""
-            bodyClassName=""
           />
         </div>
       </div>

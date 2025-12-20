@@ -1,4 +1,4 @@
-import { useMemo, FC, useEffect, useRef, useState } from 'react';
+import { useMemo, FC, useEffect, useRef, useState, useCallback } from 'react';
 import { Resizable } from 'react-resizable';
 import { isEmpty } from 'es-toolkit/compat';
 import styles from './table.module.scss';
@@ -150,9 +150,32 @@ export const Table: FC<TableComponentProps> = ({
   const headerRef = useRef<HTMLDivElement>(null);
   const bodyRef = useRef<HTMLDivElement>(null);
   const [isHeaderPinned, setIsHeaderPinned] = useState(false);
+
+  const updateLeftBorderAccentStyle = useCallback((element: HTMLElement) => {
+    const header = headerRef.current;
+    if (header && header.contains(element)) {
+      return;
+    }
+
+    const rowContent = element.parentElement as HTMLElement;
+    if (!rowContent) {
+      return;
+    }
+
+    const rowContentStyle = window.getComputedStyle(rowContent);
+    const paddingTop = parseFloat(rowContentStyle.paddingTop) || 0;
+    const paddingBottom = parseFloat(rowContentStyle.paddingBottom) || 0;
+
+    const elementHeight = element.offsetHeight;
+    const totalHeight = elementHeight + paddingTop + paddingBottom;
+
+    element.style.setProperty('--expand-cell-top', `${paddingTop}px`);
+    element.style.setProperty('--expand-cell-height', `${totalHeight}px`);
+  }, []);
   const [scrollLeft, setScrollLeft] = useState(0);
   const [scrollTop, setScrollTop] = useState(0);
   const [tableScrollWidth, setTableScrollWidth] = useState(0);
+  const [windowResizeCounter, setWindowResizeCounter] = useState(0);
   const isUnpinningRef = useRef(false);
   const prevExpandedRowIdsRef = useRef<Set<string | number>>(new Set());
   const updateTableGradientsRef = useRef<(() => void) | null>(null);
@@ -160,25 +183,27 @@ export const Table: FC<TableComponentProps> = ({
   const rightGradientPosition = useRightGradientPosition(
     tableRef.current,
     headerRef.current,
-    (externalScrollContainerRef?.current instanceof HTMLElement
+    externalScrollContainerRef?.current instanceof HTMLElement
       ? externalScrollContainerRef.current
-      : null) || null,
+      : null,
     isHeaderPinned,
     scrollLeft,
     scrollTop,
     tableScrollWidth,
+    windowResizeCounter,
   );
 
   const pinnedGradientPosition = usePinnedGradientPosition(
     tableRef.current,
     scrollLeft,
     headerRef.current,
-    (externalScrollContainerRef?.current instanceof HTMLElement
+    externalScrollContainerRef?.current instanceof HTMLElement
       ? externalScrollContainerRef.current
-      : null) || null,
+      : null,
     isHeaderPinned,
     scrollTop,
     tableScrollWidth,
+    windowResizeCounter,
   );
 
   const handleSort = (key: string) => {
@@ -312,15 +337,15 @@ export const Table: FC<TableComponentProps> = ({
       }
     };
 
-    const timeoutId = setTimeout(() => {
+    const rafId = requestAnimationFrame(() => {
       updatePinnedState();
-    }, 200);
+    });
 
     scrollContainer.addEventListener('scroll', updatePinnedState);
     window.addEventListener('resize', updatePinnedState);
 
     return () => {
-      clearTimeout(timeoutId);
+      cancelAnimationFrame(rafId);
       scrollContainer.removeEventListener('scroll', updatePinnedState);
       window.removeEventListener('resize', updatePinnedState);
     };
@@ -440,7 +465,11 @@ export const Table: FC<TableComponentProps> = ({
         passive: true,
       });
     }
-    window.addEventListener('resize', updateTableGradients);
+    const handleWindowResize = () => {
+      updateTableGradients();
+      setWindowResizeCounter((prev) => prev + 1);
+    };
+    window.addEventListener('resize', handleWindowResize);
     updateTableGradientsRef.current = updateTableGradients;
     updateTableGradients();
 
@@ -457,7 +486,7 @@ export const Table: FC<TableComponentProps> = ({
       if (scrollContainer) {
         scrollContainer.removeEventListener('scroll', handleContainerScrollForGradients);
       }
-      window.removeEventListener('resize', updateTableGradients);
+      window.removeEventListener('resize', handleWindowResize);
       resizeObserver.disconnect();
       if (rafId !== null) {
         cancelAnimationFrame(rafId);
@@ -492,28 +521,6 @@ export const Table: FC<TableComponentProps> = ({
     }
 
     const table = tableRef.current;
-    const header = headerRef.current;
-
-    const updateLeftBorderAccentStyle = (element: HTMLElement) => {
-      if (header && header.contains(element)) {
-        return;
-      }
-
-      const rowContent = element.parentElement as HTMLElement;
-      if (!rowContent) {
-        return;
-      }
-
-      const rowContentStyle = window.getComputedStyle(rowContent);
-      const paddingTop = parseFloat(rowContentStyle.paddingTop) || 0;
-      const paddingBottom = parseFloat(rowContentStyle.paddingBottom) || 0;
-
-      const elementHeight = element.offsetHeight;
-      const totalHeight = elementHeight + paddingTop + paddingBottom;
-
-      element.style.setProperty('--expand-cell-top', `${paddingTop}px`);
-      element.style.setProperty('--expand-cell-height', `${totalHeight}px`);
-    };
 
     const updateAllLeftBorderAccentStyles = () => {
       const expandCells = Array.from(table.querySelectorAll<HTMLElement>('[data-base-left="0"]'));
@@ -523,7 +530,7 @@ export const Table: FC<TableComponentProps> = ({
     requestAnimationFrame(() => {
       updateAllLeftBorderAccentStyles();
     });
-  }, [isRowsExpandable, data]);
+  }, [isRowsExpandable, data, updateLeftBorderAccentStyle]);
 
   useEffect(() => {
     if (!tableRef.current) {
@@ -531,7 +538,6 @@ export const Table: FC<TableComponentProps> = ({
     }
 
     const table = tableRef.current;
-    const header = headerRef.current;
     const currentExpanded = new Set(expandedRowIds);
     const prevExpanded = prevExpandedRowIdsRef.current;
 
@@ -552,27 +558,6 @@ export const Table: FC<TableComponentProps> = ({
       return undefined;
     }
 
-    const updateLeftBorderAccentStyle = (element: HTMLElement) => {
-      if (header && header.contains(element)) {
-        return;
-      }
-
-      const rowContent = element.parentElement as HTMLElement;
-      if (!rowContent) {
-        return;
-      }
-
-      const rowContentStyle = window.getComputedStyle(rowContent);
-      const paddingTop = parseFloat(rowContentStyle.paddingTop) || 0;
-      const paddingBottom = parseFloat(rowContentStyle.paddingBottom) || 0;
-
-      const elementHeight = element.offsetHeight;
-      const totalHeight = elementHeight + paddingTop + paddingBottom;
-
-      element.style.setProperty('--expand-cell-top', `${paddingTop}px`);
-      element.style.setProperty('--expand-cell-height', `${totalHeight}px`);
-    };
-
     requestAnimationFrame(() => {
       changedRowIds.forEach((rowId) => {
         const expandCell = table.querySelector<HTMLElement>(
@@ -585,7 +570,7 @@ export const Table: FC<TableComponentProps> = ({
     });
 
     prevExpandedRowIdsRef.current = currentExpanded;
-  }, [isRowsExpandable, expandedRowIds]);
+  }, [isRowsExpandable, expandedRowIds, updateLeftBorderAccentStyle]);
 
   return (
     <div
