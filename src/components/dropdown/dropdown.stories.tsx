@@ -292,6 +292,7 @@ export const WithTooltipPortal: Story = {
           }}
           value={selectedValues}
           tooltipPortalRoot={document.body}
+          customOverflowTooltip={true}
         />
       </div>
     );
@@ -341,12 +342,57 @@ return (
       value={selectedValues}
       onChange={(nextValue) => setSelectedValues(nextValue)}
       tooltipPortalRoot={document.body}
+      customOverflowTooltip={true}
     />
   </div>
 );`,
         language: 'tsx',
       },
     },
+  },
+};
+
+export const WithNativeTooltip: Story = {
+  render: (args: DropdownProps) => {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const [selectedValue, setSelectedValue] = useState<DropdownValue | DropdownValue[]>(
+      'very-long-option-1',
+    );
+
+    return (
+      <div className="dropdown-default" style={{ width: '300px' }}>
+        <p style={{ marginBottom: '16px' }}>
+          This example uses native browser tooltip (title attribute) instead of custom Tooltip
+          component when the selected value overflows. This is the default behavior (project
+          standard).
+        </p>
+        <Dropdown
+          {...args}
+          onChange={(nextValue) => {
+            setSelectedValue(nextValue);
+          }}
+          value={selectedValue}
+          customOverflowTooltip={false}
+        />
+      </div>
+    );
+  },
+  args: {
+    options: [
+      {
+        value: 'very-long-option-1',
+        label: 'Very long option name that will definitely be truncated and show native tooltip',
+      },
+      {
+        value: 'very-long-option-2',
+        label: 'Another extremely long option name that exceeds the dropdown width',
+      },
+      { value: 'option-3', label: 'Short option' },
+      { value: 'option-4', label: 'Option 4' },
+    ],
+    placeholder: 'Select value',
+    clearable: true,
+    onClear: () => {},
   },
 };
 

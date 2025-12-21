@@ -93,6 +93,12 @@ export interface DropdownProps {
   /** Z-index for tooltip when rendered in portal (default: 9) */
   tooltipZIndex?: number;
   /**
+   * Whether to use custom Tooltip component for overflowed selected value.
+   * When false, uses native browser title attribute instead (project standard).
+   * @default false
+   */
+  customOverflowTooltip?: boolean;
+  /**
    * Portal root element for dropdown menu rendering.
    * When provided, the menu will be rendered in this element using React Portal.
    * Useful for preventing clipping in containers with overflow: hidden (e.g., Modal, SidePanel).
@@ -140,6 +146,7 @@ export const Dropdown: FC<DropdownProps> = ({
   clearButtonAriaLabel = 'Clear selection',
   tooltipPortalRoot,
   tooltipZIndex,
+  customOverflowTooltip = false,
   menuPortalRoot,
   isMultiSelectWithTags = false,
   noMatchesMessage = 'No matches found',
@@ -836,19 +843,23 @@ export const Dropdown: FC<DropdownProps> = ({
     const formattedValue = formatDisplayedValue
       ? formatDisplayedValue(displayedValue)
       : displayedValue;
+    const shouldShowOverflowTooltip = hasSelectedValue && !!formattedValue && isValueOverflowed;
+    const nativeTooltipValue =
+      shouldShowOverflowTooltip && !customOverflowTooltip ? formattedValue : undefined;
+
     const contentNode = (
       <span
         ref={valueRef}
         className={cx('value', {
           placeholder: displayedValue === placeholder,
         })}
+        title={nativeTooltipValue}
       >
         {formattedValue}
       </span>
     );
-    const shouldShowTooltip = hasSelectedValue && !!formattedValue && isValueOverflowed;
 
-    if (!shouldShowTooltip) {
+    if (!shouldShowOverflowTooltip || !customOverflowTooltip) {
       return contentNode;
     }
 
