@@ -1,0 +1,37 @@
+.gradient-overlay {
+  pointer-events: none;
+  opacity: 0.8;
+
+  &.direction-right {
+    background: linear-gradient(
+      270deg,
+      var(--rp-ui-color-bg-2) 0%,
+      transparent 100%
+    );
+
+    @supports (color-mix(in srgb, white, transparent)) {
+      background: linear-gradient(
+        270deg,
+        var(--rp-ui-color-bg-2) 0%,
+        color-mix(in srgb, var(--rp-ui-color-bg-2) 0%, transparent) 100%
+      );
+    }
+  }
+
+  &.direction-left {
+    background: linear-gradient(
+      90deg,
+      var(--rp-ui-color-bg-2) 0%,
+      transparent 100%
+    );
+
+    @supports (color-mix(in srgb, white, transparent)) {
+      background: linear-gradient(
+        90deg,
+        var(--rp-ui-color-bg-2) 0%,
+        color-mix(in srgb, var(--rp-ui-color-bg-2) 0%, transparent) 100%
+      );
+    }
+  }
+}
+

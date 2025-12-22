@@ -10,6 +10,8 @@ $PADDING_VERTICAL-LARGE: 30px;
 .table {
   width: 100%;
   max-width: 1200px;
+  position: relative;
+  isolation: isolate;
 
   * {
     box-sizing: border-box;
@@ -18,26 +20,35 @@ $PADDING_VERTICAL-LARGE: 30px;
   &.fixed-header {
     display: flex;
     flex-direction: column;
-    height: 100%;
-    overflow: hidden;
+
+    &:not(.external-scroll-container) {
+      height: 100%;
+      overflow: hidden;
+    }
+
+    &.external-scroll-container {
+      height: auto;
+    }
 
     &.horizontally-scrollable-container {
       overflow-x: auto;
       overflow-y: auto;
     }
   }
+
 }
 
 .table-header {
+  --table-header-bg-color: var(--rp-ui-base-bg-000);
   display: grid;
   width: 100%;
   height: 32px;
   align-items: center;
-  background-color: var(--rp-ui-base-bg-000);
+  background-color: var(--table-header-bg-color);
 
   &.sticky-header {
     position: sticky;
-    padding: 0 3px;
+    padding: 0 3px 0 0;
     top: 0;
     left: 0;
     z-index: 5;
@@ -46,10 +57,26 @@ $PADDING_VERTICAL-LARGE: 30px;
     box-sizing: border-box;
   }
 
+  &.pinned-header {
+    position: fixed;
+    z-index: 3;
+
+    &.horizontally-scrollable {
+      min-width: 0;
+      overflow: hidden;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+
+      &::-webkit-scrollbar {
+        display: none;
+      }
+    }
+  }
+
   &.horizontally-scrollable {
     overflow-x: auto;
     min-width: fit-content;
-    padding: 0 3px;
+    padding: 0 3px 0 0;
 
     &.sticky-header {
       overflow-x: visible;
@@ -65,7 +92,7 @@ $PADDING_VERTICAL-LARGE: 30px;
 
     &:not(.horizontally-scrollable) {
       min-width: fit-content;
-      padding: 0 3px;
+      padding: 0 3px 0 0;
     }
   }
 }
@@ -93,6 +120,11 @@ $PADDING_VERTICAL-LARGE: 30px;
     &:has(.expanded-cell) {
       height: auto;
     }
+
+    &:has(.pinned-column.has-scroll) {
+      overflow: visible;
+    }
+
   }
 
   .table-row-content {
@@ -110,8 +142,25 @@ $PADDING_VERTICAL-LARGE: 30px;
       align-items: flex-start;
     }
 
+    &:has(.pinned-column.has-scroll) {
+      overflow: visible;
+    }
+
     .expand-cell {
       background-color: inherit;
+    }
+
+    .left-border-accent {
+      &::before {
+        content: '';
+        position: absolute;
+        top: calc(-1 * var(--expand-cell-top, 0px));
+        left: 0;
+        width: 3px;
+        height: var(--expand-cell-height, 100%);
+        pointer-events: none;
+        border-left: 1px solid rgba(var(--rp-ui-shadow-rgb), .15);
+      }
     }
   }
 
@@ -154,8 +203,13 @@ $PADDING_VERTICAL-LARGE: 30px;
     flex: 1;
     overflow-y: auto;
     min-height: 0;
-    padding: 0 3px 3px 3px;
+    padding: 0 3px 3px 0;
     width: 100%;
+
+    .table.external-scroll-container & {
+      flex: none;
+      overflow-y: visible;
+    }
 
     .table-row {
       min-height: $HEIGHT-DEFAULT;
@@ -176,7 +230,7 @@ $PADDING_VERTICAL-LARGE: 30px;
 
   &.horizontally-scrollable {
     overflow-x: auto;
-    padding: 3px;
+    padding: 0 3px 3px 0;
     min-width: fit-content;
 
     .table-row {
@@ -191,7 +245,7 @@ $PADDING_VERTICAL-LARGE: 30px;
 
   &.resizable:not(.horizontally-scrollable) {
     min-width: fit-content;
-    padding: 3px;
+    padding: 0 3px 3px 0;
 
     .table-row {
       min-width: fit-content;
@@ -246,6 +300,10 @@ $PADDING_VERTICAL-LARGE: 30px;
       text-overflow: ellipsis;
       white-space: nowrap;
       min-width: 0;
+
+      &.pinned-column.has-scroll {
+        overflow: visible;
+      }
     }
 
     &.expanded-cell {
@@ -255,10 +313,9 @@ $PADDING_VERTICAL-LARGE: 30px;
       word-break: break-word;
       overflow-wrap: break-word;
       hyphens: auto;
-      height: auto;
+      height: 100%;
       max-height: none;
       overflow: hidden;
-      background-color: var(--rp-ui-base-bg-050);
     }
   }
 
@@ -280,6 +337,7 @@ $PADDING_VERTICAL-LARGE: 30px;
         background-color: var(--rp-ui-base-bg-000);
       }
     }
+
   }
 
   &.expand-cell {
@@ -288,6 +346,7 @@ $PADDING_VERTICAL-LARGE: 30px;
     display: flex;
     align-items: center;
     position: sticky;
+    left: 0;
     z-index: 10;
     background-color: inherit;
 
@@ -386,9 +445,9 @@ $PADDING_VERTICAL-LARGE: 30px;
   &.pinned-column {
     position: sticky;
     z-index: 12;
-    background-color: inherit;
+    background-color: var(--table-header-bg-color);
 
-    &::after {
+    &::before {
       content: '';
       position: absolute;
       top: 50%;
@@ -398,6 +457,14 @@ $PADDING_VERTICAL-LARGE: 30px;
       transform: translateY(-50%);
       background-color: var(--rp-ui-base-e-200);
       z-index: 1;
+    }
+
+    &.has-scroll {
+      isolation: isolate;
+
+      &::before {
+        display: none;
+      }
     }
   }
 
@@ -423,5 +490,10 @@ $PADDING_VERTICAL-LARGE: 30px;
     position: sticky;
     z-index: 1;
     background: var(--rp-ui-color-field-bg);
+
+    &.has-scroll {
+      overflow: visible;
+      isolation: isolate;
+    }
   }
 }
