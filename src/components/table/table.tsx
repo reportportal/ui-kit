@@ -559,13 +559,15 @@ export const Table: FC<TableComponentProps> = ({
     }
 
     requestAnimationFrame(() => {
-      changedRowIds.forEach((rowId) => {
-        const expandCell = table.querySelector<HTMLElement>(
-          `[data-base-left="0"][data-row-id="${rowId}"]`,
-        );
-        if (expandCell) {
-          updateLeftBorderAccentStyle(expandCell);
-        }
+      requestAnimationFrame(() => {
+        changedRowIds.forEach((rowId) => {
+          const expandCell = table.querySelector<HTMLElement>(
+            `[data-base-left="0"][data-row-id="${rowId}"]`,
+          );
+          if (expandCell) {
+            updateLeftBorderAccentStyle(expandCell);
+          }
+        });
       });
     });
 
