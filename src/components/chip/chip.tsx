@@ -80,7 +80,12 @@ export const Chip = ({
         {children}
       </span>
       {onRemove && !disabled && (
-        <button type="button" className={cx('remove-button')} onClick={handleRemove}>
+        <button
+          type="button"
+          className={cx('remove-button')}
+          onClick={handleRemove}
+          aria-label="Remove"
+        >
           <CloseIcon />
         </button>
       )}
