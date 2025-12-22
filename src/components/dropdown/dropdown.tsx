@@ -23,7 +23,6 @@ import { Scrollbars } from 'rc-scrollbars';
 import { KeyCodes } from '@common/constants/keyCodes';
 import { BaseIconButton } from '@components/baseIconButton';
 import { ClearIcon, DropdownIcon } from '@components/icons';
-import { Tooltip } from '@components/tooltip';
 import { FieldLabel } from '@components/fieldLabel';
 import { AdaptiveTagList } from '@components/adaptiveTagList';
 import { DropdownOption } from './dropdownOption';
@@ -88,16 +87,6 @@ export interface DropdownProps {
   onClear?: () => void;
   /** ARIA label for the clear button */
   clearButtonAriaLabel?: string;
-  /** Portal root element for tooltip rendering (e.g., document.body to prevent clipping) */
-  tooltipPortalRoot?: Element;
-  /** Z-index for tooltip when rendered in portal (default: 9) */
-  tooltipZIndex?: number;
-  /**
-   * Whether to use custom Tooltip component for overflowed selected value.
-   * When false, uses native browser title attribute instead (project standard).
-   * @default false
-   */
-  customOverflowTooltip?: boolean;
   /**
    * Portal root element for dropdown menu rendering.
    * When provided, the menu will be rendered in this element using React Portal.
@@ -144,9 +133,6 @@ export const Dropdown: FC<DropdownProps> = ({
   clearable = false,
   onClear = () => {},
   clearButtonAriaLabel = 'Clear selection',
-  tooltipPortalRoot,
-  tooltipZIndex,
-  customOverflowTooltip = false,
   menuPortalRoot,
   isMultiSelectWithTags = false,
   noMatchesMessage = 'No matches found',
@@ -844,35 +830,17 @@ export const Dropdown: FC<DropdownProps> = ({
       ? formatDisplayedValue(displayedValue)
       : displayedValue;
     const shouldShowOverflowTooltip = hasSelectedValue && !!formattedValue && isValueOverflowed;
-    const nativeTooltipValue =
-      shouldShowOverflowTooltip && !customOverflowTooltip ? formattedValue : undefined;
 
-    const contentNode = (
+    return (
       <span
         ref={valueRef}
         className={cx('value', {
           placeholder: displayedValue === placeholder,
         })}
-        title={nativeTooltipValue}
+        title={shouldShowOverflowTooltip ? formattedValue : undefined}
       >
         {formattedValue}
       </span>
-    );
-
-    if (!shouldShowOverflowTooltip || !customOverflowTooltip) {
-      return contentNode;
-    }
-
-    return (
-      <Tooltip
-        content={formattedValue}
-        placement="top"
-        wrapperClassName={cx('value-tooltip')}
-        portalRoot={tooltipPortalRoot}
-        zIndex={tooltipZIndex}
-      >
-        {contentNode}
-      </Tooltip>
     );
   };
 
