@@ -175,7 +175,7 @@ export const Table: FC<TableComponentProps> = ({
   const [scrollLeft, setScrollLeft] = useState(0);
   const [scrollTop, setScrollTop] = useState(0);
   const [tableScrollWidth, setTableScrollWidth] = useState(0);
-  const [windowResizeCounter, setWindowResizeCounter] = useState(0);
+  const [gradientUpdateCounter, setGradientUpdateCounter] = useState(0);
   const isUnpinningRef = useRef(false);
   const prevExpandedRowIdsRef = useRef<Set<string | number>>(new Set());
   const updateTableGradientsRef = useRef<(() => void) | null>(null);
@@ -190,7 +190,7 @@ export const Table: FC<TableComponentProps> = ({
     scrollLeft,
     scrollTop,
     tableScrollWidth,
-    windowResizeCounter,
+    gradientUpdateCounter,
   );
 
   const pinnedGradientPosition = usePinnedGradientPosition(
@@ -203,7 +203,7 @@ export const Table: FC<TableComponentProps> = ({
     isHeaderPinned,
     scrollTop,
     tableScrollWidth,
-    windowResizeCounter,
+    gradientUpdateCounter,
   );
 
   const handleSort = (key: string) => {
@@ -467,7 +467,7 @@ export const Table: FC<TableComponentProps> = ({
     }
     const handleWindowResize = () => {
       updateTableGradients();
-      setWindowResizeCounter((prev) => prev + 1);
+      setGradientUpdateCounter((prev) => prev + 1);
     };
     window.addEventListener('resize', handleWindowResize);
     updateTableGradientsRef.current = updateTableGradients;
@@ -558,20 +558,23 @@ export const Table: FC<TableComponentProps> = ({
       return undefined;
     }
 
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        changedRowIds.forEach((rowId) => {
-          const expandCell = table.querySelector<HTMLElement>(
-            `[data-base-left="0"][data-row-id="${rowId}"]`,
-          );
-          if (expandCell) {
-            updateLeftBorderAccentStyle(expandCell);
-          }
-        });
+    const timeoutId = setTimeout(() => {
+      changedRowIds.forEach((rowId) => {
+        const expandCell = table.querySelector<HTMLElement>(
+          `[data-base-left="0"][data-row-id="${rowId}"]`,
+        );
+        if (expandCell) {
+          updateLeftBorderAccentStyle(expandCell);
+        }
       });
-    });
+
+      // Force gradient recalculation after expand/collapse as table dimensions changed
+      setGradientUpdateCounter((prev) => prev + 1);
+    }, 0);
 
     prevExpandedRowIdsRef.current = currentExpanded;
+
+    return () => clearTimeout(timeoutId);
   }, [isRowsExpandable, expandedRowIds, updateLeftBorderAccentStyle]);
 
   return (
