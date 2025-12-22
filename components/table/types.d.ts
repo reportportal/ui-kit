@@ -1,4 +1,4 @@
-import { Dispatch, ReactNode, SetStateAction } from '../../../node_modules/react';
+import { Dispatch, ReactNode, RefObject, SetStateAction } from '../../../node_modules/react';
 import { ASC, DESC } from './constants';
 
 export interface Column {
@@ -70,4 +70,8 @@ export interface TableComponentProps {
     onToggleRowExpansion?: (id: string | number) => void;
     onToggleAllRowsExpansion?: () => void;
     onColumnResize?: (columnKey: string, width: number) => void;
+    externalScrollContainerRef?: RefObject<HTMLElement> | RefObject<Element> | null | undefined;
+    portalContainer?: HTMLElement | null;
+    rightGradientClassName?: string;
+    pinnedGradientClassName?: string;
 }

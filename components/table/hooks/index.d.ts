@@ -3,3 +3,5 @@ export { useTableHover } from './useTableHover';
 export { useTableExpansion } from './useTableExpansion';
 export { useColumnWidths } from './useColumnWidths';
 export { useColumnResize } from './useColumnResize';
+export { useRightGradientPosition, usePinnedGradientPosition } from './useGradientPosition';
+export type { RightGradientPosition, PinnedGradientPosition } from './useGradientPosition';
