@@ -6,33 +6,25 @@
   // Gap size - consumers can override
   --sortable-gap: 8px;
 
-  // Show line ABOVE
+  // Show line ABOVE when dropping in top half
   &--drop-target-top::before {
     content: '';
-    position: absolute;
-    top: calc(var(--sortable-gap) / -2);
-    left: 0;
-    right: 0;
+    display: block;
     height: 2px;
+    margin-bottom: var(--sortable-gap);
     background-color: var(--rp-ui-color-primary-focused);
     border-radius: 2px;
-    z-index: 1;
-    transform: translateY(-50%);
     pointer-events: none;
   }
 
-  // Show line BELOW
+  // Show line BELOW when dropping in bottom half
   &--drop-target-bottom::after {
     content: '';
-    position: absolute;
-    bottom: calc(var(--sortable-gap) / -2);
-    left: 0;
-    right: 0;
+    display: block;
     height: 2px;
+    margin-top: var(--sortable-gap);
     background-color: var(--rp-ui-color-primary-focused);
     border-radius: 2px;
-    z-index: 1;
-    transform: translateY(50%);
     pointer-events: none;
   }
 }
