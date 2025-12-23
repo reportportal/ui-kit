@@ -147,7 +147,10 @@ export const Dropdown: FC<DropdownProps> = ({
   Object.entries(rest).forEach(([key, attrValue]) => {
     if (key.startsWith('data') || key.startsWith('aria')) {
       // Convert camelCase to kebab-case (e.g., dataAutomationId -> data-automation-id)
-      const kebabKey = key.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
+      const kebabKey = key
+        .replace(/([a-z])([A-Z])/g, '$1-$2')
+        .replace(/([A-Z])([A-Z][a-z])/g, '$1-$2')
+        .toLowerCase();
       transformedAttributes[kebabKey] = attrValue;
     } else {
       restProps[key] = attrValue;
