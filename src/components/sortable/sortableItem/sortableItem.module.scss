@@ -6,26 +6,50 @@
   // Gap size - consumers can override
   --sortable-gap: 8px;
 
-  // Show line ABOVE when dropping in top half
   &--drop-target-top::before {
     content: '';
-    display: block;
+    position: absolute;
+    top: calc(var(--sortable-gap) / -2);
+    left: 0;
+    right: 0;
     height: 2px;
-    margin-bottom: var(--sortable-gap);
     background-color: var(--rp-ui-color-primary-focused);
     border-radius: 2px;
+    z-index: 1;
+    transform: translateY(-50%);
     pointer-events: none;
   }
 
-  // Show line BELOW when dropping in bottom half
   &--drop-target-bottom::after {
     content: '';
-    display: block;
+    position: absolute;
+    bottom: calc(var(--sortable-gap) / -2);
+    left: 0;
+    right: 0;
     height: 2px;
-    margin-top: var(--sortable-gap);
     background-color: var(--rp-ui-color-primary-focused);
     border-radius: 2px;
+    z-index: 1;
+    transform: translateY(50%);
     pointer-events: none;
+  }
+
+  &--hover-mode#{&}--drop-target-top::before {
+    display: block;
+    position: static;
+    top: auto;
+    margin-bottom: var(--sortable-gap);
+    transform: none;
+    z-index: auto;
+  }
+
+  &--hover-mode#{&}--drop-target-bottom::after {
+    display: block;
+    position: static;
+    bottom: auto;
+    margin-top: var(--sortable-gap);
+    transform: none;
+    z-index: auto;
   }
 }
 
