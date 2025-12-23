@@ -34,8 +34,11 @@ export const SortableItem = ({
 
   const isRenderFunction = typeof children === 'function';
 
+  const isHoverMode = dropDetectionMode === DROP_DETECTION_MODE.HOVER;
+
   const itemClassName = cx('sortable-item', className, {
     'sortable-item--dragging': isDragging,
+    'sortable-item--hover-mode': isHoverMode,
     'sortable-item--drop-target-top': dropPosition === DROP_POSITIONS.TOP,
     'sortable-item--drop-target-bottom': dropPosition === DROP_POSITIONS.BOTTOM,
     [draggingClassName || '']: isDragging && draggingClassName,

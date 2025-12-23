@@ -42,11 +42,6 @@ export const calculateCursorBasedDropIndex = ({
 export const getDropZone = (cursorY: number, elementHeight: number): DropPosition => {
   const relativeY = cursorY / elementHeight;
 
-  // Dead zones at edges
-  if (relativeY < 0.05 || relativeY > 0.95) {
-    return null;
-  }
-
   if (relativeY < 0.5) {
     return DROP_POSITIONS.TOP;
   }
