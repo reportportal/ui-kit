@@ -26,6 +26,7 @@ import { BaseIconButton } from '@components/baseIconButton';
 import { ClearIcon, DropdownIcon } from '@components/icons';
 import { FieldLabel } from '@components/fieldLabel';
 import { AdaptiveTagList } from '@components/adaptiveTagList';
+import { splitHtmlAttributes } from '@common/utils';
 import { DropdownOption } from './dropdownOption';
 import { DropdownVariant, RenderDropdownOption, DropdownOptionType, DropdownValue } from './types';
 import {
@@ -140,22 +141,7 @@ export const Dropdown: FC<DropdownProps> = ({
   noMatchesMessage = 'No matches found',
   ...rest
 }): ReactElement => {
-  // Transform camelCase data-* and aria-* attributes to kebab-case
-  const transformedAttributes: Record<string, unknown> = {};
-  const restProps: Record<string, unknown> = {};
-
-  Object.entries(rest).forEach(([key, attrValue]) => {
-    if (key.startsWith('data') || key.startsWith('aria')) {
-      // Convert camelCase to kebab-case (e.g., dataAutomationId -> data-automation-id)
-      const kebabKey = key
-        .replace(/([a-z])([A-Z])/g, '$1-$2')
-        .replace(/([A-Z])([A-Z][a-z])/g, '$1-$2')
-        .toLowerCase();
-      transformedAttributes[kebabKey] = attrValue;
-    } else {
-      restProps[key] = attrValue;
-    }
-  });
+  const { transformed: transformedAttributes, remaining: restProps } = splitHtmlAttributes(rest);
 
   const [opened, setOpened] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
