@@ -333,7 +333,7 @@ export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompletePr
                         disabled,
                         ...inputProps,
                       })}
-                      className={cx('input', { disabled })}
+                      className={cx('input', { disabled }, inputProps.className)}
                       data-automation-id={dataAutomationId}
                     />
                   </div>
