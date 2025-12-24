@@ -13,6 +13,7 @@ import {
   KeyboardEvent,
   ChangeEvent,
   FocusEvent,
+  ComponentPropsWithRef,
 } from 'react';
 import { isEmpty } from 'es-toolkit/compat';
 import { createPortal } from 'react-dom';
@@ -25,6 +26,7 @@ import { BaseIconButton } from '@components/baseIconButton';
 import { ClearIcon, DropdownIcon } from '@components/icons';
 import { FieldLabel } from '@components/fieldLabel';
 import { AdaptiveTagList } from '@components/adaptiveTagList';
+import { splitHtmlAttributes } from '@common/utils';
 import { DropdownOption } from './dropdownOption';
 import { DropdownVariant, RenderDropdownOption, DropdownOptionType, DropdownValue } from './types';
 import {
@@ -47,7 +49,8 @@ import styles from './dropdown.module.scss';
 
 const cx = classNames.bind(styles);
 
-export interface DropdownProps {
+export interface DropdownProps
+  extends Omit<ComponentPropsWithRef<'div'>, 'onChange' | 'onFocus' | 'onBlur' | 'title'> {
   // TODO: make value and options optional
   options: DropdownOptionType[];
   value: DropdownValue | DropdownValue[];
@@ -136,7 +139,10 @@ export const Dropdown: FC<DropdownProps> = ({
   menuPortalRoot,
   isMultiSelectWithTags = false,
   noMatchesMessage = 'No matches found',
+  ...rest
 }): ReactElement => {
+  const { transformed: transformedAttributes, remaining: restProps } = splitHtmlAttributes(rest);
+
   const [opened, setOpened] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const containerRef = useRef<HTMLDivElement>(null);
@@ -598,7 +604,13 @@ export const Dropdown: FC<DropdownProps> = ({
       return placeholder;
     }
 
-    return undefined;
+    // Fallback for string values that are not found in options
+    // Only applies when placeholder is not set (empty string is used by default)
+    if (typeof value === 'string' && value.length > 0 && !placeholder) {
+      return value;
+    }
+
+    return placeholder || undefined;
   }, [
     multiSelect,
     value,
@@ -863,7 +875,13 @@ export const Dropdown: FC<DropdownProps> = ({
   void toggleButtonType;
 
   return (
-    <div ref={containerRef} className={cx('container', className)} title={title}>
+    <div
+      ref={containerRef}
+      className={cx('container', className)}
+      title={title}
+      {...restProps}
+      {...transformedAttributes}
+    >
       {label && (
         <FieldLabel
           {...getLabelProps()}
