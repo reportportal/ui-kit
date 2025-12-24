@@ -1,7 +1,7 @@
-import { ReactNode, FC } from '../../../node_modules/react';
+import { ReactNode, FC, ComponentPropsWithRef } from '../../../node_modules/react';
 import { DropdownVariant, RenderDropdownOption, DropdownOptionType, DropdownValue } from './types';
 
-export interface DropdownProps {
+export interface DropdownProps extends Omit<ComponentPropsWithRef<'div'>, 'onChange' | 'onFocus' | 'onBlur' | 'title'> {
     options: DropdownOptionType[];
     value: DropdownValue | DropdownValue[];
     disabled?: boolean;
