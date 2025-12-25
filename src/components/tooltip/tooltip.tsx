@@ -120,6 +120,7 @@ export const Tooltip: FC<TooltipProps> = ({
         ...styleWidth,
         minWidth,
         zIndex,
+        pointerEvents: 'none',
       }}
       data-automation-id={dataAutomationId}
       className={cx(tooltipClassName)}
