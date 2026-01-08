@@ -44,6 +44,7 @@ export interface TableComponentProps {
   fixedColumns: FixedColumn[];
   renderRowActions?: (metaData?: MetaData) => ReactNode;
   selectable?: boolean;
+  isCheckboxOutside?: boolean;
   className?: string;
   headerClassName?: string;
   bodyClassName?: string;
