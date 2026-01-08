@@ -3,28 +3,53 @@
   width: 100%;
   transition: opacity 0.2s ease;
 
+  // Gap size - consumers can override
+  --sortable-gap: 8px;
+
   &--drop-target-top::before {
     content: '';
     position: absolute;
-    top: -2px;
+    top: calc(var(--sortable-gap) / -2);
     left: 0;
     right: 0;
     height: 2px;
     background-color: var(--rp-ui-color-primary-focused);
     border-radius: 2px;
     z-index: 1;
+    transform: translateY(-50%);
+    pointer-events: none;
   }
 
   &--drop-target-bottom::after {
     content: '';
     position: absolute;
-    bottom: -2px;
+    bottom: calc(var(--sortable-gap) / -2);
     left: 0;
     right: 0;
     height: 2px;
     background-color: var(--rp-ui-color-primary-focused);
     border-radius: 2px;
     z-index: 1;
+    transform: translateY(50%);
+    pointer-events: none;
+  }
+
+  &--hover-mode#{&}--drop-target-top::before {
+    display: block;
+    position: static;
+    top: auto;
+    margin-bottom: var(--sortable-gap);
+    transform: none;
+    z-index: auto;
+  }
+
+  &--hover-mode#{&}--drop-target-bottom::after {
+    display: block;
+    position: static;
+    bottom: auto;
+    margin-top: var(--sortable-gap);
+    transform: none;
+    z-index: auto;
   }
 }
 
@@ -41,4 +66,3 @@
     opacity: 0.5;
   }
 }
-

@@ -3,6 +3,7 @@
 $WIDTH-SMALL: 320px;
 $WIDTH-DEFAULT: 480px;
 $WIDTH-LARGE: 720px;
+$SCROLLBAR-WIDTH: 12px;
 
 // TODO: Discuss with UX team. There are no designs for the dark theme, so the theme-independent CSS properties are used
 
@@ -67,10 +68,14 @@ $WIDTH-LARGE: 720px;
   font-weight: var(--rp-ui-base-fw-regular);
   @include font-scale();
   color: var(--rp-ui-base-almost-black);
+}
 
-  &.scrollable{
-    width: calc(100% - 34px);
-  }
+.scrollable-wrapper {
+  margin-right: -$SCROLLBAR-WIDTH;
+}
+
+.scrollable-content {
+  padding-right: $SCROLLBAR-WIDTH;
 }
 
 .size-default {

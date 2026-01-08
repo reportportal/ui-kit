@@ -1,4 +1,6 @@
-import { useMemo, FC, useEffect, useRef, useState } from 'react';
+import { useMemo, FC, useEffect, useRef, useState, useCallback } from 'react';
+import { Resizable } from 'react-resizable';
+import { isEmpty } from 'es-toolkit/compat';
 import styles from './table.module.scss';
 import classNames from 'classnames/bind';
 import { ArrowDownIcon, ArrowUpIcon, ChevronDownDropdownIcon } from '@components/icons';
@@ -14,7 +16,17 @@ import {
   isAsc,
 } from './utils';
 import { ASC, EXPANDABLE_CHECKBOX_COLUMN_WIDTH } from './constants';
-import { useTableColumns, useTableHover, useTableExpansion, useColumnWidths } from './hooks';
+import {
+  useTableColumns,
+  useTableHover,
+  useTableExpansion,
+  useColumnWidths,
+  useColumnResize,
+  useRightGradientPosition,
+  usePinnedGradientPosition,
+} from './hooks';
+import { ResizeHandle } from './resizeHandle';
+import { GradientOverlay } from './gradientOverlay';
 
 const cx = classNames.bind(styles);
 
@@ -58,11 +70,20 @@ export const Table: FC<TableComponentProps> = ({
   expandedRowIds = [],
   isAllExpandedByDefault,
   expandAllTooltip,
+  isResizable = false,
+  minColumnWidth = 50,
+  maxColumnWidth = 500,
+  isSelectAllCheckboxAlwaysVisible = false,
   onChangeSorting = () => {},
   onToggleRowSelection = () => {},
   onToggleAllRowsSelection = () => {},
   onToggleRowExpansion = () => {},
   onToggleAllRowsExpansion = () => {},
+  onColumnResize = () => {},
+  externalScrollContainerRef,
+  portalContainer = typeof document !== 'undefined' ? document.body : null,
+  rightGradientClassName,
+  pinnedGradientClassName,
 }) => {
   const primaryColumns: Column[] = useMemo(
     () => (Array.isArray(primaryColumnsInput) ? primaryColumnsInput : [primaryColumnsInput]),
@@ -97,6 +118,94 @@ export const Table: FC<TableComponentProps> = ({
     onToggleRowExpansion,
   });
 
+  const { columnWidths, handleResize, handleResizeStop, handleResizeStart } = useColumnResize({
+    enabled: isResizable,
+    minWidth: minColumnWidth,
+    maxWidth: maxColumnWidth,
+    columnWidthsRef,
+    onColumnResize,
+  });
+
+  const wrapWithResizable = (column: PrimaryColumn | FixedColumn, headerCell: JSX.Element) => (
+    <Resizable
+      key={column.key}
+      width={
+        columnWidths[column.key] ??
+        (typeof column.width === 'number' ? column.width : minColumnWidth)
+      }
+      height={0}
+      axis="x"
+      handle={<ResizeHandle />}
+      onResizeStart={handleResizeStart}
+      onResize={handleResize(column.key)}
+      onResizeStop={handleResizeStop(column.key)}
+      minConstraints={[minColumnWidth, 0]}
+      maxConstraints={[maxColumnWidth, 0]}
+      className={cx('resizable-column')}
+    >
+      {headerCell}
+    </Resizable>
+  );
+  const tableRef = useRef<HTMLDivElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
+  const bodyRef = useRef<HTMLDivElement>(null);
+  const [isHeaderPinned, setIsHeaderPinned] = useState(false);
+
+  const updateLeftBorderAccentStyle = useCallback((element: HTMLElement) => {
+    const header = headerRef.current;
+    if (header && header.contains(element)) {
+      return;
+    }
+
+    const rowContent = element.parentElement as HTMLElement;
+    if (!rowContent) {
+      return;
+    }
+
+    const rowContentStyle = window.getComputedStyle(rowContent);
+    const paddingTop = parseFloat(rowContentStyle.paddingTop) || 0;
+    const paddingBottom = parseFloat(rowContentStyle.paddingBottom) || 0;
+
+    const elementHeight = element.offsetHeight;
+    const totalHeight = elementHeight + paddingTop + paddingBottom;
+
+    element.style.setProperty('--expand-cell-top', `${paddingTop}px`);
+    element.style.setProperty('--expand-cell-height', `${totalHeight}px`);
+  }, []);
+  const [scrollLeft, setScrollLeft] = useState(0);
+  const [scrollTop, setScrollTop] = useState(0);
+  const [tableScrollWidth, setTableScrollWidth] = useState(0);
+  const [gradientUpdateCounter, setGradientUpdateCounter] = useState(0);
+  const isUnpinningRef = useRef(false);
+  const prevExpandedRowIdsRef = useRef<Set<string | number>>(new Set());
+  const updateTableGradientsRef = useRef<(() => void) | null>(null);
+
+  const rightGradientPosition = useRightGradientPosition(
+    tableRef.current,
+    headerRef.current,
+    externalScrollContainerRef?.current instanceof HTMLElement
+      ? externalScrollContainerRef.current
+      : null,
+    isHeaderPinned,
+    scrollLeft,
+    scrollTop,
+    tableScrollWidth,
+    gradientUpdateCounter,
+  );
+
+  const pinnedGradientPosition = usePinnedGradientPosition(
+    tableRef.current,
+    scrollLeft,
+    headerRef.current,
+    externalScrollContainerRef?.current instanceof HTMLElement
+      ? externalScrollContainerRef.current
+      : null,
+    isHeaderPinned,
+    scrollTop,
+    tableScrollWidth,
+    gradientUpdateCounter,
+  );
+
   const handleSort = (key: string) => {
     if (!defaultSortableColumns.includes(key)) return;
     onChangeSorting({ key, direction: sortingDirection });
@@ -127,6 +236,9 @@ export const Table: FC<TableComponentProps> = ({
   const isAllRowsSelected: boolean = data.every((row) => selectedRowIds.includes(row.id));
   const isAnyRowSelected: boolean = data.some((row) => selectedRowIds.includes(row.id));
   const hasSelectedRows = selectedRowIds?.length > 0;
+  const hasRows = !isEmpty(data);
+  const isSelectAllCheckboxVisible =
+    (isSelectAllCheckboxAlwaysVisible && hasRows) || hasSelectedRows;
 
   const isAllRowsExpanded: boolean = data.every((row) => expandedRowIds.includes(row.id));
   const expandAllIconState =
@@ -139,6 +251,8 @@ export const Table: FC<TableComponentProps> = ({
     selectable,
     !!renderRowActions,
     false,
+    isResizable ? columnWidths : undefined,
+    isResizable,
   );
 
   const headerGridTemplateColumns = getGridTemplateColumns(
@@ -148,6 +262,8 @@ export const Table: FC<TableComponentProps> = ({
     selectable,
     !!renderRowActions,
     true,
+    isResizable ? columnWidths : undefined,
+    isResizable,
   );
 
   const expandAllButton = (
@@ -158,23 +274,331 @@ export const Table: FC<TableComponentProps> = ({
     </button>
   );
 
+  useEffect(() => {
+    if (!externalScrollContainerRef?.current || !tableRef.current || !headerRef.current) {
+      return undefined;
+    }
+
+    const scrollContainer = externalScrollContainerRef.current;
+    const table = tableRef.current;
+    const header = headerRef.current;
+
+    const updatePinnedState = () => {
+      const tableRect = table.getBoundingClientRect();
+      const containerRect = scrollContainer.getBoundingClientRect();
+      const headerHeight = header.offsetHeight;
+
+      const tableTop = tableRect.top - containerRect.top;
+      const tableBottom = tableRect.bottom - containerRect.top;
+      const containerScrollTop = scrollContainer.scrollTop;
+      const shouldPin = containerScrollTop > 0 && tableTop <= 0 && tableBottom > headerHeight;
+
+      setIsHeaderPinned(shouldPin);
+
+      if (shouldPin) {
+        const tableLeft = tableRect.left;
+        const topOffset = containerRect.top;
+
+        header.classList.add(cx('pinned-header'));
+        if (isHorizontallyScrollable) {
+          header.style.overflow = 'hidden';
+          header.style.overflowX = 'hidden';
+        }
+        header.style.left = `${tableLeft}px`;
+        header.style.top = `${topOffset}px`;
+        header.style.width = `${tableRect.width}px`;
+      } else {
+        const savedScrollLeft = table.scrollLeft;
+
+        isUnpinningRef.current = true;
+
+        header.classList.remove(cx('pinned-header'));
+        if (isHorizontallyScrollable) {
+          header.scrollLeft = 0;
+        }
+        header.style.left = '';
+        header.style.top = '';
+        header.style.width = '';
+        if (isHorizontallyScrollable) {
+          header.style.overflow = '';
+          header.style.overflowX = '';
+        }
+
+        if (isHorizontallyScrollable && savedScrollLeft > 0) {
+          requestAnimationFrame(() => {
+            table.scrollLeft = savedScrollLeft;
+            setTimeout(() => {
+              isUnpinningRef.current = false;
+            }, 0);
+          });
+        } else {
+          isUnpinningRef.current = false;
+        }
+      }
+    };
+
+    const rafId = requestAnimationFrame(() => {
+      updatePinnedState();
+    });
+
+    scrollContainer.addEventListener('scroll', updatePinnedState);
+    window.addEventListener('resize', updatePinnedState);
+
+    return () => {
+      cancelAnimationFrame(rafId);
+      scrollContainer.removeEventListener('scroll', updatePinnedState);
+      window.removeEventListener('resize', updatePinnedState);
+    };
+  }, [externalScrollContainerRef, isHorizontallyScrollable]);
+
+  useEffect(() => {
+    if (
+      !externalScrollContainerRef?.current ||
+      !tableRef.current ||
+      !headerRef.current ||
+      !isHeaderPinned
+    ) {
+      return undefined;
+    }
+
+    const scrollContainer = externalScrollContainerRef.current;
+    const table = tableRef.current;
+    const header = headerRef.current;
+
+    const updateHeaderPosition = () => {
+      const tableRect = table.getBoundingClientRect();
+      const containerRect = scrollContainer.getBoundingClientRect();
+
+      header.style.left = `${tableRect.left}px`;
+      header.style.top = `${containerRect.top}px`;
+      header.style.width = `${tableRect.width}px`;
+    };
+
+    const syncHorizontalScroll = (source: HTMLElement) => {
+      if (isUnpinningRef.current) {
+        return;
+      }
+      if (source === header) {
+        table.scrollLeft = header.scrollLeft;
+      } else {
+        header.scrollLeft = table.scrollLeft;
+      }
+      if (updateTableGradientsRef.current) {
+        updateTableGradientsRef.current();
+      }
+    };
+
+    const handleTableScroll = () => {
+      syncHorizontalScroll(table);
+      updateHeaderPosition();
+    };
+
+    const handleHeaderScroll = () => {
+      syncHorizontalScroll(header);
+    };
+
+    const handleContainerScroll = () => {
+      updateHeaderPosition();
+    };
+
+    table.addEventListener('scroll', handleTableScroll);
+    if (isHorizontallyScrollable) {
+      header.addEventListener('scroll', handleHeaderScroll);
+    }
+    scrollContainer.addEventListener('scroll', handleContainerScroll);
+    window.addEventListener('resize', updateHeaderPosition);
+    syncHorizontalScroll(table);
+    updateHeaderPosition();
+
+    return () => {
+      table.removeEventListener('scroll', handleTableScroll);
+      if (isHorizontallyScrollable) {
+        header.removeEventListener('scroll', handleHeaderScroll);
+      }
+      scrollContainer.removeEventListener('scroll', handleContainerScroll);
+      window.removeEventListener('resize', updateHeaderPosition);
+    };
+  }, [isHeaderPinned, externalScrollContainerRef, isHorizontallyScrollable]);
+
+  useEffect(() => {
+    if (!tableRef.current || !isHorizontallyScrollable) {
+      return undefined;
+    }
+
+    const table = tableRef.current;
+    const scrollContainer = externalScrollContainerRef?.current;
+
+    setScrollLeft(table.scrollLeft);
+    setScrollTop(scrollContainer?.scrollTop || table.scrollTop || 0);
+    setTableScrollWidth(table.scrollWidth);
+
+    const updateTableGradients = () => {
+      if (table) {
+        setScrollLeft(table.scrollLeft);
+        setScrollTop(scrollContainer?.scrollTop || table.scrollTop || 0);
+        setTableScrollWidth(table.scrollWidth);
+      }
+    };
+
+    let rafId: number | null = null;
+
+    const scheduleGradientUpdate = () => {
+      if (rafId === null) {
+        rafId = requestAnimationFrame(() => {
+          updateTableGradients();
+          rafId = null;
+        });
+      }
+    };
+
+    const handleTableScrollForGradients = () => {
+      scheduleGradientUpdate();
+    };
+
+    const handleContainerScrollForGradients = () => {
+      scheduleGradientUpdate();
+    };
+
+    table.addEventListener('scroll', handleTableScrollForGradients, { passive: true });
+    if (scrollContainer) {
+      scrollContainer.addEventListener('scroll', handleContainerScrollForGradients, {
+        passive: true,
+      });
+    }
+    const handleWindowResize = () => {
+      updateTableGradients();
+      setGradientUpdateCounter((prev) => prev + 1);
+    };
+    window.addEventListener('resize', handleWindowResize);
+    updateTableGradientsRef.current = updateTableGradients;
+    updateTableGradients();
+
+    const resizeObserver = new ResizeObserver(() => {
+      updateTableGradients();
+    });
+
+    if (table) {
+      resizeObserver.observe(table);
+    }
+
+    return () => {
+      table.removeEventListener('scroll', handleTableScrollForGradients);
+      if (scrollContainer) {
+        scrollContainer.removeEventListener('scroll', handleContainerScrollForGradients);
+      }
+      window.removeEventListener('resize', handleWindowResize);
+      resizeObserver.disconnect();
+      if (rafId !== null) {
+        cancelAnimationFrame(rafId);
+        rafId = null;
+      }
+    };
+  }, [isHorizontallyScrollable, externalScrollContainerRef, isHeaderPinned, expandedRowIds]);
+
+  useEffect(() => {
+    if (!tableRef.current || !isHorizontallyScrollable) {
+      return;
+    }
+
+    const table = tableRef.current;
+    const scrollContainer = externalScrollContainerRef?.current;
+
+    requestAnimationFrame(() => {
+      if (table) {
+        setScrollLeft(table.scrollLeft);
+        setScrollTop(scrollContainer?.scrollTop || table.scrollTop || 0);
+        setTableScrollWidth(table.scrollWidth);
+        if (updateTableGradientsRef.current) {
+          updateTableGradientsRef.current();
+        }
+      }
+    });
+  }, [columnWidths, isHorizontallyScrollable, externalScrollContainerRef]);
+
+  useEffect(() => {
+    if (!tableRef.current) {
+      return undefined;
+    }
+
+    const table = tableRef.current;
+
+    const updateAllLeftBorderAccentStyles = () => {
+      const expandCells = Array.from(table.querySelectorAll<HTMLElement>('[data-base-left="0"]'));
+      expandCells.forEach(updateLeftBorderAccentStyle);
+    };
+
+    requestAnimationFrame(() => {
+      updateAllLeftBorderAccentStyles();
+    });
+  }, [isRowsExpandable, data, updateLeftBorderAccentStyle]);
+
+  useEffect(() => {
+    if (!tableRef.current) {
+      return undefined;
+    }
+
+    const table = tableRef.current;
+    const currentExpanded = new Set(expandedRowIds);
+    const prevExpanded = prevExpandedRowIdsRef.current;
+
+    const changedRowIds = new Set<string | number>();
+    expandedRowIds.forEach((id) => {
+      if (!prevExpanded.has(id)) {
+        changedRowIds.add(id);
+      }
+    });
+    prevExpanded.forEach((id) => {
+      if (!currentExpanded.has(id)) {
+        changedRowIds.add(id);
+      }
+    });
+
+    if (changedRowIds.size === 0) {
+      prevExpandedRowIdsRef.current = currentExpanded;
+      return undefined;
+    }
+
+    const timeoutId = setTimeout(() => {
+      changedRowIds.forEach((rowId) => {
+        const expandCell = table.querySelector<HTMLElement>(
+          `[data-base-left="0"][data-row-id="${rowId}"]`,
+        );
+        if (expandCell) {
+          updateLeftBorderAccentStyle(expandCell);
+        }
+      });
+
+      // Force gradient recalculation after expand/collapse as table dimensions changed
+      setGradientUpdateCounter((prev) => prev + 1);
+    }, 0);
+
+    prevExpandedRowIdsRef.current = currentExpanded;
+
+    return () => clearTimeout(timeoutId);
+  }, [isRowsExpandable, expandedRowIds, updateLeftBorderAccentStyle]);
+
   return (
     <div
+      ref={tableRef}
       className={cx(
         'table',
         {
           'fixed-header': isHeaderFixed,
-          'horizontally-scrollable-container': isHeaderFixed && isHorizontallyScrollable,
+          'horizontally-scrollable-container':
+            isHeaderFixed && (isHorizontallyScrollable || isResizable),
+          'external-scroll-container': isHeaderFixed && !!externalScrollContainerRef,
         },
         className,
       )}
     >
       <div
+        ref={headerRef}
         className={cx(
           'table-header',
           {
-            'sticky-header': isHeaderFixed,
+            'sticky-header': isHeaderFixed && !isHeaderPinned,
             'horizontally-scrollable': isHorizontallyScrollable,
+            resizable: isResizable,
           },
           headerClassName,
         )}
@@ -183,9 +607,9 @@ export const Table: FC<TableComponentProps> = ({
         {selectable && (
           <div
             className={cx('table-header-cell', 'checkbox-cell')}
-            style={{ left: isRowsExpandable ? `${EXPANDABLE_CHECKBOX_COLUMN_WIDTH}px` : '0' }}
+            data-base-left={isRowsExpandable ? EXPANDABLE_CHECKBOX_COLUMN_WIDTH : 0}
           >
-            {hasSelectedRows && (
+            {isSelectAllCheckboxVisible && (
               <Checkbox
                 value={isAllRowsSelected}
                 partiallyChecked={isAnyRowSelected}
@@ -196,7 +620,10 @@ export const Table: FC<TableComponentProps> = ({
           </div>
         )}
         {isRowsExpandable && (
-          <div className={cx('table-header-cell', 'expand-cell')} style={{ left: '0' }}>
+          <div
+            className={cx('table-header-cell', 'expand-cell', 'left-border-accent')}
+            data-base-left="0"
+          >
             {expandAllTooltip ? (
               <Tooltip
                 content={expandAllTooltip}
@@ -211,75 +638,89 @@ export const Table: FC<TableComponentProps> = ({
             )}
           </div>
         )}
-        {pinnedColumns.map((column, index) => (
-          <button
-            key={column.key}
-            className={cx('table-header-cell', 'pinned-column', {
-              [`align-${(column as FixedColumn).align}`]: 'align' in column,
-              'primary-cell': isPrimaryColumn(column),
-              'sortable-cell': defaultSortableColumns.includes(column.key),
-            })}
-            style={getCellStyle(
-              column,
-              true,
-              index,
-              pinnedColumns,
-              columnWidthsRef,
-              isRowsExpandable,
-              selectable,
-            )}
-          >
-            <div
-              className={cx('label')}
-              onClick={() => handleSort(column.key)}
-              onMouseEnter={() => handleColumnMouseEnter(column.key)}
-              onMouseLeave={handleColumnMouseLeave}
+        {pinnedColumns.map((column, index) => {
+          const headerCell = (
+            <button
+              key={column.key}
+              data-column-key={column.key}
+              data-pinned-index={index}
+              className={cx('table-header-cell', 'pinned-column', {
+                [`align-${(column as FixedColumn).align}`]: 'align' in column,
+                'primary-cell': isPrimaryColumn(column),
+                'sortable-cell': defaultSortableColumns.includes(column.key),
+                resizable: isResizable,
+              })}
+              style={getCellStyle(
+                column,
+                true,
+                index,
+                pinnedColumns,
+                columnWidthsRef,
+                isRowsExpandable,
+                selectable,
+              )}
             >
-              <ColumnHeaderText column={column} />
-              {(hoveredColumn === column.key || defaultSortingColumn?.key === column.key) &&
-                getSortIcon(column.key)}
-            </div>
-          </button>
-        ))}
-        {scrollableColumns.map((column) => (
-          <button
-            key={column.key}
-            className={cx('table-header-cell', {
-              [`align-${(column as FixedColumn).align}`]: 'align' in column,
-              'primary-cell': isPrimaryColumn(column),
-              'sortable-cell': defaultSortableColumns.includes(column.key),
-            })}
-            style={getCellStyle(
-              column,
-              false,
-              undefined,
-              pinnedColumns,
-              columnWidthsRef,
-              isRowsExpandable,
-              selectable,
-            )}
-          >
-            <div
-              className={cx('label')}
-              onClick={() => handleSort(column.key)}
-              onMouseEnter={() => handleColumnMouseEnter(column.key)}
-              onMouseLeave={handleColumnMouseLeave}
+              <div
+                className={cx('label')}
+                onClick={() => handleSort(column.key)}
+                onMouseEnter={() => handleColumnMouseEnter(column.key)}
+                onMouseLeave={handleColumnMouseLeave}
+              >
+                <ColumnHeaderText column={column} />
+                {(hoveredColumn === column.key || defaultSortingColumn?.key === column.key) &&
+                  getSortIcon(column.key)}
+              </div>
+            </button>
+          );
+
+          return isResizable ? wrapWithResizable(column, headerCell) : headerCell;
+        })}
+        {scrollableColumns.map((column) => {
+          const headerCell = (
+            <button
+              key={column.key}
+              className={cx('table-header-cell', {
+                [`align-${(column as FixedColumn).align}`]: 'align' in column,
+                'primary-cell': isPrimaryColumn(column),
+                'sortable-cell': defaultSortableColumns.includes(column.key),
+                resizable: isResizable,
+              })}
+              style={getCellStyle(
+                column,
+                false,
+                undefined,
+                pinnedColumns,
+                columnWidthsRef,
+                isRowsExpandable,
+                selectable,
+              )}
             >
-              <ColumnHeaderText column={column} />
-              {(hoveredColumn === column.key || defaultSortingColumn?.key === column.key) &&
-                getSortIcon(column.key)}
-            </div>
-          </button>
-        ))}
+              <div
+                className={cx('label')}
+                onClick={() => handleSort(column.key)}
+                onMouseEnter={() => handleColumnMouseEnter(column.key)}
+                onMouseLeave={handleColumnMouseLeave}
+              >
+                <ColumnHeaderText column={column} />
+                {(hoveredColumn === column.key || defaultSortingColumn?.key === column.key) &&
+                  getSortIcon(column.key)}
+              </div>
+            </button>
+          );
+
+          return isResizable ? wrapWithResizable(column, headerCell) : headerCell;
+        })}
         {renderRowActions && <div className={cx('table-header-cell', 'action-menu-cell')} />}
       </div>
 
       <div
+        ref={bodyRef}
         className={cx(
           'table-body',
           {
             'scrollable-body': isHeaderFixed,
             'horizontally-scrollable': isHorizontallyScrollable,
+            resizable: isResizable,
           },
           bodyClassName,
         )}
@@ -287,6 +728,7 @@ export const Table: FC<TableComponentProps> = ({
         {data.map((item, index) => (
           <div
             key={item.id}
+            data-row-index={index}
             className={cx('table-row', getRowSizeClassName(item), rowClassName, {
               selectable: selectable,
             })}
@@ -296,7 +738,7 @@ export const Table: FC<TableComponentProps> = ({
             {selectable && (
               <div
                 className={cx('table-cell', 'checkbox-cell')}
-                style={{ left: isRowsExpandable ? `${EXPANDABLE_CHECKBOX_COLUMN_WIDTH}px` : '0' }}
+                data-base-left={isRowsExpandable ? EXPANDABLE_CHECKBOX_COLUMN_WIDTH : 0}
               >
                 {(hasSelectedRows || hoveredRow === index) && (
                   <Checkbox
@@ -310,7 +752,11 @@ export const Table: FC<TableComponentProps> = ({
             <div className={cx('row-content-wrapper')}>
               <div className={cx('table-row-content')} style={{ gridTemplateColumns }}>
                 {isRowsExpandable && (
-                  <div className={cx('table-cell', 'expand-cell')} style={{ left: '0' }}>
+                  <div
+                    className={cx('table-cell', 'expand-cell', 'left-border-accent')}
+                    data-base-left="0"
+                    data-row-id={item.id}
+                  >
                     <button
                       onClick={() => handleToggleRowExpansion(item.id)}
                       aria-label={expandedRowIds.includes(item.id) ? 'Collapse row' : 'Expand row'}
@@ -333,6 +779,8 @@ export const Table: FC<TableComponentProps> = ({
                   return (
                     <div
                       key={column.key}
+                      data-column-key={column.key}
+                      data-pinned-index={colIndex}
                       ref={isPrimary ? setCellRef(column.key) : undefined}
                       className={cx('table-cell', 'pinned-column', {
                         'primary-cell': isPrimary,
@@ -389,6 +837,28 @@ export const Table: FC<TableComponentProps> = ({
           </div>
         ))}
       </div>
+      {isHorizontallyScrollable && (
+        <>
+          <GradientOverlay
+            portalContainer={portalContainer}
+            visible={rightGradientPosition.visible}
+            position={rightGradientPosition.position}
+            size={rightGradientPosition.size}
+            direction="right"
+            className={rightGradientClassName}
+            dataTestId="right-gradient"
+          />
+          <GradientOverlay
+            portalContainer={portalContainer}
+            visible={pinnedGradientPosition.visible}
+            position={pinnedGradientPosition.position}
+            size={pinnedGradientPosition.size}
+            direction="left"
+            className={pinnedGradientClassName}
+            dataTestId="pinned-gradient"
+          />
+        </>
+      )}
     </div>
   );
 };

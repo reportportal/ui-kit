@@ -19,6 +19,10 @@ A wrapper component that makes its children draggable and droppable.
 - **dropTargetClassName**: _string_, optional - CSS class applied when item is a drop target
 - **onDrop**: _(fromIndex: number, toIndex: number) => void_, optional - Callback when item is dropped
 - **hideDefaultPreview**: _boolean_, optional, default = false - Hide default browser drag preview (use with DragLayer)
+- **dropDetectionMode**: _'indexBased' | 'hover'_, optional, default = 'indexBased' - Detection mode for drop position calculation:
+  - `'indexBased'` - uses dragged item index comparison (item stays visible during drag)
+  - `'hover'` - uses cursor position with 70% threshold (for when dragged item disappears from original position)
+- **isLast**: _boolean_, optional, default = false - Marks item as last in list (shows bottom drop indicator)
 - **children**: _ReactNode | ((props: SortableItemRenderProps) => ReactNode)_, required - Content or render function
 
 #### SortableList
@@ -97,7 +101,11 @@ A reusable hook for implementing drag-and-drop sortable functionality.
 - **isDisabled**: _boolean_, optional - Disables drag
 - **onDrop**: _(fromIndex: number, toIndex: number) => void_, optional - Drop callback
 - **hideDefaultPreview**: _boolean_, optional - Hide default preview
-
+- **dropDetectionMode**: _'indexBased' | 'hover'_, optional, default = 'indexBased' - Detection mode for drop position:
+  - `'indexBased'` - uses index comparison (item stays visible)
+  - `'hover'` - uses cursor position (for cases where need that item disappears during drag)
+- **isLast**: _boolean_, optional - Marks item as last in list
+ 
 ##### Returns:
 
 - **isDragging**: _boolean_ - Whether item is being dragged

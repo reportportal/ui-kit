@@ -1,4 +1,4 @@
-import { Dispatch, ReactNode, SetStateAction } from 'react';
+import { Dispatch, ReactNode, RefObject, SetStateAction } from 'react';
 import { ASC, DESC } from './constants';
 
 export interface Column {
@@ -57,12 +57,21 @@ export interface TableComponentProps {
   pinnedColumnKeys?: string[];
   isRowsExpandable?: boolean;
   expandedRowIds?: (string | number)[];
+  isSelectAllCheckboxAlwaysVisible?: boolean;
   setExpandedRowIds?: Dispatch<SetStateAction<Set<string | number>>>;
   isAllExpandedByDefault?: boolean;
   expandAllTooltip?: ReactNode;
+  isResizable?: boolean;
+  minColumnWidth?: number;
+  maxColumnWidth?: number;
   onChangeSorting?: (sortConfig?: SortConfig) => void;
   onToggleRowSelection?: (id: string | number) => void;
   onToggleAllRowsSelection?: () => void;
   onToggleRowExpansion?: (id: string | number) => void;
   onToggleAllRowsExpansion?: () => void;
+  onColumnResize?: (columnKey: string, width: number) => void;
+  externalScrollContainerRef?: RefObject<HTMLElement> | RefObject<Element> | null | undefined;
+  portalContainer?: HTMLElement | null;
+  rightGradientClassName?: string;
+  pinnedGradientClassName?: string;
 }

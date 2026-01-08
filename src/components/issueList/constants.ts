@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * https://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-export { getFileExtension } from './getFileExtension';
-export { isString } from './isString';
-export { getAlignmentAxisOffset } from './floatingUi';
-export { splitHtmlAttributes } from './htmlAttributes';
+export const FONT_LOADING_DELAY = 100;
+export const GAP = 8;
+export const MIN_COUNTER_WIDTH = 32;
+export const MIN_ISSUE_WIDTH = 60;
+export const TOOLTIP_WIDTH = 360;

@@ -13,6 +13,7 @@ import {
   KeyboardEvent,
   ChangeEvent,
   FocusEvent,
+  ComponentPropsWithRef,
 } from 'react';
 import { isEmpty } from 'es-toolkit/compat';
 import { createPortal } from 'react-dom';
@@ -23,9 +24,9 @@ import { Scrollbars } from 'rc-scrollbars';
 import { KeyCodes } from '@common/constants/keyCodes';
 import { BaseIconButton } from '@components/baseIconButton';
 import { ClearIcon, DropdownIcon } from '@components/icons';
-import { Tooltip } from '@components/tooltip';
 import { FieldLabel } from '@components/fieldLabel';
 import { AdaptiveTagList } from '@components/adaptiveTagList';
+import { splitHtmlAttributes } from '@common/utils';
 import { DropdownOption } from './dropdownOption';
 import { DropdownVariant, RenderDropdownOption, DropdownOptionType, DropdownValue } from './types';
 import {
@@ -48,7 +49,8 @@ import styles from './dropdown.module.scss';
 
 const cx = classNames.bind(styles);
 
-export interface DropdownProps {
+export interface DropdownProps
+  extends Omit<ComponentPropsWithRef<'div'>, 'onChange' | 'onFocus' | 'onBlur' | 'title'> {
   // TODO: make value and options optional
   options: DropdownOptionType[];
   value: DropdownValue | DropdownValue[];
@@ -88,10 +90,6 @@ export interface DropdownProps {
   onClear?: () => void;
   /** ARIA label for the clear button */
   clearButtonAriaLabel?: string;
-  /** Portal root element for tooltip rendering (e.g., document.body to prevent clipping) */
-  tooltipPortalRoot?: Element;
-  /** Z-index for tooltip when rendered in portal (default: 9) */
-  tooltipZIndex?: number;
   /**
    * Portal root element for dropdown menu rendering.
    * When provided, the menu will be rendered in this element using React Portal.
@@ -101,6 +99,8 @@ export interface DropdownProps {
   menuPortalRoot?: Element;
   /** Whether to render selected values as tags using AdaptiveTagList (only for multiSelect mode) */
   isMultiSelectWithTags?: boolean;
+  /** Message to display when no options match the search term */
+  noMatchesMessage?: string;
 }
 
 // DS link - https://www.figma.com/file/gjYQPbeyf4YsH3wZiVKoaj/%F0%9F%9B%A0-RP-DS-6?type=design&node-id=3424-12207&mode=design&t=dDq6moPaTzQLviS1-0
@@ -136,11 +136,13 @@ export const Dropdown: FC<DropdownProps> = ({
   clearable = false,
   onClear = () => {},
   clearButtonAriaLabel = 'Clear selection',
-  tooltipPortalRoot,
-  tooltipZIndex,
   menuPortalRoot,
   isMultiSelectWithTags = false,
+  noMatchesMessage = 'No matches found',
+  ...rest
 }): ReactElement => {
+  const { transformed: transformedAttributes, remaining: restProps } = splitHtmlAttributes(rest);
+
   const [opened, setOpened] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const containerRef = useRef<HTMLDivElement>(null);
@@ -259,13 +261,12 @@ export const Dropdown: FC<DropdownProps> = ({
           })
         : null,
     ].filter(Boolean),
-    whileElementsMounted:
-      opened && menuPortalRoot
-        ? (reference, floating, update) =>
-            autoUpdate(reference, floating, update, {
-              animationFrame: true,
-            })
-        : undefined,
+    whileElementsMounted: opened
+      ? (reference, floating, update) =>
+          autoUpdate(reference, floating, update, {
+            animationFrame: true,
+          })
+      : undefined,
   });
 
   const handleSelectAll = () => {
@@ -603,7 +604,13 @@ export const Dropdown: FC<DropdownProps> = ({
       return placeholder;
     }
 
-    return undefined;
+    // Fallback for string values that are not found in options
+    // Only applies when placeholder is not set (empty string is used by default)
+    if (typeof value === 'string' && value.length > 0 && !placeholder) {
+      return value;
+    }
+
+    return placeholder || undefined;
   }, [
     multiSelect,
     value,
@@ -670,7 +677,7 @@ export const Dropdown: FC<DropdownProps> = ({
 
   const renderOptions = () => (
     <div className={cx('options-container')}>
-      {multiSelect && isOptionAllVisible && (
+      {multiSelect && isOptionAllVisible && !isEmpty(flattenedOptions) && (
         <>
           <DropdownOption
             option={optionAll}
@@ -689,36 +696,40 @@ export const Dropdown: FC<DropdownProps> = ({
           <div className={cx('divider')} />{' '}
         </>
       )}
-      {flattenedOptions.map(({ option, depth }, index) => {
-        const optionLeafValues = leafValuesByOption.get(option.value) ?? [option.value];
-        const isMultiChecked =
-          multiSelect && optionLeafValues.every((leafValue) => selectedValuesSet.has(leafValue));
-        const isPartiallyChecked =
-          multiSelect &&
-          option.children?.length &&
-          optionLeafValues.some((leafValue) => selectedValuesSet.has(leafValue)) &&
-          !isMultiChecked;
+      {!isEmpty(flattenedOptions) ? (
+        flattenedOptions.map(({ option, depth }, index) => {
+          const optionLeafValues = leafValuesByOption.get(option.value) ?? [option.value];
+          const isMultiChecked =
+            multiSelect && optionLeafValues.every((leafValue) => selectedValuesSet.has(leafValue));
+          const isPartiallyChecked =
+            multiSelect &&
+            option.children?.length &&
+            optionLeafValues.some((leafValue) => selectedValuesSet.has(leafValue)) &&
+            !isMultiChecked;
 
-        return (
-          <DropdownOption
-            key={option.value}
-            {...getItemProps({
-              item: option,
-              index,
-            })}
-            multiSelect={multiSelect}
-            selected={multiSelect ? isMultiChecked : option.value === value}
-            option={{ title: option.label, ...option }}
-            highlightHovered={highlightedIndex === index && eventName !== EventName.ON_CLICK}
-            render={renderOption}
-            onChange={option.disabled ? null : () => handleChange(option)}
-            onMouseEnter={() => setHighlightedIndex(index)}
-            depth={depth}
-            hasChildren={!!option.children?.length}
-            isPartiallyChecked={isPartiallyChecked}
-          />
-        );
-      })}
+          return (
+            <DropdownOption
+              key={option.value}
+              {...getItemProps({
+                item: option,
+                index,
+              })}
+              multiSelect={multiSelect}
+              selected={multiSelect ? isMultiChecked : option.value === value}
+              option={{ title: option.label, ...option }}
+              highlightHovered={highlightedIndex === index && eventName !== EventName.ON_CLICK}
+              render={renderOption}
+              onChange={option.disabled ? null : () => handleChange(option)}
+              onMouseEnter={() => setHighlightedIndex(index)}
+              depth={depth}
+              hasChildren={!!option.children?.length}
+              isPartiallyChecked={isPartiallyChecked}
+            />
+          );
+        })
+      ) : (
+        <div className={cx('empty-list-message')}>{noMatchesMessage}</div>
+      )}
       {footer && (
         <>
           <div className={cx('divider')} />
@@ -830,32 +841,18 @@ export const Dropdown: FC<DropdownProps> = ({
     const formattedValue = formatDisplayedValue
       ? formatDisplayedValue(displayedValue)
       : displayedValue;
-    const contentNode = (
+    const shouldShowOverflowTooltip = hasSelectedValue && !!formattedValue && isValueOverflowed;
+
+    return (
       <span
         ref={valueRef}
         className={cx('value', {
           placeholder: displayedValue === placeholder,
         })}
+        title={shouldShowOverflowTooltip ? formattedValue : undefined}
       >
         {formattedValue}
       </span>
-    );
-    const shouldShowTooltip = hasSelectedValue && !!formattedValue && isValueOverflowed;
-
-    if (!shouldShowTooltip) {
-      return contentNode;
-    }
-
-    return (
-      <Tooltip
-        content={formattedValue}
-        placement="top"
-        wrapperClassName={cx('value-tooltip')}
-        portalRoot={tooltipPortalRoot}
-        zIndex={tooltipZIndex}
-      >
-        {contentNode}
-      </Tooltip>
     );
   };
 
@@ -867,6 +864,7 @@ export const Dropdown: FC<DropdownProps> = ({
       error,
       touched,
       'mobile-disabled': mobileDisabled,
+      'multi-select-with-tags': isMultiSelectWithTags,
     }),
     onClick: onDropdownClick,
     onKeyDown: handleToggleButtonKeyDown as unknown as KeyboardEventHandler<HTMLButtonElement>,
@@ -877,7 +875,13 @@ export const Dropdown: FC<DropdownProps> = ({
   void toggleButtonType;
 
   return (
-    <div ref={containerRef} className={cx('container', className)} title={title}>
+    <div
+      ref={containerRef}
+      className={cx('container', className)}
+      title={title}
+      {...restProps}
+      {...transformedAttributes}
+    >
       {label && (
         <FieldLabel
           {...getLabelProps()}

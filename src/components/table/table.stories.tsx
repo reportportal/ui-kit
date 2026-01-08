@@ -10,7 +10,7 @@ import {
   SortingDirection,
   TableComponentProps,
 } from './types';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { sortTableData, toggleDirection } from '@components/table/utils';
 import { ASC } from './constants';
 
@@ -1464,4 +1464,281 @@ const CustomHeaderDemo = () => {
  */
 export const CustomHeaderStyle: Story = {
   render: () => <CustomHeaderDemo />,
+};
+
+/**
+ * Demonstrates resizable columns with default constraints (min: 50px, max: 500px).
+ *
+ * Users can drag the column borders in the header to adjust column widths.
+ * Initial widths are taken from column.width property.
+ */
+export const ResizableColumns: Story = {
+  render: (args: TableComponentProps) => (
+    <div style={{ minWidth: '600px' }}>
+      <h3 style={{ margin: '0 0 16px 0', fontSize: '16px', color: '#333' }}>
+        Resizable Columns (Default Constraints)
+      </h3>
+      <p style={{ margin: '0 0 16px 0', fontSize: '14px', color: '#666' }}>
+        Drag the column borders in the header to adjust widths. Default constraints:{' '}
+        <code>minColumnWidth=50</code>, <code>maxColumnWidth=500</code>
+      </p>
+      <Table {...args} primaryColumn={primaryColumns} data={data} fixedColumns={fixedColumns} />
+    </div>
+  ),
+  args: {
+    renderRowActions,
+    isResizable: true,
+  },
+};
+
+/**
+ * Demonstrates resizable columns without row actions.
+ */
+export const ResizableColumnsWithoutActions: Story = {
+  render: (args: TableComponentProps) => (
+    <div style={{ minWidth: '600px' }}>
+      <Table {...args} primaryColumn={primaryColumns} data={data} fixedColumns={fixedColumns} />
+    </div>
+  ),
+  args: {
+    isResizable: true,
+  },
+};
+
+/**
+ * Demonstrates resizable columns with custom min/max constraints.
+ *
+ * Columns can be resized between 80px and 300px.
+ */
+export const ResizableColumnsWithConstraints: Story = {
+  render: (args: TableComponentProps) => (
+    <div style={{ minWidth: '600px' }}>
+      <h3 style={{ margin: '0 0 16px 0', fontSize: '16px', color: '#333' }}>
+        Resizable Columns (Custom Constraints)
+      </h3>
+      <p style={{ margin: '0 0 16px 0', fontSize: '14px', color: '#666' }}>
+        Columns can be resized between 80px and 300px. Custom constraints:{' '}
+        <code>minColumnWidth=80</code>, <code>maxColumnWidth=300</code>
+      </p>
+      <Table {...args} primaryColumn={primaryColumns} data={data} fixedColumns={fixedColumns} />
+    </div>
+  ),
+  args: {
+    renderRowActions,
+    isResizable: true,
+    minColumnWidth: 80,
+    maxColumnWidth: 300,
+  },
+};
+
+/**
+ * Demonstrates resizable columns with fixed header.
+ */
+export const ResizableColumnsWithFixedHeader: Story = {
+  render: (args: TableComponentProps) => (
+    <div style={{ width: '900px', height: '400px', border: '1px solid #ccc', padding: '16px' }}>
+      <div style={{ height: 'calc(100% - 16px)', position: 'relative' }}>
+        <Table
+          {...args}
+          data={largeDataSet}
+          primaryColumn={primaryColumns}
+          fixedColumns={scrollableFixedColumns}
+        />
+      </div>
+    </div>
+  ),
+  args: {
+    renderRowActions,
+    isResizable: true,
+    isHeaderFixed: true,
+  },
+};
+
+/**
+ * Demonstrates resizable columns with horizontal scroll and fixed header.
+ */
+export const ResizableColumnsWithHorizontalScroll: Story = {
+  render: (args: TableComponentProps) => (
+    <div style={{ width: '600px', height: '500px', border: '1px solid #ccc', padding: '16px' }}>
+      <div style={{ height: 'calc(100% - 16px)', position: 'relative' }}>
+        <Table
+          {...args}
+          data={wideTableData}
+          primaryColumn={wideTablePrimaryColumns}
+          fixedColumns={wideTableFixedColumns}
+          isHorizontallyScrollable
+          isHeaderFixed
+        />
+      </div>
+    </div>
+  ),
+  args: {
+    renderRowActions,
+    isResizable: true,
+  },
+};
+
+/**
+ * Demonstrates resizable columns with pinned columns.
+ */
+export const ResizableColumnsWithPinnedColumns: Story = {
+  render: (args: TableComponentProps) => (
+    <div style={{ width: '900px', height: '500px', border: '1px solid #ccc', padding: '16px' }}>
+      <div style={{ height: 'calc(100% - 16px)', position: 'relative' }}>
+        <Table
+          {...args}
+          data={largeDataSet}
+          primaryColumn={primaryColumns}
+          fixedColumns={scrollableFixedColumns}
+          pinnedColumnKeys={['name', 'email']}
+          isHorizontallyScrollable
+          isHeaderFixed
+        />
+      </div>
+    </div>
+  ),
+  args: {
+    renderRowActions,
+    isResizable: true,
+  },
+};
+
+/**
+ * Demonstrates a table with pinned header when scrolling is handled by an external container.
+ *
+ * This example shows:
+ * - Horizontal scrolling when table content is wider than the container
+ * - Pinned header that pins to the top when scrolling vertically in the external container
+ * - Pinned columns that stay visible during horizontal scroll
+ * - Gradient effects on pinned columns and right edge
+ *
+ * Note: This is different from a fixed header with internal table scrolling. Here, the scroll
+ * container is external (parent div), and the header pins when scrolling reaches the table top.
+ *
+ * Scroll vertically in the external container to see the header pinning, and horizontally to see
+ * pinned columns and gradients.
+ */
+export const HorizontalScrollWithPinnedHeader: Story = {
+  render: (args: TableComponentProps) => {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const scrollContainerRef = useRef<HTMLDivElement>(null);
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const [sortConfig, setSortConfig] = useState<SortConfig>({
+      key: wideTablePrimaryColumns[0].key,
+      direction: ASC,
+    });
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const [sortingColumn, setSortingColumn] = useState<Column>(wideTablePrimaryColumns[0]);
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const [sortingDirection, setSortingDirection] = useState<SortingDirection>(ASC);
+    // Generate more data for vertical scrolling demonstration
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const extendedWideTableData = useMemo(() => {
+      const baseData = [...wideTableData];
+      // Duplicate data to make table taller than container
+      for (let i = 0; i < 3; i++) {
+        baseData.push(
+          ...wideTableData.map((item) => ({
+            ...item,
+            id: `${item.id}-copy-${i + 1}`,
+          })),
+        );
+      }
+      return baseData;
+    }, []);
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const defaultSortedData = sortTableData(extendedWideTableData, sortConfig);
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const [tableData, setTableData] = useState(defaultSortedData);
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const [checkedRows, setCheckedRows] = useState<Set<number | string>>(new Set([]));
+
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    useEffect(() => {
+      const { key, direction } = sortConfig;
+      const column = [...wideTableFixedColumns, ...wideTablePrimaryColumns].find(
+        (col) => col.key === key,
+      );
+      setSortingDirection(direction);
+      setSortingColumn(column as Column);
+    }, [sortConfig]);
+
+    return (
+      <div style={{ width: '800px', height: '600px', border: '1px solid #ccc', padding: '16px' }}>
+        <h3 style={{ margin: '0 0 16px 0' }}>
+          Table with Horizontal Scroll + Pinned Header (External Scroll Container)
+        </h3>
+        <p style={{ margin: '0 0 16px 0', fontSize: '14px', color: '#666' }}>
+          This example demonstrates a pinned header that activates when scrolling in an external
+          container. The table header pins to the top when the scroll position reaches it. Scroll
+          vertically in the container to see the header pinning, and horizontally to see pinned
+          columns and gradient effects.
+        </p>
+        <div
+          ref={scrollContainerRef}
+          style={{
+            height: 'calc(100% - 100px)',
+            overflowY: 'auto',
+            overflowX: 'hidden',
+            position: 'relative',
+          }}
+        >
+          <div style={{ padding: '16px', backgroundColor: '#f0f0f0', marginBottom: '16px' }}>
+            <h4 style={{ margin: '0 0 8px 0', fontSize: '16px' }}>Content Above Table</h4>
+            <p style={{ margin: '0', fontSize: '14px', color: '#666' }}>
+              This content is inside the scrollable container. When you scroll down, this text will
+              move up and disappear, but the table header will stick to the top.
+            </p>
+            <p style={{ margin: '8px 0 0', fontSize: '14px', color: '#666' }}>
+              Scroll down to see the header pinning effect. The table header will remain fixed at
+              the top while this content scrolls away.
+            </p>
+          </div>
+          <Table
+            {...args}
+            data={tableData}
+            primaryColumn={wideTablePrimaryColumns}
+            fixedColumns={wideTableFixedColumns}
+            isHeaderFixed={true}
+            isHorizontallyScrollable={true}
+            pinnedColumnKeys={['name', 'email']}
+            externalScrollContainerRef={scrollContainerRef}
+            sortableColumns={[wideTablePrimaryColumns[0].key, 'department', 'status']}
+            onChangeSorting={(sortConfigParam = sortConfig) => {
+              let { direction } = sortConfigParam;
+              const { key } = sortConfigParam;
+              direction = toggleDirection(direction);
+              const sortedData = sortTableData(tableData, { key, direction });
+              setSortConfig({ key, direction });
+              setTableData(sortedData);
+            }}
+            onToggleRowSelection={(id) => {
+              const newCheckedRows = new Set(checkedRows);
+              if (newCheckedRows.has(id)) {
+                newCheckedRows.delete(id);
+              } else {
+                newCheckedRows.add(id);
+              }
+              setCheckedRows(newCheckedRows);
+            }}
+            onToggleAllRowsSelection={() => {
+              if (checkedRows.size === extendedWideTableData.length) {
+                setCheckedRows(new Set());
+              } else {
+                const allRows = new Set(extendedWideTableData.map((item) => item.id));
+                setCheckedRows(allRows);
+              }
+            }}
+            selectedRowIds={[...checkedRows]}
+            sortingColumn={sortingColumn}
+            sortingDirection={sortingDirection}
+          />
+        </div>
+      </div>
+    );
+  },
+  args: {
+    selectable: true,
+    renderRowActions,
+  },
 };

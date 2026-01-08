@@ -1,6 +1,6 @@
 {
   "name": "@reportportal/ui-kit",
-  "version": "0.0.1-alpha.143",
+  "version": "0.0.1-alpha.158",
   "description": "The UI-kit library for ReportPortal Design System.",
   "type": "module",
   "scripts": {
@@ -29,8 +29,9 @@
     },
     "./style.css": "./dist/style.css",
     "./common": {
-      "types": "./dist/common/types.d.ts",
-      "default": "./dist/common/types.d.ts"
+      "types": "./dist/common/types/index.d.ts",
+      "import": "./dist/common.js",
+      "default": "./dist/common.js"
     },
     "./*": {
       "types": "./dist/components/*/index.d.ts",
@@ -53,7 +54,8 @@
     "react-datepicker": "^7.6.0",
     "react-dnd": "^16.0.1",
     "react-dnd-html5-backend": "^16.0.1",
-    "react-dropzone": "^14.3.8"
+    "react-dropzone": "^14.3.8",
+    "react-resizable": "^3.0.5"
   },
   "devDependencies": {
     "@storybook/addon-essentials": "^8.6.14",
@@ -71,6 +73,7 @@
     "@types/react": "^18.3.3",
     "@types/react-datepicker": "^6.2.0",
     "@types/react-dom": "^18.2.7",
+    "@types/react-resizable": "^3.0.8",
     "@typescript-eslint/eslint-plugin": "^5.62.0",
     "@typescript-eslint/parser": "^5.62.0",
     "@vitejs/plugin-react": "^4.0.3",

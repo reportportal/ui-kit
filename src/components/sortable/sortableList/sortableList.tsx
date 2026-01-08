@@ -34,6 +34,7 @@ export const SortableList = <T extends { id: string | number }>({
           isDisabled={isDisabled}
           className={itemClassName}
           onDrop={handleDrop}
+          isLast={index === items.length - 1}
         >
           {({ dragRef, isDragging }) => renderItem(item, index, dragRef, isDragging)}
         </SortableItem>
