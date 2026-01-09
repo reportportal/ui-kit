@@ -507,7 +507,7 @@ $EXPANDABLE_CHECKBOX_Z_INDEX: 10;
 }
 
 /* Checkbox outside styles start */
-.table-outer-wrapper {
+.table-wrapper {
   position: relative;
   display: flex;
   width: calc(100% + $EXPANDABLE_CHECKBOX_COLUMN_WIDTH);

@@ -56,6 +56,7 @@ export const Table: FC<TableComponentProps> = ({
   fixedColumns,
   renderRowActions,
   className = '',
+  wrapperClassName = '',
   rowClassName = '',
   headerClassName = '',
   bodyClassName = '',
@@ -980,7 +981,7 @@ export const Table: FC<TableComponentProps> = ({
   );
 
   return isCheckboxOutside ? (
-    <div className={cx('table-outer-wrapper', { 'fixed-header': isHeaderFixed }, className)}>
+    <div className={cx('table-wrapper', { 'fixed-header': isHeaderFixed }, wrapperClassName)}>
       {renderCheckboxColumn()}
       {renderTable()}
     </div>

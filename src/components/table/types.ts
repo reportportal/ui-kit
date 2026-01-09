@@ -46,6 +46,7 @@ export interface TableComponentProps {
   selectable?: boolean;
   isCheckboxOutside?: boolean;
   className?: string;
+  wrapperClassName?: string;
   headerClassName?: string;
   bodyClassName?: string;
   rowClassName?: string;
