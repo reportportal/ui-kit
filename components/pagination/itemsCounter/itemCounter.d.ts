@@ -1,4 +1,4 @@
-import { FC } from '../../../../node_modules/react';
+import { ReactElement, ReactNode } from '../../../../node_modules/react';
 
 export interface ItemCounterProps {
     activePage: number;
@@ -6,5 +6,7 @@ export interface ItemCounterProps {
     totalItems: number;
     ofText: string;
     itemsText: string;
+    limitExceeded?: boolean;
+    warningContent?: ReactNode;
 }
-export declare const ItemCounter: FC<ItemCounterProps>;
+export declare const ItemCounter: ({ activePage, pageSize, totalItems, ofText, itemsText, limitExceeded, warningContent, }: ItemCounterProps) => ReactElement;

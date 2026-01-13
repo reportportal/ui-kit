@@ -1,4 +1,4 @@
-import { FC } from '../../../node_modules/react';
+import { ReactElement, ReactNode } from '../../../node_modules/react';
 import { ChangePageSize, ChangePage } from './types';
 
 type PaginationCaptions = {
@@ -19,6 +19,8 @@ export interface PaginationProps {
     changePageSize: ChangePageSize;
     captions?: PaginationCaptions;
     className?: string;
+    warningContent?: ReactNode;
+    limitExceeded?: boolean;
 }
-export declare const Pagination: FC<PaginationProps>;
+export declare const Pagination: ({ activePage, totalPages, pageSize, totalItems, pageSizeOptions, changePage, changePageSize, captions, className, warningContent, limitExceeded, }: PaginationProps) => ReactElement;
 export {};
