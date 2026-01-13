@@ -8,10 +8,14 @@ export interface Column {
 export interface PrimaryColumn extends Column {
   primary: boolean;
   width?: string | number;
+  minWidth?: number;
+  maxWidth?: number;
 }
 export interface FixedColumn extends Column {
   width: string | number;
   align?: 'left' | 'center' | 'right';
+  minWidth?: number;
+  maxWidth?: number;
 }
 export interface PinnedColumn extends FixedColumn {
   pinned: boolean;
