@@ -18,6 +18,7 @@ export interface PaginationProps {
     changePage: ChangePage;
     changePageSize: ChangePageSize;
     captions?: PaginationCaptions;
+    className?: string;
 }
 export declare const Pagination: FC<PaginationProps>;
 export {};
