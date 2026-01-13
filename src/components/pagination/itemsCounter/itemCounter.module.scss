@@ -1,6 +1,9 @@
 .item-counter {
-  display: inline-block;
-  width: 200px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  flex-shrink: 0;
+  max-width: 200px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
