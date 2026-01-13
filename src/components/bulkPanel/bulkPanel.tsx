@@ -23,9 +23,10 @@ export const BulkPanel = ({
   onRemoveItem,
   onClearSelection,
   className,
-  captions = DEFAULT_CAPTIONS,
+  captions: captionsProp,
   portalRoot,
 }: BulkPanelProps) => {
+  const captions = { ...DEFAULT_CAPTIONS, ...captionsProp };
   const [isExpanded, setIsExpanded] = useState(false);
   const panelContentRef = useRef<HTMLDivElement>(null);
 
