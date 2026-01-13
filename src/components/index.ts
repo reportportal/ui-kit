@@ -3,6 +3,7 @@ export { AttachedFile } from './attachedFile';
 export { BaseIconButton } from './baseIconButton';
 export { Breadcrumbs } from './breadcrumbs';
 export { BubblesLoader } from './bubblesLoader';
+export { BulkPanel } from './bulkPanel';
 export { Button } from './button';
 export { Checkbox } from './checkbox';
 export { Chip } from './chip';

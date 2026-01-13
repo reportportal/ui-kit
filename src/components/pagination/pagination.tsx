@@ -26,6 +26,7 @@ export interface PaginationProps {
   changePage: ChangePage;
   changePageSize: ChangePageSize;
   captions?: PaginationCaptions;
+  className?: string;
 }
 
 export const Pagination: FC<PaginationProps> = ({
@@ -37,12 +38,13 @@ export const Pagination: FC<PaginationProps> = ({
   changePage,
   changePageSize,
   captions,
+  className,
 }): ReactElement => {
   const ofText = captions?.of || 'of';
   const pageText = captions?.page || 'Page';
 
   return (
-    <div className={cx('pagination')}>
+    <div className={cx('pagination', className)}>
       <ItemCounter
         activePage={activePage}
         pageSize={pageSize}
