@@ -125,6 +125,7 @@ export const Table: FC<TableComponentProps> = ({
     enabled: isResizable,
     minWidth: minColumnWidth,
     maxWidth: maxColumnWidth,
+    columns: [...pinnedColumns, ...scrollableColumns],
     columnWidthsRef,
     onColumnResize,
   });
@@ -134,26 +135,31 @@ export const Table: FC<TableComponentProps> = ({
     rowCount: data.length,
   });
 
-  const wrapWithResizable = (column: PrimaryColumn | FixedColumn, headerCell: JSX.Element) => (
-    <Resizable
-      key={column.key}
-      width={
-        columnWidths[column.key] ??
-        (typeof column.width === 'number' ? column.width : minColumnWidth)
-      }
-      height={0}
-      axis="x"
-      handle={<ResizeHandle />}
-      onResizeStart={handleResizeStart}
-      onResize={handleResize(column.key)}
-      onResizeStop={handleResizeStop(column.key)}
-      minConstraints={[minColumnWidth, 0]}
-      maxConstraints={[maxColumnWidth, 0]}
-      className={cx('resizable-column')}
-    >
-      {headerCell}
-    </Resizable>
-  );
+  const wrapWithResizable = (column: PrimaryColumn | FixedColumn, headerCell: JSX.Element) => {
+    const effectiveMinWidth = column.minWidth ?? minColumnWidth;
+    const effectiveMaxWidth = column.maxWidth ?? maxColumnWidth;
+
+    return (
+      <Resizable
+        key={column.key}
+        width={
+          columnWidths[column.key] ??
+          (typeof column.width === 'number' ? column.width : minColumnWidth)
+        }
+        height={0}
+        axis="x"
+        handle={<ResizeHandle />}
+        onResizeStart={handleResizeStart}
+        onResize={handleResize(column.key)}
+        onResizeStop={handleResizeStop(column.key)}
+        minConstraints={[effectiveMinWidth, 0]}
+        maxConstraints={[effectiveMaxWidth, 0]}
+        className={cx('resizable-column')}
+      >
+        {headerCell}
+      </Resizable>
+    );
+  };
   const tableRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
   const bodyRef = useRef<HTMLDivElement>(null);
