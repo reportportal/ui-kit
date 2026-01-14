@@ -1,10 +1,12 @@
 import { MutableRefObject } from '../../../../node_modules/react';
 import { ResizeCallbackData } from 'react-resizable';
+import { PrimaryColumn, FixedColumn } from '../types';
 
 interface UseColumnResizeProps {
     enabled?: boolean;
     minWidth?: number;
     maxWidth?: number;
+    columns?: (PrimaryColumn | FixedColumn)[];
     columnWidthsRef?: MutableRefObject<Map<string, number>>;
     onColumnResize?: (columnKey: string, width: number) => void;
 }
@@ -14,5 +16,5 @@ interface UseColumnResizeReturn {
     handleResizeStop: (columnKey: string) => () => void;
     handleResizeStart: () => void;
 }
-export declare const useColumnResize: ({ enabled, minWidth, maxWidth, columnWidthsRef, onColumnResize, }: UseColumnResizeProps) => UseColumnResizeReturn;
+export declare const useColumnResize: ({ enabled, minWidth, maxWidth, columns, columnWidthsRef, onColumnResize, }: UseColumnResizeProps) => UseColumnResizeReturn;
 export {};
