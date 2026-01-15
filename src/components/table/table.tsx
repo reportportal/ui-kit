@@ -117,21 +117,17 @@ export const Table: FC<TableComponentProps> = ({
   const columnWidthsFromProps = useMemo(() => {
     const widths: Record<string, number> = {};
 
-    if (primaryColumns && Array.isArray(primaryColumns)) {
-      primaryColumns.forEach((col) => {
-        if ('width' in col && typeof col.width === 'number') {
-          widths[col.key] = col.width;
-        }
-      });
-    }
+    primaryColumns.forEach((col) => {
+      if ('width' in col && typeof col.width === 'number') {
+        widths[col.key] = col.width;
+      }
+    });
 
-    if (fixedColumns && Array.isArray(fixedColumns)) {
-      fixedColumns.forEach((col) => {
-        if ('width' in col && typeof col.width === 'number') {
-          widths[col.key] = col.width;
-        }
-      });
-    }
+    fixedColumns.forEach((col) => {
+      if ('width' in col && typeof col.width === 'number') {
+        widths[col.key] = col.width;
+      }
+    });
 
     return Object.keys(widths).length > 0 ? widths : undefined;
   }, [primaryColumns, fixedColumns]);
