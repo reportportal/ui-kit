@@ -1,4 +1,4 @@
-import { useState, useCallback, MutableRefObject } from 'react';
+import { useState, useCallback, MutableRefObject, useEffect } from 'react';
 import { ResizeCallbackData } from 'react-resizable';
 import { PrimaryColumn, FixedColumn } from '../types';
 
@@ -9,6 +9,7 @@ interface UseColumnResizeProps {
   columns?: (PrimaryColumn | FixedColumn)[];
   columnWidthsRef?: MutableRefObject<Map<string, number>>;
   onColumnResize?: (columnKey: string, width: number) => void;
+  initialColumnWidths?: Record<string, number>;
 }
 
 interface UseColumnResizeReturn {
@@ -25,6 +26,7 @@ export const useColumnResize = ({
   columns = [],
   columnWidthsRef,
   onColumnResize,
+  initialColumnWidths,
 }: UseColumnResizeProps): UseColumnResizeReturn => {
   const [columnWidths, setColumnWidths] = useState<Record<string, number>>({});
 
@@ -38,6 +40,15 @@ export const useColumnResize = ({
     },
     [columns, minWidth, maxWidth],
   );
+  useEffect(() => {
+    if (initialColumnWidths) {
+      const constrainedWidths: Record<string, number> = {};
+      Object.entries(initialColumnWidths).forEach(([key, width]) => {
+        constrainedWidths[key] = Math.min(maxWidth, Math.max(minWidth, width));
+      });
+      setColumnWidths(constrainedWidths);
+    }
+  }, [initialColumnWidths, minWidth, maxWidth]);
 
   const handleResizeStart = useCallback(() => {
     if (!enabled || Object.keys(columnWidths).length > 0 || !columnWidthsRef) return;

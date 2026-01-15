@@ -114,6 +114,28 @@ export const Table: FC<TableComponentProps> = ({
 
   const { columnWidthsRef, setCellRef } = useColumnWidths();
 
+  const columnWidthsFromProps = useMemo(() => {
+    const widths: Record<string, number> = {};
+
+    if (primaryColumns && Array.isArray(primaryColumns)) {
+      primaryColumns.forEach((col) => {
+        if ('width' in col && typeof col.width === 'number') {
+          widths[col.key] = col.width;
+        }
+      });
+    }
+
+    if (fixedColumns && Array.isArray(fixedColumns)) {
+      fixedColumns.forEach((col) => {
+        if ('width' in col && typeof col.width === 'number') {
+          widths[col.key] = col.width;
+        }
+      });
+    }
+
+    return Object.keys(widths).length > 0 ? widths : undefined;
+  }, [primaryColumns, fixedColumns]);
+
   const { handleToggleRowExpansion, isCellExpanded } = useTableExpansion({
     primaryColumns,
     fixedColumns,
@@ -128,6 +150,7 @@ export const Table: FC<TableComponentProps> = ({
     columns: [...pinnedColumns, ...scrollableColumns],
     columnWidthsRef,
     onColumnResize,
+    initialColumnWidths: columnWidthsFromProps,
   });
 
   const { setTableRowRef, setCheckboxRowRef } = useCheckboxRowSync({
