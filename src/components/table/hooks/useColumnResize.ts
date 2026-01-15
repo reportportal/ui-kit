@@ -43,12 +43,15 @@ export const useColumnResize = ({
   useEffect(() => {
     if (initialColumnWidths) {
       const constrainedWidths: Record<string, number> = {};
-      Object.entries(initialColumnWidths).forEach(([key, width]) => {
-        constrainedWidths[key] = Math.min(maxWidth, Math.max(minWidth, width));
+      Object.entries(initialColumnWidths).forEach(([columnKey, width]) => {
+        const column = columns.find((col) => col.key === columnKey);
+        const colMinWidth = column?.minWidth ?? minWidth;
+        const colMaxWidth = column?.maxWidth ?? maxWidth;
+        constrainedWidths[columnKey] = Math.min(colMaxWidth, Math.max(colMinWidth, width));
       });
       setColumnWidths(constrainedWidths);
     }
-  }, [initialColumnWidths, minWidth, maxWidth]);
+  }, [initialColumnWidths, columns, minWidth, maxWidth]);
 
   const handleResizeStart = useCallback(() => {
     if (!enabled || Object.keys(columnWidths).length > 0 || !columnWidthsRef) return;

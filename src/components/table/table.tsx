@@ -143,11 +143,16 @@ export const Table: FC<TableComponentProps> = ({
     onToggleRowExpansion,
   });
 
+  const allTableColumns = useMemo(
+    () => [...pinnedColumns, ...scrollableColumns],
+    [pinnedColumns, scrollableColumns],
+  );
+
   const { columnWidths, handleResize, handleResizeStop, handleResizeStart } = useColumnResize({
     enabled: isResizable,
     minWidth: minColumnWidth,
     maxWidth: maxColumnWidth,
-    columns: [...pinnedColumns, ...scrollableColumns],
+    columns: allTableColumns,
     columnWidthsRef,
     onColumnResize,
     initialColumnWidths: columnWidthsFromProps,
