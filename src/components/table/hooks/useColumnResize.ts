@@ -1,4 +1,4 @@
-import { useState, useCallback, MutableRefObject, useEffect } from 'react';
+import { useState, useCallback, MutableRefObject, useEffect, useRef } from 'react';
 import { ResizeCallbackData } from 'react-resizable';
 import { PrimaryColumn, FixedColumn } from '../types';
 
@@ -29,6 +29,12 @@ export const useColumnResize = ({
   initialColumnWidths,
 }: UseColumnResizeProps): UseColumnResizeReturn => {
   const [columnWidths, setColumnWidths] = useState<Record<string, number>>({});
+  const columnsRef = useRef(columns);
+  const prevInitialColumnWidthsRef = useRef<Record<string, number> | undefined>(undefined);
+
+  useEffect(() => {
+    columnsRef.current = columns;
+  }, [columns]);
 
   const getColumnLimits = useCallback(
     (columnKey: string) => {
@@ -42,16 +48,20 @@ export const useColumnResize = ({
   );
   useEffect(() => {
     if (initialColumnWidths) {
-      const constrainedWidths: Record<string, number> = {};
-      Object.entries(initialColumnWidths).forEach(([columnKey, width]) => {
-        const column = columns.find((col) => col.key === columnKey);
-        const colMinWidth = column?.minWidth ?? minWidth;
-        const colMaxWidth = column?.maxWidth ?? maxWidth;
-        constrainedWidths[columnKey] = Math.min(colMaxWidth, Math.max(colMinWidth, width));
-      });
-      setColumnWidths(constrainedWidths);
+      const hasChanged = prevInitialColumnWidthsRef.current !== initialColumnWidths;
+      if (hasChanged) {
+        const constrainedWidths: Record<string, number> = {};
+        Object.entries(initialColumnWidths).forEach(([columnKey, width]) => {
+          const column = columnsRef.current.find((col) => col.key === columnKey);
+          const colMinWidth = column?.minWidth ?? minWidth;
+          const colMaxWidth = column?.maxWidth ?? maxWidth;
+          constrainedWidths[columnKey] = Math.min(colMaxWidth, Math.max(colMinWidth, width));
+        });
+        setColumnWidths(constrainedWidths);
+        prevInitialColumnWidthsRef.current = initialColumnWidths;
+      }
     }
-  }, [initialColumnWidths, columns, minWidth, maxWidth]);
+  }, [initialColumnWidths, minWidth, maxWidth]);
 
   const handleResizeStart = useCallback(() => {
     if (!enabled || Object.keys(columnWidths).length > 0 || !columnWidthsRef) return;
