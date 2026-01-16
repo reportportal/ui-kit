@@ -9,6 +9,7 @@ interface UseColumnResizeProps {
     columns?: (PrimaryColumn | FixedColumn)[];
     columnWidthsRef?: MutableRefObject<Map<string, number>>;
     onColumnResize?: (columnKey: string, width: number) => void;
+    initialColumnWidths?: Record<string, number>;
 }
 interface UseColumnResizeReturn {
     columnWidths: Record<string, number>;
@@ -16,5 +17,5 @@ interface UseColumnResizeReturn {
     handleResizeStop: (columnKey: string) => () => void;
     handleResizeStart: () => void;
 }
-export declare const useColumnResize: ({ enabled, minWidth, maxWidth, columns, columnWidthsRef, onColumnResize, }: UseColumnResizeProps) => UseColumnResizeReturn;
+export declare const useColumnResize: ({ enabled, minWidth, maxWidth, columns, columnWidthsRef, onColumnResize, initialColumnWidths, }: UseColumnResizeProps) => UseColumnResizeReturn;
 export {};
