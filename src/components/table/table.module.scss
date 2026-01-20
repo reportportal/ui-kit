@@ -476,7 +476,7 @@ $EXPANDABLE_CHECKBOX_Z_INDEX: 10;
     }
   }
 
-  &.resizable:not(:last-child)::after {
+  &.resizable::after {
     content: '';
     position: absolute;
     top: 50%;
