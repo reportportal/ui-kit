@@ -1,2 +1,2 @@
 export { BulkPanel } from './bulkPanel';
-export type { BulkPanelProps, BulkPanelItem } from './types';
+export type { BulkPanelProps, BulkPanelItem, BulkPanelAction, BulkPanelCaptions } from './types';
