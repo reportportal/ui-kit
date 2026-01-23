@@ -106,9 +106,11 @@ export const BulkPanel = ({
   );
 
   const handleCancel = useCallback(() => {
-    currentAction?.onCancel?.();
+    const onCancel = currentAction?.onCancel;
+
     setCurrentAction(null);
     setIsExpanded(false);
+    onCancel?.();
   }, [currentAction]);
 
   const handleProceed = useCallback(() => {
