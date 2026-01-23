@@ -88,6 +88,12 @@ export const BulkPanel = ({
     eligibleCount,
   ]);
 
+  const handleCollapse = useCallback(() => {
+    requestAnimationFrame(() => {
+      setIsExpanded(false);
+    });
+  }, []);
+
   const handleActionClick = useCallback(
     (action: BulkPanelAction) => {
       action.onClick?.();
@@ -96,32 +102,29 @@ export const BulkPanel = ({
 
       if (ineligible.length === 0) {
         action.onProceed(items, true);
+        handleCollapse();
       } else {
         setCurrentAction(action);
         setActiveTab(TABS.INELIGIBLE);
         setIsExpanded(true);
       }
     },
-    [items],
+    [items, handleCollapse],
   );
 
   const handleCancel = useCallback(() => {
     const onCancel = currentAction?.onCancel;
 
     setCurrentAction(null);
-    setIsExpanded(false);
+    handleCollapse();
     onCancel?.();
-  }, [currentAction]);
+  }, [currentAction, handleCollapse]);
 
   const handleProceed = useCallback(() => {
     currentAction?.onProceed(eligibleItems);
     setCurrentAction(null);
-    setIsExpanded(false);
-  }, [currentAction, eligibleItems]);
-
-  const handleCollapse = useCallback(() => {
-    setIsExpanded(false);
-  }, []);
+    handleCollapse();
+  }, [currentAction, eligibleItems, handleCollapse]);
 
   const handleToggle = useCallback(() => {
     setIsExpanded((prev) => !prev);
