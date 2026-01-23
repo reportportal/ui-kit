@@ -1,3 +1,3 @@
 import { BulkPanelProps } from './types';
 
-export declare const BulkPanel: ({ items, onRemoveItem, onClearSelection, className, captions: captionsProp, portalRoot, }: BulkPanelProps) => import("react/jsx-runtime").JSX.Element | null;
+export declare const BulkPanel: ({ items, actions, captions: captionsProp, infoMessage, className, portalRoot, onRemoveItem, onClearSelection, }: BulkPanelProps) => import("react/jsx-runtime").JSX.Element | null;
