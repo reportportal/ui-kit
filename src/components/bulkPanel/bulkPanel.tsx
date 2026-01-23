@@ -231,9 +231,9 @@ export const BulkPanel = ({
                   )}
                 </>
               ) : (
-                actions.map((action) => (
+                actions.map((action, index) => (
                   <Button
-                    key={action.label}
+                    key={`${action.label}-${index}`}
                     variant={action.variant}
                     onClick={() => handleActionClick(action)}
                     disabled={action.disabled}
