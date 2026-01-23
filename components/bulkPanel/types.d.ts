@@ -22,6 +22,7 @@ export interface BulkPanelAction {
      * @param direct - true if all items were eligible and proceed was called directly, false if called via Proceed button
      */
     onProceed: (eligibleItems: BulkPanelItem[], direct?: boolean) => void;
+    onCancel?: () => void;
 }
 export interface BulkPanelCaptions {
     selected?: string;
