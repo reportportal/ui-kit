@@ -271,7 +271,7 @@ export const ActionMenu = ({
 
     return cleaned;
   };
-  const renderedItems = cleanupDividerItems(items).map(renderItem);
+  const renderedItems = cleanupDividerItems(items).map(renderItem).filter(Boolean);
 
   if (renderedItems.length === 0) {
     return null;

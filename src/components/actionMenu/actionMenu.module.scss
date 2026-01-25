@@ -46,18 +46,18 @@
 .action-item {
   display: flex;
   align-items: center;
+  box-sizing: border-box;
   width: 100%;
   padding: 8px 16px;
   border: none;
   background: none;
-  cursor: pointer;
+  color: var(--rp-ui-color-text);
   @include font-scale('base');
   font-family: var(--rp-ui-base-font-family);
   font-weight: var(--rp-ui-base-fw-regular);
-  color: var(--rp-ui-color-text);
   text-align: left;
   text-decoration: none;
-  box-sizing: border-box;
+  cursor: pointer;
   transition: background-color 0.2s ease;
 
   &:hover {
