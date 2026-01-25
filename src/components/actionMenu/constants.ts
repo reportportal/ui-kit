@@ -1,4 +1,4 @@
-/*
+/*!
  * Copyright 2026 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,5 +14,6 @@
  * limitations under the License.
  */
 
-export { ActionsMenu } from './actionsMenu';
-export type { ActionsMenuProps, ActionsMenuItem } from './actionsMenu';
+import { DividerItem } from './actionMenu';
+
+export const ACTION_MENU_DIVIDER: DividerItem = { type: 'divider' };
