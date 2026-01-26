@@ -483,30 +483,30 @@ const FolderNode = ({
                 pointerEvents: isChildOfDragged ? 'none' : 'auto',
               }}
             >
-            <span
-              onClick={(e) => {
-                e.stopPropagation();
-                if (hasChildren) onToggle(folder.id);
-              }}
-              style={{
-                width: '16px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: '#9ca3af',
-                cursor: hasChildren ? 'pointer' : 'default',
-                visibility: hasChildren ? 'visible' : 'hidden',
-              }}
-            >
-              <ChevronIcon isExpanded={isExpanded} />
-            </span>
-            <span style={{ color: '#f59e0b' }}>
-              {isExpanded ? <FolderOpenIcon /> : <FolderIcon />}
-            </span>
-            <span style={{ flex: 1 }}>{folder.name}</span>
-          </div>
-        )}
-      </TreeSortableItem>
+              <span
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (hasChildren) onToggle(folder.id);
+                }}
+                style={{
+                  width: '16px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: '#9ca3af',
+                  cursor: hasChildren ? 'pointer' : 'default',
+                  visibility: hasChildren ? 'visible' : 'hidden',
+                }}
+              >
+                <ChevronIcon isExpanded={isExpanded} />
+              </span>
+              <span style={{ color: '#f59e0b' }}>
+                {isExpanded ? <FolderOpenIcon /> : <FolderIcon />}
+              </span>
+              <span style={{ flex: 1 }}>{folder.name}</span>
+            </div>
+          )}
+        </TreeSortableItem>
       </div>
 
       {isExpanded &&

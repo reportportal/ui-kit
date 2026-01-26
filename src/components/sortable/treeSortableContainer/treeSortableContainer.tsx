@@ -11,6 +11,7 @@ import type {
   DropAction,
 } from '@common/types';
 import { DROP_ACTIONS } from '@common/types';
+import { useOnClickOutside } from '@common/hooks';
 
 import { TreeSortableContext, TreeSortableContextValue } from './TreeSortableContext';
 import styles from './treeSortableContainer.module.scss';
@@ -37,7 +38,6 @@ export const TreeSortableContainer = ({
     null,
   );
   const popoverRef = useRef<HTMLDivElement>(null);
-
   const labels = { ...DEFAULT_LABELS, ...confirmationLabels };
 
   const resetDropState = useCallback(() => {
@@ -58,9 +58,20 @@ export const TreeSortableContainer = ({
       }
 
       const rect = dropElement.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+
+      let top: number;
+      if (position === 'before') {
+        top = rect.top;
+      } else if (position === 'after') {
+        top = rect.top + rect.height;
+      } else {
+        top = rect.top;
+      }
+
       setPopoverPosition({
-        top: rect.top + rect.height / 2,
-        left: rect.right + 8,
+        top,
+        left: centerX,
       });
       setPendingDrop({ draggedItem, targetId, position });
     },
@@ -93,6 +104,11 @@ export const TreeSortableContainer = ({
     [pendingDrop, onMove, onDuplicate, onCancel, resetDropState],
   );
 
+  useOnClickOutside(
+    popoverRef,
+    pendingDrop && showDropConfirmation ? () => handleAction(DROP_ACTIONS.CANCEL) : undefined,
+  );
+
   const contextValue: TreeSortableContextValue = {
     showDropConfirmation,
     pendingDraggedItemId: pendingDrop?.draggedItem.id ?? null,
@@ -112,7 +128,10 @@ export const TreeSortableContainer = ({
         createPortal(
           <div
             ref={popoverRef}
-            className={cx('drop-confirmation-popover')}
+            className={cx('drop-confirmation-popover', {
+              'drop-confirmation-popover--before': pendingDrop.position === 'before',
+              'drop-confirmation-popover--after': pendingDrop.position === 'after',
+            })}
             style={{
               top: popoverPosition.top,
               left: popoverPosition.left,
@@ -132,12 +151,10 @@ export const TreeSortableContainer = ({
             >
               {labels[DROP_ACTIONS.DUPLICATE]}
             </button>
+            <div className={cx('drop-confirmation-popover__divider')} />
             <button
               type="button"
-              className={cx(
-                'drop-confirmation-popover__button',
-                'drop-confirmation-popover__button--cancel',
-              )}
+              className={cx('drop-confirmation-popover__button')}
               onClick={() => handleAction(DROP_ACTIONS.CANCEL)}
             >
               {labels[DROP_ACTIONS.CANCEL]}
