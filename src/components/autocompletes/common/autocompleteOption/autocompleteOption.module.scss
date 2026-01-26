@@ -66,8 +66,8 @@
 .divider {
   display: block;
   height: 1px;
-  margin: 0 12px;
-  background: var(--rp-ui-autocompelete-divider-bg);
+  margin: 8px 12px;
+  background: var(--rp-ui-base-e-100);
 }
 
 .new-item {
@@ -77,38 +77,29 @@
 
   button {
     min-width: unset;
+    padding: 0;
   }
 }
 
 .item,
 .new-item {
   min-height: 36px;
-  padding: 4px 12px;
+  padding: 8px 12px;
   cursor: pointer;
   box-sizing: border-box;
   color: var(--rp-ui-color-text-2);
 
   &.active,
   &:hover {
-    color: var(--rp-ui-color-primary-text);
     background-color: var(--rp-ui-color-bg-3);
-  }
-
-  &.active:not(:hover) {
-    border: 1px solid var(--rp-ui-color-error-focused);
-    padding: 3px 11px;
   }
 }
 
 .value {
-  display: inline-block;
-  height: 28px;
+  display: block;
   max-width: 50%;
-  padding: 4px 8px;
   font-size: 13px;
   text-align: center;
-  border: 1px solid transparent;
-  border-radius: 6px;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;

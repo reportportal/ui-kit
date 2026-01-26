@@ -93,7 +93,7 @@ $Z-INDEX-POPUP: 10;
   &:active,
   &:focus-visible {
     border-color: var(--rp-ui-color-primary-focused);
-    box-shadow: 0 0 0 1px var(--rp-ui-color-primary-focused);
+    box-shadow: inset 0 0 0 1px var(--rp-ui-color-primary-focused);
     outline: none;
 
     @include arrow-color(var(--rp-ui-color-field-hover-2));

@@ -1,4 +1,4 @@
-import { useMemo, FC, useEffect, useRef, useState, useCallback } from 'react';
+import { useMemo, FC, useEffect, useRef, useState, useCallback, useLayoutEffect } from 'react';
 import { Resizable } from 'react-resizable';
 import { isEmpty } from 'es-toolkit/compat';
 import styles from './table.module.scss';
@@ -24,6 +24,7 @@ import {
   useColumnResize,
   useRightGradientPosition,
   usePinnedGradientPosition,
+  useCheckboxRowSync,
 } from './hooks';
 import { ResizeHandle } from './resizeHandle';
 import { GradientOverlay } from './gradientOverlay';
@@ -55,6 +56,7 @@ export const Table: FC<TableComponentProps> = ({
   fixedColumns,
   renderRowActions,
   className = '',
+  wrapperClassName = '',
   rowClassName = '',
   headerClassName = '',
   bodyClassName = '',
@@ -74,6 +76,7 @@ export const Table: FC<TableComponentProps> = ({
   minColumnWidth = 50,
   maxColumnWidth = 500,
   isSelectAllCheckboxAlwaysVisible = false,
+  isCheckboxOutside = false,
   onChangeSorting = () => {},
   onToggleRowSelection = () => {},
   onToggleAllRowsSelection = () => {},
@@ -111,6 +114,24 @@ export const Table: FC<TableComponentProps> = ({
 
   const { columnWidthsRef, setCellRef } = useColumnWidths();
 
+  const columnWidthsFromProps = useMemo(() => {
+    const widths: Record<string, number> = {};
+
+    primaryColumns.forEach((col) => {
+      if ('width' in col && typeof col.width === 'number') {
+        widths[col.key] = col.width;
+      }
+    });
+
+    fixedColumns.forEach((col) => {
+      if ('width' in col && typeof col.width === 'number') {
+        widths[col.key] = col.width;
+      }
+    });
+
+    return Object.keys(widths).length > 0 ? widths : undefined;
+  }, [primaryColumns, fixedColumns]);
+
   const { handleToggleRowExpansion, isCellExpanded } = useTableExpansion({
     primaryColumns,
     fixedColumns,
@@ -118,37 +139,56 @@ export const Table: FC<TableComponentProps> = ({
     onToggleRowExpansion,
   });
 
+  const allTableColumns = useMemo(
+    () => [...pinnedColumns, ...scrollableColumns],
+    [pinnedColumns, scrollableColumns],
+  );
+
   const { columnWidths, handleResize, handleResizeStop, handleResizeStart } = useColumnResize({
     enabled: isResizable,
     minWidth: minColumnWidth,
     maxWidth: maxColumnWidth,
+    columns: allTableColumns,
     columnWidthsRef,
     onColumnResize,
+    initialColumnWidths: columnWidthsFromProps,
   });
 
-  const wrapWithResizable = (column: PrimaryColumn | FixedColumn, headerCell: JSX.Element) => (
-    <Resizable
-      key={column.key}
-      width={
-        columnWidths[column.key] ??
-        (typeof column.width === 'number' ? column.width : minColumnWidth)
-      }
-      height={0}
-      axis="x"
-      handle={<ResizeHandle />}
-      onResizeStart={handleResizeStart}
-      onResize={handleResize(column.key)}
-      onResizeStop={handleResizeStop(column.key)}
-      minConstraints={[minColumnWidth, 0]}
-      maxConstraints={[maxColumnWidth, 0]}
-      className={cx('resizable-column')}
-    >
-      {headerCell}
-    </Resizable>
-  );
+  const { setTableRowRef, setCheckboxRowRef } = useCheckboxRowSync({
+    enabled: selectable && isCheckboxOutside,
+    rowCount: data.length,
+  });
+
+  const wrapWithResizable = (column: PrimaryColumn | FixedColumn, headerCell: JSX.Element) => {
+    const effectiveMinWidth = column.minWidth ?? minColumnWidth;
+    const effectiveMaxWidth = column.maxWidth ?? maxColumnWidth;
+
+    return (
+      <Resizable
+        key={column.key}
+        width={
+          columnWidths[column.key] ??
+          (typeof column.width === 'number' ? column.width : minColumnWidth)
+        }
+        height={0}
+        axis="x"
+        handle={<ResizeHandle />}
+        onResizeStart={handleResizeStart}
+        onResize={handleResize(column.key)}
+        onResizeStop={handleResizeStop(column.key)}
+        minConstraints={[effectiveMinWidth, 0]}
+        maxConstraints={[effectiveMaxWidth, 0]}
+        className={cx('resizable-column')}
+      >
+        {headerCell}
+      </Resizable>
+    );
+  };
   const tableRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
   const bodyRef = useRef<HTMLDivElement>(null);
+  const checkboxColumnRef = useRef<HTMLDivElement>(null);
+  const checkboxHeaderRef = useRef<HTMLDivElement>(null);
   const [isHeaderPinned, setIsHeaderPinned] = useState(false);
 
   const updateLeftBorderAccentStyle = useCallback((element: HTMLElement) => {
@@ -253,6 +293,7 @@ export const Table: FC<TableComponentProps> = ({
     false,
     isResizable ? columnWidths : undefined,
     isResizable,
+    isCheckboxOutside,
   );
 
   const headerGridTemplateColumns = getGridTemplateColumns(
@@ -264,6 +305,7 @@ export const Table: FC<TableComponentProps> = ({
     true,
     isResizable ? columnWidths : undefined,
     isResizable,
+    isCheckboxOutside,
   );
 
   const expandAllButton = (
@@ -282,6 +324,7 @@ export const Table: FC<TableComponentProps> = ({
     const scrollContainer = externalScrollContainerRef.current;
     const table = tableRef.current;
     const header = headerRef.current;
+    const checkboxHeader = checkboxHeaderRef.current;
 
     const updatePinnedState = () => {
       const tableRect = table.getBoundingClientRect();
@@ -307,6 +350,10 @@ export const Table: FC<TableComponentProps> = ({
         header.style.left = `${tableLeft}px`;
         header.style.top = `${topOffset}px`;
         header.style.width = `${tableRect.width}px`;
+
+        if (checkboxHeader && isCheckboxOutside) {
+          checkboxHeader.style.top = `${topOffset}px`;
+        }
       } else {
         const savedScrollLeft = table.scrollLeft;
 
@@ -322,6 +369,11 @@ export const Table: FC<TableComponentProps> = ({
         if (isHorizontallyScrollable) {
           header.style.overflow = '';
           header.style.overflowX = '';
+        }
+
+        if (checkboxHeader && isCheckboxOutside) {
+          checkboxHeader.style.top = '';
+          checkboxHeader.classList.remove(cx('pinned-header'));
         }
 
         if (isHorizontallyScrollable && savedScrollLeft > 0) {
@@ -349,7 +401,7 @@ export const Table: FC<TableComponentProps> = ({
       scrollContainer.removeEventListener('scroll', updatePinnedState);
       window.removeEventListener('resize', updatePinnedState);
     };
-  }, [externalScrollContainerRef, isHorizontallyScrollable]);
+  }, [externalScrollContainerRef, isHorizontallyScrollable, isCheckboxOutside]);
 
   useEffect(() => {
     if (
@@ -364,6 +416,7 @@ export const Table: FC<TableComponentProps> = ({
     const scrollContainer = externalScrollContainerRef.current;
     const table = tableRef.current;
     const header = headerRef.current;
+    const checkboxHeader = checkboxHeaderRef.current;
 
     const updateHeaderPosition = () => {
       const tableRect = table.getBoundingClientRect();
@@ -372,6 +425,10 @@ export const Table: FC<TableComponentProps> = ({
       header.style.left = `${tableRect.left}px`;
       header.style.top = `${containerRect.top}px`;
       header.style.width = `${tableRect.width}px`;
+
+      if (checkboxHeader && isCheckboxOutside) {
+        checkboxHeader.style.top = `${containerRect.top}px`;
+      }
     };
 
     const syncHorizontalScroll = (source: HTMLElement) => {
@@ -418,7 +475,7 @@ export const Table: FC<TableComponentProps> = ({
       scrollContainer.removeEventListener('scroll', handleContainerScroll);
       window.removeEventListener('resize', updateHeaderPosition);
     };
-  }, [isHeaderPinned, externalScrollContainerRef, isHorizontallyScrollable]);
+  }, [isHeaderPinned, externalScrollContainerRef, isHorizontallyScrollable, isCheckboxOutside]);
 
   useEffect(() => {
     if (!tableRef.current || !isHorizontallyScrollable) {
@@ -577,7 +634,93 @@ export const Table: FC<TableComponentProps> = ({
     return () => clearTimeout(timeoutId);
   }, [isRowsExpandable, expandedRowIds, updateLeftBorderAccentStyle]);
 
-  return (
+  useEffect(() => {
+    if (!checkboxColumnRef.current || !tableRef.current || !isCheckboxOutside) {
+      return undefined;
+    }
+
+    const checkboxColumn = checkboxColumnRef.current;
+    const table = tableRef.current;
+
+    const handleTableScroll = () => {
+      requestAnimationFrame(() => {
+        checkboxColumn.scrollTop = table.scrollTop;
+      });
+    };
+
+    table.addEventListener('scroll', handleTableScroll);
+
+    return () => {
+      table.removeEventListener('scroll', handleTableScroll);
+    };
+  }, [data, isCheckboxOutside]);
+
+  useLayoutEffect(() => {
+    if (!tableRef.current || !checkboxColumnRef.current) return;
+
+    const table = tableRef.current;
+    const checkboxColumn = checkboxColumnRef.current;
+
+    const syncHeight = () => {
+      const newHeight = `${table.clientHeight}px`;
+      if (checkboxColumn.style.height !== newHeight) {
+        checkboxColumn.style.height = newHeight;
+      }
+    };
+
+    syncHeight();
+
+    const observer = new ResizeObserver(() => {
+      requestAnimationFrame(syncHeight);
+    });
+    observer.observe(table);
+
+    return () => observer.disconnect();
+  }, []);
+
+  const renderCheckboxColumn = () => (
+    <div className={cx('checkbox-column')} ref={checkboxColumnRef}>
+      <div
+        ref={checkboxHeaderRef}
+        className={cx(
+          'table-header',
+          'checkbox-header',
+          { 'pinned-header': isHeaderPinned },
+          headerClassName,
+        )}
+      >
+        {isSelectAllCheckboxVisible && (
+          <Checkbox
+            value={isAllRowsSelected}
+            partiallyChecked={isAnyRowSelected}
+            onChange={handleSelectAllRows}
+            className={cx('checkbox-cell')}
+          />
+        )}
+      </div>
+      <div className={cx('checkbox-body', bodyClassName)}>
+        {data.map((item, index) => (
+          <div
+            key={item.id}
+            ref={setCheckboxRowRef(index)}
+            className={cx('checkbox-row', 'table-row', getRowSizeClassName(item), rowClassName)}
+            onMouseEnter={() => handleRowMouseEnter(index)}
+            onMouseLeave={handleRowMouseLeave}
+          >
+            {(hasSelectedRows || hoveredRow === index) && (
+              <Checkbox
+                value={selectedRowIds.includes(item.id)}
+                onChange={() => handleSingleRowSelection(item.id)}
+                className={cx('checkbox-cell')}
+              />
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+
+  const renderTable = () => (
     <div
       ref={tableRef}
       className={cx(
@@ -604,7 +747,7 @@ export const Table: FC<TableComponentProps> = ({
         )}
         style={{ gridTemplateColumns: headerGridTemplateColumns }}
       >
-        {selectable && (
+        {selectable && !isCheckboxOutside && (
           <div
             className={cx('table-header-cell', 'checkbox-cell')}
             data-base-left={isRowsExpandable ? EXPANDABLE_CHECKBOX_COLUMN_WIDTH : 0}
@@ -658,6 +801,7 @@ export const Table: FC<TableComponentProps> = ({
                 columnWidthsRef,
                 isRowsExpandable,
                 selectable,
+                isCheckboxOutside,
               )}
             >
               <div
@@ -693,6 +837,7 @@ export const Table: FC<TableComponentProps> = ({
                 columnWidthsRef,
                 isRowsExpandable,
                 selectable,
+                isCheckboxOutside,
               )}
             >
               <div
@@ -729,13 +874,14 @@ export const Table: FC<TableComponentProps> = ({
           <div
             key={item.id}
             data-row-index={index}
+            ref={setTableRowRef(index)}
             className={cx('table-row', getRowSizeClassName(item), rowClassName, {
-              selectable: selectable,
+              selectable: selectable && !isCheckboxOutside,
             })}
             onMouseEnter={() => handleRowMouseEnter(index)}
             onMouseLeave={handleRowMouseLeave}
           >
-            {selectable && (
+            {selectable && !isCheckboxOutside && (
               <div
                 className={cx('table-cell', 'checkbox-cell')}
                 data-base-left={isRowsExpandable ? EXPANDABLE_CHECKBOX_COLUMN_WIDTH : 0}
@@ -794,6 +940,7 @@ export const Table: FC<TableComponentProps> = ({
                         columnWidthsRef,
                         isRowsExpandable,
                         selectable,
+                        isCheckboxOutside,
                       )}
                     >
                       {item[column.key].component || item[column.key].content || item[column.key]}
@@ -820,6 +967,7 @@ export const Table: FC<TableComponentProps> = ({
                         columnWidthsRef,
                         isRowsExpandable,
                         selectable,
+                        isCheckboxOutside,
                       )}
                     >
                       {item[column.key].component || item[column.key].content || item[column.key]}
@@ -860,5 +1008,14 @@ export const Table: FC<TableComponentProps> = ({
         </>
       )}
     </div>
+  );
+
+  return isCheckboxOutside ? (
+    <div className={cx('table-wrapper', { 'fixed-header': isHeaderFixed }, wrapperClassName)}>
+      {renderCheckboxColumn()}
+      {renderTable()}
+    </div>
+  ) : (
+    renderTable()
   );
 };

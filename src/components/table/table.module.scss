@@ -6,6 +6,8 @@ $HEIGHT-LARGE: 80px;
 $PADDING_VERTICAL-SMALL: 12px;
 $PADDING_VERTICAL-DEFAULT: 22px;
 $PADDING_VERTICAL-LARGE: 30px;
+$EXPANDABLE_CHECKBOX_COLUMN_WIDTH: 32px;
+$EXPANDABLE_CHECKBOX_Z_INDEX: 10;
 
 .table {
   width: 100%;
@@ -51,7 +53,7 @@ $PADDING_VERTICAL-LARGE: 30px;
     padding: 0 3px 0 0;
     top: 0;
     left: 0;
-    z-index: 5;
+    z-index: $EXPANDABLE_CHECKBOX_Z_INDEX + 1;
     border-bottom: 1px solid var(--rp-ui-base-e-100);
     flex-shrink: 0;
     box-sizing: border-box;
@@ -109,7 +111,7 @@ $PADDING_VERTICAL-LARGE: 30px;
 
   &.selectable {
     display: grid;
-    grid-template-columns: 32px 1fr;
+    grid-template-columns: $EXPANDABLE_CHECKBOX_COLUMN_WIDTH 1fr;
   }
 
   .row-content-wrapper {
@@ -320,14 +322,15 @@ $PADDING_VERTICAL-LARGE: 30px;
   }
 
   &.checkbox-cell {
-    width: 32px;
+    width: $EXPANDABLE_CHECKBOX_COLUMN_WIDTH;
     padding: 0;
+    margin-left: 8px;
     align-self: center;
     height: 18px;
     cursor: pointer;
     position: sticky;
     left: 0;
-    z-index: 10;
+    z-index: $EXPANDABLE_CHECKBOX_Z_INDEX;
 
     label {
       height: 18px;
@@ -342,13 +345,13 @@ $PADDING_VERTICAL-LARGE: 30px;
 
   &.expand-cell {
     padding: 0;
-    width: 32px;
+    width: $EXPANDABLE_CHECKBOX_COLUMN_WIDTH;
     display: flex;
     align-items: flex-start;
     align-self: stretch;
     position: sticky;
     left: 0;
-    z-index: 10;
+    z-index: $EXPANDABLE_CHECKBOX_Z_INDEX;
     background-color: inherit;
 
     button {
@@ -411,9 +414,9 @@ $PADDING_VERTICAL-LARGE: 30px;
   padding: 0 16px;
   align-self: center;
 
-   &.expand-cell {
+  &.expand-cell {
     align-items: center;
-   }
+  }
 
   .label {
     display: flex;
@@ -473,7 +476,7 @@ $PADDING_VERTICAL-LARGE: 30px;
     }
   }
 
-  &.resizable:not(:last-child)::after {
+  &.resizable::after {
     content: '';
     position: absolute;
     top: 50%;
@@ -502,3 +505,81 @@ $PADDING_VERTICAL-LARGE: 30px;
     }
   }
 }
+
+/* Checkbox outside styles start */
+.table-wrapper {
+  position: relative;
+  display: flex;
+  width: calc(100% + $EXPANDABLE_CHECKBOX_COLUMN_WIDTH);
+  margin-left: -$EXPANDABLE_CHECKBOX_COLUMN_WIDTH;
+  height: 100%;
+  overflow: hidden;
+
+  * {
+    box-sizing: border-box;
+  }
+}
+
+.checkbox-column {
+  width: $EXPANDABLE_CHECKBOX_COLUMN_WIDTH;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  max-height: 100%;
+
+  .checkbox-cell {
+    margin-left: 8px;
+  }
+}
+
+.checkbox-header {
+  width: $EXPANDABLE_CHECKBOX_COLUMN_WIDTH;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  .fixed-header & {
+    position: sticky;
+    top: 0;
+    z-index: $EXPANDABLE_CHECKBOX_Z_INDEX + 1;
+  }
+
+  &.pinned-header {
+    position: fixed;
+  }
+
+  label {
+    height: 18px;
+    width: 16px;
+
+    span {
+      background-color: var(--rp-ui-base-bg-000);
+    }
+  }
+}
+
+.checkbox-body {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.checkbox-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  label {
+    height: 18px;
+    width: 16px;
+
+    span {
+      background-color: var(--rp-ui-base-bg-000);
+    }
+  }
+}
+/* Checkbox outside styles end */

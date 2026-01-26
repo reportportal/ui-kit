@@ -55,6 +55,7 @@ export const calculatePinnedPosition = (
   columnWidthsRef: MutableRefObject<Map<string, number>>,
   isRowsExpandable: boolean,
   selectable: boolean,
+  isCheckboxOutside = false,
 ): number => {
   let position = 0;
 
@@ -62,7 +63,7 @@ export const calculatePinnedPosition = (
     position += EXPANDABLE_CHECKBOX_COLUMN_WIDTH;
   }
 
-  if (selectable) {
+  if (selectable && !isCheckboxOutside) {
     position += EXPANDABLE_CHECKBOX_COLUMN_WIDTH;
   }
 
@@ -90,6 +91,7 @@ export const getCellStyle = (
   columnWidthsRef: MutableRefObject<Map<string, number>>,
   isRowsExpandable: boolean,
   selectable: boolean,
+  isCheckboxOutside = false,
 ): CSSProperties => {
   const baseStyle: CSSProperties = {};
 
@@ -105,6 +107,7 @@ export const getCellStyle = (
       columnWidthsRef,
       isRowsExpandable,
       selectable,
+      isCheckboxOutside,
     );
     baseStyle.left = `${leftPosition}px`;
   }
@@ -121,6 +124,7 @@ export const getGridTemplateColumns = (
   isHeader = false,
   columnWidths?: Record<string, number>,
   isResizable = false,
+  isCheckboxOutside = false,
 ): string => {
   const columns: string[] = [];
 
@@ -128,7 +132,7 @@ export const getGridTemplateColumns = (
     columns.push(`${EXPANDABLE_CHECKBOX_COLUMN_WIDTH}px`);
   }
 
-  if (isHeader && selectable) {
+  if (isHeader && selectable && !isCheckboxOutside) {
     columns.push(`${EXPANDABLE_CHECKBOX_COLUMN_WIDTH}px`);
   }
 

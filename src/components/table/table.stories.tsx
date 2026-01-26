@@ -1742,3 +1742,82 @@ export const HorizontalScrollWithPinnedHeader: Story = {
     renderRowActions,
   },
 };
+
+/**
+ * Demonstrates resizable columns with horizontal scroll and checkbox outside.
+ */
+export const ResizableColumnsWithCheckboxOutside: Story = {
+  render: (args: TableComponentProps) => {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const [checkedRows, setCheckedRows] = useState<Set<number | string>>(new Set([]));
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const [expandedRows, setExpandedRows] = useState<Set<number | string>>(new Set([]));
+
+    return (
+      <div
+        style={{
+          width: '600px',
+          height: '500px',
+          border: '1px solid #ccc',
+          padding: '16px',
+          paddingLeft: '48px',
+        }}
+      >
+        <div style={{ height: 'calc(100% - 16px)', position: 'relative' }}>
+          <Table
+            {...args}
+            data={wideTableData}
+            primaryColumn={wideTablePrimaryColumns}
+            fixedColumns={wideTableFixedColumns}
+            expandedRowIds={[...expandedRows]}
+            selectedRowIds={[...checkedRows]}
+            onToggleRowSelection={(id) => {
+              const newCheckedRows = new Set(checkedRows);
+              if (newCheckedRows.has(id)) {
+                newCheckedRows.delete(id);
+              } else {
+                newCheckedRows.add(id);
+              }
+              setCheckedRows(newCheckedRows);
+            }}
+            onToggleAllRowsSelection={() => {
+              if (checkedRows.size === wideTableData.length) {
+                setCheckedRows(new Set());
+              } else {
+                const allRows = new Set(wideTableData.map((item) => item.id));
+                setCheckedRows(allRows);
+              }
+            }}
+            onToggleRowExpansion={(id) => {
+              const newExpandedRows = new Set(expandedRows);
+              if (newExpandedRows.has(id)) {
+                newExpandedRows.delete(id);
+              } else {
+                newExpandedRows.add(id);
+              }
+              setExpandedRows(newExpandedRows);
+            }}
+            onToggleAllRowsExpansion={() => {
+              if (expandedRows.size === wideTableData.length) {
+                setExpandedRows(new Set());
+              } else {
+                const allRows = new Set(wideTableData.map((item) => item.id));
+                setExpandedRows(allRows);
+              }
+            }}
+          />
+        </div>
+      </div>
+    );
+  },
+  args: {
+    renderRowActions,
+    isResizable: true,
+    isHeaderFixed: true,
+    isHorizontallyScrollable: true,
+    pinnedColumnKeys: ['name', 'email'],
+    selectable: true,
+    isRowsExpandable: true,
+    isCheckboxOutside: true,
+  },
+};
