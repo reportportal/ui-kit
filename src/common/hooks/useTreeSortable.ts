@@ -43,6 +43,7 @@ export const useTreeSortable = ({
   type = DEFAULT_SORTABLE_TYPE,
   isDisabled = false,
   acceptDrop = true,
+  canDropOn,
   onDrop,
   hideDefaultPreview = false,
 }: UseTreeSortableOptions): UseTreeSortableReturn => {
@@ -72,7 +73,10 @@ export const useTreeSortable = ({
       accept: type,
       collect: (monitor: DropTargetMonitor) => {
         const draggedItem = monitor.getItem() as TreeDragItem | null;
-        const canDrop = draggedItem?.id !== id && acceptDrop;
+        const canDrop =
+          draggedItem?.id !== id &&
+          acceptDrop &&
+          (!canDropOn || !draggedItem || canDropOn(draggedItem, id));
         const isCurrentlyOver = canDrop ? monitor.isOver({ shallow: true }) : false;
 
         let position: TreeDropPosition = null;
@@ -94,12 +98,13 @@ export const useTreeSortable = ({
         if (monitor.didDrop()) {
           return;
         }
-        if (draggedItem.id !== id && onDrop && dropPositionRef.current) {
+        const canDrop = !canDropOn || canDropOn(draggedItem, id);
+        if (draggedItem.id !== id && canDrop && onDrop && dropPositionRef.current) {
           onDrop(draggedItem, id, dropPositionRef.current);
         }
       },
     }),
-    [id, type, acceptDrop, onDrop],
+    [id, type, acceptDrop, canDropOn, onDrop],
   );
 
   const combinedDropRef = (node: HTMLElement | null) => {

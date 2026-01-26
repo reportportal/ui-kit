@@ -1,15 +1,16 @@
 import { useState } from 'react';
 import type { CSSProperties, Ref } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { DndProvider } from 'react-dnd';
+import { DndProvider, useDragLayer } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 
 import { SortableItem } from './sortableItem';
 import { SortableList } from './sortableList';
 import { DragLayer } from './dragLayer';
 import { TreeSortableItem } from './treeSortableItem';
-import { TreeSortableContainer } from './treeSortableContainer';
+import { TreeSortableContainer, useTreeSortableContext } from './treeSortableContainer';
 import type { SortableItemProps, DragItem, TreeDragItem, TreeDropPosition } from '@common/types';
+import { useTreeDropValidation } from '@common/hooks';
 
 const meta: Meta<typeof SortableItem> = {
   title: 'DnD/Sortable',
@@ -394,8 +395,10 @@ interface FolderNodeProps {
   index: number;
   depth: number;
   parentId: number | null;
+  isLast: boolean;
   expandedIds: Set<number>;
   onToggle: (id: number) => void;
+  canDropOn?: (draggedItem: TreeDragItem, targetId: string | number) => boolean;
   onDrop: (
     draggedItem: TreeDragItem,
     targetId: string | number,
@@ -408,19 +411,48 @@ const FolderNode = ({
   index,
   depth,
   parentId,
+  isLast,
   expandedIds,
   onToggle,
+  canDropOn,
   onDrop,
 }: FolderNodeProps) => {
   const isExpanded = expandedIds.has(folder.id);
   const hasChildren = folder.children.length > 0;
+
+  // Get pending state from TreeSortableContainer context
+  const context = useTreeSortableContext();
+  const pendingDraggedItemId = context?.pendingDraggedItemId;
+
+  // Check if this folder is a child of the dragged folder
+  const { draggedItem } = useDragLayer((monitor) => ({
+    draggedItem: monitor.getItem() as TreeDragItem | null,
+  }));
+
+  // This folder should be disabled if it's a child of the dragged folder OR pending dragged folder
+  const isChildOfDragged = (() => {
+    if (!canDropOn) return false;
+
+    // Check both active drag and pending drag
+    const sourceItem = draggedItem || (pendingDraggedItemId ? { id: pendingDraggedItemId } : null);
+    if (!sourceItem) return false;
+
+    // Normalize IDs (canDropOn normalizes them internally)
+    const sourceId = typeof sourceItem.id === 'string' ? Number(sourceItem.id) : sourceItem.id;
+    const currentId = typeof folder.id === 'string' ? Number(folder.id) : folder.id;
+
+    // Don't disable the dragged item itself
+    if (sourceId === currentId) return false;
+
+    // Disable descendants (canDropOn returns false for descendants)
+    return !canDropOn(sourceItem as TreeDragItem, folder.id);
+  })();
 
   const folderRowStyle: CSSProperties = {
     display: 'flex',
     alignItems: 'center',
     gap: '4px',
     padding: '6px 8px',
-    paddingLeft: `${8 + depth * 20}px`,
     backgroundColor: 'var(--rp-ui-base-bg-000, #fff)',
     borderRadius: '4px',
     cursor: 'grab',
@@ -430,22 +462,27 @@ const FolderNode = ({
 
   return (
     <>
-      <TreeSortableItem
-        id={folder.id}
-        index={index}
-        parentId={parentId}
-        type={FOLDER_TYPE}
-        onDrop={onDrop}
-      >
-        {({ isDragging, dragRef }) => (
-          <div
-            ref={dragRef as Ref<HTMLDivElement>}
-            style={{
-              ...folderRowStyle,
-              opacity: isDragging ? 0.4 : 1,
-              marginBottom: '2px',
-            }}
-          >
+      <div style={{ paddingLeft: `${depth * 20}px` }}>
+        <TreeSortableItem
+          id={folder.id}
+          index={index}
+          parentId={parentId}
+          type={FOLDER_TYPE}
+          isLast={isLast}
+          canDropOn={canDropOn}
+          onDrop={onDrop}
+        >
+          {({ isDragging, dragRef }) => (
+            <div
+              ref={dragRef as Ref<HTMLDivElement>}
+              style={{
+                ...folderRowStyle,
+                opacity: isDragging ? 0.4 : isChildOfDragged ? 0.5 : 1,
+                marginBottom: '2px',
+                cursor: isChildOfDragged ? 'not-allowed' : folderRowStyle.cursor,
+                pointerEvents: isChildOfDragged ? 'none' : 'auto',
+              }}
+            >
             <span
               onClick={(e) => {
                 e.stopPropagation();
@@ -470,6 +507,7 @@ const FolderNode = ({
           </div>
         )}
       </TreeSortableItem>
+      </div>
 
       {isExpanded &&
         folder.children.map((child, childIndex) => (
@@ -479,8 +517,10 @@ const FolderNode = ({
             index={childIndex}
             depth={depth + 1}
             parentId={folder.id}
+            isLast={childIndex === folder.children.length - 1}
             expandedIds={expandedIds}
             onToggle={onToggle}
+            canDropOn={canDropOn}
             onDrop={onDrop}
           />
         ))}
@@ -530,7 +570,76 @@ export const TreeSortableNested: Story = {
       setExpandedIds(new Set());
     };
 
-    const handleDrop = (
+    // Use tree drop validation hook to prevent dropping folder into itself or descendants
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const { canDropOn } = useTreeDropValidation({ items: folders });
+
+    // Helper functions for folder manipulation
+    const removeFolder = (
+      items: NestedFolder[],
+      id: number,
+    ): [NestedFolder[], NestedFolder | null] => {
+      let removed: NestedFolder | null = null;
+      const filtered = items.filter((item) => {
+        if (item.id === id) {
+          removed = { ...item, children: [...item.children] };
+          return false;
+        }
+        return true;
+      });
+
+      if (!removed) {
+        return [
+          filtered.map((item) => {
+            const [newChildren, found] = removeFolder(item.children, id);
+            if (found) removed = found;
+            return { ...item, children: newChildren };
+          }),
+          removed,
+        ];
+      }
+
+      return [filtered, removed];
+    };
+
+    const insertFolder = (
+      items: NestedFolder[],
+      insertTargetId: number,
+      folder: NestedFolder,
+      pos: TreeDropPosition,
+    ): NestedFolder[] => {
+      const result: NestedFolder[] = [];
+
+      for (let i = 0; i < items.length; i++) {
+        const item = items[i];
+
+        if (item.id === insertTargetId) {
+          if (pos === 'before') {
+            result.push(folder);
+            result.push({ ...item, children: [...item.children] });
+          } else if (pos === 'after') {
+            result.push({ ...item, children: [...item.children] });
+            result.push(folder);
+          } else if (pos === 'inside') {
+            result.push({
+              ...item,
+              children: [...item.children, folder],
+            });
+            // Auto-expand when dropping inside
+            setExpandedIds((prev) => new Set([...prev, item.id]));
+          }
+        } else {
+          result.push({
+            ...item,
+            children: insertFolder(item.children, insertTargetId, folder, pos),
+          });
+        }
+      }
+
+      return result;
+    };
+
+    const handleMove = (
       draggedItem: TreeDragItem,
       targetId: string | number,
       position: TreeDropPosition,
@@ -538,73 +647,8 @@ export const TreeSortableNested: Story = {
       const draggedName = getFolderName(folders, draggedItem.id as number);
       const targetName = getFolderName(folders, targetId as number);
 
-      const action = `"${draggedName}" → ${position?.toUpperCase()} "${targetName}"`;
+      const action = `MOVED "${draggedName}" → ${position?.toUpperCase()} "${targetName}"`;
       setActionLog((prev) => [action, ...prev.slice(0, 4)]);
-
-      // Deep clone and modify the tree
-      const removeFolder = (
-        items: NestedFolder[],
-        id: number,
-      ): [NestedFolder[], NestedFolder | null] => {
-        let removed: NestedFolder | null = null;
-        const filtered = items.filter((item) => {
-          if (item.id === id) {
-            removed = { ...item, children: [...item.children] };
-            return false;
-          }
-          return true;
-        });
-
-        if (!removed) {
-          return [
-            filtered.map((item) => {
-              const [newChildren, found] = removeFolder(item.children, id);
-              if (found) removed = found;
-              return { ...item, children: newChildren };
-            }),
-            removed,
-          ];
-        }
-
-        return [filtered, removed];
-      };
-
-      const insertFolder = (
-        items: NestedFolder[],
-        insertTargetId: number,
-        folder: NestedFolder,
-        pos: TreeDropPosition,
-      ): NestedFolder[] => {
-        const result: NestedFolder[] = [];
-
-        for (let i = 0; i < items.length; i++) {
-          const item = items[i];
-
-          if (item.id === insertTargetId) {
-            if (pos === 'before') {
-              result.push(folder);
-              result.push({ ...item, children: [...item.children] });
-            } else if (pos === 'after') {
-              result.push({ ...item, children: [...item.children] });
-              result.push(folder);
-            } else if (pos === 'inside') {
-              result.push({
-                ...item,
-                children: [...item.children, folder],
-              });
-              // Auto-expand when dropping inside
-              setExpandedIds((prev) => new Set([...prev, item.id]));
-            }
-          } else {
-            result.push({
-              ...item,
-              children: insertFolder(item.children, insertTargetId, folder, pos),
-            });
-          }
-        }
-
-        return result;
-      };
 
       const [withoutDragged, draggedFolder] = removeFolder(folders, draggedItem.id as number);
 
@@ -619,13 +663,44 @@ export const TreeSortableNested: Story = {
       }
     };
 
+    const handleDuplicate = (
+      draggedItem: TreeDragItem,
+      targetId: string | number,
+      position: TreeDropPosition,
+    ) => {
+      const draggedName = getFolderName(folders, draggedItem.id as number);
+      const targetName = getFolderName(folders, targetId as number);
+
+      const action = `DUPLICATED "${draggedName}" → ${position?.toUpperCase()} "${targetName}"`;
+      setActionLog((prev) => [action, ...prev.slice(0, 4)]);
+
+      const [, draggedFolder] = removeFolder(folders, draggedItem.id as number);
+
+      if (draggedFolder && position) {
+        // Create a copy with a new ID
+        const duplicatedFolder = {
+          ...draggedFolder,
+          id: Date.now(),
+          name: `${draggedFolder.name} (copy)`,
+        };
+
+        const newFolders = insertFolder(folders, targetId as number, duplicatedFolder, position);
+        setFolders(newFolders);
+      }
+    };
+
+    const handleCancel = () => {
+      setActionLog((prev) => ['CANCELLED drop action', ...prev.slice(0, 4)]);
+    };
+
     return (
       <div style={{ width: '400px' }}>
         <h3 style={{ marginBottom: '8px', fontSize: '14px', color: '#666' }}>
-          Nested Folder Tree - Drag & Drop
+          Nested Folder Tree - Drag & Drop with Confirmation
         </h3>
         <p style={{ marginBottom: '12px', fontSize: '12px', color: '#999' }}>
-          Click chevron to expand • Drag to: top = before, middle = inside, bottom = after
+          Click chevron to expand • Drag to: top = before, middle = inside, bottom = after • Drop to
+          see confirmation popup
         </p>
 
         <div style={{ marginBottom: '12px', display: 'flex', gap: '8px' }}>
@@ -657,29 +732,38 @@ export const TreeSortableNested: Story = {
           </button>
         </div>
 
-        <div
-          style={{
-            border: '1px solid #e1e5e9',
-            borderRadius: '8px',
-            padding: '8px',
-            backgroundColor: '#f9fafb',
-            maxHeight: '400px',
-            overflowY: 'auto',
-          }}
+        <TreeSortableContainer
+          showDropConfirmation
+          onMove={handleMove}
+          onDuplicate={handleDuplicate}
+          onCancel={handleCancel}
         >
-          {folders.map((folder, index) => (
-            <FolderNode
-              key={folder.id}
-              folder={folder}
-              index={index}
-              depth={0}
-              parentId={null}
-              expandedIds={expandedIds}
-              onToggle={toggleFolder}
-              onDrop={handleDrop}
-            />
-          ))}
-        </div>
+          <div
+            style={{
+              border: '1px solid #e1e5e9',
+              borderRadius: '8px',
+              padding: '8px',
+              backgroundColor: '#f9fafb',
+              maxHeight: '400px',
+              overflowY: 'auto',
+            }}
+          >
+            {folders.map((folder, index) => (
+              <FolderNode
+                key={folder.id}
+                folder={folder}
+                index={index}
+                depth={0}
+                parentId={null}
+                isLast={index === folders.length - 1}
+                expandedIds={expandedIds}
+                onToggle={toggleFolder}
+                canDropOn={canDropOn}
+                onDrop={handleMove}
+              />
+            ))}
+          </div>
+        </TreeSortableContainer>
 
         {actionLog.length > 0 && (
           <div
@@ -697,165 +781,6 @@ export const TreeSortableNested: Story = {
             {actionLog.map((action, i) => (
               <div key={i} style={{ opacity: 1 - i * 0.15 }}>
                 ✓ {action}
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-    );
-  },
-};
-
-// Simple folder for confirmation demo
-interface SimpleFolderItem {
-  id: number;
-  name: string;
-}
-
-export const TreeSortableWithConfirmation: Story = {
-  name: 'Tree Sortable - With Drop Confirmation',
-  render: () => {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    const [folders, setFolders] = useState<SimpleFolderItem[]>([
-      { id: 1, name: 'Documents' },
-      { id: 2, name: 'Images' },
-      { id: 3, name: 'Videos' },
-      { id: 4, name: 'Music' },
-      { id: 5, name: 'Downloads' },
-    ]);
-
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    const [actionLog, setActionLog] = useState<string[]>([]);
-
-    const handleMove = (
-      draggedItem: TreeDragItem,
-      targetId: string | number,
-      position: TreeDropPosition,
-    ) => {
-      const draggedFolder = folders.find((f) => f.id === draggedItem.id);
-      const targetFolder = folders.find((f) => f.id === targetId);
-      if (!draggedFolder || !targetFolder) return;
-
-      const newFolders = folders.filter((f) => f.id !== draggedItem.id);
-      const targetIndex = newFolders.findIndex((f) => f.id === targetId);
-
-      if (position === 'before') {
-        newFolders.splice(targetIndex, 0, draggedFolder);
-      } else {
-        newFolders.splice(targetIndex + 1, 0, draggedFolder);
-      }
-
-      setFolders(newFolders);
-      setActionLog((prev) => [
-        `MOVED "${draggedFolder.name}" ${position} "${targetFolder.name}"`,
-        ...prev.slice(0, 4),
-      ]);
-    };
-
-    const handleDuplicate = (
-      draggedItem: TreeDragItem,
-      targetId: string | number,
-      position: TreeDropPosition,
-    ) => {
-      const draggedFolder = folders.find((f) => f.id === draggedItem.id);
-      const targetFolder = folders.find((f) => f.id === targetId);
-      if (!draggedFolder || !targetFolder) return;
-
-      const newFolder = {
-        id: Date.now(),
-        name: `${draggedFolder.name} (copy)`,
-      };
-
-      const targetIndex = folders.findIndex((f) => f.id === targetId);
-      const newFolders = [...folders];
-
-      if (position === 'before') {
-        newFolders.splice(targetIndex, 0, newFolder);
-      } else {
-        newFolders.splice(targetIndex + 1, 0, newFolder);
-      }
-
-      setFolders(newFolders);
-      setActionLog((prev) => [
-        `DUPLICATED "${draggedFolder.name}" ${position} "${targetFolder.name}"`,
-        ...prev.slice(0, 4),
-      ]);
-    };
-
-    const handleCancel = () => {
-      setActionLog((prev) => ['CANCELLED drop action', ...prev.slice(0, 4)]);
-    };
-
-    const folderRowStyle: CSSProperties = {
-      display: 'flex',
-      alignItems: 'center',
-      gap: '8px',
-      padding: '10px 12px',
-      backgroundColor: 'var(--rp-ui-base-bg-000, #fff)',
-      borderRadius: '4px',
-      cursor: 'grab',
-      fontSize: '14px',
-    };
-
-    return (
-      <div style={{ width: '400px' }}>
-        <h3 style={{ marginBottom: '8px', fontSize: '14px', color: '#666' }}>
-          Drop Confirmation Popup
-        </h3>
-        <p style={{ marginBottom: '16px', fontSize: '12px', color: '#999' }}>
-          Drag a folder and drop it. A popup will appear with Move, Duplicate, or Cancel options.
-        </p>
-
-        <TreeSortableContainer
-          showDropConfirmation
-          onMove={handleMove}
-          onDuplicate={handleDuplicate}
-          onCancel={handleCancel}
-        >
-          <div
-            style={{
-              border: '1px solid #e1e5e9',
-              borderRadius: '8px',
-              padding: '8px',
-              backgroundColor: '#f9fafb',
-            }}
-          >
-            {folders.map((folder, index) => (
-              <TreeSortableItem key={folder.id} id={folder.id} index={index} type={FOLDER_TYPE}>
-                {({ isDragging, dragRef }) => (
-                  <div
-                    ref={dragRef as Ref<HTMLDivElement>}
-                    style={{
-                      ...folderRowStyle,
-                      opacity: isDragging ? 0.4 : 1,
-                      marginBottom: '4px',
-                    }}
-                  >
-                    <FolderIcon />
-                    <span>{folder.name}</span>
-                  </div>
-                )}
-              </TreeSortableItem>
-            ))}
-          </div>
-        </TreeSortableContainer>
-
-        {actionLog.length > 0 && (
-          <div
-            style={{
-              marginTop: '16px',
-              padding: '8px 12px',
-              backgroundColor: '#f0fdf4',
-              border: '1px solid #86efac',
-              borderRadius: '4px',
-              fontSize: '11px',
-              color: '#166534',
-            }}
-          >
-            <div style={{ fontWeight: 600, marginBottom: '4px' }}>Action Log:</div>
-            {actionLog.map((action, i) => (
-              <div key={i} style={{ opacity: 1 - i * 0.15 }}>
-                • {action}
               </div>
             ))}
           </div>

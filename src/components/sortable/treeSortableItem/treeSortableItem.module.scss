@@ -24,13 +24,6 @@
     z-index: 10;
   }
 
-  &--drop-inside {
-    outline: 2px dashed var(--rp-ui-color-primary-focused);
-    outline-offset: 0;
-    border-radius: 4px;
-    z-index: 1;
-  }
-
   &--drop-after::after {
     content: '';
     position: absolute;
@@ -40,5 +33,29 @@
     height: 2px;
     background-color: var(--rp-ui-color-primary-focused);
     z-index: 10;
+  }
+
+  &--drop-inside {
+    position: relative;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      border: 2px dashed var(--rp-ui-color-primary-focused);
+      border-radius: 4px;
+      stroke-dasharray: 10 6;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .tree-sortable-item {
+      &::before {
+        display: none;
+      }
+    }
   }
 }

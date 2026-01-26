@@ -52,6 +52,8 @@ A wrapper component for tree-like structures (e.g., folders) that supports dropp
 - **type**: _string_, optional, default = "SORTABLE_ITEM" - DnD type for grouping
 - **isDisabled**: _boolean_, optional, default = false - Disables drag functionality
 - **acceptDrop**: _boolean_, optional, default = true - Whether this item accepts drops
+- **isLast**: _boolean_, optional, default = false - Marks item as last in list (shows bottom drop indicator)
+- **canDropOn**: _(draggedItem: TreeDragItem, targetId: string | number) => boolean_, optional - Custom validation function to check if item can be dropped on this target (e.g., prevent dropping a folder into itself or its descendants)
 - **className**: _string_, optional - Additional CSS class
 - **draggingClassName**: _string_, optional - CSS class applied when dragging
 - **dropBeforeClassName**: _string_, optional - CSS class applied when dropping before
@@ -128,6 +130,7 @@ A reusable hook for implementing tree-like drag-and-drop with before/inside/afte
 - **type**: _string_, optional - DnD type
 - **isDisabled**: _boolean_, optional - Disables drag
 - **acceptDrop**: _boolean_, optional - Whether this item accepts drops
+- **canDropOn**: _(draggedItem: TreeDragItem, targetId: string | number) => boolean_, optional - Custom validation function
 - **onDrop**: _(draggedItem: TreeDragItem, targetId: string | number, position: TreeDropPosition) => void_, optional - Drop callback
 - **hideDefaultPreview**: _boolean_, optional - Hide default preview
 
@@ -139,3 +142,31 @@ A reusable hook for implementing tree-like drag-and-drop with before/inside/afte
 - **dragRef**: _ConnectDragSource_ - Ref for drag handle element
 - **dropRef**: _ConnectDropTarget_ - Ref for drop target element
 - **previewRef**: _ConnectDragPreview_ - Ref for drag preview element
+
+#### useTreeDropValidation
+
+A reusable hook that provides validation for tree drop operations.
+
+##### Options:
+
+- **items**: _T[]_, required - Array of tree items (flat or nested structure)
+- **childrenKey**: _'children' | 'folders'_, optional, default = 'children' - Property name for children array
+
+##### Returns:
+
+- **canDropOn**: _(draggedItem: TreeDragItem, targetId: string | number) => boolean_ - Validation function for drop operations
+
+##### Example:
+
+```tsx
+const { canDropOn } = useTreeDropValidation({
+  items: folders,
+  childrenKey: 'folders' // or 'children'
+});
+
+<TreeSortableItem
+  id={folder.id}
+  canDropOn={canDropOn}
+  ...
+/>
+```

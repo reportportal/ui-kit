@@ -16,7 +16,6 @@ export const DROP_POSITIONS = {
 } as const;
 
 export type DropPositionValue = (typeof DROP_POSITIONS)[keyof typeof DROP_POSITIONS];
-export type DropPosition = DropPositionValue | null;
 
 export const DROP_DETECTION_MODE = {
   INDEX_BASED: 'indexBased',
@@ -124,6 +123,7 @@ export interface UseTreeSortableOptions {
   type?: string;
   isDisabled?: boolean;
   acceptDrop?: boolean;
+  canDropOn?: (draggedItem: TreeDragItem, targetId: string | number) => boolean;
   onDrop?: TreeDropHandler;
   hideDefaultPreview?: boolean;
 }
@@ -150,6 +150,9 @@ export interface TreeSortableItemProps {
   type?: string;
   isDisabled?: boolean;
   acceptDrop?: boolean;
+  isLast?: boolean;
+  canDropOn?: (draggedItem: TreeDragItem, targetId: string | number) => boolean;
+  depth?: number;
   className?: string;
   draggingClassName?: string;
   dropBeforeClassName?: string;
@@ -158,6 +161,17 @@ export interface TreeSortableItemProps {
   onDrop?: TreeDropHandler;
   hideDefaultPreview?: boolean;
   children: ReactNode | ((props: TreeSortableItemRenderProps) => ReactNode);
+}
+
+export interface TreeItem<T = unknown> {
+  id: string | number;
+  children?: T[];
+  folders?: T[];
+}
+
+export interface UseTreeDropValidationOptions<T extends TreeItem<T>> {
+  items: T[];
+  childrenKey?: 'children' | 'folders';
 }
 
 // Drop Confirmation Types
