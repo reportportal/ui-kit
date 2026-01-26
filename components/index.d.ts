@@ -1,4 +1,7 @@
 export { AdaptiveTagList } from './adaptiveTagList';
+export { ActionMenu, ActionMenuItem } from './actionMenu';
+export { ACTION_MENU_DIVIDER } from './actionMenu/constants';
+export type { ActionMenuProps, ActionItem, DividerItem, MenuItem } from './actionMenu';
 export { AttachedFile } from './attachedFile';
 export { BaseIconButton } from './baseIconButton';
 export { Breadcrumbs } from './breadcrumbs';
@@ -15,6 +18,8 @@ export { FieldText } from './fieldText';
 export { FieldTextFlex } from './fieldTextFlex';
 export { FileDropArea } from './fileDropArea';
 export { FiltersButton } from './filtersButton';
+export { FilterItem } from './filterItem';
+export type { FilterItemProps } from './filterItem';
 export { IssueList } from './issueList';
 export { Modal } from './modal';
 export { MultipleAutocomplete } from './autocompletes/multipleAutocomplete';
