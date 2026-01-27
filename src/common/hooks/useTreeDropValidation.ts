@@ -2,15 +2,20 @@ import { useCallback } from 'react';
 
 import type { TreeDragItem, TreeItem, UseTreeDropValidationOptions } from '@common/types';
 
+const normalizeId = (id: string | number): string => String(id);
+
 const isDescendant = <T extends TreeItem<T>>(
   ancestorId: string | number,
   targetId: string | number,
   items: T[],
   childrenKey: 'children' | 'folders' = 'children',
 ): boolean => {
-  const findItem = (id: string | number, searchItems: T[]): T | null => {
+  const normalizedAncestorId = normalizeId(ancestorId);
+  const normalizedTargetId = normalizeId(targetId);
+
+  const findItem = (id: string, searchItems: T[]): T | null => {
     for (const item of searchItems) {
-      if (item.id === id) return item;
+      if (normalizeId(item.id) === id) return item;
       const children = (item[childrenKey] as T[] | undefined) || [];
       if (children.length > 0) {
         const found = findItem(id, children);
@@ -20,12 +25,12 @@ const isDescendant = <T extends TreeItem<T>>(
     return null;
   };
 
-  const ancestor = findItem(ancestorId, items);
+  const ancestor = findItem(normalizedAncestorId, items);
   if (!ancestor) return false;
 
   const checkDescendants = (searchItems: T[]): boolean => {
     for (const item of searchItems) {
-      if (item.id === targetId) return true;
+      if (normalizeId(item.id) === normalizedTargetId) return true;
       const children = (item[childrenKey] as T[] | undefined) || [];
       if (children.length > 0 && checkDescendants(children)) return true;
     }
@@ -42,15 +47,14 @@ export const useTreeDropValidation = <T extends TreeItem<T>>({
 }: UseTreeDropValidationOptions<T>) => {
   const canDropOn = useCallback(
     (draggedItem: TreeDragItem, targetId: string | number): boolean => {
-      const draggedId =
-        typeof draggedItem.id === 'string' ? Number(draggedItem.id) : draggedItem.id;
-      const normalizedTargetId = typeof targetId === 'string' ? Number(targetId) : targetId;
+      const draggedId = normalizeId(draggedItem.id);
+      const normalizedTargetId = normalizeId(targetId);
 
       if (draggedId === normalizedTargetId) {
         return false;
       }
 
-      return !isDescendant(draggedId, normalizedTargetId, items, childrenKey);
+      return !isDescendant(draggedItem.id, targetId, items, childrenKey);
     },
     [items, childrenKey],
   );

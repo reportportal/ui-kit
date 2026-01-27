@@ -373,7 +373,6 @@ const initialFolders: NestedFolder[] = [
   },
 ];
 
-// Helper to find folder by id in nested structure
 const findFolderById = (folders: NestedFolder[], id: number): NestedFolder | null => {
   for (const folder of folders) {
     if (folder.id === id) return folder;
@@ -383,13 +382,10 @@ const findFolderById = (folders: NestedFolder[], id: number): NestedFolder | nul
   return null;
 };
 
-// Helper to get folder name by id
 const getFolderName = (folders: NestedFolder[], id: number): string => {
   const folder = findFolderById(folders, id);
   return folder?.name || 'Unknown';
 };
-
-// Recursive folder component
 interface FolderNodeProps {
   folder: NestedFolder;
   index: number;
@@ -420,31 +416,24 @@ const FolderNode = ({
   const isExpanded = expandedIds.has(folder.id);
   const hasChildren = folder.children.length > 0;
 
-  // Get pending state from TreeSortableContainer context
   const context = useTreeSortableContext();
   const pendingDraggedItemId = context?.pendingDraggedItemId;
 
-  // Check if this folder is a child of the dragged folder
   const { draggedItem } = useDragLayer((monitor) => ({
     draggedItem: monitor.getItem() as TreeDragItem | null,
   }));
 
-  // This folder should be disabled if it's a child of the dragged folder OR pending dragged folder
   const isChildOfDragged = (() => {
     if (!canDropOn) return false;
 
-    // Check both active drag and pending drag
     const sourceItem = draggedItem || (pendingDraggedItemId ? { id: pendingDraggedItemId } : null);
     if (!sourceItem) return false;
 
-    // Normalize IDs (canDropOn normalizes them internally)
-    const sourceId = typeof sourceItem.id === 'string' ? Number(sourceItem.id) : sourceItem.id;
-    const currentId = typeof folder.id === 'string' ? Number(folder.id) : folder.id;
+    const sourceId = String(sourceItem.id);
+    const currentId = String(folder.id);
 
-    // Don't disable the dragged item itself
     if (sourceId === currentId) return false;
 
-    // Disable descendants (canDropOn returns false for descendants)
     return !canDropOn(sourceItem as TreeDragItem, folder.id);
   })();
 
@@ -570,11 +559,9 @@ export const TreeSortableNested: Story = {
       setExpandedIds(new Set());
     };
 
-    // Use tree drop validation hook to prevent dropping folder into itself or descendants
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const { canDropOn } = useTreeDropValidation({ items: folders });
 
-    // Helper functions for folder manipulation
     const removeFolder = (
       items: NestedFolder[],
       id: number,
@@ -625,7 +612,6 @@ export const TreeSortableNested: Story = {
               ...item,
               children: [...item.children, folder],
             });
-            // Auto-expand when dropping inside
             setExpandedIds((prev) => new Set([...prev, item.id]));
           }
         } else {
