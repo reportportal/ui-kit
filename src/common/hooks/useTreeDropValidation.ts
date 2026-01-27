@@ -2,9 +2,6 @@ import { useCallback } from 'react';
 
 import type { TreeDragItem, TreeItem, UseTreeDropValidationOptions } from '@common/types';
 
-/**
- * Check if targetId is a descendant of ancestorId in a tree structure
- */
 const isDescendant = <T extends TreeItem<T>>(
   ancestorId: string | number,
   targetId: string | number,
@@ -39,20 +36,6 @@ const isDescendant = <T extends TreeItem<T>>(
   return checkDescendants(children);
 };
 
-/**
- * Hook that provides validation for tree drop operations
- * Prevents dropping an item into itself or its descendants
- *
- * @example
- * ```tsx
- * const { canDropOn } = useTreeDropValidation({
- *   items: folders,
- *   childrenKey: 'folders'
- * });
- *
- * <TreeSortableItem canDropOn={canDropOn} ... />
- * ```
- */
 export const useTreeDropValidation = <T extends TreeItem<T>>({
   items,
   childrenKey = 'children',

@@ -38,7 +38,7 @@
       "types": "./dist/common/hooks/index.d.ts",
       "import": "./dist/common/hooks/index.js",
       "default": "./dist/common/hooks/index.js"
-    }, 
+    },
     "./*": {
       "types": "./dist/components/*/index.d.ts",
       "import": "./dist/*.js",
