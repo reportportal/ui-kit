@@ -373,6 +373,15 @@ const initialFolders: NestedFolder[] = [
   },
 ];
 
+let nextFolderId = Date.now();
+const getNextFolderId = () => ++nextFolderId;
+
+const cloneFolderWithNewIds = (folder: NestedFolder): NestedFolder => ({
+  ...folder,
+  id: getNextFolderId(),
+  children: folder.children.map(cloneFolderWithNewIds),
+});
+
 const findFolderById = (folders: NestedFolder[], id: number): NestedFolder | null => {
   for (const folder of folders) {
     if (folder.id === id) return folder;
@@ -663,10 +672,9 @@ export const TreeSortableNested: Story = {
       const [, draggedFolder] = removeFolder(folders, draggedItem.id as number);
 
       if (draggedFolder && position) {
-        // Create a copy with a new ID
+        // Create a deep copy with new IDs for all folders and subfolders
         const duplicatedFolder = {
-          ...draggedFolder,
-          id: Date.now(),
+          ...cloneFolderWithNewIds(draggedFolder),
           name: `${draggedFolder.name} (copy)`,
         };
 
