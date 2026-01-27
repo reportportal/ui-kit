@@ -100,7 +100,14 @@ export const WithIcons: Story = {
 };
 
 export const EqualWidth: Story = {
-  render: () => (
+  args: {
+    options: [
+      { value: 'new', label: 'Save as new', selected: true, className: 'equal-width-button' },
+      { value: 'update', label: 'Update existing filter', className: 'equal-width-button' },
+    ],
+    fullWidth: true,
+  },
+  render: (args) => (
     <>
       <style>{`
         .equal-width-button {
@@ -109,13 +116,7 @@ export const EqualWidth: Story = {
         }
       `}</style>
       <div style={{ width: '368px' }}>
-        <SegmentedControl
-          options={[
-            { value: 'new', label: 'Save as new', selected: true, className: 'equal-width-button' },
-            { value: 'update', label: 'Update existing filter', className: 'equal-width-button' },
-          ]}
-          fullWidth
-        />
+        <SegmentedControl {...args} />
       </div>
     </>
   ),
