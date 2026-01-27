@@ -48,18 +48,6 @@ const meta: Meta<typeof DatePicker> = {
       description: 'Specifies whether the calendar should have a fixed height.',
       table: { type: { summary: 'boolean' } },
     },
-    startDate: {
-      control: 'date',
-      description:
-        'The start date of the date range. Used when selects="start" or for range selection.',
-      table: { type: { summary: 'Date | undefined' } },
-    },
-    endDate: {
-      control: 'date',
-      description:
-        'The end date of the date range. Used when selects="end" or for range selection.',
-      table: { type: { summary: 'Date | undefined' } },
-    },
     customClassName: {
       control: 'text',
       description: 'Custom CSS class name to apply to the date picker header.',
@@ -102,17 +90,17 @@ const meta: Meta<typeof DatePicker> = {
       description: 'Format string for displaying the date (e.g., "MM-dd-yyyy", "dd/MM/yyyy").',
       table: { type: { summary: 'string' } },
     },
-    selects: {
-      control: 'select',
-      options: ['start', 'end', 'none'],
-      description:
-        'Specifies the selection mode: "start" for start date, "end" for end date, "none" for single date selection.',
-      table: { type: { summary: "'start' | 'end' | 'none'" } },
-    },
     value: {
       control: 'date',
-      description: 'The currently selected date value.',
-      table: { type: { summary: 'Date | null' } },
+      description:
+        'The currently selected date value (Date for single mode, [Date | null, Date | null] tuple for range mode).',
+      table: { type: { summary: 'Date | null | [Date | null, Date | null]' } },
+    },
+    selectsRange: {
+      control: 'boolean',
+      description:
+        'Enables range selection mode. When true, allows selecting a date range in a single field.',
+      table: { type: { summary: 'boolean' } },
     },
   },
   args: {
@@ -122,14 +110,12 @@ const meta: Meta<typeof DatePicker> = {
     language: 'en',
     placeholder: 'MM-DD-YYYY',
     dateFormat: 'MM-dd-yyyy',
-    selects: 'start',
     value: null,
-    startDate: undefined,
-    endDate: undefined,
     customClassName: '',
     popperClassName: '',
     calendarClassName: '',
     yearsOptions: [],
+    selectsRange: false,
   },
 };
 
@@ -138,7 +124,7 @@ export default meta;
 type Story = StoryObj<typeof DatePicker>;
 
 export const Default: Story = {
-  render: (args) => {
+  render: () => {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const [date, setDate] = useState<Date | null>(null);
     return (
@@ -151,7 +137,7 @@ export const Default: Story = {
         }}
       >
         <div>Default DatePicker:</div>
-        <DatePicker {...args} value={date} onChange={setDate} />
+        <DatePicker value={date} onChange={setDate} />
         {date && (
           <div style={{ fontSize: '12px', color: '#666' }}>
             Selected: {date.toLocaleDateString()}
@@ -163,7 +149,7 @@ export const Default: Story = {
 };
 
 export const Single: Story = {
-  render: (args) => {
+  render: () => {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const [date, setDate] = useState<Date | null>(null);
     return (
@@ -176,7 +162,7 @@ export const Single: Story = {
         }}
       >
         <div>Single DatePicker:</div>
-        <DatePicker {...args} value={date} onChange={setDate} selects="none" />
+        <DatePicker value={date} onChange={setDate} />
         {date && (
           <div style={{ fontSize: '12px', color: '#666' }}>
             Selected: {date.toLocaleDateString()}
@@ -187,52 +173,27 @@ export const Single: Story = {
   },
 };
 
-export const Range: Story = {
-  render: (args) => {
+export const RangeSingleField: Story = {
+  render: () => {
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    const [startDate, setStartDate] = useState<Date | null>(null);
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    const [endDate, setEndDate] = useState<Date | null>(null);
+    const [dateRange, setDateRange] = useState<[Date | null, Date | null]>([null, null]);
+    const [startDate, endDate] = dateRange;
+
     return (
-      <div style={{ padding: '200px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
-        <div>Range DatePicker:</div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-          <div>
-            <div style={{ marginBottom: '5px', fontSize: '12px' }}>Start Date:</div>
-            <DatePicker
-              {...args}
-              value={startDate}
-              startDate={startDate || undefined}
-              endDate={endDate || undefined}
-              onChange={setStartDate}
-              selects="start"
-            />
-          </div>
-          <div>
-            <div style={{ marginBottom: '5px', fontSize: '12px' }}>End Date:</div>
-            <DatePicker
-              {...args}
-              value={endDate}
-              startDate={startDate || undefined}
-              endDate={endDate || undefined}
-              onChange={setEndDate}
-              selects="end"
-            />
-          </div>
+      <div style={{ padding: '200px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+        <div>Range DatePicker (Single Field):</div>
+        <DatePicker selectsRange value={dateRange} onChange={(dates) => setDateRange(dates)} />
+        <div style={{ marginTop: '10px', fontSize: '12px', color: '#666' }}>
+          <div>Start: {startDate?.toLocaleDateString() ?? 'Not selected'}</div>
+          <div>End: {endDate?.toLocaleDateString() ?? 'Not selected'}</div>
         </div>
-        {(startDate || endDate) && (
-          <div style={{ fontSize: '12px', color: '#666' }}>
-            Range: {startDate?.toLocaleDateString() || '...'} -{' '}
-            {endDate?.toLocaleDateString() || '...'}
-          </div>
-        )}
       </div>
     );
   },
 };
 
 export const WithLocale: Story = {
-  render: (args) => {
+  render: () => {
     registerDatePickerLocale('ru', ru);
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const [date, setDate] = useState<Date | null>(null);
@@ -246,7 +207,7 @@ export const WithLocale: Story = {
         }}
       >
         <div>DatePicker with Russian locale:</div>
-        <DatePicker {...args} language="ru" value={date} onChange={setDate} />
+        <DatePicker language="ru" value={date} onChange={setDate} />
         {date && (
           <div style={{ fontSize: '12px', color: '#666' }}>
             Selected: {date.toLocaleDateString('ru-RU')}
@@ -258,10 +219,7 @@ export const WithLocale: Story = {
 };
 
 export const Disabled: Story = {
-  args: {
-    disabled: true,
-  },
-  render: (args) => {
+  render: () => {
     return (
       <div
         style={{
@@ -272,14 +230,14 @@ export const Disabled: Story = {
         }}
       >
         <div>Disabled DatePicker:</div>
-        <DatePicker {...args} />
+        <DatePicker disabled />
       </div>
     );
   },
 };
 
 export const WithCustomDateFormat: Story = {
-  render: (args) => {
+  render: () => {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const [date, setDate] = useState<Date | null>(null);
     return (
@@ -293,7 +251,6 @@ export const WithCustomDateFormat: Story = {
       >
         <div>DatePicker with custom format (dd/MM/yyyy):</div>
         <DatePicker
-          {...args}
           dateFormat="dd/MM/yyyy"
           placeholder="DD/MM/YYYY"
           value={date}
@@ -310,7 +267,7 @@ export const WithCustomDateFormat: Story = {
 };
 
 export const WithCustomYears: Story = {
-  render: (args) => {
+  render: () => {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const [date, setDate] = useState<Date | null>(new Date(2020, 0, 1));
     // Generate years from 2020 to 2030 (inclusive)
@@ -325,7 +282,7 @@ export const WithCustomYears: Story = {
         }}
       >
         <div>DatePicker with custom years range (2020-2030):</div>
-        <DatePicker {...args} yearsOptions={customYears} value={date} onChange={setDate} />
+        <DatePicker yearsOptions={customYears} value={date} onChange={setDate} />
         {date && (
           <div style={{ fontSize: '12px', color: '#666' }}>
             Selected: {date.toLocaleDateString()}
@@ -337,7 +294,7 @@ export const WithCustomYears: Story = {
 };
 
 export const WithHeaderNodes: Story = {
-  render: (args) => {
+  render: () => {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const [date, setDate] = useState<Date | null>(null);
     return (
@@ -351,7 +308,6 @@ export const WithHeaderNodes: Story = {
       >
         <div>DatePicker with custom header nodes:</div>
         <DatePicker
-          {...args}
           headerNodes={
             <div style={{ padding: '10px', backgroundColor: '#f0f0f0', borderRadius: '4px' }}>
               Custom Header
@@ -371,7 +327,7 @@ export const WithHeaderNodes: Story = {
 };
 
 export const ShouldNotCloseOnSelect: Story = {
-  render: (args) => {
+  render: () => {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const [date, setDate] = useState<Date | null>(null);
     return (
@@ -384,7 +340,7 @@ export const ShouldNotCloseOnSelect: Story = {
         }}
       >
         <div>DatePicker that stays open after selection:</div>
-        <DatePicker {...args} shouldCloseOnSelect={false} value={date} onChange={setDate} />
+        <DatePicker shouldCloseOnSelect={false} value={date} onChange={setDate} />
         {date && (
           <div style={{ fontSize: '12px', color: '#666' }}>
             Selected: {date.toLocaleDateString()}
@@ -396,7 +352,7 @@ export const ShouldNotCloseOnSelect: Story = {
 };
 
 export const FixedHeight: Story = {
-  render: (args) => {
+  render: () => {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const [date, setDate] = useState<Date | null>(null);
     return (
@@ -409,7 +365,7 @@ export const FixedHeight: Story = {
         }}
       >
         <div>DatePicker with fixed height calendar:</div>
-        <DatePicker {...args} fixedHeight={true} value={date} onChange={setDate} />
+        <DatePicker fixedHeight value={date} onChange={setDate} />
         {date && (
           <div style={{ fontSize: '12px', color: '#666' }}>
             Selected: {date.toLocaleDateString()}

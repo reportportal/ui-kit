@@ -56,7 +56,7 @@ $POPOVER_Z_INDEX: 10;
   .react-datepicker__day {
     cursor: pointer;
 
-    &.react-datepicker__day--in-selecting-range {
+    &--in-selecting-range {
       &:not(.react-datepicker__day--selecting-range-end, .react-datepicker__day--selecting-range-start, .react-datepicker__day--range-start, .react-datepicker__day--range-end) {
         background-color: var(--rp-ui-base-bg-200);
         height: 32px;
@@ -65,13 +65,29 @@ $POPOVER_Z_INDEX: 10;
       }
     }
 
-    &.react-datepicker__day--selected {
+    &--selected {
       position: relative;
-      border-radius: 50%;
-      background-color: var(--rp-ui-base-topaz);
-      font-family: var(--rp-ui-base-font-family);
-      font-weight: var(--rp-ui-base-fw-bold);
+      @include setHoverState(var(--rp-ui-base-topaz));
       color: var(--rp-ui-base-bg-000);
+    }
+
+    &--outside-month {
+      &:not(.react-datepicker__day--range-start, .react-datepicker__day--range-end, .react-datepicker__day--selecting-range-start, .react-datepicker__day--selecting-range-end, .react-datepicker__day--selected) {
+        color: var(--rp-ui-color-text-secondary);
+      }
+    }
+
+    &--today {
+      font-weight: var(--rp-ui-base-fw-bold);
+
+      &:not(.react-datepicker__day--in-selecting-range, .react-datepicker__day--in-range, .react-datepicker__day--selected, .react-datepicker__day--selecting-range-end, .react-datepicker__day--selecting-range-start) {
+        border-radius: 4px;
+        background-color: var(--rp-ui-base-topaz-100);
+      }
+
+      &:not(.react-datepicker__day--range-start, .react-datepicker__day--range-end, .react-datepicker__day--selecting-range-start, .react-datepicker__day--selected) {
+        color: var(--rp-ui-base-topaz);
+      }
     }
   }
 
@@ -109,12 +125,11 @@ $POPOVER_Z_INDEX: 10;
   }
 }
 
-@mixin setHoverState($backgroundColor, $textColor: inherit) {
-  border-radius: 50%;
+@mixin setHoverState($backgroundColor) {
+  border-radius: 4px;
   border: 1px solid var(--rp-ui-base-topaz);
   background-color: $backgroundColor;
   line-height: 38px;
-  color: $textColor;
 }
 
 @mixin removeOutline {
@@ -126,32 +141,6 @@ $POPOVER_Z_INDEX: 10;
 @mixin verticalAlign($height) {
   height: $height;
   line-height: $height;
-}
-
-@mixin drawBeforePseudoElement {
-  position: absolute;
-  content: '';
-  height: 32px;
-  background-color: var(--rp-ui-base-bg-200);
-  width: 16px;
-  top: 0;
-  left: -9px;
-  z-index: 1;
-}
-
-@mixin drawAfterPseudoElement($displayValue, $borderWidth) {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 40px;
-  height: 40px;
-  border: $borderWidth solid var(--rp-ui-base-topaz);
-  border-radius: 50%;
-  display: $displayValue;
-  z-index: $DAY_OF_THE_WEEK_HOVERED_Z_INDEX;
-  box-sizing: border-box;
 }
 
 :global {
@@ -181,72 +170,42 @@ $POPOVER_Z_INDEX: 10;
     @include removeOutline;
   }
 
-  .date {
+  .date.date {
     background-color: transparent;
     border-radius: unset;
     color: inherit;
     text-align: center;
-  }
 
-  .current-date,
-  .current-date:hover {
-    position: relative;
-    z-index: $DAY_OF_THE_WEEK_Z_INDEX;
-    font-family: var(--rp-ui-base-font-family);
-    font-weight: var(--rp-ui-base-fw-bold);
-    @include setHoverState(var(--rp-ui-base-topaz), var(--rp-ui-base-bg-000));
+    &.current-date,
+    &.current-date:hover,
+    &.end-date,
+    &.end-date:hover {
+      position: relative;
+      z-index: $DAY_OF_THE_WEEK_Z_INDEX;
+      font-weight: var(--rp-ui-base-fw-bold);
+      @include setHoverState(var(--rp-ui-base-topaz));
+      color: var(--rp-ui-base-bg-000);
+    }
   }
 
   .date:hover:not(.current-date):not(.selected-range):not(.end-date) {
     @include setHoverState(transparent);
   }
 
-  .end-date,
-  .end-date:hover {
-    position: relative;
-    border-radius: 50%;
-    background-color: var(--rp-ui-base-topaz);
-    font-family: var(--rp-ui-base-font-family);
-    font-weight: var(--rp-ui-base-fw-bold);
-    color: var(--rp-ui-base-bg-000);
-  }
-
-  .end-date::after {
-    @include drawAfterPseudoElement(block, 10px);
-  }
-
-  .end-date::before {
-    @include drawBeforePseudoElement;
-    top: 4px;
-  }
-
-  .selected-range {
+  .date.selected-range {
     background-color: var(--rp-ui-base-bg-200);
-    border-radius: 8px;
     @include verticalAlign(32px);
     position: relative;
     &:hover {
-      @include verticalAlign(40px);
-      border-radius: 50%;
-      background: var(--rp-ui-base-bg-200);
-      &::after {
-        display: block;
-      }
-      &:not(:first-child)::before {
-        top: 4px;
-      }
+      border-radius: 4px;
+      border: 1px solid var(--rp-ui-base-topaz);
+      background-color: var(--rp-ui-base-bg-200);
+      line-height: 38px;
+      height: 40px;
     }
   }
 
-  .selected-range::after {
-    @include drawAfterPseudoElement(none, 1px);
-  }
-
-  .selected-range:not(:first-child)::before {
-    @include drawBeforePseudoElement;
-  }
-
-  .disabled {
+  .date.disabled {
     color: var(--rp-ui-base-e-400);
     background-color: transparent;
     @include removeOutline;
@@ -261,4 +220,8 @@ $POPOVER_Z_INDEX: 10;
   min-width: 138px;
   background: url('/src/components/icons/svg/calendar.svg') no-repeat right 12px center;
   background-size: 16px 16px;
+}
+
+.input-range {
+  min-width: 220px;
 }
