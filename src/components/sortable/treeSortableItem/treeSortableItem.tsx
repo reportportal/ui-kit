@@ -1,5 +1,6 @@
 import { useCallback, useRef } from 'react';
 import classNames from 'classnames/bind';
+import { isFunction } from 'es-toolkit';
 
 import { useTreeSortable } from '@common/hooks';
 import { DEFAULT_SORTABLE_TYPE } from '@common/constants/sortable';
@@ -76,15 +77,14 @@ export const TreeSortableItem = ({
     ((isOver && dropPosition === TREE_DROP_POSITIONS.AFTER) ||
       (isPendingTarget && pendingPosition === TREE_DROP_POSITIONS.AFTER));
 
-  const content =
-    typeof children === 'function'
-      ? children({
-          isDragging: showDraggingState,
-          isOver: isOver || isPendingTarget,
-          dropPosition: isPendingTarget ? (pendingPosition ?? null) : dropPosition,
-          dragRef,
-        })
-      : children;
+  const content = isFunction(children)
+    ? children({
+        isDragging: showDraggingState,
+        isOver: isOver || isPendingTarget,
+        dropPosition: isPendingTarget ? (pendingPosition ?? null) : dropPosition,
+        dragRef,
+      })
+    : children;
 
   const wrapperClasses = cx('tree-sortable-item', className, {
     'tree-sortable-item--dragging': showDraggingState,
@@ -103,7 +103,7 @@ export const TreeSortableItem = ({
       ref={(node) => {
         wrapperRef.current = node;
         dropRef(node);
-        if (typeof children !== 'function') {
+        if (!isFunction(children)) {
           (dragRef as (node: HTMLElement | null) => void)(node);
           (previewRef as (node: HTMLElement | null) => void)(node);
         }

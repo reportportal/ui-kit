@@ -1,3 +1,13 @@
+@mixin drop-indicator {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: var(--rp-ui-color-primary-focused);
+  z-index: 10;
+}
+
 .tree-sortable-item {
   position: relative;
   transition: opacity 0.2s ease;
@@ -14,25 +24,15 @@
   }
 
   &--drop-before::before {
-    content: '';
-    position: absolute;
+    @include drop-indicator;
+
     top: 0;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background-color: var(--rp-ui-color-primary-focused);
-    z-index: 10;
   }
 
   &--drop-after::after {
-    content: '';
-    position: absolute;
+    @include drop-indicator;
+
     bottom: 0;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background-color: var(--rp-ui-color-primary-focused);
-    z-index: 10;
   }
 
   &--drop-inside {

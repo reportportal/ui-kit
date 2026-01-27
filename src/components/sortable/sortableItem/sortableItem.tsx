@@ -1,4 +1,6 @@
 import classNames from 'classnames/bind';
+import { isFunction } from 'es-toolkit';
+
 import { useSortable } from '@common/hooks';
 import { DEFAULT_SORTABLE_TYPE } from '@common/constants/sortable';
 import type { SortableItemProps } from '@common/types';
@@ -32,7 +34,7 @@ export const SortableItem = ({
     isLast,
   });
 
-  const isRenderFunction = typeof children === 'function';
+  const isRenderFunction = isFunction(children);
 
   const isHoverMode = dropDetectionMode === DROP_DETECTION_MODE.HOVER;
 
