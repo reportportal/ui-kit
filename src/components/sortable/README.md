@@ -107,7 +107,7 @@ A reusable hook for implementing drag-and-drop sortable functionality.
   - `'indexBased'` - uses index comparison (item stays visible)
   - `'hover'` - uses cursor position (for cases where need that item disappears during drag)
 - **isLast**: _boolean_, optional - Marks item as last in list
- 
+
 ##### Returns:
 
 - **isDragging**: _boolean_ - Whether item is being dragged
@@ -164,9 +164,9 @@ const { canDropOn } = useTreeDropValidation({
   childrenKey: 'folders' // or 'children'
 });
 
-<TreeSortableItem
-  id={folder.id}
-  canDropOn={canDropOn}
-  ...
-/>
+// <TreeSortableItem
+//   id={folder.id}
+//   canDropOn={canDropOn}
+//   ...
+// />
 ```

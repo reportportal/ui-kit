@@ -11,7 +11,7 @@ import type {
 } from '@common/types';
 import { TREE_DROP_POSITIONS } from '@common/types';
 
-const EDGE_ZONE_SIZE = 2; // 2px at top/bottom edges for before/after, rest is inside
+const EDGE_ZONE_SIZE = 2;
 
 const calculateDropPosition = (
   clientOffset: { x: number; y: number } | null,
@@ -24,15 +24,14 @@ const calculateDropPosition = (
   const { top, height } = dropTargetRect;
   const relativeY = clientOffset.y - top;
 
-  // Top edge = before
   if (relativeY < EDGE_ZONE_SIZE) {
     return TREE_DROP_POSITIONS.BEFORE;
   }
-  // Bottom edge = after
+
   if (relativeY > height - EDGE_ZONE_SIZE) {
     return TREE_DROP_POSITIONS.AFTER;
   }
-  // Everything in between = inside
+
   return TREE_DROP_POSITIONS.INSIDE;
 };
 
