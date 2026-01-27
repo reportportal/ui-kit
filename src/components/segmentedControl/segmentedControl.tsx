@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { ReactElement, useId, useState } from 'react';
+import { ReactElement, useEffect, useState } from 'react';
 import classNames from 'classnames/bind';
 import styles from './segmentedControl.module.scss';
 import { SegmentedControlProps, SegmentedControlOption } from './types';
@@ -26,9 +26,13 @@ export const SegmentedControl = ({
   onChange,
   className,
   fullWidth = false,
+  ariaLabel,
 }: SegmentedControlProps): ReactElement => {
-  const groupId = useId();
   const [options, setOptions] = useState<SegmentedControlOption[]>(initialOptions);
+
+  useEffect(() => {
+    setOptions(initialOptions);
+  }, [initialOptions]);
 
   const handleClick = (option: SegmentedControlOption) => {
     if (!option.disabled && !option.selected) {
@@ -47,7 +51,7 @@ export const SegmentedControl = ({
         'full-width': fullWidth,
       })}
       role="group"
-      aria-labelledby={groupId}
+      aria-label={ariaLabel}
     >
       {options.map((option) => (
         <button

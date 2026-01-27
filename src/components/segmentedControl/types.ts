@@ -32,4 +32,5 @@ export interface SegmentedControlProps {
   onChange?: (value: SegmentedControlValue) => void;
   className?: string;
   fullWidth?: boolean;
+  ariaLabel?: string;
 }
