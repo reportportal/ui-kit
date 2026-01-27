@@ -113,8 +113,14 @@ export const useTreeSortable = ({
         if (monitor.didDrop()) {
           return;
         }
-        const canDrop = !canDropOn || canDropOn(draggedItem, id);
-        if (draggedItem.id !== id && canDrop && onDrop && dropPositionRef.current) {
+        const canDropValidation = !canDropOn || canDropOn(draggedItem, id);
+        if (
+          draggedItem.id !== id &&
+          acceptDrop &&
+          canDropValidation &&
+          onDrop &&
+          dropPositionRef.current
+        ) {
           onDrop(draggedItem, id, dropPositionRef.current);
         }
       },
