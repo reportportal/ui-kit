@@ -27,11 +27,6 @@ export { Pagination } from './pagination';
 export { Popover } from './popover';
 export { Radio } from './radio';
 export { SegmentedControl } from './segmentedControl';
-export type {
-  SegmentedControlProps,
-  SegmentedControlValue,
-  SegmentedControlOption,
-} from './segmentedControl';
 export { Selection } from './selection';
 export { SpinLoader } from './spinLoader';
 export { SystemAlert } from './systemAlert';
