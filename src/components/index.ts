@@ -26,6 +26,7 @@ export { MultipleAutocomplete } from './autocompletes/multipleAutocomplete';
 export { Pagination } from './pagination';
 export { Popover } from './popover';
 export { Radio } from './radio';
+export { SegmentedControl } from './segmentedControl';
 export { Selection } from './selection';
 export { SpinLoader } from './spinLoader';
 export { SystemAlert } from './systemAlert';
