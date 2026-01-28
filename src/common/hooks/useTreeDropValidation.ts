@@ -15,6 +15,7 @@
  */
 
 import { useCallback } from 'react';
+import { isEmpty } from 'es-toolkit/compat';
 
 import type { TreeDragItem, TreeItem, UseTreeDropValidationOptions } from '@common/types';
 
@@ -31,29 +32,44 @@ const isDescendant = <T extends TreeItem<T>>(
 
   const findItem = (id: string, searchItems: T[]): T | null => {
     for (const item of searchItems) {
-      if (normalizeId(item.id) === id) return item;
+      if (normalizeId(item.id) === id) {
+        return item;
+      }
+
       const children = (item[childrenKey] as T[] | undefined) || [];
-      if (children.length > 0) {
+
+      if (!isEmpty(children)) {
         const found = findItem(id, children);
+
         if (found) return found;
       }
     }
+
     return null;
   };
 
   const ancestor = findItem(normalizedAncestorId, items);
+
   if (!ancestor) return false;
 
   const checkDescendants = (searchItems: T[]): boolean => {
     for (const item of searchItems) {
-      if (normalizeId(item.id) === normalizedTargetId) return true;
+      if (normalizeId(item.id) === normalizedTargetId) {
+        return true;
+      }
+
       const children = (item[childrenKey] as T[] | undefined) || [];
-      if (children.length > 0 && checkDescendants(children)) return true;
+
+      if (!isEmpty(children) && checkDescendants(children)) {
+        return true;
+      }
     }
+
     return false;
   };
 
   const children = (ancestor[childrenKey] as T[] | undefined) || [];
+
   return checkDescendants(children);
 };
 

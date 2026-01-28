@@ -95,6 +95,7 @@ export const useTreeSortable = ({
         const isCurrentlyOver = canDrop ? monitor.isOver({ shallow: true }) : false;
 
         let position: TreeDropPosition = null;
+
         if (isCurrentlyOver && dropTargetRef.current) {
           const clientOffset = monitor.getClientOffset();
           const rect = dropTargetRef.current.getBoundingClientRect();
@@ -113,7 +114,9 @@ export const useTreeSortable = ({
         if (monitor.didDrop()) {
           return;
         }
+
         const canDropValidation = !canDropOn || canDropOn(draggedItem, id);
+
         if (
           draggedItem.id !== id &&
           acceptDrop &&

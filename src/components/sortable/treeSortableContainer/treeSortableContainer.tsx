@@ -77,6 +77,7 @@ export const TreeSortableContainer = ({
       const centerX = rect.left + rect.width / 2;
 
       let top: number;
+
       if (position === 'before') {
         top = rect.top;
       } else if (position === 'after') {

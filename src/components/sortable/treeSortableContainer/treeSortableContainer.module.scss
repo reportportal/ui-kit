@@ -25,7 +25,7 @@
   min-width: 120px;
   max-width: 480px;
   padding: 8px 0;
-  background-color: var(--rp-ui-base-bg-000, #fff);
+  background-color: var(--rp-ui-base-bg-000);
   border-radius: 8px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 
@@ -50,7 +50,7 @@
     height: 0;
     border-left: 8px solid transparent;
     border-right: 8px solid transparent;
-    border-top: 8px solid var(--rp-ui-base-bg-000, #fff);
+    border-top: 8px solid var(--rp-ui-base-bg-000);
     filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
   }
 
@@ -58,7 +58,7 @@
     top: -8px;
     bottom: auto;
     border-top: none;
-    border-bottom: 8px solid var(--rp-ui-base-bg-000, #fff);
+    border-bottom: 8px solid var(--rp-ui-base-bg-000);
   }
 
   &__button {

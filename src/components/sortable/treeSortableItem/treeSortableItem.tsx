@@ -119,6 +119,7 @@ export const TreeSortableItem = ({
       ref={(node) => {
         wrapperRef.current = node;
         dropRef(node);
+
         if (!isFunction(children)) {
           (dragRef as (node: HTMLElement | null) => void)(node);
           (previewRef as (node: HTMLElement | null) => void)(node);
