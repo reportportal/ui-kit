@@ -1,7 +1,7 @@
 import { default as ReactDatePicker } from 'react-datepicker/dist/es/index.js';
 import { ReactDatePickerCustomHeaderProps } from 'react-datepicker';
 import classNames from 'classnames/bind';
-import { FC, ReactNode, useRef, ReactElement, forwardRef } from 'react';
+import { ReactNode, useRef, ReactElement, forwardRef } from 'react';
 import { FieldText, FieldTextProps } from '@components/fieldText';
 import { DatePickerHeader } from './header/datePickerHeader';
 import styles from './datePicker.module.scss';
@@ -50,7 +50,7 @@ const RangeInput = forwardRef<HTMLInputElement, FieldTextProps>(({ value, ...res
   return <FieldText {...rest} value={formattedValue} ref={ref} />;
 });
 
-export const DatePicker: FC<DatePickerProps> = (props) => {
+export const DatePicker = (props: DatePickerProps) => {
   const {
     onChange = () => {},
     disabled = false,
