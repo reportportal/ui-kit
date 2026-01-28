@@ -14,4 +14,5 @@
  * limitations under the License.
  */
 
-export { SortableItem } from './sortableItem';
+export { TreeSortableContainer } from './treeSortableContainer';
+export { useTreeSortableContext } from './TreeSortableContext';

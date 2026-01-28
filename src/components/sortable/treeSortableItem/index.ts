@@ -14,4 +14,4 @@
  * limitations under the License.
  */
 
-export { SortableItem } from './sortableItem';
+export { TreeSortableItem } from './treeSortableItem';

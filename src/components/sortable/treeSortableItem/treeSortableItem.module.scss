@@ -1,0 +1,76 @@
+/*
+ * Copyright 2025 EPAM Systems
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@mixin drop-indicator {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: var(--rp-ui-color-primary-focused);
+  z-index: 10;
+}
+
+.tree-sortable-item {
+  position: relative;
+  transition: opacity 0.2s ease;
+
+  &--dragging {
+    opacity: 0.5;
+  }
+
+  &--pending {
+    opacity: 0.5;
+    pointer-events: none;
+    user-select: none;
+    cursor: not-allowed;
+  }
+
+  &--drop-before::before {
+    @include drop-indicator;
+
+    top: 0;
+  }
+
+  &--drop-after::after {
+    @include drop-indicator;
+
+    bottom: 0;
+  }
+
+  &--drop-inside {
+    position: relative;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      border: 2px dashed var(--rp-ui-color-primary-focused);
+      border-radius: 4px;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .tree-sortable-item {
+      &::before {
+        display: none;
+      }
+    }
+  }
+}
