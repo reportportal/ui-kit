@@ -29,6 +29,7 @@ export interface FilterItemProps {
   onHover?: (id: string, isHovering: boolean) => void;
   className?: string;
   captionClassName?: string;
+  popoverClassName?: string;
   disabled?: boolean;
   selected?: boolean;
   editMode?: boolean;
@@ -42,6 +43,7 @@ export const FilterItem = ({
   onHover,
   className,
   captionClassName,
+  popoverClassName,
   disabled = false,
   selected = false,
   editMode = false,
@@ -135,6 +137,7 @@ export const FilterItem = ({
           items={actions}
           disabled={disabled || editMode}
           buttonClassName={cx('actions-button')}
+          popoverClassName={popoverClassName}
           placement="bottom-start"
         />
       </div>
