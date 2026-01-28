@@ -55,7 +55,9 @@ export const DatePickerHeader: FC<DatePickerHeaderProps> = ({
   }, [locale, year]);
 
   const yearDropdownOptions: DropdownOptionType[] = useMemo(() => {
-    const yearValues = yearsOptions.length > 0 ? yearsOptions : getYearsFrom(year);
+    const currentYear = new Date().getFullYear();
+    const yearValues = yearsOptions.length > 0 ? yearsOptions : getYearsFrom(currentYear, year);
+
     return yearValues.reduce(
       (acc: DropdownOptionType[], yearValue) =>
         acc.concat({ value: yearValue, label: `${yearValue}` }),

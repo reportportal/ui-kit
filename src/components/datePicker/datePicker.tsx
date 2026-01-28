@@ -1,7 +1,8 @@
+import { ReactNode, useRef, ReactElement, forwardRef } from 'react';
 import { default as ReactDatePicker } from 'react-datepicker/dist/es/index.js';
+import { Placement } from '@floating-ui/react';
 import { ReactDatePickerCustomHeaderProps } from 'react-datepicker';
 import classNames from 'classnames/bind';
-import { ReactNode, useRef, ReactElement, forwardRef } from 'react';
 import { FieldText, FieldTextProps } from '@components/fieldText';
 import { DatePickerHeader } from './header/datePickerHeader';
 import styles from './datePicker.module.scss';
@@ -29,6 +30,7 @@ interface DatePickerBaseProps {
   yearsOptions?: number[];
   placeholder?: string;
   dateFormat?: string;
+  popperPlacement?: Placement;
 }
 
 interface DatePickerSingleProps extends DatePickerBaseProps {
@@ -62,7 +64,8 @@ export const DatePicker = (props: DatePickerProps) => {
     shouldCloseOnSelect = true,
     popperClassName = '',
     calendarClassName = '',
-    fixedHeight = false,
+    popperPlacement = 'bottom-start',
+    fixedHeight = true,
     language = DEFAULT_LANGUAGE,
     yearsOptions = [],
     dateFormat = DEFAULT_DATE_FORMAT,
@@ -79,9 +82,7 @@ export const DatePicker = (props: DatePickerProps) => {
   const endDateString = endDate?.toDateString();
   const isValidEndDate = endDate && startDate && endDate > startDate;
 
-  const defaultPlaceholder = selectsRange
-    ? `${DEFAULT_DATE_FORMAT.toUpperCase()} to ${DEFAULT_DATE_FORMAT.toUpperCase()}`
-    : DEFAULT_DATE_FORMAT.toUpperCase();
+  const defaultPlaceholder = selectsRange ? 'Select date range' : 'Select date';
   const placeholder = props.placeholder ?? defaultPlaceholder;
 
   const getDayClassName = (displayedDates: Date) => {
@@ -140,6 +141,7 @@ export const DatePicker = (props: DatePickerProps) => {
     popperClassName: cx(popperClassName, 'popper'),
     dateFormat,
     className: cx('datepicker'),
+    popperPlacement,
   };
 
   if (selectsRange) {
