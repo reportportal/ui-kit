@@ -13,7 +13,6 @@ export declare const DROP_POSITIONS: {
     readonly BOTTOM: "bottom";
 };
 export type DropPositionValue = (typeof DROP_POSITIONS)[keyof typeof DROP_POSITIONS];
-export type DropPosition = DropPositionValue | null;
 export declare const DROP_DETECTION_MODE: {
     readonly INDEX_BASED: "indexBased";
     readonly HOVER: "hover";
@@ -81,4 +80,89 @@ export interface DragLayerCollectedProps {
     itemType: string | symbol | null;
     clientOffset: XYCoord | null;
     isDragging: boolean;
+}
+export type DropPosition = 'top' | 'bottom' | null;
+export declare const TREE_DROP_POSITIONS: {
+    readonly BEFORE: "before";
+    readonly INSIDE: "inside";
+    readonly AFTER: "after";
+};
+export type TreeDropPositionValue = (typeof TREE_DROP_POSITIONS)[keyof typeof TREE_DROP_POSITIONS];
+export type TreeDropPosition = TreeDropPositionValue | null;
+export interface TreeDragItem extends DragItem {
+    parentId?: string | number | null;
+    depth?: number;
+}
+export type TreeDropHandler = (draggedItem: TreeDragItem, targetId: string | number, position: TreeDropPosition) => void;
+export interface UseTreeSortableOptions {
+    id: string | number;
+    index: number;
+    parentId?: string | number | null;
+    type?: string;
+    isDisabled?: boolean;
+    acceptDrop?: boolean;
+    canDropOn?: (draggedItem: TreeDragItem, targetId: string | number) => boolean;
+    onDrop?: TreeDropHandler;
+    hideDefaultPreview?: boolean;
+}
+export interface TreeSortableState {
+    isDragging: boolean;
+    isOver: boolean;
+    dropPosition: TreeDropPosition;
+    dragRef: ConnectDragSource;
+}
+export interface UseTreeSortableReturn extends TreeSortableState {
+    dropRef: (node: HTMLElement | null) => void;
+    previewRef: ConnectDragPreview;
+    elementRef: React.RefObject<HTMLElement | null>;
+}
+export type TreeSortableItemRenderProps = TreeSortableState;
+export interface TreeSortableItemProps {
+    id: string | number;
+    index: number;
+    parentId?: string | number | null;
+    type?: string;
+    isDisabled?: boolean;
+    acceptDrop?: boolean;
+    isLast?: boolean;
+    canDropOn?: (draggedItem: TreeDragItem, targetId: string | number) => boolean;
+    depth?: number;
+    className?: string;
+    draggingClassName?: string;
+    dropBeforeClassName?: string;
+    dropInsideClassName?: string;
+    dropAfterClassName?: string;
+    onDrop?: TreeDropHandler;
+    hideDefaultPreview?: boolean;
+    children: ReactNode | ((props: TreeSortableItemRenderProps) => ReactNode);
+}
+export interface TreeItem<T = unknown> {
+    id: string | number;
+    children?: T[];
+    folders?: T[];
+}
+export interface UseTreeDropValidationOptions<T extends TreeItem<T>> {
+    items: T[];
+    childrenKey?: 'children' | 'folders';
+}
+export declare const DROP_ACTIONS: {
+    readonly MOVE: "move";
+    readonly DUPLICATE: "duplicate";
+    readonly CANCEL: "cancel";
+};
+export type DropAction = (typeof DROP_ACTIONS)[keyof typeof DROP_ACTIONS];
+export interface PendingDropInfo {
+    draggedItem: TreeDragItem;
+    targetId: string | number;
+    position: TreeDropPosition;
+}
+export type DropConfirmationLabels = Partial<Record<DropAction, string>>;
+export interface TreeSortableContainerProps {
+    children: ReactNode;
+    showDropConfirmation?: boolean;
+    confirmationLabels?: DropConfirmationLabels;
+    portalTarget?: Element | null;
+    onMove?: TreeDropHandler;
+    onDuplicate?: TreeDropHandler;
+    onCancel?: () => void;
 }
