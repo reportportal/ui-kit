@@ -57,14 +57,14 @@
       width: 117px;
     }
 
-    .toggle-button > span {
+    .toggle-button span {
       color: var(--rp-ui-base-topaz);
       font-family: var(--rp-ui-base-font-family);
       font-weight: var(--rp-ui-base-fw-bold);
     }
 
-    .toggle-button:hover > span {
-      color: var(-rp-ui-base-topaz-hover);
+    .toggle-button:hover span {
+      color: var(--rp-ui-base-topaz-hover);
     }
   }
 }
