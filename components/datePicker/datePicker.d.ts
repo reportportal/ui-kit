@@ -1,15 +1,13 @@
-import { FC, ReactNode, ReactElement } from '../../../node_modules/react';
+import { ReactNode, ReactElement } from '../../../node_modules/react';
 
-interface DatePickerProps {
-    onChange?: (date: Date | null) => void;
+type DateRangeValue = [Date | null, Date | null];
+interface DatePickerBaseProps {
     onBlur?: () => void;
     onFocus?: () => void;
     headerNodes?: ReactNode;
     disabled?: boolean;
     shouldCloseOnSelect?: boolean;
     fixedHeight?: boolean;
-    startDate?: Date | undefined;
-    endDate?: Date | undefined;
     customClassName?: string;
     popperClassName?: string;
     calendarClassName?: string;
@@ -18,8 +16,17 @@ interface DatePickerProps {
     yearsOptions?: number[];
     placeholder?: string;
     dateFormat?: string;
-    selects?: 'start' | 'end' | 'none';
-    value?: Date | null;
 }
-export declare const DatePicker: FC<DatePickerProps>;
+interface DatePickerSingleProps extends DatePickerBaseProps {
+    selectsRange?: false;
+    value?: Date | null;
+    onChange?: (date: Date | null) => void;
+}
+interface DatePickerRangeProps extends DatePickerBaseProps {
+    selectsRange: true;
+    value?: DateRangeValue;
+    onChange?: (dates: DateRangeValue) => void;
+}
+type DatePickerProps = DatePickerSingleProps | DatePickerRangeProps;
+export declare const DatePicker: (props: DatePickerProps) => import("react/jsx-runtime").JSX.Element;
 export {};
