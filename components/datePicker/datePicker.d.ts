@@ -1,4 +1,5 @@
 import { ReactNode, ReactElement } from '../../../node_modules/react';
+import { Placement } from '@floating-ui/react';
 
 type DateRangeValue = [Date | null, Date | null];
 interface DatePickerBaseProps {
@@ -16,6 +17,7 @@ interface DatePickerBaseProps {
     yearsOptions?: number[];
     placeholder?: string;
     dateFormat?: string;
+    popperPlacement?: Placement;
 }
 interface DatePickerSingleProps extends DatePickerBaseProps {
     selectsRange?: false;
