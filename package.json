@@ -1,6 +1,6 @@
 {
   "name": "@reportportal/ui-kit",
-  "version": "0.0.1-alpha.168",
+  "version": "0.0.1-alpha.169",
   "description": "The UI-kit library for ReportPortal Design System.",
   "type": "module",
   "scripts": {
