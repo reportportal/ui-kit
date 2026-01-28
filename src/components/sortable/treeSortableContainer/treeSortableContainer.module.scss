@@ -71,11 +71,11 @@
     font-size: 13px;
     text-align: left;
     cursor: pointer;
-    color: var(--rp-ui-base-almost-black, #1a1a1a);
+    color: var(--rp-ui-base-almost-black);
     transition: background-color 0.15s ease;
 
     &:hover {
-      background-color: var(--rp-ui-color-primary-hover, #f0f4ff);
+      background-color: var(--rp-ui-color-primary-hover);
     }
   }
 
