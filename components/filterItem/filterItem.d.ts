@@ -9,9 +9,10 @@ export interface FilterItemProps {
     onHover?: (id: string, isHovering: boolean) => void;
     className?: string;
     captionClassName?: string;
+    popoverClassName?: string;
     disabled?: boolean;
     selected?: boolean;
     editMode?: boolean;
 }
-export declare const FilterItem: ({ id, caption, actions, onClick, onHover, className, captionClassName, disabled, selected, editMode, }: FilterItemProps) => ReactElement;
+export declare const FilterItem: ({ id, caption, actions, onClick, onHover, className, captionClassName, popoverClassName, disabled, selected, editMode, }: FilterItemProps) => ReactElement;
 export default FilterItem;
