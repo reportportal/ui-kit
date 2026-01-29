@@ -134,7 +134,7 @@ export const SidePanel = ({
     </aside>
   );
 
-  if (showOverlay && isOpen) {
+  if (showOverlay) {
     return (
       <div
         className={cx(
