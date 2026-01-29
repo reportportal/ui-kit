@@ -47,10 +47,20 @@ interface DatePickerRangeProps extends DatePickerBaseProps {
 
 type DatePickerProps = DatePickerSingleProps | DatePickerRangeProps;
 
-const RangeInput = forwardRef<HTMLInputElement, FieldTextProps>(({ value, ...rest }, ref) => {
-  const formattedValue = value?.replace(' - ', DATE_RANGE_SEPARATOR) ?? '';
-  return <FieldText {...rest} value={formattedValue} ref={ref} />;
-});
+const DateInput = forwardRef<HTMLInputElement, FieldTextProps & { selectsRange: boolean }>(
+  ({ selectsRange, value, ...rest }, ref) => {
+    return (
+      <FieldText
+        {...rest}
+        className={cx('input', selectsRange ? 'input-range' : '')}
+        defaultWidth={false}
+        value={selectsRange ? (value?.replace(' - ', DATE_RANGE_SEPARATOR) ?? '') : value}
+        ref={ref}
+        readOnly
+      />
+    );
+  },
+);
 
 export const DatePicker = (props: DatePickerProps) => {
   const {
@@ -109,11 +119,7 @@ export const DatePicker = (props: DatePickerProps) => {
     });
   };
 
-  const customInput = selectsRange ? (
-    <RangeInput className={cx('input', 'input-range')} defaultWidth={false} ref={inputRef} />
-  ) : (
-    <FieldText className={cx('input')} defaultWidth={false} ref={inputRef} />
-  );
+  const customInput = <DateInput ref={inputRef} selectsRange={selectsRange} />;
 
   const commonProps = {
     customInput,

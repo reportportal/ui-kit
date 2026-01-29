@@ -48,6 +48,7 @@ $POPOVER_Z_INDEX: 10;
     font-family: var(--rp-ui-base-font-family);
     color: var(--rp-ui-base-dark-e-500);
     @include font-scale();
+
     .react-datepicker__day--range-end:first-child:before {
       display: none;
     }
@@ -196,6 +197,7 @@ $POPOVER_Z_INDEX: 10;
     background-color: var(--rp-ui-base-bg-200);
     @include verticalAlign(32px);
     position: relative;
+
     &:hover {
       border-radius: 4px;
       border: 1px solid var(--rp-ui-base-topaz);
@@ -211,6 +213,7 @@ $POPOVER_Z_INDEX: 10;
     @include removeOutline;
   }
 }
+
 .popper {
   z-index: $POPOVER_Z_INDEX;
 }
@@ -220,6 +223,11 @@ $POPOVER_Z_INDEX: 10;
   min-width: 138px;
   background: url('/src/components/icons/svg/calendar.svg') no-repeat right 12px center;
   background-size: 16px 16px;
+  cursor: pointer;
+
+  input {
+    cursor: pointer;
+  }
 }
 
 .input-range {
