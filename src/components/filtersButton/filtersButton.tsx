@@ -31,6 +31,7 @@ export interface FiltersButtonProps extends Omit<ComponentPropsWithRef<'button'>
   filtersLabelClassName?: string;
   clearable?: boolean;
   onClear?: () => void;
+  clearButtonAriaLabel?: string;
 }
 
 export const FiltersButton = forwardRef<HTMLButtonElement, FiltersButtonProps>(
@@ -44,6 +45,7 @@ export const FiltersButton = forwardRef<HTMLButtonElement, FiltersButtonProps>(
       filtersLabelClassName,
       clearable = false,
       onClear,
+      clearButtonAriaLabel = 'Clear filters',
       ...rest
     },
     ref,
@@ -81,17 +83,26 @@ export const FiltersButton = forwardRef<HTMLButtonElement, FiltersButtonProps>(
         ) : null}
         {clearable && (hasAppliedFilters || hasText) && (
           <div className={cx('clear-wrapper')}>
-            <button
-              type="button"
+            <span
+              role="button"
+              tabIndex={0}
+              aria-label={clearButtonAriaLabel}
               className={cx('clear-icon')}
               onClick={(e) => {
                 e.stopPropagation();
                 onClear?.();
               }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  onClear?.();
+                }
+              }}
               onMouseDown={(e) => e.preventDefault()}
             >
               <ClearIcon />
-            </button>
+            </span>
           </div>
         )}
       </button>

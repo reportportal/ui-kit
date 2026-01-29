@@ -39,6 +39,10 @@ export function useEllipsisTitle<T extends HTMLElement = HTMLElement>(
 
     checkOverflow();
 
+    if (typeof ResizeObserver === 'undefined') {
+      return;
+    }
+
     const resizeObserver = new ResizeObserver(checkOverflow);
     resizeObserver.observe(element);
 

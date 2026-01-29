@@ -105,6 +105,14 @@ const meta: Meta<typeof FiltersButton> = {
         type: { summary: '() => void' },
       },
     },
+    clearButtonAriaLabel: {
+      control: 'text',
+      description: 'ARIA label for the clear button (for accessibility and internationalization)',
+      table: {
+        type: { summary: 'string' },
+        defaultValue: { summary: "'Clear filters'" },
+      },
+    },
   },
 };
 
