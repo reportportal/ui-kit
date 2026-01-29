@@ -46,14 +46,6 @@ $SCREEN_XS_MAX: 767px;
   border-color: $borderColor;
 }
 
-@mixin fill-svg($color) {
-  svg {
-    & > rect {
-      fill: $color;
-    }
-  }
-}
-
 .autocomplete {
   &-wrapper {
     position: relative;

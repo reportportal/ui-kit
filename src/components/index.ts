@@ -42,5 +42,5 @@ export { ThemeProvider } from './themeProvider';
 export { Toggle } from './toggle';
 export { Tooltip } from './tooltip';
 export { SidePanel } from './sidePanel';
-export { useTreeDropValidation } from '@common/hooks';
+export { useTreeDropValidation, useEllipsisTitle } from '@common/hooks';
 export * from './icons';

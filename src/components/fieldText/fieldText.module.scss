@@ -1,23 +1,6 @@
 @import 'src/assets/styles/mixins/font-scale';
 @import 'src/assets/styles/mixins/field-asterisk';
-
-@mixin fill-svg($color) {
-  svg {
-    fill: $color;
-
-    & > rect {
-      fill: $color;
-    }
-  }
-}
-
-@mixin fill-svg-path($color) {
-  svg {
-    & > path {
-      fill: $color;
-    }
-  }
-}
+@import 'src/assets/styles/mixins/svg-color';
 
 .icon-container {
   display: flex;

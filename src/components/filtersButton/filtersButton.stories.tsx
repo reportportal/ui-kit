@@ -1,3 +1,19 @@
+/*
+ * Copyright 2026 EPAM Systems
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import type { Meta, StoryObj } from '@storybook/react';
 import { useState } from 'react';
 
@@ -24,6 +40,28 @@ const meta: Meta<typeof FiltersButton> = {
     isOpen: {
       control: 'boolean',
       description: 'Whether the filters panel is currently open',
+      table: {
+        type: { summary: 'boolean' },
+        defaultValue: { summary: 'false' },
+      },
+    },
+    text: {
+      control: 'text',
+      description: 'Text to display instead of filter count',
+      table: {
+        type: { summary: 'string' },
+      },
+    },
+    filtersLabelClassName: {
+      control: 'text',
+      description: 'CSS class name for the filters label/count element',
+      table: {
+        type: { summary: 'string' },
+      },
+    },
+    clearable: {
+      control: 'boolean',
+      description: 'Whether to show a clear button when filters are active',
       table: {
         type: { summary: 'boolean' },
         defaultValue: { summary: 'false' },
@@ -58,6 +96,13 @@ const meta: Meta<typeof FiltersButton> = {
       description: 'Click event handler',
       table: {
         type: { summary: '(event: MouseEvent<HTMLButtonElement>) => void' },
+      },
+    },
+    onClear: {
+      action: 'cleared',
+      description: 'Callback when clear button is clicked',
+      table: {
+        type: { summary: '() => void' },
       },
     },
   },
@@ -130,6 +175,68 @@ export const Interactive: Story = {
       description: {
         story:
           'Interactive example cycling through states: no filters → 1 filter → 2 filters → 3 filters → reset.',
+      },
+    },
+  },
+};
+
+export const WithText: Story = {
+  args: {
+    text: 'Active',
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Button with custom text instead of filter count. Useful for displaying status or custom labels.',
+      },
+    },
+  },
+};
+
+export const WithLongText: Story = {
+  args: {
+    text: 'Very important filters applied',
+    clearable: true,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Button with longer text to demonstrate text wrapping and layout behavior. Includes clearable functionality.',
+      },
+    },
+  },
+};
+
+const FiltersButtonWithClear = (args: FiltersButtonProps) => {
+  const [count, setCount] = useState(3);
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <FiltersButton
+      {...args}
+      appliedFiltersCount={count}
+      isOpen={isOpen}
+      clearable
+      onClick={() => {
+        setIsOpen((prev) => !prev);
+      }}
+      onClear={() => {
+        setCount(0);
+        setIsOpen(false);
+      }}
+    />
+  );
+};
+
+export const Clearable: Story = {
+  render: (args: FiltersButtonProps) => <FiltersButtonWithClear {...args} />,
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Button with clear functionality. The clear button appears when filters are active and can be clicked to reset filters.',
       },
     },
   },
