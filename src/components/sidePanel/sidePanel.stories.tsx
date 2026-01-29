@@ -17,6 +17,36 @@ const meta: Meta<typeof SidePanel> = {
     layout: 'fullscreen',
   },
   tags: ['autodocs'],
+  argTypes: {
+    showOverlay: {
+      control: 'boolean',
+      description: 'Show overlay behind the panel',
+      table: {
+        defaultValue: { summary: 'false' },
+      },
+    },
+    overlay: {
+      control: { type: 'select', options: ['default', 'light-cyan'] },
+      description: 'Overlay color variant',
+      table: {
+        defaultValue: { summary: 'default' },
+      },
+      if: { arg: 'showOverlay', truthy: true },
+    },
+    allowCloseOutside: {
+      control: 'boolean',
+      description: 'Allow closing panel by clicking outside',
+      table: {
+        defaultValue: { summary: 'true' },
+      },
+      if: { arg: 'showOverlay', truthy: true },
+    },
+    overlayClassName: {
+      control: 'text',
+      description: 'Custom className for overlay element',
+      if: { arg: 'showOverlay', truthy: true },
+    },
+  },
 };
 
 export default meta;
@@ -466,21 +496,27 @@ const INITIAL_FILTERS = {
   patternName: '',
 };
 
-export const Example2 = {
+export const WithFormAndClickOutside = {
   render: () => {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const [isOpen, setIsOpen] = useState(true);
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const [filters, setFilters] = useState(INITIAL_FILTERS);
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const [isDirty, setIsDirty] = useState(false);
 
     type Filters = typeof INITIAL_FILTERS;
     const updateFilter =
       <K extends keyof Filters>(key: K) =>
       (value: string | number | boolean | (string | number | boolean)[]) => {
         setFilters((prev) => ({ ...prev, [key]: String(value) }));
+        setIsDirty(true);
       };
 
-    const handleClearFilters = () => setFilters(INITIAL_FILTERS);
+    const handleClearFilters = () => {
+      setFilters(INITIAL_FILTERS);
+      setIsDirty(false);
+    };
 
     return (
       <div>
@@ -488,11 +524,20 @@ export const Example2 = {
           <Button onClick={() => setIsOpen(!isOpen)}>
             {isOpen ? 'Close Panel' : 'Open Panel'}
           </Button>
+          {isDirty && (
+            <div
+              style={{ marginTop: '8px', color: 'var(--rp-ui-base-warning)', fontWeight: 'bold' }}
+            >
+              Form has unsaved changes. Click outside is disabled.
+            </div>
+          )}
         </div>
         <SidePanel
           className="example-2"
           isOpen={isOpen}
           onClose={() => setIsOpen(false)}
+          showOverlay={true}
+          allowCloseOutside={!isDirty}
           title="Filter"
           contentComponent={
             <div className="filter-content">
@@ -623,11 +668,83 @@ export const Example2 = {
                 Clear all filters
               </Button>
               <div className="filter-footer-actions">
-                <Button variant="ghost" onClick={() => setIsOpen(false)}>
+                <Button
+                  variant="ghost"
+                  onClick={() => {
+                    setIsOpen(false);
+                    setIsDirty(false);
+                  }}
+                >
                   Cancel
                 </Button>
-                <Button>Apply</Button>
+                <Button
+                  onClick={() => {
+                    setIsOpen(false);
+                    setIsDirty(false);
+                  }}
+                >
+                  Apply
+                </Button>
               </div>
+            </div>
+          }
+        />
+      </div>
+    );
+  },
+} satisfies Story;
+
+export const WithOverlay = {
+  render: () => {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const [isOpen, setIsOpen] = useState(true);
+
+    return (
+      <div>
+        <div className="control-wrapper">
+          <Button onClick={() => setIsOpen(!isOpen)}>
+            {isOpen ? 'Close Panel' : 'Open Panel'}
+          </Button>
+        </div>
+        <SidePanel
+          className="example-2"
+          isOpen={isOpen}
+          onClose={() => setIsOpen(false)}
+          showOverlay={true}
+          title="Panel with overlay"
+          contentComponent={
+            <div className="filter-content">
+              <p>Background is blocked. Overlay is shown.</p>
+            </div>
+          }
+        />
+      </div>
+    );
+  },
+} satisfies Story;
+
+export const LightCyanOverlay = {
+  render: () => {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const [isOpen, setIsOpen] = useState(true);
+
+    return (
+      <div>
+        <div className="control-wrapper">
+          <Button onClick={() => setIsOpen(!isOpen)}>
+            {isOpen ? 'Close Panel' : 'Open Panel'}
+          </Button>
+        </div>
+        <SidePanel
+          className="example-2"
+          isOpen={isOpen}
+          onClose={() => setIsOpen(false)}
+          showOverlay={true}
+          overlay="light-cyan"
+          title="Panel with light cyan overlay"
+          contentComponent={
+            <div className="filter-content">
+              <p>Light cyan overlay variant.</p>
             </div>
           }
         />
