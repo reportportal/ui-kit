@@ -1,6 +1,8 @@
-import { ReactNode, useEffect, useId } from 'react';
+import { ReactNode, useEffect, useId, useRef, useMemo } from 'react';
 import classNames from 'classnames/bind';
 import { KeyCodes } from '@common/constants/keyCodes';
+import { useOnClickOutside } from '@common/hooks';
+import { DROPDOWN_PORTAL_MENU_ATTR } from '@components/dropdown';
 import { CloseIcon } from '@components/icons';
 import { BaseIconButton } from '@components/baseIconButton';
 import styles from './sidePanel.module.scss';
@@ -19,6 +21,10 @@ export interface SidePanelProps {
   isOpen?: boolean;
   onClose?: () => void;
   closeButtonAriaLabel?: string;
+  showOverlay?: boolean;
+  overlay?: 'default' | 'light-cyan';
+  allowCloseOutside?: boolean;
+  overlayClassName?: string;
 }
 
 export const SidePanel = ({
@@ -33,12 +39,30 @@ export const SidePanel = ({
   isOpen = true,
   onClose,
   closeButtonAriaLabel = 'Close panel',
+  showOverlay = false,
+  overlay = 'default',
+  allowCloseOutside = true,
+  overlayClassName,
 }: SidePanelProps) => {
   const titleId = useId();
+  const panelRef = useRef<HTMLElement>(null);
 
   const handleClose = () => {
     onClose?.();
   };
+
+  const clickOutsideOptions = useMemo(
+    () => ({
+      ignoreSelectors: [`[${DROPDOWN_PORTAL_MENU_ATTR}]`],
+    }),
+    [],
+  );
+
+  useOnClickOutside(
+    panelRef,
+    allowCloseOutside && showOverlay && isOpen ? onClose : undefined,
+    clickOutsideOptions,
+  );
 
   useEffect(() => {
     if (!isOpen || !onClose) {
@@ -48,7 +72,7 @@ export const SidePanel = ({
     const onKeydown = (event: KeyboardEvent) => {
       const { keyCode } = event;
 
-      if (keyCode === KeyCodes.ESCAPE_KEY_CODE) {
+      if (keyCode === KeyCodes.ESCAPE_KEY_CODE && allowCloseOutside) {
         onClose();
       }
     };
@@ -58,12 +82,13 @@ export const SidePanel = ({
     return () => {
       document.removeEventListener('keydown', onKeydown, false);
     };
-  }, [isOpen, onClose]);
+  }, [isOpen, onClose, allowCloseOutside]);
 
   const hasHeaderOrDescription = !!(headerComponent || descriptionComponent);
 
-  return (
+  const panelElement = (
     <aside
+      ref={panelRef}
       className={cx('side-panel', `side-${side}`, { active: isOpen }, className)}
       role="dialog"
       aria-modal="true"
@@ -108,6 +133,23 @@ export const SidePanel = ({
       )}
     </aside>
   );
+
+  if (showOverlay && isOpen) {
+    return (
+      <div
+        className={cx(
+          'side-panel-overlay',
+          { active: isOpen },
+          overlay && `overlay-${overlay}`,
+          overlayClassName,
+        )}
+      >
+        {panelElement}
+      </div>
+    );
+  }
+
+  return panelElement;
 };
 
 export default SidePanel;
