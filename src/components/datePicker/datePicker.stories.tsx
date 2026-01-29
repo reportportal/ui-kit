@@ -173,7 +173,7 @@ export const Single: Story = {
   },
 };
 
-export const RangeSingleField: Story = {
+export const Range: Story = {
   render: () => {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const [dateRange, setDateRange] = useState<[Date | null, Date | null]>([null, null]);
@@ -181,7 +181,7 @@ export const RangeSingleField: Story = {
 
     return (
       <div style={{ padding: '200px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
-        <div>Range DatePicker (Single Field):</div>
+        <div>Range DatePicker</div>
         <DatePicker selectsRange value={dateRange} onChange={(dates) => setDateRange(dates)} />
         <div style={{ marginTop: '10px', fontSize: '12px', color: '#666' }}>
           <div>Start: {startDate?.toLocaleDateString() ?? 'Not selected'}</div>
@@ -351,7 +351,7 @@ export const ShouldNotCloseOnSelect: Story = {
   },
 };
 
-export const FixedHeight: Story = {
+export const DynamicHeight: Story = {
   render: () => {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const [date, setDate] = useState<Date | null>(null);
@@ -364,8 +364,8 @@ export const FixedHeight: Story = {
           gap: '10px',
         }}
       >
-        <div>DatePicker with fixed height calendar:</div>
-        <DatePicker fixedHeight value={date} onChange={setDate} />
+        <div>DatePicker with dynamic height calendar:</div>
+        <DatePicker fixedHeight={false} value={date} onChange={setDate} />
         {date && (
           <div style={{ fontSize: '12px', color: '#666' }}>
             Selected: {date.toLocaleDateString()}
