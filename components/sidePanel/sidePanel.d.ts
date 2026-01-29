@@ -12,6 +12,10 @@ export interface SidePanelProps {
     isOpen?: boolean;
     onClose?: () => void;
     closeButtonAriaLabel?: string;
+    showOverlay?: boolean;
+    overlay?: 'default' | 'light-cyan';
+    allowCloseOutside?: boolean;
+    overlayClassName?: string;
 }
-export declare const SidePanel: ({ className, title, descriptionComponent, headerComponent, contentComponent, footerComponent, top, side, isOpen, onClose, closeButtonAriaLabel, }: SidePanelProps) => import("react/jsx-runtime").JSX.Element;
+export declare const SidePanel: ({ className, title, descriptionComponent, headerComponent, contentComponent, footerComponent, top, side, isOpen, onClose, closeButtonAriaLabel, showOverlay, overlay, allowCloseOutside, overlayClassName, }: SidePanelProps) => import("react/jsx-runtime").JSX.Element;
 export default SidePanel;
