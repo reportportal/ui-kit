@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-import { ReactElement, useCallback, MouseEvent, KeyboardEvent, useRef, useEffect } from 'react';
+import { ReactElement, useCallback, MouseEvent, KeyboardEvent, useRef } from 'react';
 import classNames from 'classnames/bind';
+import { useEllipsisTitle } from '@common/hooks';
 import { ActionMenu, ActionItem } from '../actionMenu';
 import styles from './filterItem.module.scss';
 
@@ -48,30 +49,8 @@ export const FilterItem = ({
   selected = false,
   editMode = false,
 }: FilterItemProps): ReactElement => {
-  const captionRef = useRef<HTMLDivElement>(null);
+  const { ref: captionRef, title: captionTitle } = useEllipsisTitle<HTMLDivElement>(caption);
   const actionsMenuRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const checkTruncation = () => {
-      if (captionRef.current) {
-        const isTruncated = captionRef.current.scrollWidth > captionRef.current.clientWidth;
-        if (isTruncated) {
-          captionRef.current.setAttribute('title', caption);
-        } else {
-          captionRef.current.removeAttribute('title');
-        }
-      }
-    };
-
-    checkTruncation();
-
-    if (typeof ResizeObserver !== 'undefined' && captionRef.current) {
-      const resizeObserver = new ResizeObserver(checkTruncation);
-      resizeObserver.observe(captionRef.current);
-
-      return () => resizeObserver.disconnect();
-    }
-  }, [caption]);
 
   const handleContainerClick = useCallback(
     (event: MouseEvent<HTMLDivElement>) => {
@@ -128,7 +107,7 @@ export const FilterItem = ({
       role="button"
       tabIndex={disabled ? -1 : 0}
     >
-      <div className={captionWrapperClassName} ref={captionRef}>
+      <div className={captionWrapperClassName} ref={captionRef} title={captionTitle}>
         {caption}
       </div>
 

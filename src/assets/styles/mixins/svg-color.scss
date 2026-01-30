@@ -1,0 +1,17 @@
+@mixin fill-svg($color) {
+  svg {
+    fill: $color;
+
+    & > rect {
+      fill: $color;
+    }
+  }
+}
+
+@mixin fill-svg-path($color) {
+  svg {
+    & > path {
+      fill: $color;
+    }
+  }
+}
