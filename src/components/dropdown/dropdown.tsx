@@ -27,6 +27,7 @@ import { ClearIcon, DropdownIcon } from '@components/icons';
 import { FieldLabel } from '@components/fieldLabel';
 import { AdaptiveTagList } from '@components/adaptiveTagList';
 import { splitHtmlAttributes } from '@common/utils';
+import { useEllipsisTitle } from '@common/hooks';
 import { DropdownOption } from './dropdownOption';
 import { DropdownVariant, RenderDropdownOption, DropdownOptionType, DropdownValue } from './types';
 import {
@@ -149,10 +150,8 @@ export const Dropdown: FC<DropdownProps> = ({
   const menuRef = useRef<HTMLDivElement | null>(null);
   const scrollbarsRef = useRef<Scrollbars | null>(null);
   const scrollPositionRef = useRef(0);
-  const valueRef = useRef<HTMLSpanElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const prevSearchTermRef = useRef('');
-  const [isValueOverflowed, setIsValueOverflowed] = useState(false);
   const [eventName, setEventName] = useState<string | null>(null);
   const savedHighlightedIndexRef = useRef<number | null>(null);
   const allFlattenedOptions = useMemo(() => flattenOptions(options), [options]);
@@ -621,14 +620,12 @@ export const Dropdown: FC<DropdownProps> = ({
     placeholder,
   ]);
 
-  useEffect(() => {
-    if (valueRef.current) {
-      const { offsetWidth, scrollWidth } = valueRef.current;
-      setIsValueOverflowed(scrollWidth > offsetWidth);
-    } else {
-      setIsValueOverflowed(false);
-    }
-  }, [displayedValue]);
+  const formattedValue = useMemo(() => {
+    return formatDisplayedValue ? formatDisplayedValue(displayedValue) : displayedValue;
+  }, [formatDisplayedValue, displayedValue]);
+
+  const ellipsisContent = hasSelectedValue && formattedValue ? formattedValue : undefined;
+  const { ref: valueRef, title: valueTitle } = useEllipsisTitle<HTMLSpanElement>(ellipsisContent);
 
   const handleToggleButtonKeyDown: KeyboardEventHandler<HTMLDivElement> = (event) => {
     const { keyCode } = event;
@@ -838,18 +835,13 @@ export const Dropdown: FC<DropdownProps> = ({
       return renderMultiSelectTags();
     }
 
-    const formattedValue = formatDisplayedValue
-      ? formatDisplayedValue(displayedValue)
-      : displayedValue;
-    const shouldShowOverflowTooltip = hasSelectedValue && !!formattedValue && isValueOverflowed;
-
     return (
       <span
         ref={valueRef}
         className={cx('value', {
-          placeholder: displayedValue === placeholder,
+          placeholder: !hasSelectedValue,
         })}
-        title={shouldShowOverflowTooltip ? formattedValue : undefined}
+        title={valueTitle}
       >
         {formattedValue}
       </span>

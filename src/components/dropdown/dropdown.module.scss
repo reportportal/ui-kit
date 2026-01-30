@@ -1,5 +1,6 @@
 @import 'src/assets/styles/variables/breakpoints';
 @import 'src/assets/styles/mixins/font-scale';
+@import 'src/assets/styles/mixins/text-ellipsis';
 
 $Z-INDEX-POPUP: 10;
 
@@ -120,9 +121,7 @@ $Z-INDEX-POPUP: 10;
     font-weight: var(--rp-ui-base-fw-regular);
     @include font-scale();
     color: var(--rp-ui-color-text-3);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    @include text-ellipsis();
 
     &.placeholder {
       color: var(--rp-ui-color-field-placeholder-3);
