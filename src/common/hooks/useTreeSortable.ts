@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useDrag, useDrop, DragSourceMonitor, DropTargetMonitor } from 'react-dnd';
 import { getEmptyImage } from 'react-dnd-html5-backend';
 
@@ -37,26 +37,16 @@ const calculateDropPosition = (
   }
 
   const { top, height } = dropTargetRect;
-  const relativeY = clientOffset.y - top;
-  const relativeYPercent = relativeY / height;
+  const cursorY = clientOffset.y;
+  const relativeY = cursorY - top;
 
-  if (relativeY < 0 && relativeY >= -5) {
+  const EDGE_ZONE = 6;
+
+  if (relativeY >= 0 && relativeY < EDGE_ZONE) {
     return TREE_DROP_POSITIONS.BEFORE;
   }
 
-  if (relativeY > height && relativeY <= height + 5) {
-    return isLast ? TREE_DROP_POSITIONS.AFTER : TREE_DROP_POSITIONS.BEFORE;
-  }
-
-  if (relativeY < 0 || relativeY > height) {
-    return null;
-  }
-
-  if (relativeYPercent <= 0.1) {
-    return TREE_DROP_POSITIONS.BEFORE;
-  }
-
-  if (isLast && relativeYPercent >= 0.9) {
+  if (isLast && relativeY >= height - EDGE_ZONE && relativeY <= height) {
     return TREE_DROP_POSITIONS.AFTER;
   }
 
@@ -78,6 +68,10 @@ export const useTreeSortable = ({
   const dropTargetRef = useRef<HTMLElement | null>(null);
   const dropPositionRef = useRef<TreeDropPosition>(null);
 
+  // CRITICAL FIX: useState for dropPosition to trigger re-renders
+  // React-DND's collect doesn't trigger re-render on getClientOffset() changes (issue #179)
+  const [dropPosition, setDropPosition] = useState<TreeDropPosition>(null);
+
   const [{ isDragging }, dragRef, previewRef] = useDrag(
     () => ({
       type,
@@ -96,32 +90,48 @@ export const useTreeSortable = ({
     }
   }, [hideDefaultPreview, previewRef]);
 
-  const [{ isOver, dropPosition }, dropRef] = useDrop(
+  const [{ isOver }, dropRef] = useDrop(
     () => ({
       accept: type,
+      hover: (draggedItem: TreeDragItem, monitor: DropTargetMonitor) => {
+        if (dropTargetRef.current && draggedItem.id !== id && acceptDrop) {
+          const isValidDropTarget = !canDropOn || canDropOn(draggedItem, id);
+
+          if (isValidDropTarget) {
+            const clientOffset = monitor.getClientOffset();
+            const rect = dropTargetRef.current.getBoundingClientRect();
+
+            if (clientOffset && rect) {
+              const newPosition = calculateDropPosition(clientOffset, rect, isLast);
+
+              if (newPosition !== dropPosition) {
+                setDropPosition(newPosition);
+                dropPositionRef.current = newPosition;
+              }
+            }
+          } else {
+            if (dropPosition !== null) {
+              setDropPosition(null);
+              dropPositionRef.current = null;
+            }
+          }
+        }
+      },
       collect: (monitor: DropTargetMonitor) => {
         const draggedItem = monitor.getItem() as TreeDragItem | null;
-        const canDrop =
-          draggedItem?.id !== id &&
-          acceptDrop &&
-          (!canDropOn || !draggedItem || canDropOn(draggedItem, id));
+        const isBasicDropValid = draggedItem?.id !== id && acceptDrop;
+        const isValidDropTarget = !canDropOn || !draggedItem || canDropOn(draggedItem, id);
 
-        const isDirectlyOver = canDrop && monitor.isOver({ shallow: true });
+        const isDirectlyOverThis = monitor.isOver({ shallow: true });
+        const canDrop = isBasicDropValid && isValidDropTarget;
 
-        let position: TreeDropPosition = null;
-
-        if (isDirectlyOver && dropTargetRef.current) {
-          const clientOffset = monitor.getClientOffset();
-          const rect = dropTargetRef.current.getBoundingClientRect();
-          position = calculateDropPosition(clientOffset, rect, isLast);
-          dropPositionRef.current = position;
-        } else {
+        if (!isDirectlyOverThis && dropPosition !== null) {
+          setDropPosition(null);
           dropPositionRef.current = null;
         }
 
         return {
-          isOver: isDirectlyOver,
-          dropPosition: position,
+          isOver: isDirectlyOverThis && canDrop,
         };
       },
       drop: (draggedItem: TreeDragItem, monitor) => {
@@ -142,7 +152,7 @@ export const useTreeSortable = ({
         }
       },
     }),
-    [id, type, acceptDrop, isLast, canDropOn, onDrop],
+    [id, type, acceptDrop, isLast, canDropOn, onDrop, dropPosition],
   );
 
   const combinedDropRef = (node: HTMLElement | null) => {

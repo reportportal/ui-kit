@@ -507,29 +507,28 @@ const FolderNode = ({
   };
 
   return (
-    <>
-      <TreeSortableItem
-        id={folder.id}
-        index={index}
-        parentId={parentId}
-        type={FOLDER_TYPE}
-        isLast={isLast}
-        canDropOn={canDropOn}
-        onDrop={onDrop}
-        style={{
-          paddingLeft: `${depth * 20}px`,
-          ['--tree-item-indent' as string]: `${depth * 20}px`,
-        }}
-      >
-        {({ isDragging, dragRef }) => (
+    <TreeSortableItem
+      id={folder.id}
+      index={index}
+      parentId={parentId}
+      type={FOLDER_TYPE}
+      isLast={isLast}
+      canDropOn={canDropOn}
+      onDrop={onDrop}
+      style={{
+        ['--tree-item-indent' as string]: `${depth * 20}px`,
+      }}
+    >
+      {({ isDragging, dragRef }) => (
+        <>
           <div
             ref={dragRef as Ref<HTMLDivElement>}
             style={{
               ...folderRowStyle,
-              opacity: isDragging ? 0.4 : isChildOfDragged ? 0.5 : 1,
-              marginBottom: '2px',
+              paddingLeft: `${depth * 20}px`,
+              opacity: isDragging || isChildOfDragged ? 0.4 : 1,
               cursor: isChildOfDragged ? 'not-allowed' : folderRowStyle.cursor,
-              pointerEvents: isChildOfDragged ? 'none' : 'auto',
+              pointerEvents: isDragging || isChildOfDragged ? 'none' : 'auto',
             }}
           >
             <span
@@ -554,25 +553,25 @@ const FolderNode = ({
             </span>
             <span style={{ flex: 1 }}>{folder.name}</span>
           </div>
-        )}
-      </TreeSortableItem>
 
-      {isExpanded &&
-        folder.children.map((child, childIndex) => (
-          <FolderNode
-            key={child.id}
-            folder={child}
-            index={childIndex}
-            depth={depth + 1}
-            parentId={folder.id}
-            isLast={childIndex === folder.children.length - 1}
-            expandedIds={expandedIds}
-            onToggle={onToggle}
-            canDropOn={canDropOn}
-            onDrop={onDrop}
-          />
-        ))}
-    </>
+          {isExpanded &&
+            folder.children.map((child, childIndex) => (
+              <FolderNode
+                key={child.id}
+                folder={child}
+                index={childIndex}
+                depth={depth + 1}
+                parentId={folder.id}
+                isLast={childIndex === folder.children.length - 1}
+                expandedIds={expandedIds}
+                onToggle={onToggle}
+                canDropOn={canDropOn}
+                onDrop={onDrop}
+              />
+            ))}
+        </>
+      )}
+    </TreeSortableItem>
   );
 };
 
