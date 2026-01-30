@@ -38,6 +38,7 @@ export const TreeSortableItem = ({
   isLast = false,
   canDropOn,
   className,
+  style,
   draggingClassName,
   dropBeforeClassName,
   dropInsideClassName,
@@ -67,6 +68,7 @@ export const TreeSortableItem = ({
     type,
     isDisabled,
     acceptDrop,
+    isLast,
     canDropOn,
     onDrop: handleDrop,
     hideDefaultPreview,
@@ -84,6 +86,7 @@ export const TreeSortableItem = ({
   const showDropBefore =
     (isOver && dropPosition === TREE_DROP_POSITIONS.BEFORE) ||
     (isPendingTarget && pendingPosition === TREE_DROP_POSITIONS.BEFORE);
+
   const showDropInside =
     (isOver && dropPosition === TREE_DROP_POSITIONS.INSIDE) ||
     (isPendingTarget && pendingPosition === TREE_DROP_POSITIONS.INSIDE);
@@ -126,6 +129,7 @@ export const TreeSortableItem = ({
         }
       }}
       className={wrapperClasses}
+      style={style}
     >
       {content}
     </div>
