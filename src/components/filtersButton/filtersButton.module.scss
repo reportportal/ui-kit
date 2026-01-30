@@ -18,6 +18,8 @@
 @import 'src/assets/styles/mixins/svg-color';
 @import 'src/assets/styles/mixins/text-ellipsis';
 
+$MAX-CAPTION-WIDTH: 120px;
+
 .filters-icon-container {
   all: unset;
   display: flex;
@@ -87,7 +89,7 @@
       color: var(--rp-ui-base-topaz);
       font-family: var(--rp-ui-base-font-family);
       font-weight: var(--rp-ui-base-fw-medium);
-      @include text-ellipsis(120px);
+      @include text-ellipsis($MAX-CAPTION-WIDTH);
     }
 
     &.opened {
