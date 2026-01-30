@@ -22,11 +22,11 @@ const DEFAULT_CAPTIONS = {
   ineligibleTab: 'Ineligible Items',
   ineligibleInfoMessage: (count: number) => (
     <>
-      You have <b>{count}</b> ineligible items
+      You have <b>{count}</b> ineligible item{count === 1 ? '' : 's'}
     </>
   ),
   cancelButton: (actionLabel: string) => `Cancel "${actionLabel}"`,
-  proceedButton: (count: number) => `Proceed with ${count} Eligible Items`,
+  proceedButton: (count: number) => `Proceed with ${count} Eligible Item${count === 1 ? '' : 's'}`,
 };
 
 const TABS = {
