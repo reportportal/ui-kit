@@ -15,6 +15,7 @@
  */
 
 @import 'src/assets/styles/mixins/font-scale';
+@import 'src/assets/styles/mixins/text-ellipsis';
 
 $MIN-CAPTION-WIDTH: 80px;
 $MAX-CAPTION-WIDTH: 200px;
@@ -72,11 +73,8 @@ $MAX-CAPTION-WIDTH: 200px;
 
 .caption-wrapper {
   flex: 0 1 auto;
-  overflow: hidden;
-  max-width: $MAX-CAPTION-WIDTH;
-  text-overflow: ellipsis;
-  white-space: nowrap;
   @include font-scale('base');
   font-family: var(--rp-ui-base-font-family);
   font-weight: var(--rp-ui-base-fw-regular);
+  @include text-ellipsis($MAX-CAPTION-WIDTH);
 }

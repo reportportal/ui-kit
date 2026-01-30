@@ -16,6 +16,7 @@
 
 @import 'src/assets/styles/mixins/font-scale';
 @import 'src/assets/styles/mixins/svg-color';
+@import 'src/assets/styles/mixins/text-ellipsis';
 
 .filters-icon-container {
   all: unset;
@@ -86,10 +87,7 @@
       color: var(--rp-ui-base-topaz);
       font-family: var(--rp-ui-base-font-family);
       font-weight: var(--rp-ui-base-fw-medium);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 120px;
+      @include text-ellipsis(120px);
     }
 
     &.opened {
