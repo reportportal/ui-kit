@@ -27,11 +27,10 @@ import type {
 } from '@common/types';
 import { TREE_DROP_POSITIONS } from '@common/types';
 
-const EDGE_ZONE_SIZE = 2;
-
 const calculateDropPosition = (
   clientOffset: { x: number; y: number } | null,
   dropTargetRect: DOMRect | null,
+  isLast = false,
 ): TreeDropPosition => {
   if (!clientOffset || !dropTargetRect) {
     return null;
@@ -39,12 +38,25 @@ const calculateDropPosition = (
 
   const { top, height } = dropTargetRect;
   const relativeY = clientOffset.y - top;
+  const relativeYPercent = relativeY / height;
 
-  if (relativeY < EDGE_ZONE_SIZE) {
+  if (relativeY < 0 && relativeY >= -5) {
     return TREE_DROP_POSITIONS.BEFORE;
   }
 
-  if (relativeY > height - EDGE_ZONE_SIZE) {
+  if (relativeY > height && relativeY <= height + 5) {
+    return isLast ? TREE_DROP_POSITIONS.AFTER : TREE_DROP_POSITIONS.BEFORE;
+  }
+
+  if (relativeY < 0 || relativeY > height) {
+    return null;
+  }
+
+  if (relativeYPercent <= 0.1) {
+    return TREE_DROP_POSITIONS.BEFORE;
+  }
+
+  if (isLast && relativeYPercent >= 0.9) {
     return TREE_DROP_POSITIONS.AFTER;
   }
 
@@ -58,6 +70,7 @@ export const useTreeSortable = ({
   type = DEFAULT_SORTABLE_TYPE,
   isDisabled = false,
   acceptDrop = true,
+  isLast = false,
   canDropOn,
   onDrop,
   hideDefaultPreview = false,
@@ -92,21 +105,22 @@ export const useTreeSortable = ({
           draggedItem?.id !== id &&
           acceptDrop &&
           (!canDropOn || !draggedItem || canDropOn(draggedItem, id));
-        const isCurrentlyOver = canDrop ? monitor.isOver({ shallow: true }) : false;
+
+        const isDirectlyOver = canDrop && monitor.isOver({ shallow: true });
 
         let position: TreeDropPosition = null;
 
-        if (isCurrentlyOver && dropTargetRef.current) {
+        if (isDirectlyOver && dropTargetRef.current) {
           const clientOffset = monitor.getClientOffset();
           const rect = dropTargetRef.current.getBoundingClientRect();
-          position = calculateDropPosition(clientOffset, rect);
+          position = calculateDropPosition(clientOffset, rect, isLast);
           dropPositionRef.current = position;
         } else {
           dropPositionRef.current = null;
         }
 
         return {
-          isOver: isCurrentlyOver,
+          isOver: isDirectlyOver,
           dropPosition: position,
         };
       },
@@ -128,7 +142,7 @@ export const useTreeSortable = ({
         }
       },
     }),
-    [id, type, acceptDrop, canDropOn, onDrop],
+    [id, type, acceptDrop, isLast, canDropOn, onDrop],
   );
 
   const combinedDropRef = (node: HTMLElement | null) => {

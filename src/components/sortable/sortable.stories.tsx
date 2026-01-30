@@ -411,6 +411,38 @@ const getFolderName = (folders: NestedFolder[], id: number): string => {
   const folder = findFolderById(folders, id);
   return folder?.name || 'Unknown';
 };
+
+const getAllFolderNames = (folders: NestedFolder[]): string[] => {
+  const names: string[] = [];
+
+  const collectNames = (folderList: NestedFolder[]) => {
+    for (const folder of folderList) {
+      names.push(folder.name);
+      if (folder.children.length > 0) {
+        collectNames(folder.children);
+      }
+    }
+  };
+
+  collectNames(folders);
+  return names;
+};
+
+const getNextDuplicateName = (baseName: string, existingNames: string[]): string => {
+  // Remove any existing numeric suffix
+  const baseNameWithoutSuffix = baseName.replace(/\d+$/, '');
+
+  let counter = 1;
+  let newName = `${baseNameWithoutSuffix}${counter}`;
+
+  while (existingNames.includes(newName)) {
+    counter++;
+    newName = `${baseNameWithoutSuffix}${counter}`;
+  }
+
+  return newName;
+};
+
 interface FolderNodeProps {
   folder: NestedFolder;
   index: number;
@@ -476,52 +508,54 @@ const FolderNode = ({
 
   return (
     <>
-      <div style={{ paddingLeft: `${depth * 20}px` }}>
-        <TreeSortableItem
-          id={folder.id}
-          index={index}
-          parentId={parentId}
-          type={FOLDER_TYPE}
-          isLast={isLast}
-          canDropOn={canDropOn}
-          onDrop={onDrop}
-        >
-          {({ isDragging, dragRef }) => (
-            <div
-              ref={dragRef as Ref<HTMLDivElement>}
+      <TreeSortableItem
+        id={folder.id}
+        index={index}
+        parentId={parentId}
+        type={FOLDER_TYPE}
+        isLast={isLast}
+        canDropOn={canDropOn}
+        onDrop={onDrop}
+        style={{
+          paddingLeft: `${depth * 20}px`,
+          ['--tree-item-indent' as string]: `${depth * 20}px`,
+        }}
+      >
+        {({ isDragging, dragRef }) => (
+          <div
+            ref={dragRef as Ref<HTMLDivElement>}
+            style={{
+              ...folderRowStyle,
+              opacity: isDragging ? 0.4 : isChildOfDragged ? 0.5 : 1,
+              marginBottom: '2px',
+              cursor: isChildOfDragged ? 'not-allowed' : folderRowStyle.cursor,
+              pointerEvents: isChildOfDragged ? 'none' : 'auto',
+            }}
+          >
+            <span
+              onClick={(e) => {
+                e.stopPropagation();
+                if (hasChildren) onToggle(folder.id);
+              }}
               style={{
-                ...folderRowStyle,
-                opacity: isDragging ? 0.4 : isChildOfDragged ? 0.5 : 1,
-                marginBottom: '2px',
-                cursor: isChildOfDragged ? 'not-allowed' : folderRowStyle.cursor,
-                pointerEvents: isChildOfDragged ? 'none' : 'auto',
+                width: '16px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: '#9ca3af',
+                cursor: hasChildren ? 'pointer' : 'default',
+                visibility: hasChildren ? 'visible' : 'hidden',
               }}
             >
-              <span
-                onClick={(e) => {
-                  e.stopPropagation();
-                  if (hasChildren) onToggle(folder.id);
-                }}
-                style={{
-                  width: '16px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: '#9ca3af',
-                  cursor: hasChildren ? 'pointer' : 'default',
-                  visibility: hasChildren ? 'visible' : 'hidden',
-                }}
-              >
-                <ChevronIcon isExpanded={isExpanded} />
-              </span>
-              <span style={{ color: '#f59e0b' }}>
-                {isExpanded ? <FolderOpenIcon /> : <FolderIcon />}
-              </span>
-              <span style={{ flex: 1 }}>{folder.name}</span>
-            </div>
-          )}
-        </TreeSortableItem>
-      </div>
+              <ChevronIcon isExpanded={isExpanded} />
+            </span>
+            <span style={{ color: '#f59e0b' }}>
+              {isExpanded ? <FolderOpenIcon /> : <FolderIcon />}
+            </span>
+            <span style={{ flex: 1 }}>{folder.name}</span>
+          </div>
+        )}
+      </TreeSortableItem>
 
       {isExpanded &&
         folder.children.map((child, childIndex) => (
@@ -688,10 +722,12 @@ export const TreeSortableNested: Story = {
       const [, draggedFolder] = removeFolder(folders, draggedItem.id as number);
 
       if (draggedFolder && position) {
+        const existingNames = getAllFolderNames(folders);
+
         // Create a deep copy with new IDs for all folders and subfolders
         const duplicatedFolder = {
           ...cloneFolderWithNewIds(draggedFolder),
-          name: `${draggedFolder.name} (copy)`,
+          name: getNextDuplicateName(draggedFolder.name, existingNames),
         };
 
         const newFolders = insertFolder(folders, targetId as number, duplicatedFolder, position);
