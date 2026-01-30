@@ -62,7 +62,7 @@ export const FiltersButton = forwardRef<HTMLButtonElement, FiltersButtonProps>(
     return (
       <button type={type} className={containerClassName} ref={ref} {...rest}>
         <span className={cx('filter-icon')}>
-          {hasAppliedFilters || hasText ? <FilterFilledIcon /> : <FilterOutlineIcon />}
+          {hasAppliedFilters ? <FilterFilledIcon /> : <FilterOutlineIcon />}
         </span>
         {hasText ? (
           <span
