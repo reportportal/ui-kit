@@ -507,20 +507,20 @@ const FolderNode = ({
   };
 
   return (
-    <TreeSortableItem
-      id={folder.id}
-      index={index}
-      parentId={parentId}
-      type={FOLDER_TYPE}
-      isLast={isLast}
-      canDropOn={canDropOn}
-      onDrop={onDrop}
-      style={{
-        ['--tree-item-indent' as string]: `${depth * 20}px`,
-      }}
-    >
-      {({ isDragging, dragRef }) => (
-        <>
+    <>
+      <TreeSortableItem
+        id={folder.id}
+        index={index}
+        parentId={parentId}
+        type={FOLDER_TYPE}
+        isLast={isLast}
+        canDropOn={canDropOn}
+        onDrop={onDrop}
+        style={{
+          ['--tree-item-indent' as string]: `${depth * 20}px`,
+        }}
+      >
+        {({ isDragging, dragRef }) => (
           <div
             ref={dragRef as Ref<HTMLDivElement>}
             style={{
@@ -553,25 +553,25 @@ const FolderNode = ({
             </span>
             <span style={{ flex: 1 }}>{folder.name}</span>
           </div>
+        )}
+      </TreeSortableItem>
 
-          {isExpanded &&
-            folder.children.map((child, childIndex) => (
-              <FolderNode
-                key={child.id}
-                folder={child}
-                index={childIndex}
-                depth={depth + 1}
-                parentId={folder.id}
-                isLast={childIndex === folder.children.length - 1}
-                expandedIds={expandedIds}
-                onToggle={onToggle}
-                canDropOn={canDropOn}
-                onDrop={onDrop}
-              />
-            ))}
-        </>
-      )}
-    </TreeSortableItem>
+      {isExpanded &&
+        folder.children.map((child, childIndex) => (
+          <FolderNode
+            key={child.id}
+            folder={child}
+            index={childIndex}
+            depth={depth + 1}
+            parentId={folder.id}
+            isLast={childIndex === folder.children.length - 1}
+            expandedIds={expandedIds}
+            onToggle={onToggle}
+            canDropOn={canDropOn}
+            onDrop={onDrop}
+          />
+        ))}
+    </>
   );
 };
 
