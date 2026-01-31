@@ -429,18 +429,23 @@ const getAllFolderNames = (folders: NestedFolder[]): string[] => {
 };
 
 const getNextDuplicateName = (baseName: string, existingNames: string[]): string => {
-  // Remove any existing numeric suffix
-  const baseNameWithoutSuffix = baseName.replace(/\d+$/, '');
+  // Check if name already has "(N)" pattern at the end
+  const numberPattern = /^(.*?)\((\d+)\)$/;
+  const match = baseName.match(numberPattern);
+  const originalName = match ? match[1] : baseName;
 
-  let counter = 1;
-  let newName = `${baseNameWithoutSuffix}${counter}`;
-
-  while (existingNames.includes(newName)) {
-    counter++;
-    newName = `${baseNameWithoutSuffix}${counter}`;
+  // If original name (without number) is not taken, return it
+  if (!existingNames.includes(originalName)) {
+    return originalName;
   }
 
-  return newName;
+  // Find next available number
+  let counter = 1;
+  while (existingNames.includes(`${originalName}(${counter})`)) {
+    counter++;
+  }
+
+  return `${originalName}(${counter})`;
 };
 
 interface FolderNodeProps {
