@@ -1,4 +1,4 @@
-import { ReactNode, Ref } from '../../../node_modules/react';
+import { ReactNode, Ref, CSSProperties } from '../../../node_modules/react';
 import { XYCoord, ConnectDragSource, ConnectDropTarget, ConnectDragPreview } from 'react-dnd';
 
 export interface SortableItemData {
@@ -101,6 +101,7 @@ export interface UseTreeSortableOptions {
     type?: string;
     isDisabled?: boolean;
     acceptDrop?: boolean;
+    isLast?: boolean;
     canDropOn?: (draggedItem: TreeDragItem, targetId: string | number) => boolean;
     onDrop?: TreeDropHandler;
     hideDefaultPreview?: boolean;
@@ -126,8 +127,8 @@ export interface TreeSortableItemProps {
     acceptDrop?: boolean;
     isLast?: boolean;
     canDropOn?: (draggedItem: TreeDragItem, targetId: string | number) => boolean;
-    depth?: number;
     className?: string;
+    style?: CSSProperties;
     draggingClassName?: string;
     dropBeforeClassName?: string;
     dropInsideClassName?: string;
