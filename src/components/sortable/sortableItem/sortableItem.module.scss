@@ -1,0 +1,84 @@
+/*
+ * Copyright 2025 EPAM Systems
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+.sortable-item {
+  position: relative;
+  width: 100%;
+  transition: opacity 0.2s ease;
+
+  // Gap size - consumers can override
+  --sortable-gap: 8px;
+
+  &--drop-target-top::before {
+    content: '';
+    position: absolute;
+    top: calc(var(--sortable-gap) / -2);
+    left: 0;
+    right: 0;
+    height: 2px;
+    background-color: var(--rp-ui-color-primary-focused);
+    border-radius: 2px;
+    z-index: 1;
+    transform: translateY(-50%);
+    pointer-events: none;
+  }
+
+  &--drop-target-bottom::after {
+    content: '';
+    position: absolute;
+    bottom: calc(var(--sortable-gap) / -2);
+    left: 0;
+    right: 0;
+    height: 2px;
+    background-color: var(--rp-ui-color-primary-focused);
+    border-radius: 2px;
+    z-index: 1;
+    transform: translateY(50%);
+    pointer-events: none;
+  }
+
+  &--hover-mode#{&}--drop-target-top::before {
+    display: block;
+    position: static;
+    top: auto;
+    margin-bottom: var(--sortable-gap);
+    transform: none;
+    z-index: auto;
+  }
+
+  &--hover-mode#{&}--drop-target-bottom::after {
+    display: block;
+    position: static;
+    bottom: auto;
+    margin-top: var(--sortable-gap);
+    transform: none;
+    z-index: auto;
+  }
+}
+
+.drag-handle {
+  cursor: grab;
+  touch-action: none;
+
+  &:active {
+    cursor: grabbing;
+  }
+
+  &--disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+}

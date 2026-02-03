@@ -1,9 +1,20 @@
-import { useEffect, RefObject } from 'react';
+import { useEffect, useRef, RefObject } from 'react';
+
+export interface UseOnClickOutsideOptions {
+  ignoreSelectors?: string[];
+}
 
 export function useOnClickOutside<T extends HTMLElement = HTMLDivElement>(
   ref: RefObject<T>,
   handler?: (e?: MouseEvent) => void,
+  options?: UseOnClickOutsideOptions,
 ) {
+  const optionsRef = useRef(options);
+
+  useEffect(() => {
+    optionsRef.current = options;
+  }, [options]);
+
   useEffect(() => {
     if (!handler) {
       return undefined;
@@ -11,7 +22,14 @@ export function useOnClickOutside<T extends HTMLElement = HTMLDivElement>(
 
     const listener = (event: MouseEvent) => {
       if (ref && ref.current && !ref.current.contains(event.target as Node)) {
-        handler(event);
+        const target = event.target as HTMLElement;
+        const shouldIgnore = optionsRef.current?.ignoreSelectors?.some((selector) =>
+          target?.closest(selector),
+        );
+
+        if (!shouldIgnore) {
+          handler(event);
+        }
       }
     };
 

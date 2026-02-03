@@ -10,7 +10,7 @@ import {
   SortingDirection,
   TableComponentProps,
 } from './types';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { sortTableData, toggleDirection } from '@components/table/utils';
 import { ASC } from './constants';
 
@@ -19,8 +19,177 @@ const meta: Meta<typeof Table> = {
   component: Table,
   parameters: {
     layout: 'centered',
+    docs: {
+      description: {
+        component: `
+A flexible table component with support for:
+- **Row sizes**: Configure via \`rowConfigs: { size: 'small' | 'medium' | 'large' }\` in row data
+- **Expandable rows**: Enable with \`isRowsExpandable\` prop
+- **Pinned columns**: Use \`pinnedColumnKeys\` to pin columns to the left
+- **Sorting**: Configure with \`sortableColumns\`, \`sortingColumn\`, \`sortingDirection\`
+- **Selection**: Enable with \`selectable\` prop
+- **Custom cell content**: Use \`DetailedCellData\` with \`content\` and \`component\` properties
+        `,
+      },
+    },
   },
   tags: ['autodocs'],
+  argTypes: {
+    data: {
+      description:
+        'Array of row data. Each row should have an `id` and can include `rowConfigs` for size configuration.',
+      table: {
+        type: { summary: 'RowData[]' },
+      },
+    },
+    primaryColumn: {
+      description: 'The main column configuration (typically the name/title column).',
+      table: {
+        type: { summary: 'Column | Column[]' },
+      },
+    },
+    fixedColumns: {
+      description: 'Array of fixed-width columns with optional alignment.',
+      table: {
+        type: { summary: 'FixedColumn[]' },
+      },
+    },
+    selectable: {
+      description: 'Enable row selection with checkboxes.',
+      control: 'boolean',
+      table: {
+        defaultValue: { summary: 'false' },
+      },
+    },
+    isRowsExpandable: {
+      description: 'Enable expand/collapse functionality for rows with long content.',
+      control: 'boolean',
+      table: {
+        defaultValue: { summary: 'false' },
+      },
+    },
+    expandedRowIds: {
+      description: 'Array of row IDs that are currently expanded.',
+      table: {
+        type: { summary: '(string | number)[]' },
+      },
+    },
+    isAllExpandedByDefault: {
+      description: 'Whether all rows should be expanded by default.',
+      control: 'boolean',
+      table: {
+        defaultValue: { summary: 'false' },
+      },
+    },
+    expandAllTooltip: {
+      description: 'Tooltip text for the expand all button.',
+      table: {
+        type: { summary: 'ReactNode' },
+      },
+    },
+    pinnedColumnKeys: {
+      description: 'Array of column keys to pin to the left side of the table.',
+      table: {
+        type: { summary: 'string[]' },
+      },
+    },
+    sortableColumns: {
+      description: 'Array of column keys that can be sorted.',
+      table: {
+        type: { summary: 'string[]' },
+      },
+    },
+    sortingColumn: {
+      description: 'Currently sorted column.',
+      table: {
+        type: { summary: 'Column' },
+      },
+    },
+    sortingDirection: {
+      description: 'Current sorting direction.',
+      control: 'select',
+      options: ['ASC', 'DESC'],
+      table: {
+        type: { summary: "'ASC' | 'DESC'" },
+      },
+    },
+    isHeaderFixed: {
+      description: 'Keep the header fixed when scrolling vertically.',
+      control: 'boolean',
+      table: {
+        defaultValue: { summary: 'false' },
+      },
+    },
+    isHorizontallyScrollable: {
+      description: 'Enable horizontal scrolling for wide tables.',
+      control: 'boolean',
+      table: {
+        defaultValue: { summary: 'false' },
+      },
+    },
+    className: {
+      description: 'Custom CSS class for the table container.',
+      table: {
+        type: { summary: 'string' },
+      },
+    },
+    headerClassName: {
+      description:
+        'Custom CSS class for the table header. Use this to customize header background, borders, etc.',
+      table: {
+        type: { summary: 'string' },
+      },
+    },
+    bodyClassName: {
+      description:
+        'Custom CSS class for the table body. Use this to customize row gap, padding, etc.',
+      table: {
+        type: { summary: 'string' },
+      },
+    },
+    rowClassName: {
+      description: 'Custom CSS class for table rows.',
+      table: {
+        type: { summary: 'string' },
+      },
+    },
+    onToggleRowExpansion: {
+      description: 'Callback when a row is expanded/collapsed.',
+      table: {
+        type: { summary: '(id: string | number) => void' },
+      },
+    },
+    onToggleAllRowsExpansion: {
+      description: 'Callback when all rows are expanded/collapsed.',
+      table: {
+        type: { summary: '() => void' },
+      },
+    },
+    onToggleRowSelection: {
+      description: 'Callback when a row is selected/deselected.',
+      table: {
+        type: { summary: '(id: string | number) => void' },
+      },
+    },
+    onToggleAllRowsSelection: {
+      description: 'Callback when all rows are selected/deselected.',
+      table: {
+        type: { summary: '() => void' },
+      },
+    },
+    onChangeSorting: {
+      description: 'Callback when sorting changes.',
+      table: {
+        type: { summary: '(sortConfig?: SortConfig) => void' },
+      },
+    },
+    renderRowActions: {
+      description: 'Function to render action menu for each row.',
+      table: {
+        type: { summary: '(metaData?: MetaData) => ReactNode' },
+      },
+    },
+  },
   args: {
     selectable: true,
   },
@@ -621,6 +790,140 @@ export const ExpandableRows: Story = {
             }
             setExpandedRows(newExpandedRows);
           }}
+          onToggleAllRowsExpansion={() => {
+            if (expandedRows.size === expandableData.length) {
+              setExpandedRows(new Set());
+            } else {
+              const allRows = new Set(expandableData.map((item) => item.id));
+              setExpandedRows(allRows);
+            }
+          }}
+          selectedRowIds={[...checkedRows]}
+          onToggleRowSelection={(id) => {
+            const newCheckedRows = new Set(checkedRows);
+            if (newCheckedRows.has(id)) {
+              newCheckedRows.delete(id);
+            } else {
+              newCheckedRows.add(id);
+            }
+            setCheckedRows(newCheckedRows);
+          }}
+          onToggleAllRowsSelection={() => {
+            if (checkedRows.size === expandableData.length) {
+              setCheckedRows(new Set());
+            } else {
+              const allRows = new Set(expandableData.map((item) => item.id));
+              setCheckedRows(allRows);
+            }
+          }}
+        />
+      </div>
+    );
+  },
+  args: {
+    selectable: true,
+  },
+};
+
+export const ExpandableRowsWithDefaultState: Story = {
+  render: (args: TableComponentProps) => {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const [expandedRows, setExpandedRows] = useState<Set<number | string>>(new Set([1, 2, 3, 4]));
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const [isAllExpandedByDefault, setIsAllExpandedByDefault] = useState<boolean>(true);
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const [checkedRows, setCheckedRows] = useState<Set<number | string>>(new Set([]));
+
+    const expandableData: RowData[] = [
+      {
+        id: 1,
+        name: 'Anna Smith',
+        age: 25,
+        city: 'New York',
+        department: 'Engineering',
+        email: 'anna.smith@example.com',
+      },
+      {
+        id: 2,
+        name: 'Mike Davis',
+        age: 32,
+        city: 'San Francisco',
+        department: 'Design',
+        email: 'mike.davis@example.com',
+      },
+      {
+        id: 3,
+        name: 'Sarah Wilson',
+        age: 28,
+        city: 'Los Angeles',
+        department: 'Marketing',
+        email: 'sarah.wilson@example.com',
+      },
+      {
+        id: 4,
+        name: 'John Brown',
+        age: 35,
+        city: 'Chicago',
+        department: 'Sales',
+        email: 'john.brown@example.com',
+      },
+    ];
+
+    const expandableFixedColumns: FixedColumn[] = [
+      { key: 'age', header: 'Age', align: 'right', width: 80 },
+      { key: 'department', header: 'Department', width: 120 },
+      { key: 'city', header: 'City', width: 120 },
+    ];
+    const expandablePrimaryColumns: Column[] = [
+      {
+        key: 'name',
+        header: 'Name',
+      },
+    ];
+
+    const expandAllTooltip = isAllExpandedByDefault
+      ? 'Expanded by default'
+      : 'Collapsed by default';
+
+    return (
+      <div style={{ minWidth: '800px', maxWidth: '1300px' }}>
+        <h3 style={{ margin: '0 0 16px 0', fontSize: '16px', color: '#333' }}>
+          Expandable Rows with Default State
+        </h3>
+        <p style={{ margin: '0 0 16px 0', fontSize: '14px', color: '#666' }}>
+          Demonstrates <strong>isAllExpandedByDefault</strong> and <strong>expandAllTooltip</strong>{' '}
+          props. The expandAll icon shows the default state regardless of individual row states.
+          Hover over the expandAll icon to see the tooltip.
+        </p>
+        <Table
+          {...args}
+          data={expandableData}
+          primaryColumn={expandablePrimaryColumns}
+          fixedColumns={expandableFixedColumns}
+          isRowsExpandable={true}
+          selectable={true}
+          expandedRowIds={[...expandedRows]}
+          isAllExpandedByDefault={isAllExpandedByDefault}
+          expandAllTooltip={expandAllTooltip}
+          onToggleRowExpansion={(id) => {
+            const newExpandedRows = new Set(expandedRows);
+            if (newExpandedRows.has(id)) {
+              newExpandedRows.delete(id);
+            } else {
+              newExpandedRows.add(id);
+            }
+            setExpandedRows(newExpandedRows);
+          }}
+          onToggleAllRowsExpansion={() => {
+            const newIsAllExpandedByDefault = !isAllExpandedByDefault;
+            setIsAllExpandedByDefault(newIsAllExpandedByDefault);
+
+            if (newIsAllExpandedByDefault) {
+              setExpandedRows(new Set(expandableData.map((item) => item.id)));
+            } else {
+              setExpandedRows(new Set());
+            }
+          }}
           selectedRowIds={[...checkedRows]}
           onToggleRowSelection={(id) => {
             const newCheckedRows = new Set(checkedRows);
@@ -764,6 +1067,14 @@ export const CellExpansion: Story = {
               }
               setExpandedRows(newExpandedRows);
             }}
+            onToggleAllRowsExpansion={() => {
+              if (expandedRows.size === longTextData.length) {
+                setExpandedRows(new Set());
+              } else {
+                const allRows = new Set(longTextData.map((item) => item.id));
+                setExpandedRows(allRows);
+              }
+            }}
           />
         </div>
         <p style={{ margin: '16px 0 0 0', fontSize: '12px', color: '#888', fontStyle: 'italic' }}>
@@ -775,5 +1086,738 @@ export const CellExpansion: Story = {
   },
   args: {
     renderRowActions: undefined,
+  },
+};
+
+/**
+ * Demonstrates all row sizes (small: 44px, default: 64px, large: 80px) with expandable content.
+ * Useful for testing that row heights behave correctly when expanding/collapsing cells with long text.
+ */
+export const RowSizesWithExpand: Story = {
+  render: (args: TableComponentProps) => {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const [expandedRowsSmall, setExpandedRowsSmall] = useState<Set<number | string>>(new Set([1]));
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const [expandedRowsDefault, setExpandedRowsDefault] = useState<Set<number | string>>(
+      new Set([5]),
+    );
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const [expandedRowsLarge, setExpandedRowsLarge] = useState<Set<number | string>>(new Set([9]));
+
+    const createData = (idOffset: number, size?: 'small' | 'medium' | 'large'): RowData[] => [
+      {
+        id: idOffset + 1,
+        name: 'Anna Smith',
+        age: 25,
+        city: 'New York',
+        department: 'Engineering',
+        rowConfigs: size ? { size } : undefined,
+      },
+      {
+        id: idOffset + 2,
+        name: 'John Doe with a very long name that should wrap when expanded and demonstrate how the row height increases to accommodate multiple lines of text content',
+        age: 32,
+        city: 'San Francisco Bay Area, California, United States of America',
+        department: 'Design and User Experience Research Department',
+        rowConfigs: size ? { size } : undefined,
+      },
+      {
+        id: idOffset + 3,
+        name: 'Mike Davis',
+        age: 28,
+        city: 'Los Angeles',
+        department: 'Marketing',
+        rowConfigs: size ? { size } : undefined,
+      },
+      {
+        id: idOffset + 4,
+        name: 'Sarah Elizabeth Wilson-Montgomery III with an exceptionally long hyphenated surname that demonstrates text wrapping behavior in expanded table rows when the content exceeds the available column width',
+        age: 35,
+        city: 'Chicago Metropolitan Area',
+        department: 'Sales and Business Development International Operations',
+        rowConfigs: size ? { size } : undefined,
+      },
+    ];
+
+    const smallData = createData(0, 'small');
+    const defaultData = createData(4);
+    const largeData = createData(8, 'large');
+
+    const columns: FixedColumn[] = [
+      { key: 'age', header: 'Age', align: 'right', width: 80 },
+      { key: 'department', header: 'Department', width: 120 },
+      { key: 'city', header: 'City', width: 120 },
+    ];
+    const primaryColumn: Column[] = [{ key: 'name', header: 'Name' }];
+
+    const renderTable = (
+      title: string,
+      subtitle: string,
+      rowData: RowData[],
+      expandedRows: Set<number | string>,
+      setExpandedRows: React.Dispatch<React.SetStateAction<Set<number | string>>>,
+    ) => (
+      <div style={{ marginBottom: '32px' }}>
+        <h4 style={{ margin: '0 0 4px 0', fontSize: '14px', color: '#333' }}>{title}</h4>
+        <p style={{ margin: '0 0 12px 0', fontSize: '12px', color: '#666' }}>{subtitle}</p>
+        <Table
+          {...args}
+          data={rowData}
+          primaryColumn={primaryColumn}
+          fixedColumns={columns}
+          isRowsExpandable={true}
+          expandedRowIds={[...expandedRows]}
+          onToggleRowExpansion={(id) => {
+            const newExpandedRows = new Set(expandedRows);
+            if (newExpandedRows.has(id)) {
+              newExpandedRows.delete(id);
+            } else {
+              newExpandedRows.add(id);
+            }
+            setExpandedRows(newExpandedRows);
+          }}
+          onToggleAllRowsExpansion={() => {
+            if (expandedRows.size === rowData.length) {
+              setExpandedRows(new Set());
+            } else {
+              const allRows = new Set(rowData.map((item) => item.id));
+              setExpandedRows(allRows);
+            }
+          }}
+        />
+      </div>
+    );
+
+    return (
+      <div style={{ minWidth: '800px', maxWidth: '1000px' }}>
+        <h3 style={{ margin: '0 0 24px 0', fontSize: '18px', color: '#333' }}>
+          Row Sizes with Expand - Testing Jump Fix
+        </h3>
+        <p style={{ margin: '0 0 24px 0', fontSize: '14px', color: '#666' }}>
+          Test expand/collapse on each table size. The row height should NOT change when
+          expanding/collapsing (unless content requires more space).
+        </p>
+
+        {renderTable(
+          'Small Rows (44px)',
+          'rowConfigs: { size: "small" }',
+          smallData,
+          expandedRowsSmall,
+          setExpandedRowsSmall,
+        )}
+
+        {renderTable(
+          'Default Rows (64px)',
+          'No rowConfigs specified',
+          defaultData,
+          expandedRowsDefault,
+          setExpandedRowsDefault,
+        )}
+
+        {renderTable(
+          'Large Rows (80px)',
+          'rowConfigs: { size: "large" }',
+          largeData,
+          expandedRowsLarge,
+          setExpandedRowsLarge,
+        )}
+      </div>
+    );
+  },
+};
+
+/**
+ * Simple demonstration of row sizes without expand functionality.
+ *
+ * Row sizes are configured via `rowConfigs: { size: 'small' | 'medium' | 'large' }` in each row data object.
+ *
+ * Available sizes:
+ * - **small**: 44px height - best for dense data tables
+ * - **medium** (default): 64px height - standard table row
+ * - **large**: 80px height - for tables with more visual prominence
+ */
+export const RowSizes: Story = {
+  render: () => {
+    const rowSizesColumns: Column[] = [{ key: 'name', header: 'Name' }];
+
+    const rowSizesFixedColumns: FixedColumn[] = [
+      { key: 'status', header: 'Status', width: 100 },
+      { key: 'description', header: 'Description', width: 250 },
+    ];
+
+    const smallRowsData = [
+      {
+        id: 1,
+        name: 'Small Row 1',
+        description: 'Compact row for dense tables',
+        status: 'Active',
+        rowConfigs: { size: 'small' as const },
+      },
+      {
+        id: 2,
+        name: 'Small Row 2',
+        description: 'Height: 44px',
+        status: 'Active',
+        rowConfigs: { size: 'small' as const },
+      },
+    ];
+
+    const defaultRowsData = [
+      { id: 1, name: 'Default Row 1', description: 'Standard row size', status: 'Active' },
+      {
+        id: 2,
+        name: 'Default Row 2',
+        description: 'Height: 64px (no rowConfigs needed)',
+        status: 'Active',
+      },
+    ];
+
+    const largeRowsData = [
+      {
+        id: 1,
+        name: 'Large Row 1',
+        description: 'Prominent row for emphasis',
+        status: 'Active',
+        rowConfigs: { size: 'large' as const },
+      },
+      {
+        id: 2,
+        name: 'Large Row 2',
+        description: 'Height: 80px',
+        status: 'Active',
+        rowConfigs: { size: 'large' as const },
+      },
+    ];
+
+    return (
+      <div style={{ minWidth: '600px' }}>
+        <div style={{ marginBottom: '32px' }}>
+          <h4 style={{ margin: '0 0 8px 0' }}>Small (44px)</h4>
+          <code style={{ display: 'block', marginBottom: '8px', color: '#666', fontSize: '12px' }}>
+            rowConfigs: {'{ size: "small" }'}
+          </code>
+          <Table
+            data={smallRowsData}
+            primaryColumn={rowSizesColumns[0]}
+            fixedColumns={rowSizesFixedColumns}
+            selectable={false}
+          />
+        </div>
+
+        <div style={{ marginBottom: '32px' }}>
+          <h4 style={{ margin: '0 0 8px 0' }}>Default (64px)</h4>
+          <code style={{ display: 'block', marginBottom: '8px', color: '#666', fontSize: '12px' }}>
+            No rowConfigs needed
+          </code>
+          <Table
+            data={defaultRowsData}
+            primaryColumn={rowSizesColumns[0]}
+            fixedColumns={rowSizesFixedColumns}
+            selectable={false}
+          />
+        </div>
+
+        <div>
+          <h4 style={{ margin: '0 0 8px 0' }}>Large (80px)</h4>
+          <code style={{ display: 'block', marginBottom: '8px', color: '#666', fontSize: '12px' }}>
+            rowConfigs: {'{ size: "large" }'}
+          </code>
+          <Table
+            data={largeRowsData}
+            primaryColumn={rowSizesColumns[0]}
+            fixedColumns={rowSizesFixedColumns}
+            selectable={false}
+          />
+        </div>
+      </div>
+    );
+  },
+};
+
+const customHeaderColumns: Column[] = [{ key: 'name', header: 'Name' }];
+
+const customHeaderFixedColumns: FixedColumn[] = [
+  { key: 'status', header: 'Status', width: 100 },
+  { key: 'category', header: 'Category', width: 120 },
+];
+
+const customHeaderData = [
+  {
+    id: 1,
+    name: 'Test execution with a very long name that demonstrates how text behaves in expanded rows with custom header styling',
+    status: 'Passed',
+    category: 'Smoke',
+    rowConfigs: { size: 'small' as const },
+  },
+  {
+    id: 2,
+    name: 'Another test case',
+    status: 'Failed',
+    category: 'Regression',
+    rowConfigs: { size: 'small' as const },
+  },
+  {
+    id: 3,
+    name: 'Quick sanity check',
+    status: 'Skipped',
+    category: 'Sanity',
+    rowConfigs: { size: 'small' as const },
+  },
+];
+
+const CustomHeaderDemo = () => {
+  const [expandedRows, setExpandedRows] = useState<Set<string | number>>(new Set());
+
+  return (
+    <div style={{ minWidth: '600px' }}>
+      <h3 style={{ margin: '0 0 16px 0', fontSize: '18px', color: '#333' }}>
+        Custom Header Background Color
+      </h3>
+      <p style={{ margin: '0 0 16px 0', fontSize: '14px', color: '#666' }}>
+        Use the <code>headerClassName</code> prop with your own CSS class to customize the header.
+        Pinned columns and expand button inherit the background color automatically.
+      </p>
+
+      {/* Define custom styles for the demo */}
+      <style>
+        {`
+          .custom-gray-header {
+            background-color: var(--rp-ui-base-bg-200) !important;
+            border-top: 1px solid var(--rp-ui-base-e-200);
+            border-bottom: none;
+          }
+        `}
+      </style>
+
+      <div
+        style={{
+          border: '1px solid var(--rp-ui-base-e-200)',
+          borderRadius: '4px',
+          overflow: 'hidden',
+        }}
+      >
+        <Table
+          data={customHeaderData}
+          primaryColumn={customHeaderColumns[0]}
+          fixedColumns={customHeaderFixedColumns}
+          pinnedColumnKeys={['status']}
+          isRowsExpandable
+          expandedRowIds={Array.from(expandedRows)}
+          selectable={false}
+          headerClassName="custom-gray-header"
+          onToggleRowExpansion={(id) => {
+            const newExpandedRows = new Set(expandedRows);
+            if (newExpandedRows.has(id)) {
+              newExpandedRows.delete(id);
+            } else {
+              newExpandedRows.add(id);
+            }
+            setExpandedRows(newExpandedRows);
+          }}
+          onToggleAllRowsExpansion={() => {
+            if (expandedRows.size === customHeaderData.length) {
+              setExpandedRows(new Set());
+            } else {
+              setExpandedRows(new Set(customHeaderData.map((item) => item.id)));
+            }
+          }}
+        />
+      </div>
+
+      <div style={{ marginTop: '24px' }}>
+        <h4 style={{ margin: '0 0 8px 0', fontSize: '14px', color: '#333' }}>How to use:</h4>
+        <pre
+          style={{
+            backgroundColor: '#f5f5f5',
+            padding: '12px',
+            borderRadius: '4px',
+            fontSize: '12px',
+            overflow: 'auto',
+          }}
+        >
+          {`// In your SCSS file:
+.custom-header {
+  background-color: var(--rp-ui-base-bg-200);
+  border-top: 1px solid var(--rp-ui-base-e-200);
+  border-bottom: none;
+}
+
+// In your component:
+<Table
+  headerClassName="custom-header"
+  // ... other props
+/>`}
+        </pre>
+      </div>
+    </div>
+  );
+};
+
+/**
+ * Demonstrates how to customize the table header background color using CSS.
+ *
+ * The Table component supports custom header styling via the `headerClassName` prop.
+ * Pinned columns and expand cells will inherit the header background color automatically.
+ *
+ * This is useful when you need to match the table header with your application's design,
+ * for example, using a gray header on a white background or vice versa.
+ */
+export const CustomHeaderStyle: Story = {
+  render: () => <CustomHeaderDemo />,
+};
+
+/**
+ * Demonstrates resizable columns with default constraints (min: 50px, max: 500px).
+ *
+ * Users can drag the column borders in the header to adjust column widths.
+ * Initial widths are taken from column.width property.
+ */
+export const ResizableColumns: Story = {
+  render: (args: TableComponentProps) => (
+    <div style={{ minWidth: '600px' }}>
+      <h3 style={{ margin: '0 0 16px 0', fontSize: '16px', color: '#333' }}>
+        Resizable Columns (Default Constraints)
+      </h3>
+      <p style={{ margin: '0 0 16px 0', fontSize: '14px', color: '#666' }}>
+        Drag the column borders in the header to adjust widths. Default constraints:{' '}
+        <code>minColumnWidth=50</code>, <code>maxColumnWidth=500</code>
+      </p>
+      <Table {...args} primaryColumn={primaryColumns} data={data} fixedColumns={fixedColumns} />
+    </div>
+  ),
+  args: {
+    renderRowActions,
+    isResizable: true,
+  },
+};
+
+/**
+ * Demonstrates resizable columns without row actions.
+ */
+export const ResizableColumnsWithoutActions: Story = {
+  render: (args: TableComponentProps) => (
+    <div style={{ minWidth: '600px' }}>
+      <Table {...args} primaryColumn={primaryColumns} data={data} fixedColumns={fixedColumns} />
+    </div>
+  ),
+  args: {
+    isResizable: true,
+  },
+};
+
+/**
+ * Demonstrates resizable columns with custom min/max constraints.
+ *
+ * Columns can be resized between 80px and 300px.
+ */
+export const ResizableColumnsWithConstraints: Story = {
+  render: (args: TableComponentProps) => (
+    <div style={{ minWidth: '600px' }}>
+      <h3 style={{ margin: '0 0 16px 0', fontSize: '16px', color: '#333' }}>
+        Resizable Columns (Custom Constraints)
+      </h3>
+      <p style={{ margin: '0 0 16px 0', fontSize: '14px', color: '#666' }}>
+        Columns can be resized between 80px and 300px. Custom constraints:{' '}
+        <code>minColumnWidth=80</code>, <code>maxColumnWidth=300</code>
+      </p>
+      <Table {...args} primaryColumn={primaryColumns} data={data} fixedColumns={fixedColumns} />
+    </div>
+  ),
+  args: {
+    renderRowActions,
+    isResizable: true,
+    minColumnWidth: 80,
+    maxColumnWidth: 300,
+  },
+};
+
+/**
+ * Demonstrates resizable columns with fixed header.
+ */
+export const ResizableColumnsWithFixedHeader: Story = {
+  render: (args: TableComponentProps) => (
+    <div style={{ width: '900px', height: '400px', border: '1px solid #ccc', padding: '16px' }}>
+      <div style={{ height: 'calc(100% - 16px)', position: 'relative' }}>
+        <Table
+          {...args}
+          data={largeDataSet}
+          primaryColumn={primaryColumns}
+          fixedColumns={scrollableFixedColumns}
+        />
+      </div>
+    </div>
+  ),
+  args: {
+    renderRowActions,
+    isResizable: true,
+    isHeaderFixed: true,
+  },
+};
+
+/**
+ * Demonstrates resizable columns with horizontal scroll and fixed header.
+ */
+export const ResizableColumnsWithHorizontalScroll: Story = {
+  render: (args: TableComponentProps) => (
+    <div style={{ width: '600px', height: '500px', border: '1px solid #ccc', padding: '16px' }}>
+      <div style={{ height: 'calc(100% - 16px)', position: 'relative' }}>
+        <Table
+          {...args}
+          data={wideTableData}
+          primaryColumn={wideTablePrimaryColumns}
+          fixedColumns={wideTableFixedColumns}
+          isHorizontallyScrollable
+          isHeaderFixed
+        />
+      </div>
+    </div>
+  ),
+  args: {
+    renderRowActions,
+    isResizable: true,
+  },
+};
+
+/**
+ * Demonstrates resizable columns with pinned columns.
+ */
+export const ResizableColumnsWithPinnedColumns: Story = {
+  render: (args: TableComponentProps) => (
+    <div style={{ width: '900px', height: '500px', border: '1px solid #ccc', padding: '16px' }}>
+      <div style={{ height: 'calc(100% - 16px)', position: 'relative' }}>
+        <Table
+          {...args}
+          data={largeDataSet}
+          primaryColumn={primaryColumns}
+          fixedColumns={scrollableFixedColumns}
+          pinnedColumnKeys={['name', 'email']}
+          isHorizontallyScrollable
+          isHeaderFixed
+        />
+      </div>
+    </div>
+  ),
+  args: {
+    renderRowActions,
+    isResizable: true,
+  },
+};
+
+/**
+ * Demonstrates a table with pinned header when scrolling is handled by an external container.
+ *
+ * This example shows:
+ * - Horizontal scrolling when table content is wider than the container
+ * - Pinned header that pins to the top when scrolling vertically in the external container
+ * - Pinned columns that stay visible during horizontal scroll
+ * - Gradient effects on pinned columns and right edge
+ *
+ * Note: This is different from a fixed header with internal table scrolling. Here, the scroll
+ * container is external (parent div), and the header pins when scrolling reaches the table top.
+ *
+ * Scroll vertically in the external container to see the header pinning, and horizontally to see
+ * pinned columns and gradients.
+ */
+export const HorizontalScrollWithPinnedHeader: Story = {
+  render: (args: TableComponentProps) => {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const scrollContainerRef = useRef<HTMLDivElement>(null);
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const [sortConfig, setSortConfig] = useState<SortConfig>({
+      key: wideTablePrimaryColumns[0].key,
+      direction: ASC,
+    });
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const [sortingColumn, setSortingColumn] = useState<Column>(wideTablePrimaryColumns[0]);
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const [sortingDirection, setSortingDirection] = useState<SortingDirection>(ASC);
+    // Generate more data for vertical scrolling demonstration
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const extendedWideTableData = useMemo(() => {
+      const baseData = [...wideTableData];
+      // Duplicate data to make table taller than container
+      for (let i = 0; i < 3; i++) {
+        baseData.push(
+          ...wideTableData.map((item) => ({
+            ...item,
+            id: `${item.id}-copy-${i + 1}`,
+          })),
+        );
+      }
+      return baseData;
+    }, []);
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const defaultSortedData = sortTableData(extendedWideTableData, sortConfig);
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const [tableData, setTableData] = useState(defaultSortedData);
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const [checkedRows, setCheckedRows] = useState<Set<number | string>>(new Set([]));
+
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    useEffect(() => {
+      const { key, direction } = sortConfig;
+      const column = [...wideTableFixedColumns, ...wideTablePrimaryColumns].find(
+        (col) => col.key === key,
+      );
+      setSortingDirection(direction);
+      setSortingColumn(column as Column);
+    }, [sortConfig]);
+
+    return (
+      <div style={{ width: '800px', height: '600px', border: '1px solid #ccc', padding: '16px' }}>
+        <h3 style={{ margin: '0 0 16px 0' }}>
+          Table with Horizontal Scroll + Pinned Header (External Scroll Container)
+        </h3>
+        <p style={{ margin: '0 0 16px 0', fontSize: '14px', color: '#666' }}>
+          This example demonstrates a pinned header that activates when scrolling in an external
+          container. The table header pins to the top when the scroll position reaches it. Scroll
+          vertically in the container to see the header pinning, and horizontally to see pinned
+          columns and gradient effects.
+        </p>
+        <div
+          ref={scrollContainerRef}
+          style={{
+            height: 'calc(100% - 100px)',
+            overflowY: 'auto',
+            overflowX: 'hidden',
+            position: 'relative',
+          }}
+        >
+          <div style={{ padding: '16px', backgroundColor: '#f0f0f0', marginBottom: '16px' }}>
+            <h4 style={{ margin: '0 0 8px 0', fontSize: '16px' }}>Content Above Table</h4>
+            <p style={{ margin: '0', fontSize: '14px', color: '#666' }}>
+              This content is inside the scrollable container. When you scroll down, this text will
+              move up and disappear, but the table header will stick to the top.
+            </p>
+            <p style={{ margin: '8px 0 0', fontSize: '14px', color: '#666' }}>
+              Scroll down to see the header pinning effect. The table header will remain fixed at
+              the top while this content scrolls away.
+            </p>
+          </div>
+          <Table
+            {...args}
+            data={tableData}
+            primaryColumn={wideTablePrimaryColumns}
+            fixedColumns={wideTableFixedColumns}
+            isHeaderFixed={true}
+            isHorizontallyScrollable={true}
+            pinnedColumnKeys={['name', 'email']}
+            externalScrollContainerRef={scrollContainerRef}
+            sortableColumns={[wideTablePrimaryColumns[0].key, 'department', 'status']}
+            onChangeSorting={(sortConfigParam = sortConfig) => {
+              let { direction } = sortConfigParam;
+              const { key } = sortConfigParam;
+              direction = toggleDirection(direction);
+              const sortedData = sortTableData(tableData, { key, direction });
+              setSortConfig({ key, direction });
+              setTableData(sortedData);
+            }}
+            onToggleRowSelection={(id) => {
+              const newCheckedRows = new Set(checkedRows);
+              if (newCheckedRows.has(id)) {
+                newCheckedRows.delete(id);
+              } else {
+                newCheckedRows.add(id);
+              }
+              setCheckedRows(newCheckedRows);
+            }}
+            onToggleAllRowsSelection={() => {
+              if (checkedRows.size === extendedWideTableData.length) {
+                setCheckedRows(new Set());
+              } else {
+                const allRows = new Set(extendedWideTableData.map((item) => item.id));
+                setCheckedRows(allRows);
+              }
+            }}
+            selectedRowIds={[...checkedRows]}
+            sortingColumn={sortingColumn}
+            sortingDirection={sortingDirection}
+          />
+        </div>
+      </div>
+    );
+  },
+  args: {
+    selectable: true,
+    renderRowActions,
+  },
+};
+
+/**
+ * Demonstrates resizable columns with horizontal scroll and checkbox outside.
+ */
+export const ResizableColumnsWithCheckboxOutside: Story = {
+  render: (args: TableComponentProps) => {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const [checkedRows, setCheckedRows] = useState<Set<number | string>>(new Set([]));
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const [expandedRows, setExpandedRows] = useState<Set<number | string>>(new Set([]));
+
+    return (
+      <div
+        style={{
+          width: '600px',
+          height: '500px',
+          border: '1px solid #ccc',
+          padding: '16px',
+          paddingLeft: '48px',
+        }}
+      >
+        <div style={{ height: 'calc(100% - 16px)', position: 'relative' }}>
+          <Table
+            {...args}
+            data={wideTableData}
+            primaryColumn={wideTablePrimaryColumns}
+            fixedColumns={wideTableFixedColumns}
+            expandedRowIds={[...expandedRows]}
+            selectedRowIds={[...checkedRows]}
+            onToggleRowSelection={(id) => {
+              const newCheckedRows = new Set(checkedRows);
+              if (newCheckedRows.has(id)) {
+                newCheckedRows.delete(id);
+              } else {
+                newCheckedRows.add(id);
+              }
+              setCheckedRows(newCheckedRows);
+            }}
+            onToggleAllRowsSelection={() => {
+              if (checkedRows.size === wideTableData.length) {
+                setCheckedRows(new Set());
+              } else {
+                const allRows = new Set(wideTableData.map((item) => item.id));
+                setCheckedRows(allRows);
+              }
+            }}
+            onToggleRowExpansion={(id) => {
+              const newExpandedRows = new Set(expandedRows);
+              if (newExpandedRows.has(id)) {
+                newExpandedRows.delete(id);
+              } else {
+                newExpandedRows.add(id);
+              }
+              setExpandedRows(newExpandedRows);
+            }}
+            onToggleAllRowsExpansion={() => {
+              if (expandedRows.size === wideTableData.length) {
+                setExpandedRows(new Set());
+              } else {
+                const allRows = new Set(wideTableData.map((item) => item.id));
+                setExpandedRows(allRows);
+              }
+            }}
+          />
+        </div>
+      </div>
+    );
+  },
+  args: {
+    renderRowActions,
+    isResizable: true,
+    isHeaderFixed: true,
+    isHorizontallyScrollable: true,
+    pinnedColumnKeys: ['name', 'email'],
+    selectable: true,
+    isRowsExpandable: true,
+    isCheckboxOutside: true,
   },
 };

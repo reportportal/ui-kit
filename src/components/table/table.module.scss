@@ -6,10 +6,14 @@ $HEIGHT-LARGE: 80px;
 $PADDING_VERTICAL-SMALL: 12px;
 $PADDING_VERTICAL-DEFAULT: 22px;
 $PADDING_VERTICAL-LARGE: 30px;
+$EXPANDABLE_CHECKBOX_COLUMN_WIDTH: 32px;
+$EXPANDABLE_CHECKBOX_Z_INDEX: 10;
 
 .table {
   width: 100%;
   max-width: 1200px;
+  position: relative;
+  isolation: isolate;
 
   * {
     box-sizing: border-box;
@@ -18,43 +22,79 @@ $PADDING_VERTICAL-LARGE: 30px;
   &.fixed-header {
     display: flex;
     flex-direction: column;
-    height: 100%;
-    overflow: hidden;
+
+    &:not(.external-scroll-container) {
+      height: 100%;
+      overflow: hidden;
+    }
+
+    &.external-scroll-container {
+      height: auto;
+    }
 
     &.horizontally-scrollable-container {
       overflow-x: auto;
       overflow-y: auto;
     }
   }
+
 }
 
 .table-header {
+  --table-header-bg-color: var(--rp-ui-base-bg-000);
   display: grid;
   width: 100%;
   height: 32px;
   align-items: center;
+  background-color: var(--table-header-bg-color);
 
   &.sticky-header {
     position: sticky;
-    padding: 0 3px;
+    padding: 0 3px 0 0;
     top: 0;
     left: 0;
-    z-index: 5;
-    background-color: var(--rp-ui-base-bg-000);
+    z-index: $EXPANDABLE_CHECKBOX_Z_INDEX + 1;
     border-bottom: 1px solid var(--rp-ui-base-e-100);
     flex-shrink: 0;
     box-sizing: border-box;
   }
 
+  &.pinned-header {
+    position: fixed;
+    z-index: 3;
+
+    &.horizontally-scrollable {
+      min-width: 0;
+      overflow: hidden;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+
+      &::-webkit-scrollbar {
+        display: none;
+      }
+    }
+  }
+
   &.horizontally-scrollable {
     overflow-x: auto;
     min-width: fit-content;
-    padding: 0 3px;
+    padding: 0 3px 0 0;
 
     &.sticky-header {
       overflow-x: visible;
       height: auto;
       min-height: 32px;
+    }
+  }
+
+  &.resizable {
+    .resizable-column:last-child {
+      overflow-x: hidden;
+    }
+
+    &:not(.horizontally-scrollable) {
+      min-width: fit-content;
+      padding: 0 3px 0 0;
     }
   }
 }
@@ -65,19 +105,28 @@ $PADDING_VERTICAL-LARGE: 30px;
   height: $HEIGHT-DEFAULT;
 
   &:has(.expanded-cell) {
-    height: max-content;
-    min-height: $HEIGHT-DEFAULT;
+    height: auto;
+    min-height: unset;
   }
 
   &.selectable {
     display: grid;
-    grid-template-columns: 32px 1fr;
+    grid-template-columns: $EXPANDABLE_CHECKBOX_COLUMN_WIDTH 1fr;
   }
 
   .row-content-wrapper {
     display: grid;
-    padding: 2px;
     width: 100%;
+    height: 100%;
+
+    &:has(.expanded-cell) {
+      height: auto;
+    }
+
+    &:has(.pinned-column.has-scroll) {
+      overflow: visible;
+    }
+
   }
 
   .table-row-content {
@@ -93,16 +142,33 @@ $PADDING_VERTICAL-LARGE: 30px;
 
     &:has(.expanded-cell) {
       align-items: flex-start;
-      height: auto;
-      min-height: $HEIGHT-DEFAULT;
+    }
+
+    &:has(.pinned-column.has-scroll) {
+      overflow: visible;
     }
 
     .expand-cell {
       background-color: inherit;
     }
+
+    .left-border-accent {
+      &::before {
+        content: '';
+        position: absolute;
+        top: calc(-1 * var(--expand-cell-top, 0px));
+        left: 0;
+        width: 3px;
+        height: var(--expand-cell-height, 100%);
+        pointer-events: none;
+        border-left: 1px solid rgba(var(--rp-ui-shadow-rgb), .15);
+      }
+    }
   }
 
   &.size-small {
+    height: $HEIGHT-SMALL;
+
     .table-row-content {
       padding-top: $PADDING_VERTICAL-SMALL;
       padding-bottom: $PADDING_VERTICAL-SMALL;
@@ -110,11 +176,7 @@ $PADDING_VERTICAL-LARGE: 30px;
 
     &:has(.expanded-cell) {
       height: auto;
-      min-height: $HEIGHT-SMALL;
-    }
-
-    .table-row-content:has(.expanded-cell) {
-      min-height: $HEIGHT-SMALL;
+      min-height: unset;
     }
   }
 
@@ -128,11 +190,7 @@ $PADDING_VERTICAL-LARGE: 30px;
 
     &:has(.expanded-cell) {
       height: auto;
-      min-height: $HEIGHT-LARGE;
-    }
-
-    .table-row-content:has(.expanded-cell) {
-      min-height: $HEIGHT-LARGE;
+      min-height: unset;
     }
   }
 }
@@ -147,8 +205,13 @@ $PADDING_VERTICAL-LARGE: 30px;
     flex: 1;
     overflow-y: auto;
     min-height: 0;
-    padding: 0 3px 3px 3px;
+    padding: 0 3px 3px 0;
     width: 100%;
+
+    .table.external-scroll-container & {
+      flex: none;
+      overflow-y: visible;
+    }
 
     .table-row {
       min-height: $HEIGHT-DEFAULT;
@@ -160,13 +223,31 @@ $PADDING_VERTICAL-LARGE: 30px;
       &.size-large {
         min-height: $HEIGHT-LARGE;
       }
+
+      &:has(.expanded-cell) {
+        min-height: unset;
+      }
     }
   }
 
   &.horizontally-scrollable {
     overflow-x: auto;
-    padding: 3px;
+    padding: 0 3px 3px 0;
     min-width: fit-content;
+
+    .table-row {
+      min-width: fit-content;
+
+      .table-row-content {
+        min-width: fit-content;
+        overflow: visible;
+      }
+    }
+  }
+
+  &.resizable:not(.horizontally-scrollable) {
+    min-width: fit-content;
+    padding: 0 3px 3px 0;
 
     .table-row {
       min-width: fit-content;
@@ -208,7 +289,6 @@ $PADDING_VERTICAL-LARGE: 30px;
   font-family: var(--rp-ui-base-font-family);
   font-weight: var(--rp-ui-base-fw-regular);
   box-sizing: border-box;
-  align-self: flex-start;
   padding: 0 16px;
 
   &.action-menu-cell {
@@ -216,11 +296,17 @@ $PADDING_VERTICAL-LARGE: 30px;
     padding: 0 16px;
   }
 
-  &:not(.action-menu-cell) {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    min-width: 0;
+  &:not(.action-menu-cell):not(.expand-cell) {
+    &:not(.table-header-cell) {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      min-width: 0;
+
+      &.pinned-column.has-scroll {
+        overflow: visible;
+      }
+    }
 
     &.expanded-cell {
       text-overflow: unset;
@@ -229,22 +315,22 @@ $PADDING_VERTICAL-LARGE: 30px;
       word-break: break-word;
       overflow-wrap: break-word;
       hyphens: auto;
-      height: auto;
+      height: 100%;
       max-height: none;
       overflow: hidden;
-      background-color: var(--rp-ui-base-bg-050);
     }
   }
 
   &.checkbox-cell {
-    width: 32px;
+    width: $EXPANDABLE_CHECKBOX_COLUMN_WIDTH;
     padding: 0;
+    margin-left: 8px;
     align-self: center;
     height: 18px;
     cursor: pointer;
     position: sticky;
     left: 0;
-    z-index: 10;
+    z-index: $EXPANDABLE_CHECKBOX_Z_INDEX;
 
     label {
       height: 18px;
@@ -254,16 +340,19 @@ $PADDING_VERTICAL-LARGE: 30px;
         background-color: var(--rp-ui-base-bg-000);
       }
     }
+
   }
 
   &.expand-cell {
     padding: 0;
-    width: 32px;
+    width: $EXPANDABLE_CHECKBOX_COLUMN_WIDTH;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
+    align-self: stretch;
     position: sticky;
-    z-index: 10;
-    background-color: var(--rp-ui-base-bg-000);
+    left: 0;
+    z-index: $EXPANDABLE_CHECKBOX_Z_INDEX;
+    background-color: inherit;
 
     button {
       display: flex;
@@ -272,8 +361,22 @@ $PADDING_VERTICAL-LARGE: 30px;
       background: none;
       border: none;
       padding: 0;
-      width: 32px;
+      width: 16px;
+      margin-left: 16px;
       cursor: pointer;
+    }
+
+    .expand-all-tooltip-wrapper {
+      width: 16px;
+      margin-left: 16px;
+
+      button {
+        margin-left: 0;
+      }
+    }
+
+    .expand-all-tooltip-content {
+      width: max-content;
     }
 
     svg {
@@ -300,8 +403,10 @@ $PADDING_VERTICAL-LARGE: 30px;
 
 .table-header-cell {
   @include font-scale(s-small);
+  position: relative;
   color: var(--rp-ui-base-e-400);
   display: flex;
+  height: 100%;
   align-items: center;
   text-align: left;
   background: none;
@@ -309,10 +414,17 @@ $PADDING_VERTICAL-LARGE: 30px;
   padding: 0 16px;
   align-self: center;
 
+  &.expand-cell {
+    align-items: center;
+  }
+
   .label {
     display: flex;
     align-items: center;
     min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 
     > span {
       overflow: hidden;
@@ -329,7 +441,7 @@ $PADDING_VERTICAL-LARGE: 30px;
   &.align-right {
     justify-content: flex-end;
 
-    svg {
+    > .label svg {
       margin-right: -16px;
     }
   }
@@ -341,23 +453,41 @@ $PADDING_VERTICAL-LARGE: 30px;
   &.pinned-column {
     position: sticky;
     z-index: 12;
-    background-color: var(--rp-ui-base-bg-000);
+    background-color: var(--table-header-bg-color);
 
-    &::after {
+    &::before {
       content: '';
       position: absolute;
-      top: -20px;
+      top: 50%;
       right: 0;
       width: 1px;
       height: 24px;
-      transform: translateY(50%);
+      transform: translateY(-50%);
       background-color: var(--rp-ui-base-e-200);
       z-index: 1;
     }
 
-    &:hover {
-      background-color: var(--rp-ui-base-e-050);
+    &.has-scroll {
+      isolation: isolate;
+
+      &::before {
+        display: none;
+      }
     }
+  }
+
+  &.resizable::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: 0;
+    width: 1px;
+    height: 24px;
+    transform: translateY(-50%);
+    background-color: var(--rp-ui-base-e-400);
+    z-index: 1;
+    opacity: 1;
+    transition: opacity 0.15s ease-in-out;
   }
 }
 
@@ -369,5 +499,87 @@ $PADDING_VERTICAL-LARGE: 30px;
     z-index: 1;
     background: var(--rp-ui-color-field-bg);
 
+    &.has-scroll {
+      overflow: visible;
+      isolation: isolate;
+    }
   }
 }
+
+/* Checkbox outside styles start */
+.table-wrapper {
+  position: relative;
+  display: flex;
+  width: calc(100% + $EXPANDABLE_CHECKBOX_COLUMN_WIDTH);
+  margin-left: -$EXPANDABLE_CHECKBOX_COLUMN_WIDTH;
+  height: 100%;
+  overflow: hidden;
+
+  * {
+    box-sizing: border-box;
+  }
+}
+
+.checkbox-column {
+  width: $EXPANDABLE_CHECKBOX_COLUMN_WIDTH;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  max-height: 100%;
+
+  .checkbox-cell {
+    margin-left: 8px;
+  }
+}
+
+.checkbox-header {
+  width: $EXPANDABLE_CHECKBOX_COLUMN_WIDTH;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  .fixed-header & {
+    position: sticky;
+    top: 0;
+    z-index: $EXPANDABLE_CHECKBOX_Z_INDEX + 1;
+  }
+
+  &.pinned-header {
+    position: fixed;
+  }
+
+  label {
+    height: 18px;
+    width: 16px;
+
+    span {
+      background-color: var(--rp-ui-base-bg-000);
+    }
+  }
+}
+
+.checkbox-body {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.checkbox-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  label {
+    height: 18px;
+    width: 16px;
+
+    span {
+      background-color: var(--rp-ui-base-bg-000);
+    }
+  }
+}
+/* Checkbox outside styles end */

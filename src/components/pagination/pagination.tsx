@@ -1,4 +1,4 @@
-import { FC, ReactElement } from 'react';
+import { ReactElement, ReactNode } from 'react';
 import classNames from 'classnames/bind';
 import { ItemCounter } from './itemsCounter/itemCounter';
 import { PageSizeControl } from './pageSizeControl/pageSizeControl';
@@ -26,9 +26,12 @@ export interface PaginationProps {
   changePage: ChangePage;
   changePageSize: ChangePageSize;
   captions?: PaginationCaptions;
+  className?: string;
+  warningContent?: ReactNode;
+  limitExceeded?: boolean;
 }
 
-export const Pagination: FC<PaginationProps> = ({
+export const Pagination = ({
   activePage,
   totalPages,
   pageSize,
@@ -37,18 +40,23 @@ export const Pagination: FC<PaginationProps> = ({
   changePage,
   changePageSize,
   captions,
-}): ReactElement => {
+  className,
+  warningContent,
+  limitExceeded = false,
+}: PaginationProps): ReactElement => {
   const ofText = captions?.of || 'of';
   const pageText = captions?.page || 'Page';
 
   return (
-    <div className={cx('pagination')}>
+    <div className={cx('pagination', className)}>
       <ItemCounter
         activePage={activePage}
         pageSize={pageSize}
         totalItems={totalItems}
         ofText={ofText}
         itemsText={captions?.items || 'items'}
+        limitExceeded={limitExceeded}
+        warningContent={warningContent}
       />
       {totalPages > 1 && (
         <PageControls

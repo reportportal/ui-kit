@@ -13,4 +13,8 @@ export enum EventName {
   ON_CLICK = 'onClick',
 }
 
-export const SCROLLBARS_AUTO_HEIGHT_MAX = 216;
+export const SCROLLBARS_AUTO_HEIGHT_MAX = 240;
+
+export const DROPDOWN_PORTAL_MENU_ATTR = 'data-dropdown-portal-menu';
+
+export const DEFAULT_VISIBLE_TAG_LINES = 10;

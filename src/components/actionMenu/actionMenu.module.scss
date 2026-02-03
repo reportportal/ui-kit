@@ -1,0 +1,89 @@
+/*!
+ * Copyright 2026 EPAM Systems
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@import 'src/assets/styles/mixins/font-scale';
+
+.action-menu {
+  display: inline-flex;
+}
+
+.actions-popover {
+  padding: 8px 0;
+}
+
+.action-dropdown {
+  display: flex;
+  flex-direction: column;
+}
+
+.action-menu-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+.action-item {
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  width: 100%;
+  padding: 8px 16px;
+  border: none;
+  background: none;
+  color: var(--rp-ui-color-text);
+  @include font-scale('base');
+  font-family: var(--rp-ui-base-font-family);
+  font-weight: var(--rp-ui-base-fw-regular);
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: var(--rp-ui-color-bg-3);
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  &:focus-visible {
+    background-color: var(--rp-ui-color-bg-3);
+  }
+
+  &.disabled {
+    color: var(--rp-ui-color-disabled);
+
+    &:hover {
+      background-color: transparent;
+    }
+  }
+}
+
+.divider {
+  height: 1px;
+  margin: 8px 12px;
+  background-color: var(--rp-ui-divider-bg);
+}
+

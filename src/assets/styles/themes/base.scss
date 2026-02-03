@@ -5,6 +5,23 @@
 @import "light";
 
 :root {
+  /* Figma palette colors */
+  // DS link - https://www.figma.com/design/G0UwEwSjuFKXrVvNa0Duw3/%E2%9A%A1%EF%B8%8F-RP-Design-System-6?node-id=20749-10029&t=uDKkW6Q4ofzeSDXt-4
+
+  /* Main colors */
+  --rp-ui-base-yellow-500: #ffd861;
+  --rp-ui-base-yellow-800: #ffc208;
+
+  /* Additional colors */
+  --rp-ui-base-a-red-200: #ff6666;
+  --rp-ui-base-a-red-400: #ff4040;
+
+  --rp-ui-base-a-raspberry-300: #c54a41;
+
+  --rp-ui-base-a-yellow-300: var(--rp-ui-base-yellow-500);
+  --rp-ui-base-a-yellow-600: var(--rp-ui-base-yellow-800);
+  --rp-ui-base-a-yellow-700: #d4a002;
+
   /* colors */
 
   --rp-ui-base-bg-000: #ffffff;
@@ -40,8 +57,8 @@
   --rp-ui-base-dark-bg-solid-96: #1a1a1a;
   --rp-ui-base-dark-bg-solid-98: #141414;
 
-  --rp-ui-base-dark-error: #ff4040;
-  --rp-ui-base-dark-error-text: #ff6666;
+  --rp-ui-base-dark-error: var(--rp-ui-base-a-red-400);
+  --rp-ui-base-dark-error-text: var(--rp-ui-base-a-red-200);
   --rp-ui-base-dark-log-error: #ff3222;
   --rp-ui-base-dark-log-fatal: #c2352b;
 
@@ -71,7 +88,7 @@
   --rp-ui-base-sm-error-line-200: #ffc0bd;
   --rp-ui-base-sm-info-line-100: #ced3db;
 
-  --rp-ui-base-defect-type-AB: #ffc208;
+  --rp-ui-base-defect-type-AB: var(--rp-ui-base-yellow-800);
   --rp-ui-base-purple-600: #8866aa;
 
   --rp-ui-base-tag-value-text: #394db6;
@@ -80,14 +97,15 @@
   --rp-ui-base-tag-key-background: #dac3e6;
   --rp-ui-base-system-issue-group: #3e7be6;
   --rp-ui-base-product-bug-group: #d32f2f;
-  --rp-ui-base-automation-bug-group: #ffc208;
+  --rp-ui-base-automation-bug-group: var(--rp-ui-base-yellow-800);
   --rp-ui-base-no-defect-bug-group: #76839b;
   --rp-ui-base-test-execution-status-passed: #3aa76d;
   --rp-ui-base-test-execution-status-skipped: #b8b8b8;
 
   /* shadows */
-  --rp-ui-base-shadow: 0px 1px 3px rgba(55, 67, 98, 0.1);
-  --rp-ui-base-shadow-hover: 0px 1px 3px rgba(55, 67, 98, 0.2);
+  --rp-ui-shadow-rgb: 55, 67, 98;
+  --rp-ui-base-shadow: 0px 1px 3px rgba(var(--rp-ui-shadow-rgb), 0.1);
+  --rp-ui-base-shadow-hover: 0px 1px 3px rgba(var(--rp-ui-shadow-rgb), 0.2);
   --rp-ui-base-shadow-secondary: 0 8px 40px rgba(0, 0, 0, 0.15);
 
   // TODO: discuss with UX

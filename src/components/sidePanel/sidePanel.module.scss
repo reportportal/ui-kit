@@ -1,5 +1,29 @@
 @import 'src/assets/styles/mixins/font-scale';
 
+.side-panel-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+    pointer-events: none;
+
+    &.active {
+        opacity: 1;
+        pointer-events: auto;
+    }
+}
+
+.overlay-default {
+    background-color: var(--rp-ui-base-overlay);
+}
+
+.overlay-light-cyan {
+    background-color: var(--rp-ui-base-overlay-light-cyan);
+}
+
 .side-panel {
     position: fixed;
     display: flex;

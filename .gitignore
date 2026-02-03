@@ -30,3 +30,8 @@ coverage
 .coverage
 coverage.json
 *.lcov
+
+# Local development and IDE tool directories
+.cursor/
+.serena/
+.local/

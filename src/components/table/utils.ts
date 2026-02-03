@@ -47,12 +47,15 @@ export const getRowSizeClassName = (rowData: RowData): string => {
   return `size-${rowSize}`;
 };
 
+const formatWidth = (width: string | number): string => (isString(width) ? width : `${width}px`);
+
 export const calculatePinnedPosition = (
   columnIndex: number,
   columns: (PrimaryColumn | FixedColumn)[],
   columnWidthsRef: MutableRefObject<Map<string, number>>,
   isRowsExpandable: boolean,
   selectable: boolean,
+  isCheckboxOutside = false,
 ): number => {
   let position = 0;
 
@@ -60,7 +63,7 @@ export const calculatePinnedPosition = (
     position += EXPANDABLE_CHECKBOX_COLUMN_WIDTH;
   }
 
-  if (selectable) {
+  if (selectable && !isCheckboxOutside) {
     position += EXPANDABLE_CHECKBOX_COLUMN_WIDTH;
   }
 
@@ -88,6 +91,7 @@ export const getCellStyle = (
   columnWidthsRef: MutableRefObject<Map<string, number>>,
   isRowsExpandable: boolean,
   selectable: boolean,
+  isCheckboxOutside = false,
 ): CSSProperties => {
   const baseStyle: CSSProperties = {};
 
@@ -103,6 +107,7 @@ export const getCellStyle = (
       columnWidthsRef,
       isRowsExpandable,
       selectable,
+      isCheckboxOutside,
     );
     baseStyle.left = `${leftPosition}px`;
   }
@@ -117,6 +122,9 @@ export const getGridTemplateColumns = (
   selectable: boolean,
   renderRowActions: boolean,
   isHeader = false,
+  columnWidths?: Record<string, number>,
+  isResizable = false,
+  isCheckboxOutside = false,
 ): string => {
   const columns: string[] = [];
 
@@ -124,22 +132,32 @@ export const getGridTemplateColumns = (
     columns.push(`${EXPANDABLE_CHECKBOX_COLUMN_WIDTH}px`);
   }
 
-  if (isHeader && selectable) {
+  if (isHeader && selectable && !isCheckboxOutside) {
     columns.push(`${EXPANDABLE_CHECKBOX_COLUMN_WIDTH}px`);
   }
 
   const addColumnWidth = (column: PrimaryColumn | FixedColumn) => {
+    // If the width is already fixed through resize, use the fixed value
+    if (columnWidths?.[column.key] !== undefined) {
+      columns.push(`${columnWidths[column.key]}px`);
+      return;
+    }
+
     if (isPrimaryColumn(column)) {
       const primaryColumn = column as PrimaryColumn;
+
+      if (isResizable && primaryColumn.width) {
+        columns.push(formatWidth(primaryColumn.width));
+        return;
+      }
+
       const minWidth = primaryColumn.width
-        ? isString(primaryColumn.width)
-          ? primaryColumn.width
-          : `${primaryColumn.width}px`
+        ? formatWidth(primaryColumn.width)
         : `${PRIMARY_COLUMN_DEFAULT_WIDTH}px`;
       columns.push(`minmax(${minWidth}, 1fr)`);
     } else {
       const fixedColumn = column as FixedColumn;
-      const width = isString(fixedColumn.width) ? fixedColumn.width : `${fixedColumn.width}px`;
+      const width = formatWidth(fixedColumn.width);
       columns.push(width);
     }
   };

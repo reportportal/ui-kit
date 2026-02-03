@@ -1,8 +1,9 @@
-import { ReactNode, useEffect, useRef, useState, FC } from 'react';
+import { ReactNode, useEffect, useMemo, useRef, useState, FC } from 'react';
 import { Scrollbars } from 'rc-scrollbars';
 import { motion, AnimatePresence } from 'framer-motion';
 import classNames from 'classnames/bind';
 import { useOnClickOutside, useWindowResize } from '@common/hooks';
+import { DROPDOWN_PORTAL_MENU_ATTR } from '@components/dropdown';
 import { KeyCodes } from '@common/constants/keyCodes';
 import { ButtonProps } from '@components/button';
 import { ModalContent } from './modalContent';
@@ -115,7 +116,14 @@ export const Modal: FC<ModalProps> = ({
     return () => document.removeEventListener('keydown', onKeydown, false);
   }, []);
 
-  useOnClickOutside(modalRef, allowCloseOutside ? closeModal : undefined);
+  const clickOutsideOptions = useMemo(
+    () => ({
+      ignoreSelectors: [`[${DROPDOWN_PORTAL_MENU_ATTR}]`],
+    }),
+    [],
+  );
+
+  useOnClickOutside(modalRef, allowCloseOutside ? closeModal : undefined, clickOutsideOptions);
 
   return (
     <AnimatePresence onExitComplete={onClose}>
@@ -134,14 +142,18 @@ export const Modal: FC<ModalProps> = ({
           >
             <ModalHeader title={title} onClose={closeModal} withDescription={!!description} />
             {scrollable ? (
-              <Scrollbars autoHeight autoHeightMax={getContentMaxHeight()} hideTracksWhenNotNeeded>
-                {description && (
-                  <span className={cx('description', { scrollable: scrollable })}>
-                    {description}
-                  </span>
-                )}
-                <ModalContent scrollable>{children}</ModalContent>
-              </Scrollbars>
+              <div className={cx('scrollable-wrapper')}>
+                <Scrollbars
+                  autoHeight
+                  autoHeightMax={getContentMaxHeight()}
+                  hideTracksWhenNotNeeded
+                >
+                  <div className={cx('scrollable-content')}>
+                    {description && <span className={cx('description')}>{description}</span>}
+                    <ModalContent>{children}</ModalContent>
+                  </div>
+                </Scrollbars>
+              </div>
             ) : (
               <>
                 {description && <span className={cx('description')}>{description}</span>}

@@ -86,6 +86,10 @@ export interface MultipleAutocompleteProps<T> {
   customNoMatchesMessage?: string;
   useFixedPositioning?: boolean;
   newItemButtonText?: string;
+  menuClassName?: string;
+  selectedItemSingleLine?: boolean;
+  selectedItemClassName?: string;
+  selectedItemTextClassName?: string;
   optionsLimit?: number;
   limitationText?: string;
 }
@@ -127,6 +131,10 @@ export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompletePr
     renderCustomSelectedItem,
     useFixedPositioning,
     newItemButtonText = '',
+    menuClassName = '',
+    selectedItemSingleLine,
+    selectedItemClassName,
+    selectedItemTextClassName,
     ...props
   } = componentsProps;
 
@@ -264,6 +272,7 @@ export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompletePr
                   <div
                     className={cx('autocomplete-input', {
                       'mobile-disabled': mobileDisabled,
+                      'single-line-mode': selectedItemSingleLine,
                     })}
                   >
                     <SelectedItems<T>
@@ -279,6 +288,9 @@ export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompletePr
                       getAdditionalCreationCondition={getAdditionalCreationCondition}
                       storedItemsMap={storedItemsMap}
                       highlightUnStoredItem={highlightUnStoredItem}
+                      selectedItemSingleLine={selectedItemSingleLine}
+                      selectedItemClassName={selectedItemClassName}
+                      selectedItemTextClassName={selectedItemTextClassName}
                     />
                     <input
                       {...getInputProps({
@@ -323,7 +335,7 @@ export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompletePr
                         disabled,
                         ...inputProps,
                       })}
-                      className={cx('input', { disabled })}
+                      className={cx('input', { disabled }, inputProps.className)}
                       data-automation-id={dataAutomationId}
                     />
                   </div>
@@ -364,6 +376,7 @@ export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompletePr
                 parseValueToString={parseValueToString}
                 createWithoutConfirmation={createWithoutConfirmation}
                 options={filteredOptions}
+                className={menuClassName}
                 {...props}
               />
             </div>

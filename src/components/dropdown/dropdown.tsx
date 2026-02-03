@@ -10,17 +10,24 @@ import {
   useLayoutEffect,
   MouseEvent,
   useEffect,
+  KeyboardEvent,
+  ChangeEvent,
+  FocusEvent,
+  ComponentPropsWithRef,
 } from 'react';
+import { isEmpty } from 'es-toolkit/compat';
+import { createPortal } from 'react-dom';
 import classNames from 'classnames/bind';
-import { useFloating, offset, flip } from '@floating-ui/react-dom';
+import { useFloating, offset, flip, size, autoUpdate } from '@floating-ui/react-dom';
 import { useSelect } from 'downshift';
 import { Scrollbars } from 'rc-scrollbars';
-import { useOnClickOutside } from '@common/hooks';
 import { KeyCodes } from '@common/constants/keyCodes';
 import { BaseIconButton } from '@components/baseIconButton';
 import { ClearIcon, DropdownIcon } from '@components/icons';
-import { Tooltip } from '@components/tooltip';
 import { FieldLabel } from '@components/fieldLabel';
+import { AdaptiveTagList } from '@components/adaptiveTagList';
+import { splitHtmlAttributes } from '@common/utils';
+import { useEllipsisTitle } from '@common/hooks';
 import { DropdownOption } from './dropdownOption';
 import { DropdownVariant, RenderDropdownOption, DropdownOptionType, DropdownValue } from './types';
 import {
@@ -28,6 +35,8 @@ import {
   CLOSE_DROPDOWN_KEY_CODES,
   EventName,
   SCROLLBARS_AUTO_HEIGHT_MAX,
+  DROPDOWN_PORTAL_MENU_ATTR,
+  DEFAULT_VISIBLE_TAG_LINES,
 } from './constants';
 import {
   calculateDefaultIndex,
@@ -41,7 +50,8 @@ import styles from './dropdown.module.scss';
 
 const cx = classNames.bind(styles);
 
-export interface DropdownProps {
+export interface DropdownProps
+  extends Omit<ComponentPropsWithRef<'div'>, 'onChange' | 'onFocus' | 'onBlur' | 'title'> {
   // TODO: make value and options optional
   options: DropdownOptionType[];
   value: DropdownValue | DropdownValue[];
@@ -81,10 +91,17 @@ export interface DropdownProps {
   onClear?: () => void;
   /** ARIA label for the clear button */
   clearButtonAriaLabel?: string;
-  /** Portal root element for tooltip rendering (e.g., document.body to prevent clipping) */
-  tooltipPortalRoot?: Element;
-  /** Z-index for tooltip when rendered in portal (default: 9) */
-  tooltipZIndex?: number;
+  /**
+   * Portal root element for dropdown menu rendering.
+   * When provided, the menu will be rendered in this element using React Portal.
+   * Useful for preventing clipping in containers with overflow: hidden (e.g., Modal, SidePanel).
+   * @example menuPortalRoot={document.body}
+   */
+  menuPortalRoot?: Element;
+  /** Whether to render selected values as tags using AdaptiveTagList (only for multiSelect mode) */
+  isMultiSelectWithTags?: boolean;
+  /** Message to display when no options match the search term */
+  noMatchesMessage?: string;
 }
 
 // DS link - https://www.figma.com/file/gjYQPbeyf4YsH3wZiVKoaj/%F0%9F%9B%A0-RP-DS-6?type=design&node-id=3424-12207&mode=design&t=dDq6moPaTzQLviS1-0
@@ -120,21 +137,42 @@ export const Dropdown: FC<DropdownProps> = ({
   clearable = false,
   onClear = () => {},
   clearButtonAriaLabel = 'Clear selection',
-  tooltipPortalRoot,
-  tooltipZIndex,
+  menuPortalRoot,
+  isMultiSelectWithTags = false,
+  noMatchesMessage = 'No matches found',
+  ...rest
 }): ReactElement => {
+  const { transformed: transformedAttributes, remaining: restProps } = splitHtmlAttributes(rest);
+
   const [opened, setOpened] = useState(false);
-  const containerRef = useRef(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const containerRef = useRef<HTMLDivElement>(null);
+  const menuRef = useRef<HTMLDivElement | null>(null);
   const scrollbarsRef = useRef<Scrollbars | null>(null);
   const scrollPositionRef = useRef(0);
-  const valueRef = useRef<HTMLSpanElement>(null);
-  const [isValueOverflowed, setIsValueOverflowed] = useState(false);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const prevSearchTermRef = useRef('');
   const [eventName, setEventName] = useState<string | null>(null);
   const savedHighlightedIndexRef = useRef<number | null>(null);
-  const flattenedOptions = useMemo(() => flattenOptions(options), [options]);
+  const allFlattenedOptions = useMemo(() => flattenOptions(options), [options]);
+  const flattenedOptions = useMemo(() => {
+    if (!isMultiSelectWithTags || !searchTerm.trim()) {
+      return allFlattenedOptions;
+    }
+
+    const lowerSearch = searchTerm.toLowerCase();
+
+    return allFlattenedOptions.filter(({ option }) =>
+      option.label.toLowerCase().includes(lowerSearch),
+    );
+  }, [allFlattenedOptions, searchTerm, isMultiSelectWithTags]);
   const selectableOptions = useMemo(
     () => flattenedOptions.map(({ option }) => option),
     [flattenedOptions],
+  );
+  const allSelectableOptions = useMemo(
+    () => allFlattenedOptions.map(({ option }) => option),
+    [allFlattenedOptions],
   );
   const groupOptions = useMemo(() => {
     return flattenedOptions
@@ -204,9 +242,32 @@ export const Dropdown: FC<DropdownProps> = ({
       offset(5),
       flip({
         fallbackPlacements: ['bottom-start', 'top-start', 'bottom', 'top'],
+        ...(menuPortalRoot && {
+          boundary: document.documentElement,
+          rootBoundary: 'viewport',
+        }),
       }),
-    ],
+      menuPortalRoot
+        ? size({
+            apply({ rects, elements }) {
+              const referenceWidth = rects.reference.width;
+              Object.assign(elements.floating.style, {
+                width: `${referenceWidth}px`,
+                minWidth: `${referenceWidth}px`,
+                maxWidth: `${referenceWidth}px`,
+              });
+            },
+          })
+        : null,
+    ].filter(Boolean),
+    whileElementsMounted: opened
+      ? (reference, floating, update) =>
+          autoUpdate(reference, floating, update, {
+            animationFrame: true,
+          })
+      : undefined,
   });
+
   const handleSelectAll = () => {
     if (!isOptionAllVisible) {
       return;
@@ -229,8 +290,17 @@ export const Dropdown: FC<DropdownProps> = ({
     onSelectAll();
   };
 
+  const openDropdown = useCallback(() => {
+    if (!opened) {
+      setOpened(true);
+      onFocus?.();
+    }
+  }, [opened, onFocus]);
+
   const closeHandler = useCallback(() => {
     setOpened(false);
+    setSearchTerm('');
+    prevSearchTermRef.current = '';
     onBlur?.();
   }, [onBlur]);
 
@@ -259,12 +329,42 @@ export const Dropdown: FC<DropdownProps> = ({
     [performClear],
   );
 
-  const handleClickOutside = () => {
-    if (opened) {
-      closeHandler();
+  const handleClickOutside = useCallback(
+    (event?: Event) => {
+      if (!opened) {
+        return;
+      }
+
+      const target = event?.target as Node | null;
+      if (!target) {
+        return;
+      }
+
+      const isClickInsideContainer = containerRef.current?.contains(target);
+      const isClickInsideMenu = menuRef.current?.contains(target);
+
+      if (!isClickInsideContainer && !isClickInsideMenu) {
+        closeHandler();
+      }
+    },
+    [opened, closeHandler],
+  );
+
+  useEffect(() => {
+    if (!opened) {
+      return undefined;
     }
-  };
-  useOnClickOutside(containerRef, handleClickOutside);
+
+    const listener = (event: Event) => {
+      handleClickOutside(event);
+    };
+
+    document.addEventListener('pointerdown', listener);
+
+    return () => {
+      document.removeEventListener('pointerdown', listener);
+    };
+  }, [opened, handleClickOutside]);
 
   const handleChange = (option: DropdownOptionType) => {
     if (option.disabled) {
@@ -306,11 +406,10 @@ export const Dropdown: FC<DropdownProps> = ({
   const {
     getToggleButtonProps,
     getLabelProps,
-    getMenuProps,
+    getMenuProps: getMenuPropsOriginal,
     getItemProps,
     setHighlightedIndex,
     highlightedIndex,
-    selectedItem,
   } = useSelect<DropdownOptionType>({
     items: selectableOptions,
     itemToString: (item): string => (item?.label ? String(item.label) : placeholder) || '',
@@ -336,6 +435,33 @@ export const Dropdown: FC<DropdownProps> = ({
     },
   });
 
+  const setFloatingRef = useCallback(
+    (node: HTMLDivElement | null) => {
+      menuRef.current = node;
+      refs.setFloating(node);
+    },
+    [refs],
+  );
+
+  const getMenuProps = useCallback(
+    (props: Parameters<typeof getMenuPropsOriginal>[0] = {}) => {
+      const menuProps = getMenuPropsOriginal(props);
+      const originalRef = menuProps.ref;
+      return {
+        ...menuProps,
+        ref: (node: HTMLDivElement | null) => {
+          setFloatingRef(node);
+          if (typeof originalRef === 'function') {
+            originalRef(node);
+          } else if (originalRef) {
+            (originalRef as { current: HTMLDivElement | null }).current = node;
+          }
+        },
+      };
+    },
+    [getMenuPropsOriginal, setFloatingRef],
+  );
+
   useEffect(() => {
     if (
       multiSelect &&
@@ -353,6 +479,92 @@ export const Dropdown: FC<DropdownProps> = ({
       });
     }
   }, [multiSelect, opened, value, selectableOptions.length, setHighlightedIndex, notScrollable]);
+
+  useEffect(() => {
+    if (opened && isMultiSelectWithTags) {
+      requestAnimationFrame(() => {
+        searchInputRef.current?.focus();
+      });
+    }
+  }, [opened, isMultiSelectWithTags]);
+
+  useEffect(() => {
+    if (isMultiSelectWithTags && opened && searchTerm !== prevSearchTermRef.current) {
+      prevSearchTermRef.current = searchTerm;
+
+      if (searchTerm) {
+        setHighlightedIndex(0);
+      }
+    }
+  }, [searchTerm, isMultiSelectWithTags, opened]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Prevent page scrolling only during initial dropdown opening when rendered in a portal
+  // Scroll lock is active for a short period (300ms) to prevent browser auto-scroll behavior
+  // After that, normal scrolling is allowed while dropdown remains open
+
+  useLayoutEffect(() => {
+    if (!opened || !menuPortalRoot) {
+      return;
+    }
+
+    let savedScrollY = window.scrollY;
+    let isLockActive = true;
+    const LOCK_DURATION = 300;
+
+    const preventScroll = () => {
+      if (!isLockActive) {
+        return;
+      }
+      const currentScrollY = window.scrollY;
+      if (currentScrollY !== savedScrollY) {
+        window.scrollTo(0, savedScrollY);
+      }
+    };
+
+    const handleScroll = (event: Event) => {
+      if (!isLockActive) {
+        return;
+      }
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      preventScroll();
+    };
+
+    savedScrollY = window.scrollY;
+    window.addEventListener('scroll', handleScroll, { passive: false, capture: true });
+
+    requestAnimationFrame(() => {
+      savedScrollY = window.scrollY;
+      preventScroll();
+    });
+
+    const timeoutId = setTimeout(() => {
+      isLockActive = false;
+    }, LOCK_DURATION);
+
+    return () => {
+      clearTimeout(timeoutId);
+      window.removeEventListener('scroll', handleScroll, { capture: true });
+    };
+  }, [opened, menuPortalRoot]);
+
+  // Close dropdown on window resize when menu is rendered in portal
+  // This prevents menu from being positioned incorrectly after layout changes
+  useEffect(() => {
+    if (!opened || !menuPortalRoot) {
+      return;
+    }
+
+    const handleResize = () => {
+      closeHandler();
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [opened, menuPortalRoot, closeHandler]);
 
   const onDropdownClick = () => {
     if (!disabled) {
@@ -391,7 +603,13 @@ export const Dropdown: FC<DropdownProps> = ({
       return placeholder;
     }
 
-    return undefined;
+    // Fallback for string values that are not found in options
+    // Only applies when placeholder is not set (empty string is used by default)
+    if (typeof value === 'string' && value.length > 0 && !placeholder) {
+      return value;
+    }
+
+    return placeholder || undefined;
   }, [
     multiSelect,
     value,
@@ -402,14 +620,12 @@ export const Dropdown: FC<DropdownProps> = ({
     placeholder,
   ]);
 
-  useEffect(() => {
-    if (valueRef.current) {
-      const { offsetWidth, scrollWidth } = valueRef.current;
-      setIsValueOverflowed(scrollWidth > offsetWidth);
-    } else {
-      setIsValueOverflowed(false);
-    }
-  }, [displayedValue]);
+  const formattedValue = useMemo(() => {
+    return formatDisplayedValue ? formatDisplayedValue(displayedValue) : displayedValue;
+  }, [formatDisplayedValue, displayedValue]);
+
+  const ellipsisContent = hasSelectedValue && formattedValue ? formattedValue : undefined;
+  const { ref: valueRef, title: valueTitle } = useEllipsisTitle<HTMLSpanElement>(ellipsisContent);
 
   const handleToggleButtonKeyDown: KeyboardEventHandler<HTMLDivElement> = (event) => {
     const { keyCode } = event;
@@ -429,8 +645,7 @@ export const Dropdown: FC<DropdownProps> = ({
     }
 
     setHighlightedIndex(defaultHighlightedIndex);
-    setOpened(true);
-    onFocus?.();
+    openDropdown();
     setEventName(EventName.ON_KEY_DOWN);
   };
 
@@ -459,7 +674,7 @@ export const Dropdown: FC<DropdownProps> = ({
 
   const renderOptions = () => (
     <div className={cx('options-container')}>
-      {multiSelect && isOptionAllVisible && (
+      {multiSelect && isOptionAllVisible && !isEmpty(flattenedOptions) && (
         <>
           <DropdownOption
             option={optionAll}
@@ -478,38 +693,40 @@ export const Dropdown: FC<DropdownProps> = ({
           <div className={cx('divider')} />{' '}
         </>
       )}
-      {flattenedOptions.map(({ option, depth }, index) => {
-        const optionLeafValues = leafValuesByOption.get(option.value) ?? [option.value];
-        const isMultiChecked =
-          multiSelect && optionLeafValues.every((leafValue) => selectedValuesSet.has(leafValue));
-        const isPartiallyChecked =
-          multiSelect &&
-          option.children?.length &&
-          optionLeafValues.some((leafValue) => selectedValuesSet.has(leafValue)) &&
-          !isMultiChecked;
+      {!isEmpty(flattenedOptions) ? (
+        flattenedOptions.map(({ option, depth }, index) => {
+          const optionLeafValues = leafValuesByOption.get(option.value) ?? [option.value];
+          const isMultiChecked =
+            multiSelect && optionLeafValues.every((leafValue) => selectedValuesSet.has(leafValue));
+          const isPartiallyChecked =
+            multiSelect &&
+            option.children?.length &&
+            optionLeafValues.some((leafValue) => selectedValuesSet.has(leafValue)) &&
+            !isMultiChecked;
 
-        return (
-          <DropdownOption
-            key={option.value}
-            {...getItemProps({
-              item: option,
-              index,
-            })}
-            multiSelect={multiSelect}
-            selected={
-              multiSelect ? isMultiChecked : option.value === (selectedItem?.value ?? selectedItem)
-            }
-            option={{ title: option.label, ...option }}
-            highlightHovered={highlightedIndex === index && eventName !== EventName.ON_CLICK}
-            render={renderOption}
-            onChange={option.disabled ? null : () => handleChange(option)}
-            onMouseEnter={() => setHighlightedIndex(index)}
-            depth={depth}
-            hasChildren={!!option.children?.length}
-            isPartiallyChecked={isPartiallyChecked}
-          />
-        );
-      })}
+          return (
+            <DropdownOption
+              key={option.value}
+              {...getItemProps({
+                item: option,
+                index,
+              })}
+              multiSelect={multiSelect}
+              selected={multiSelect ? isMultiChecked : option.value === value}
+              option={{ title: option.label, ...option }}
+              highlightHovered={highlightedIndex === index && eventName !== EventName.ON_CLICK}
+              render={renderOption}
+              onChange={option.disabled ? null : () => handleChange(option)}
+              onMouseEnter={() => setHighlightedIndex(index)}
+              depth={depth}
+              hasChildren={!!option.children?.length}
+              isPartiallyChecked={isPartiallyChecked}
+            />
+          );
+        })
+      ) : (
+        <div className={cx('empty-list-message')}>{noMatchesMessage}</div>
+      )}
       {footer && (
         <>
           <div className={cx('divider')} />
@@ -519,36 +736,115 @@ export const Dropdown: FC<DropdownProps> = ({
     </div>
   );
 
-  const renderValue = () => {
-    const formattedValue = formatDisplayedValue
-      ? formatDisplayedValue(displayedValue)
-      : displayedValue;
-    const contentNode = (
-      <span
-        ref={valueRef}
-        className={cx('value', {
-          placeholder: displayedValue === placeholder,
-        })}
-      >
-        {formattedValue}
-      </span>
-    );
-    const shouldShowTooltip = hasSelectedValue && !!formattedValue && isValueOverflowed;
+  const renderMultiSelectTags = () => {
+    const selectedLabels = allSelectableOptions.reduce<string[]>((labels, option) => {
+      if (Array.isArray(value) && value.includes(option.value)) {
+        labels.push(option.label);
+      }
+      return labels;
+    }, []);
 
-    if (!shouldShowTooltip) {
-      return contentNode;
+    const handleRemoveTag = (tagLabel: string) => {
+      const optionToRemove = allSelectableOptions.find(
+        ({ label: optionLabel }) => optionLabel === tagLabel,
+      );
+
+      if (!optionToRemove) {
+        return;
+      }
+
+      const currentValue = Array.isArray(value) ? value : [];
+      const newValueSet = new Set<DropdownValue>(currentValue);
+
+      newValueSet.delete(optionToRemove.value);
+
+      const normalizedValues = normalizeSelectedValues(newValueSet);
+
+      onChange(Array.from(normalizedValues));
+    };
+
+    const handleSearchInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+      const input = event.target;
+
+      setSearchTerm(input.value);
+
+      if (!opened) {
+        openDropdown();
+
+        requestAnimationFrame(() => {
+          input.focus();
+        });
+      }
+    };
+
+    const handleSearchInputKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+      if (event.keyCode === KeyCodes.ESCAPE_KEY_CODE) {
+        event.stopPropagation();
+        closeHandler();
+
+        return;
+      }
+      if (event.keyCode === KeyCodes.ENTER_KEY_CODE || event.keyCode === KeyCodes.SPACE_KEY_CODE) {
+        return;
+      }
+      if (
+        event.keyCode === KeyCodes.ARROW_DOWN_KEY_CODE ||
+        event.keyCode === KeyCodes.ARROW_UP_KEY_CODE
+      ) {
+        event.preventDefault();
+        openDropdown();
+      }
+    };
+
+    const searchInput = (
+      <input
+        ref={searchInputRef}
+        type="text"
+        className={cx('search-input')}
+        value={searchTerm}
+        onChange={handleSearchInputChange}
+        onKeyDown={handleSearchInputKeyDown}
+        onClick={(e) => {
+          e.stopPropagation();
+          openDropdown();
+        }}
+        placeholder={isEmpty(selectedLabels) ? placeholder : ''}
+        autoComplete="off"
+      />
+    );
+
+    if (isEmpty(selectedLabels)) {
+      return <div className={cx('tags-wrapper', 'with-search')}>{searchInput}</div>;
     }
 
     return (
-      <Tooltip
-        content={formattedValue}
-        placement="top"
-        wrapperClassName={cx('value-tooltip')}
-        portalRoot={tooltipPortalRoot}
-        zIndex={tooltipZIndex}
+      <div className={cx('tags-wrapper', 'with-search')}>
+        <AdaptiveTagList
+          tags={selectedLabels}
+          onRemoveTag={handleRemoveTag}
+          isShowAllView
+          defaultVisibleLines={DEFAULT_VISIBLE_TAG_LINES}
+        />
+        {searchInput}
+      </div>
+    );
+  };
+
+  const renderValue = () => {
+    if (isMultiSelectWithTags && multiSelect && Array.isArray(value)) {
+      return renderMultiSelectTags();
+    }
+
+    return (
+      <span
+        ref={valueRef}
+        className={cx('value', {
+          placeholder: !hasSelectedValue,
+        })}
+        title={valueTitle}
       >
-        {contentNode}
-      </Tooltip>
+        {formattedValue}
+      </span>
     );
   };
 
@@ -560,6 +856,7 @@ export const Dropdown: FC<DropdownProps> = ({
       error,
       touched,
       'mobile-disabled': mobileDisabled,
+      'multi-select-with-tags': isMultiSelectWithTags,
     }),
     onClick: onDropdownClick,
     onKeyDown: handleToggleButtonKeyDown as unknown as KeyboardEventHandler<HTMLButtonElement>,
@@ -570,8 +867,22 @@ export const Dropdown: FC<DropdownProps> = ({
   void toggleButtonType;
 
   return (
-    <div ref={containerRef} className={cx('container', className)} title={title}>
-      {label && <FieldLabel {...getLabelProps()}>{label}</FieldLabel>}
+    <div
+      ref={containerRef}
+      className={cx('container', className)}
+      title={title}
+      {...restProps}
+      {...transformedAttributes}
+    >
+      {label && (
+        <FieldLabel
+          {...getLabelProps()}
+          onClick={() => !disabled && onDropdownClick()}
+          style={{ cursor: disabled ? 'default' : 'pointer' }}
+        >
+          {label}
+        </FieldLabel>
+      )}
       <div
         {...restToggleButtonProps}
         role="button"
@@ -601,36 +912,62 @@ export const Dropdown: FC<DropdownProps> = ({
           <DropdownIcon />
         </span>
       </div>
-      {opened && (
-        <div
-          style={floatingStyles}
-          className={cx(
-            'select-list',
-            { opened, 'limited-width': isListWidthLimited },
-            selectListClassName,
-          )}
-          {...getMenuProps({
-            onKeyDown: handleKeyDownMenu,
-            ref: refs.setFloating,
-          })}
-        >
-          {notScrollable ? (
-            renderOptions()
-          ) : (
-            <Scrollbars
-              autoHeight
-              autoHeightMax={SCROLLBARS_AUTO_HEIGHT_MAX}
-              hideTracksWhenNotNeeded
-              ref={(instance) => {
-                scrollbarsRef.current = instance;
-              }}
-              onScrollFrame={handleScrollFrame}
+      {opened &&
+        (() => {
+          const referenceWidth = refs.reference.current?.getBoundingClientRect().width;
+          const menuStyle =
+            menuPortalRoot && referenceWidth
+              ? {
+                  ...floatingStyles,
+                  width: `${referenceWidth}px`,
+                  minWidth: `${referenceWidth}px`,
+                  maxWidth: `${referenceWidth}px`,
+                }
+              : floatingStyles;
+
+          const menuContent = (
+            <div
+              style={menuStyle}
+              className={cx(
+                'select-list',
+                {
+                  opened,
+                  'limited-width': isListWidthLimited,
+                },
+                selectListClassName,
+              )}
+              {...(menuPortalRoot && { [DROPDOWN_PORTAL_MENU_ATTR]: '' })}
+              {...getMenuProps({
+                onKeyDown: handleKeyDownMenu,
+                ...(isMultiSelectWithTags && {
+                  tabIndex: -1,
+                  onFocus: (event: FocusEvent<HTMLElement>) => {
+                    event.preventDefault();
+                    searchInputRef.current?.focus();
+                  },
+                }),
+              })}
             >
-              {renderOptions()}
-            </Scrollbars>
-          )}
-        </div>
-      )}
+              {notScrollable ? (
+                renderOptions()
+              ) : (
+                <Scrollbars
+                  autoHeight
+                  autoHeightMax={SCROLLBARS_AUTO_HEIGHT_MAX}
+                  hideTracksWhenNotNeeded
+                  ref={(instance) => {
+                    scrollbarsRef.current = instance;
+                  }}
+                  onScrollFrame={handleScrollFrame}
+                >
+                  {renderOptions()}
+                </Scrollbars>
+              )}
+            </div>
+          );
+
+          return menuPortalRoot ? createPortal(menuContent, menuPortalRoot) : menuContent;
+        })()}
     </div>
   );
 };

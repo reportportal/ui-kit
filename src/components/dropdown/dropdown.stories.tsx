@@ -144,6 +144,53 @@ export const MultiSelect: Story = {
   },
 };
 
+export const MultiSelectWithTags: Story = {
+  render: (args: DropdownProps) => {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const [selectedValues, setSelectedValues] = useState<DropdownValue | DropdownValue[]>([]);
+
+    return (
+      <div>
+        <Dropdown
+          {...args}
+          onChange={(value) => {
+            setSelectedValues(value);
+          }}
+          value={selectedValues}
+          footer={
+            <FooterApply
+              selected={Array.isArray(selectedValues) ? selectedValues.length : 0}
+              total={args.options.length}
+              onApply={() => {}}
+            />
+          }
+        />
+      </div>
+    );
+  },
+  args: {
+    options: [
+      { value: 1, label: 'Product Bug' },
+      { value: 2, label: 'Automation Bug' },
+      { value: 3, label: 'System Issue' },
+      { value: 4, label: 'To Investigate' },
+      { value: 5, label: 'No Defect' },
+      { value: 6, label: 'Performance' },
+      { value: 7, label: 'Security' },
+      { value: 8, label: 'UI/UX Issue' },
+      { value: 9, label: 'Documentation' },
+    ],
+    className: 'dropdown-default',
+    multiSelect: true,
+    isMultiSelectWithTags: true,
+    placeholder: 'Select defect types',
+    isOptionAllVisible: true,
+    optionAll: { value: 'all', label: 'All' },
+    clearable: true,
+    onClear: () => {},
+  },
+};
+
 export const Ghost: Story = {
   args: {
     value: 2,
@@ -192,73 +239,101 @@ export const NestedMultiSelect: Story = {
   },
 };
 
-export const WithTooltipPortal: Story = {
+export const NestedMultiSelectWithTags: Story = {
   render: (args: DropdownProps) => {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const [selectedValues, setSelectedValues] = useState<DropdownValue | DropdownValue[]>([]);
 
     return (
-      <div className="dropdown-default" style={{ width: '300px' }}>
-        <p style={{ marginBottom: '16px' }}>
-          This example demonstrates tooltip rendering in a portal to prevent clipping when the
-          dropdown is inside a container with overflow hidden (e.g., SidePanel).
-        </p>
+      <div className="dropdown-default">
         <Dropdown
           {...args}
           onChange={(nextValue) => {
             setSelectedValues(nextValue);
           }}
           value={selectedValues}
-          tooltipPortalRoot={document.body}
+        />
+      </div>
+    );
+  },
+  args: {
+    options: nestedOptions,
+    multiSelect: true,
+    isMultiSelectWithTags: true,
+    placeholder: 'Select options',
+    isOptionAllVisible: false,
+    includeGroupValue: false,
+    variant: 'default',
+    isListWidthLimited: false,
+    optionAll: {
+      label: 'all',
+      value: 'all',
+    },
+    clearable: true,
+    onClear: () => {},
+  },
+};
+
+export const WithMenuPortal: Story = {
+  render: (args: DropdownProps) => {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const [selectedValue, setSelectedValue] = useState<DropdownValue | DropdownValue[]>('');
+
+    return (
+      <div className="dropdown-default" style={{ width: '300px' }}>
+        <p style={{ marginBottom: '16px' }}>
+          This example demonstrates dropdown menu rendering in a portal to prevent clipping and
+          overflow issues when the dropdown is inside a container with overflow hidden (e.g., Modal,
+          SidePanel).
+        </p>
+        <p style={{ marginBottom: '16px', fontSize: '14px', color: '#666' }}>
+          <strong>When to use:</strong> Use <code>menuPortalRoot</code> when the dropdown is inside
+          a container with <code>overflow: hidden</code> (e.g., Modal, SidePanel) to prevent menu
+          clipping. The scroll position is automatically preserved when opening the dropdown in a
+          portal.
+        </p>
+        <Dropdown
+          {...args}
+          onChange={(nextValue) => {
+            setSelectedValue(nextValue);
+          }}
+          value={selectedValue}
+          menuPortalRoot={document.body}
         />
       </div>
     );
   },
   args: {
     options: [
-      {
-        value: 'very-long-option-1',
-        label:
-          'Product bug, Critical, Automation bug, Kotlin, Automation bug with very-very long defect type name',
-      },
-      {
-        value: 'very-long-option-2',
-        label: 'Another extremely long option name that will be truncated and show tooltip',
-      },
+      { value: 'option-1', label: 'Option 1' },
+      { value: 'option-2', label: 'Option 2' },
       { value: 'option-3', label: 'Option 3' },
       { value: 'option-4', label: 'Option 4' },
+      { value: 'option-5', label: 'Option 5' },
+      { value: 'option-6', label: 'Option 6' },
     ],
-    multiSelect: true,
     placeholder: 'Select value',
-    clearable: true,
-    onClear: () => {},
   },
   parameters: {
     docs: {
       source: {
-        code: `const [selectedValues, setSelectedValues] = useState([]);
+        code: `const [selectedValue, setSelectedValue] = useState('');
 
 return (
   <div style={{ width: '300px' }}>
     <Dropdown
       options={[
-        {
-          value: 'very-long-option-1',
-          label: 'Product bug, Critical, Automation bug, Kotlin, Automation bug with very-very long defect type name',
-        },
-        {
-          value: 'very-long-option-2',
-          label: 'Another extremely long option name that will be truncated and show tooltip',
-        },
+        { value: 'option-1', label: 'Option 1' },
+        { value: 'option-2', label: 'Option 2' },
         { value: 'option-3', label: 'Option 3' },
         { value: 'option-4', label: 'Option 4' },
+        { value: 'option-5', label: 'Option 5' },
+        { value: 'option-6', label: 'Option 6' },
       ]}
-      multiSelect
       placeholder="Select value"
-      clearable
-      value={selectedValues}
-      onChange={(nextValue) => setSelectedValues(nextValue)}
-      tooltipPortalRoot={document.body}
+      value={selectedValue}
+      onChange={(nextValue) => setSelectedValue(nextValue)}
+      menuPortalRoot={document.body}
     />
   </div>
 );`,
