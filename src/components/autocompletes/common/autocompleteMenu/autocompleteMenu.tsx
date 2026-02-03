@@ -33,6 +33,8 @@ type AutocompleteMenuProps<T> = {
   minLength?: number | null;
   inputValue?: string;
   className?: string;
+  optionsLimit?: number;
+  limitationText?: string;
 } & AutocompleteOptionsProps<T>;
 
 export const AutocompleteMenu = forwardRef(
@@ -44,6 +46,8 @@ export const AutocompleteMenu = forwardRef(
       isDropdownMode,
       inputValue = '',
       className = '',
+      limitationText = '',
+      optionsLimit = 0,
       ...props
     }: AutocompleteMenuProps<T>,
     ref: ForwardedRef<HTMLUListElement>,
@@ -58,7 +62,14 @@ export const AutocompleteMenu = forwardRef(
         )}
         style={style}
       >
-        <AutocompleteOptions inputValue={inputValue} {...props} />
+        <AutocompleteOptions
+          inputValue={inputValue}
+          {...props}
+          options={optionsLimit > 0 ? props.options.slice(0, optionsLimit) : props.options}
+        />
+        {props?.options?.length > optionsLimit && limitationText ? (
+          <p className={cx('limitation-item')}>{limitationText}</p>
+        ) : null}
       </ul>
     );
   },

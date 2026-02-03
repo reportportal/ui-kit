@@ -86,6 +86,8 @@ export interface MultipleAutocompleteProps<T> {
   customNoMatchesMessage?: string;
   useFixedPositioning?: boolean;
   newItemButtonText?: string;
+  optionsLimit?: number;
+  limitationText?: string;
 }
 
 export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompleteProps<T>) => {
