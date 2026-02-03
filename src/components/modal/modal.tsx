@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useMemo, useRef, useState, FC } from 'react';
+import { ReactNode, useEffect, useMemo, useRef, useState, ReactElement } from 'react';
 import { Scrollbars } from 'rc-scrollbars';
 import { motion, AnimatePresence } from 'framer-motion';
 import classNames from 'classnames/bind';
@@ -28,6 +28,7 @@ interface ModalProps {
   children?: ReactNode;
   footerNode?: ReactNode;
   className?: string;
+  headerClassName?: string;
   zIndex?: number;
   size?: ModalSize;
   overlay?: ModalOverlay;
@@ -36,18 +37,19 @@ interface ModalProps {
   cancelButton?: ButtonProps;
   scrollable?: boolean;
   withoutFooter?: boolean;
-  createFooter?: (closeHandler: () => void) => ReactNode;
+  createFooter?: ((closeHandler: () => void) => ReactNode) | null;
   description?: ReactNode;
 }
 
 // TODO: Fix issue with modal positioning
-export const Modal: FC<ModalProps> = ({
+export const Modal = ({
   title,
   children,
   footerNode,
   okButton,
   cancelButton,
   className,
+  headerClassName,
   size = 'default',
   onClose = () => {},
   overlay = 'default',
@@ -57,7 +59,7 @@ export const Modal: FC<ModalProps> = ({
   withoutFooter = false,
   createFooter = null,
   description = null,
-}) => {
+}: ModalProps): ReactElement => {
   const [isShown, setShown] = useState(false);
   const [modalHeight, setModalHeight] = useState(0);
   const [initiallyFocused, setInitiallyFocused] = useState(false);
@@ -140,7 +142,12 @@ export const Modal: FC<ModalProps> = ({
             transition={{ duration: 0.3 }}
             onAnimationStart={onFocus}
           >
-            <ModalHeader title={title} onClose={closeModal} withDescription={!!description} />
+            <ModalHeader
+              title={title}
+              onClose={closeModal}
+              withDescription={!!description}
+              headerClassName={headerClassName}
+            />
             {scrollable ? (
               <div className={cx('scrollable-wrapper')}>
                 <Scrollbars
