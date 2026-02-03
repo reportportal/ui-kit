@@ -10,16 +10,16 @@ interface ModalHeaderProps {
   title?: ReactNode;
   onClose: () => void;
   withDescription?: boolean;
-  headerClassName?: string;
+  className?: string;
 }
 
 export const ModalHeader = ({
   title,
   onClose,
   withDescription = false,
-  headerClassName,
+  className,
 }: ModalHeaderProps): ReactElement => (
-  <div className={cx('modal-header', { 'width-description': withDescription }, headerClassName)}>
+  <div className={cx('modal-header', { 'width-description': withDescription }, className)}>
     <div className={cx('modal-header-content')}>
       {title && <div className={cx('modal-title')}>{title}</div>}
     </div>

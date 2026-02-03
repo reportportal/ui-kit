@@ -146,7 +146,7 @@ export const Modal = ({
               title={title}
               onClose={closeModal}
               withDescription={!!description}
-              headerClassName={headerClassName}
+              className={headerClassName}
             />
             {scrollable ? (
               <div className={cx('scrollable-wrapper')}>
