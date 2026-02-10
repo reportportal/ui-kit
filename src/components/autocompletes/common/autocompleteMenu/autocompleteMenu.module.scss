@@ -41,18 +41,4 @@ $Z-INDEX-POPUP: 10;
   &.dark {
     background-color: var(--rp-ui-base-dark-e-400);
   }
-
-  .limitation-item {
-    pointer-events: none;
-    min-height: 36px;
-    padding: 4px 12px;
-    cursor: pointer;
-    box-sizing: border-box;
-    color: var(--rp-ui-color-text-secondary);
-    align-items: center;
-    text-align: center;
-    width: 100%;
-    font-family: var(--rp-ui-base-font-family);
-    font-size: 13px;
-  }
 }

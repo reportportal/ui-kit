@@ -48,6 +48,8 @@ export interface AutocompleteOptionsProps<T> {
   customNoMatchesMessage?: string;
   getUniqKey?: (item: T) => string;
   newItemButtonText: string;
+  limitationText?: string;
+  optionsLimit?: number;
 }
 
 export const AutocompleteOptions = <T,>(props: AutocompleteOptionsProps<T>) => {
@@ -65,6 +67,8 @@ export const AutocompleteOptions = <T,>(props: AutocompleteOptionsProps<T>) => {
     getUniqKey,
     getItemProps,
     parseValueToString,
+    limitationText = 'Too many results. Type to search',
+    optionsLimit = 1,
   } = props;
 
   const filterStaticOptions = useCallback(() => {
@@ -159,6 +163,9 @@ export const AutocompleteOptions = <T,>(props: AutocompleteOptionsProps<T>) => {
     <div className={cx({ container: options.length })}>
       <Scrollbars autoHeight autoHeightMax={216} hideTracksWhenNotNeeded>
         {!isEmpty(availableOptions) ? renderItems(availableOptions) : renderEmptyList()}
+        {availableOptions?.length > optionsLimit && limitationText ? (
+          <p className={cx('limitation-item')}>{limitationText}</p>
+        ) : null}
       </Scrollbars>
       {!createWithoutConfirmation && renderNewItem(availableOptions)}
     </div>
