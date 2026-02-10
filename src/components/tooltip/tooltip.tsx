@@ -151,7 +151,10 @@ export const Tooltip: FC<TooltipProps> = ({
         onMouseDown={handleHideTooltip}
         onMouseEnter={handleShowTooltip}
         onMouseLeave={handleHideTooltip}
-        onFocus={handleShowTooltip}
+        onFocus={(e) => {
+          if (e.target !== e.currentTarget) return;
+          handleShowTooltip();
+        }}
         onBlur={handleHideTooltip}
         tabIndex={0}
       >
