@@ -68,7 +68,7 @@ export const AutocompleteOptions = <T,>(props: AutocompleteOptionsProps<T>) => {
     getItemProps,
     parseValueToString,
     limitationText = 'Too many results. Type to search',
-    optionsLimit = 1,
+    optionsLimit = 0,
   } = props;
 
   const filterStaticOptions = useCallback(() => {
@@ -163,8 +163,10 @@ export const AutocompleteOptions = <T,>(props: AutocompleteOptionsProps<T>) => {
     <div className={cx({ container: options.length })}>
       <Scrollbars autoHeight autoHeightMax={216} hideTracksWhenNotNeeded>
         {!isEmpty(availableOptions) ? renderItems(availableOptions) : renderEmptyList()}
-        {availableOptions?.length > optionsLimit && limitationText ? (
-          <p className={cx('limitation-item')}>{limitationText}</p>
+        {availableOptions?.length > optionsLimit && optionsLimit > 0 && limitationText ? (
+          <li className={cx('limitation-item')} aria-hidden="true">
+            {limitationText}
+          </li>
         ) : null}
       </Scrollbars>
       {!createWithoutConfirmation && renderNewItem(availableOptions)}
