@@ -33,6 +33,8 @@ type AutocompleteMenuProps<T> = {
   minLength?: number | null;
   inputValue?: string;
   className?: string;
+  optionsLimit?: number;
+  limitationText?: string;
 } & AutocompleteOptionsProps<T>;
 
 export const AutocompleteMenu = forwardRef(

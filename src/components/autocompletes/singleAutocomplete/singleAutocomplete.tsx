@@ -75,6 +75,8 @@ export interface SingleAutocompleteProps<T> {
   customEmptyListMessage?: string;
   customNoMatchesMessage?: string;
   newItemButtonText?: string;
+  optionsLimit?: number;
+  limitationText?: string;
 }
 
 export const SingleAutocomplete = <T,>(componentProps: SingleAutocompleteProps<T>) => {
