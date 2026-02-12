@@ -49,5 +49,7 @@ export interface MultipleAutocompleteProps<T> {
     selectedItemSingleLine?: boolean;
     selectedItemClassName?: string;
     selectedItemTextClassName?: string;
+    optionsLimit?: number;
+    limitationText?: string;
 }
 export declare const MultipleAutocomplete: <T>(componentsProps: MultipleAutocompleteProps<T>) => import("react/jsx-runtime").JSX.Element;
