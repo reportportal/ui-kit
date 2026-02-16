@@ -72,7 +72,7 @@ export const SidePanel = ({
     const onKeydown = (event: KeyboardEvent) => {
       const { keyCode } = event;
 
-      if (keyCode === KeyCodes.ESCAPE_KEY_CODE && allowCloseOutside) {
+      if (keyCode === KeyCodes.ESCAPE_KEY_CODE) {
         onClose();
       }
     };
@@ -82,7 +82,7 @@ export const SidePanel = ({
     return () => {
       document.removeEventListener('keydown', onKeydown, false);
     };
-  }, [isOpen, onClose, allowCloseOutside]);
+  }, [isOpen, onClose]);
 
   const hasHeaderOrDescription = !!(headerComponent || descriptionComponent);
 
