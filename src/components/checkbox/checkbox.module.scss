@@ -7,12 +7,13 @@
   background-position: center;
   background-image: url("data:image/svg+xml,%3Csvg width='12' height='9' viewBox='0 0 12 9' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1.5 4.25L4.5 7.25L10.5 0.75' stroke='white' stroke-width='2'/%3E%3C/svg%3E");
 }
+
 @mixin partially-checked-state($border-color, $rect-fill, $background-fill: 'transparent') {
   border-color: $border-color;
   background-repeat: no-repeat;
   background-position: center;
   background-color: $background-fill;
-  position: relative;
+
   &::after {
     content: '';
     display: block;
@@ -36,6 +37,7 @@
   font-family: var(--rp-ui-base-font-family);
   font-weight: var(--rp-ui-base-fw-medium);
   @include font-scale();
+
   .disabled {
     opacity: var(--rp-ui-opacity-default);
     pointer-events: none;
