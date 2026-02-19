@@ -14,6 +14,27 @@
  * limitations under the License.
  */
 
+.chip-item {
+  margin-right: 8px;
+  margin-bottom: 8px;
+}
+
+.chip-item-dragging {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.chip-drag-layer {
+  :global([class*='drag-preview']) {
+    width: auto;
+    height: auto;
+    padding: 0;
+    background: none;
+    border: none;
+    box-shadow: none;
+  }
+}
+
 .chip-wrapper {
   position: relative;
   padding-top: 12px;

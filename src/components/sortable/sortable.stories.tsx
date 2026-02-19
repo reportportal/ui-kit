@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { CSSProperties, Ref } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { DndProvider, useDragLayer } from 'react-dnd';
@@ -332,6 +332,22 @@ const chipStyle: CSSProperties = {
   transition: 'border-color 0.2s ease',
 };
 
+const useHideOnDrag = (isDragging: boolean) => {
+  const [shouldHide, setShouldHide] = useState(false);
+
+  useEffect(() => {
+    let timeoutId: ReturnType<typeof setTimeout>;
+    if (isDragging) {
+      timeoutId = setTimeout(() => setShouldHide(true), 50);
+    } else {
+      setShouldHide(false);
+    }
+    return () => clearTimeout(timeoutId);
+  }, [isDragging]);
+
+  return shouldHide;
+};
+
 export const HorizontalFilterChips: Story = {
   name: 'Horizontal - Filter Chips',
   render: () => {
@@ -354,6 +370,41 @@ export const HorizontalFilterChips: Story = {
       setItems(newItems);
     };
 
+    const renderChipPreview = (dragItem: DragItem) => {
+      const item = items.find((i) => i.id === dragItem.id);
+      return (
+        <div style={chipStyle}>
+          {item?.name}
+          <span style={{ color: '#9ca3af', fontSize: '18px', lineHeight: 1 }}>···</span>
+        </div>
+      );
+    };
+
+    const ChipContent = ({
+      dragRef,
+      isDragging,
+      name,
+    }: {
+      dragRef: Ref<HTMLElement>;
+      isDragging: boolean;
+      name: string;
+    }) => {
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      const shouldHide = useHideOnDrag(isDragging);
+      if (shouldHide) return null;
+      return (
+        <div className={storyStyles['chip-wrapper']}>
+          <span ref={dragRef as Ref<HTMLSpanElement>} className={storyStyles['chip-handle']}>
+            <HorizontalDragHandleIcon />
+          </span>
+          <div style={chipStyle}>
+            {name}
+            <span style={{ color: '#9ca3af', fontSize: '18px', lineHeight: 1 }}>···</span>
+          </div>
+        </div>
+      );
+    };
+
     return (
       <div
         style={{
@@ -367,7 +418,12 @@ export const HorizontalFilterChips: Story = {
         <h3 style={{ marginBottom: '16px', fontSize: '14px', color: '#666' }}>
           Hover over a chip to reveal the drag handle, then drag to reorder
         </h3>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', paddingTop: '12px' }}>
+        <DragLayer
+          type={CHIP_TYPE}
+          renderPreview={renderChipPreview}
+          className={storyStyles['chip-drag-layer']}
+        />
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 0, paddingTop: '12px' }}>
           {items.map((item, index) => (
             <SortableItem
               key={item.id}
@@ -375,22 +431,15 @@ export const HorizontalFilterChips: Story = {
               index={index}
               type={CHIP_TYPE}
               orientation={SORTABLE_ORIENTATION.HORIZONTAL}
+              dropDetectionMode="hover"
+              hideDefaultPreview
+              className={storyStyles['chip-item']}
+              draggingClassName={storyStyles['chip-item-dragging']}
               onDrop={handleDrop}
               isLast={index === items.length - 1}
             >
               {({ dragRef, isDragging }) => (
-                <div className={storyStyles['chip-wrapper']}>
-                  <span
-                    ref={dragRef as Ref<HTMLSpanElement>}
-                    className={storyStyles['chip-handle']}
-                  >
-                    <HorizontalDragHandleIcon />
-                  </span>
-                  <div style={{ ...chipStyle, opacity: isDragging ? 0.4 : 1 }}>
-                    {item.name}
-                    <span style={{ color: '#9ca3af', fontSize: '18px', lineHeight: 1 }}>···</span>
-                  </div>
-                </div>
+                <ChipContent dragRef={dragRef} isDragging={isDragging} name={item.name} />
               )}
             </SortableItem>
           ))}
