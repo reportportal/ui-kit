@@ -42,14 +42,30 @@
 
   .chip-handle {
     position: absolute;
-    top: 0;
+    top: -6px;
     left: 50%;
     transform: translateX(-50%);
-    cursor: grab;
-    color: #9ca3af;
+    width: 32px;
+    height: 16px;
     display: flex;
     align-items: center;
+    justify-content: center;
+    cursor: grab;
+    color: #9ca3af;
     visibility: hidden;
+    box-sizing: border-box;
+
+    .chip-handle-icon {
+      background-color: var(--rp-ui-base-bg-000, #fff);
+      border-radius: 8px;
+      display: inline-flex;
+      justify-content: center;
+      width: 100%;
+    }
+
+    svg {
+      transform: rotate(90deg);
+    }
 
     &:active {
       cursor: grabbing;

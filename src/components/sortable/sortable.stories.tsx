@@ -20,6 +20,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { DndProvider, useDragLayer } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 
+import { DragNDropIcon } from '@components/icons';
 import { SortableItem } from './sortableItem';
 import { SortableList } from './sortableList';
 import storyStyles from './sortable.stories.module.scss';
@@ -307,17 +308,6 @@ export const DisabledState: Story = {
   },
 };
 
-const HorizontalDragHandleIcon = () => (
-  <svg width="12" height="8" viewBox="0 0 12 8" fill="currentColor">
-    <circle cx="2" cy="2" r="1.5" />
-    <circle cx="6" cy="2" r="1.5" />
-    <circle cx="10" cy="2" r="1.5" />
-    <circle cx="2" cy="6" r="1.5" />
-    <circle cx="6" cy="6" r="1.5" />
-    <circle cx="10" cy="6" r="1.5" />
-  </svg>
-);
-
 const chipStyle: CSSProperties = {
   display: 'flex',
   alignItems: 'center',
@@ -395,7 +385,9 @@ export const HorizontalFilterChips: Story = {
       return (
         <div className={storyStyles['chip-wrapper']}>
           <span ref={dragRef as Ref<HTMLSpanElement>} className={storyStyles['chip-handle']}>
-            <HorizontalDragHandleIcon />
+            <span className={storyStyles['chip-handle-icon']}>
+              <DragNDropIcon />
+            </span>
           </span>
           <div style={chipStyle}>
             {name}
