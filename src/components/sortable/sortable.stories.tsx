@@ -22,10 +22,12 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 
 import { SortableItem } from './sortableItem';
 import { SortableList } from './sortableList';
+import storyStyles from './sortable.stories.module.scss';
 import { DragLayer } from './dragLayer';
 import { TreeSortableItem } from './treeSortableItem';
 import { TreeSortableContainer, useTreeSortableContext } from './treeSortableContainer';
 import type { SortableItemProps, DragItem, TreeDragItem, TreeDropPosition } from '@common/types';
+import { SORTABLE_ORIENTATION } from '@common/types';
 import { useTreeDropValidation } from '@common/hooks';
 
 const meta: Meta<typeof SortableItem> = {
@@ -300,6 +302,99 @@ export const DisabledState: Story = {
             <div style={disabledStyle}>{item.name}</div>
           </SortableItem>
         ))}
+      </div>
+    );
+  },
+};
+
+const HorizontalDragHandleIcon = () => (
+  <svg width="12" height="8" viewBox="0 0 12 8" fill="currentColor">
+    <circle cx="2" cy="2" r="1.5" />
+    <circle cx="6" cy="2" r="1.5" />
+    <circle cx="10" cy="2" r="1.5" />
+    <circle cx="2" cy="6" r="1.5" />
+    <circle cx="6" cy="6" r="1.5" />
+    <circle cx="10" cy="6" r="1.5" />
+  </svg>
+);
+
+const chipStyle: CSSProperties = {
+  display: 'flex',
+  alignItems: 'center',
+  gap: '8px',
+  padding: '4px 12px 4px 16px',
+  border: '1px solid #d4d6e0',
+  borderRadius: '40px',
+  backgroundColor: '#fff',
+  cursor: 'pointer',
+  fontSize: '14px',
+  whiteSpace: 'nowrap',
+  transition: 'border-color 0.2s ease',
+};
+
+export const HorizontalFilterChips: Story = {
+  name: 'Horizontal - Filter Chips',
+  render: () => {
+    const CHIP_TYPE = 'FILTER_CHIP';
+
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const [items, setItems] = useState<ListItem[]>([
+      { id: 1, name: 'Personal 1' },
+      { id: 2, name: 'API tests & Back_ST' },
+      { id: 3, name: 'Regression' },
+      { id: 4, name: 'Personal 2' },
+      { id: 5, name: 'Attribute oriented - AT' },
+      { id: 6, name: 'Functional' },
+    ]);
+
+    const handleDrop = (fromIndex: number, toIndex: number) => {
+      const newItems = [...items];
+      const [moved] = newItems.splice(fromIndex, 1);
+      newItems.splice(toIndex, 0, moved);
+      setItems(newItems);
+    };
+
+    return (
+      <div
+        style={{
+          width: '450px',
+          padding: '24px 16px 16px',
+          border: '1px solid #e1e5e9',
+          borderRadius: '8px',
+          backgroundColor: '#f9fafb',
+        }}
+      >
+        <h3 style={{ marginBottom: '16px', fontSize: '14px', color: '#666' }}>
+          Hover over a chip to reveal the drag handle, then drag to reorder
+        </h3>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', paddingTop: '12px' }}>
+          {items.map((item, index) => (
+            <SortableItem
+              key={item.id}
+              id={item.id}
+              index={index}
+              type={CHIP_TYPE}
+              orientation={SORTABLE_ORIENTATION.HORIZONTAL}
+              onDrop={handleDrop}
+              isLast={index === items.length - 1}
+            >
+              {({ dragRef, isDragging }) => (
+                <div className={storyStyles['chip-wrapper']}>
+                  <span
+                    ref={dragRef as Ref<HTMLSpanElement>}
+                    className={storyStyles['chip-handle']}
+                  >
+                    <HorizontalDragHandleIcon />
+                  </span>
+                  <div style={{ ...chipStyle, opacity: isDragging ? 0.4 : 1 }}>
+                    {item.name}
+                    <span style={{ color: '#9ca3af', fontSize: '18px', lineHeight: 1 }}>···</span>
+                  </div>
+                </div>
+              )}
+            </SortableItem>
+          ))}
+        </div>
       </div>
     );
   },

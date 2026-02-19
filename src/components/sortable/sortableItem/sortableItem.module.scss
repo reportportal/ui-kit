@@ -19,6 +19,10 @@
   width: 100%;
   transition: opacity 0.2s ease;
 
+  &--horizontal {
+    width: fit-content;
+  }
+
   // Gap size - consumers can override
   --sortable-gap: 8px;
 
@@ -66,6 +70,34 @@
     margin-top: var(--sortable-gap);
     transform: none;
     z-index: auto;
+  }
+
+  &--drop-target-left::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: calc(var(--sortable-gap) / -2);
+    width: 2px;
+    height: 100%;
+    background-color: var(--rp-ui-color-primary-focused);
+    border-radius: 2px;
+    z-index: 1;
+    transform: translateX(-50%);
+    pointer-events: none;
+  }
+
+  &--drop-target-right::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: calc(var(--sortable-gap) / -2);
+    width: 2px;
+    height: 100%;
+    background-color: var(--rp-ui-color-primary-focused);
+    border-radius: 2px;
+    z-index: 1;
+    transform: translateX(50%);
+    pointer-events: none;
   }
 }
 
