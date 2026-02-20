@@ -21,6 +21,7 @@ import { DndProvider, useDragLayer } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 
 import { DragNDropIcon } from '@components/icons';
+import { FilterItem } from '@components/filterItem';
 import { SortableItem } from './sortableItem';
 import { SortableList } from './sortableList';
 import storyStyles from './sortable.stories.module.scss';
@@ -432,6 +433,101 @@ export const HorizontalFilterChips: Story = {
             >
               {({ dragRef, isDragging }) => (
                 <ChipContent dragRef={dragRef} isDragging={isDragging} name={item.name} />
+              )}
+            </SortableItem>
+          ))}
+        </div>
+      </div>
+    );
+  },
+};
+
+export const HorizontalFilterChipsWithFilterItem: Story = {
+  name: 'Horizontal - Filter Chips (FilterItem)',
+  render: () => {
+    const FILTER_ITEM_TYPE = 'FILTER_ITEM_CHIP';
+
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const [items, setItems] = useState<ListItem[]>([
+      { id: 1, name: 'Personal 1' },
+      { id: 2, name: 'API tests & Back_ST' },
+      { id: 3, name: 'Regression' },
+      { id: 4, name: 'Personal 2' },
+      { id: 5, name: 'Attribute oriented - AT' },
+      { id: 6, name: 'Functional' },
+    ]);
+
+    const handleDrop = (fromIndex: number, toIndex: number) => {
+      const newItems = [...items];
+      const [moved] = newItems.splice(fromIndex, 1);
+      newItems.splice(toIndex, 0, moved);
+      setItems(newItems);
+    };
+
+    const renderPreview = (dragItem: DragItem) => {
+      const item = items.find((i) => i.id === dragItem.id);
+      return <FilterItem id={String(dragItem.id)} caption={item?.name ?? ''} actions={[]} />;
+    };
+
+    const FilterItemContent = ({
+      dragRef,
+      isDragging,
+      item,
+    }: {
+      dragRef: Ref<HTMLElement>;
+      isDragging: boolean;
+      item: ListItem;
+    }) => {
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      const shouldHide = useHideOnDrag(isDragging);
+      if (shouldHide) return null;
+      return (
+        <div className={storyStyles['chip-wrapper']}>
+          <span ref={dragRef as Ref<HTMLSpanElement>} className={storyStyles['chip-handle']}>
+            <span className={storyStyles['chip-handle-icon']}>
+              <DragNDropIcon />
+            </span>
+          </span>
+          <FilterItem id={String(item.id)} caption={item.name} actions={[]} />
+        </div>
+      );
+    };
+
+    return (
+      <div
+        style={{
+          width: '450px',
+          padding: '24px 16px 16px',
+          border: '1px solid #e1e5e9',
+          borderRadius: '8px',
+          backgroundColor: '#f9fafb',
+        }}
+      >
+        <h3 style={{ marginBottom: '16px', fontSize: '14px', color: '#666' }}>
+          Hover over a filter to reveal the drag handle, then drag to reorder (FilterItem)
+        </h3>
+        <DragLayer
+          type={FILTER_ITEM_TYPE}
+          renderPreview={renderPreview}
+          className={storyStyles['chip-drag-layer']}
+        />
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 0, paddingTop: '12px' }}>
+          {items.map((item, index) => (
+            <SortableItem
+              key={item.id}
+              id={item.id}
+              index={index}
+              type={FILTER_ITEM_TYPE}
+              orientation={SORTABLE_ORIENTATION.HORIZONTAL}
+              dropDetectionMode="hover"
+              hideDefaultPreview
+              className={storyStyles['chip-item']}
+              draggingClassName={storyStyles['chip-item-dragging']}
+              onDrop={handleDrop}
+              isLast={index === items.length - 1}
+            >
+              {({ dragRef, isDragging }) => (
+                <FilterItemContent dragRef={dragRef} isDragging={isDragging} item={item} />
               )}
             </SortableItem>
           ))}

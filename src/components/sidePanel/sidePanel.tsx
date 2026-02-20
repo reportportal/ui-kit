@@ -12,6 +12,7 @@ const cx = classNames.bind(styles);
 export interface SidePanelProps {
   className?: string;
   title?: ReactNode;
+  headerClassName?: string;
   headerComponent?: ReactNode;
   descriptionComponent?: ReactNode;
   contentComponent?: ReactNode;
@@ -30,6 +31,7 @@ export interface SidePanelProps {
 export const SidePanel = ({
   className,
   title,
+  headerClassName,
   descriptionComponent,
   headerComponent,
   contentComponent,
@@ -123,7 +125,7 @@ export const SidePanel = ({
       </div>
       <div className={cx('divider')}></div>
 
-      {contentComponent && <div className={cx('content')}>{contentComponent}</div>}
+      {contentComponent && <div className={cx('content', headerClassName)}>{contentComponent}</div>}
 
       {footerComponent && (
         <>
