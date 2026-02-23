@@ -309,20 +309,6 @@ export const DisabledState: Story = {
   },
 };
 
-const chipStyle: CSSProperties = {
-  display: 'flex',
-  alignItems: 'center',
-  gap: '8px',
-  padding: '4px 12px 4px 16px',
-  border: '1px solid #d4d6e0',
-  borderRadius: '40px',
-  backgroundColor: '#fff',
-  cursor: 'pointer',
-  fontSize: '14px',
-  whiteSpace: 'nowrap',
-  transition: 'border-color 0.2s ease',
-};
-
 const useHideOnDrag = (isDragging: boolean) => {
   const [shouldHide, setShouldHide] = useState(false);
 
@@ -337,109 +323,6 @@ const useHideOnDrag = (isDragging: boolean) => {
   }, [isDragging]);
 
   return shouldHide;
-};
-
-export const HorizontalFilterChips: Story = {
-  name: 'Horizontal - Filter Chips',
-  render: () => {
-    const CHIP_TYPE = 'FILTER_CHIP';
-
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    const [items, setItems] = useState<ListItem[]>([
-      { id: 1, name: 'Personal 1' },
-      { id: 2, name: 'API tests & Back_ST' },
-      { id: 3, name: 'Regression' },
-      { id: 4, name: 'Personal 2' },
-      { id: 5, name: 'Attribute oriented - AT' },
-      { id: 6, name: 'Functional' },
-    ]);
-
-    const handleDrop = (fromIndex: number, toIndex: number) => {
-      const newItems = [...items];
-      const [moved] = newItems.splice(fromIndex, 1);
-      newItems.splice(toIndex, 0, moved);
-      setItems(newItems);
-    };
-
-    const renderChipPreview = (dragItem: DragItem) => {
-      const item = items.find((i) => i.id === dragItem.id);
-      return (
-        <div style={chipStyle}>
-          {item?.name}
-          <span style={{ color: '#9ca3af', fontSize: '18px', lineHeight: 1 }}>···</span>
-        </div>
-      );
-    };
-
-    const ChipContent = ({
-      dragRef,
-      isDragging,
-      name,
-    }: {
-      dragRef: Ref<HTMLElement>;
-      isDragging: boolean;
-      name: string;
-    }) => {
-      // eslint-disable-next-line react-hooks/rules-of-hooks
-      const shouldHide = useHideOnDrag(isDragging);
-      if (shouldHide) return null;
-      return (
-        <div className={storyStyles['chip-wrapper']}>
-          <span ref={dragRef as Ref<HTMLSpanElement>} className={storyStyles['chip-handle']}>
-            <span className={storyStyles['chip-handle-icon']}>
-              <DragNDropIcon />
-            </span>
-          </span>
-          <div style={chipStyle}>
-            {name}
-            <span style={{ color: '#9ca3af', fontSize: '18px', lineHeight: 1 }}>···</span>
-          </div>
-        </div>
-      );
-    };
-
-    return (
-      <div
-        style={{
-          width: '450px',
-          padding: '24px 16px 16px',
-          border: '1px solid #e1e5e9',
-          borderRadius: '8px',
-          backgroundColor: '#f9fafb',
-        }}
-      >
-        <h3 style={{ marginBottom: '16px', fontSize: '14px', color: '#666' }}>
-          Hover over a chip to reveal the drag handle, then drag to reorder
-        </h3>
-        <DragLayer
-          type={CHIP_TYPE}
-          renderPreview={renderChipPreview}
-          className={storyStyles['chip-drag-layer']}
-        />
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 0, paddingTop: '12px' }}>
-          {items.map((item, index) => (
-            <SortableItem
-              key={item.id}
-              id={item.id}
-              index={index}
-              type={CHIP_TYPE}
-              orientation={SORTABLE_ORIENTATION.HORIZONTAL}
-              dropDetectionMode="hover"
-              hideDefaultPreview
-              className={storyStyles['chip-item']}
-              draggingClassName={storyStyles['chip-item-dragging']}
-              onDrop={handleDrop}
-              isLast={index === items.length - 1}
-            >
-              {({ dragRef, isDragging }) => (
-                <ChipContent dragRef={dragRef} isDragging={isDragging} name={item.name} />
-              )}
-            </SortableItem>
-          ))}
-        </div>
-      </div>
-    );
-  },
 };
 
 export const HorizontalFilterChipsWithFilterItem: Story = {
@@ -511,7 +394,10 @@ export const HorizontalFilterChipsWithFilterItem: Story = {
           renderPreview={renderPreview}
           className={storyStyles['chip-drag-layer']}
         />
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 0, paddingTop: '12px' }}>
+        <div
+          className={storyStyles['chips-list']}
+          style={{ display: 'flex', flexWrap: 'wrap', gap: 0, paddingTop: '12px' }}
+        >
           {items.map((item, index) => (
             <SortableItem
               key={item.id}

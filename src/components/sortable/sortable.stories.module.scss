@@ -76,3 +76,7 @@
     visibility: visible;
   }
 }
+
+.chips-list:has(.chip-item-dragging) .chip-item:not(.chip-item-dragging) .chip-handle {
+  visibility: hidden !important;
+}
