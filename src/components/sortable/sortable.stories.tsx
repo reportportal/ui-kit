@@ -247,7 +247,11 @@ export const WithCustomDragPreview: Story = {
         <h3 style={{ marginBottom: '16px', fontSize: '14px', color: '#666' }}>
           Custom drag preview (styled differently from original)
         </h3>
-        <DragLayer type={CUSTOM_TYPE} renderPreview={renderPreview} />
+        <DragLayer
+          type={CUSTOM_TYPE}
+          renderPreview={renderPreview}
+          previewClassName={storyStyles['custom-drag-preview']}
+        />
         {items.map((item, index) => (
           <SortableItem
             key={item.id}
@@ -392,7 +396,7 @@ export const HorizontalFilterChipsWithFilterItem: Story = {
         <DragLayer
           type={FILTER_ITEM_TYPE}
           renderPreview={renderPreview}
-          className={storyStyles['chip-drag-layer']}
+          previewClassName={storyStyles['chip-drag-preview']}
         />
         <div
           className={storyStyles['chips-list']}

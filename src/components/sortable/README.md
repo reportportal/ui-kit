@@ -117,7 +117,7 @@ A reusable hook for implementing drag-and-drop sortable functionality.
 - **isDragging**: _boolean_ - Whether item is being dragged
 - **isOver**: _boolean_ - Whether a dragged item is over this target
 - **draggedItemIndex**: _number | null_ - Index of dragged item
-- **dropPosition**: _'top' | 'bottom' | null_ - Where the item would be dropped
+- **dropPosition**: _DropPosition_ (`'top' | 'bottom' | 'left' | 'right' | null`) - Where the item would be dropped relative to the target; `'left'`/`'right'` are used for horizontal orientation
 - **dragRef**: _Ref_ - Ref for drag handle element
 - **dropRef**: _Ref_ - Ref for drop target element
 - **previewRef**: _Ref_ - Ref for drag preview element
