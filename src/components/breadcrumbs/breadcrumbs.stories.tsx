@@ -5,6 +5,11 @@ import { TreeDescriptor } from './types';
 const meta: Meta<typeof Breadcrumbs> = {
   title: 'Components/Breadcrumbs',
   component: Breadcrumbs,
+  argTypes: {
+    maxShownDescriptors: {
+      control: { type: 'number', min: 1 },
+    },
+  },
   parameters: {
     layout: 'centered',
   },
