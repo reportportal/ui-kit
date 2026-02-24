@@ -29,7 +29,6 @@ import { DragLayer } from './dragLayer';
 import { TreeSortableItem } from './treeSortableItem';
 import { TreeSortableContainer, useTreeSortableContext } from './treeSortableContainer';
 import type { SortableItemProps, DragItem, TreeDragItem, TreeDropPosition } from '@common/types';
-import { SORTABLE_ORIENTATION } from '@common/types';
 import { useTreeDropValidation } from '@common/hooks';
 
 const meta: Meta<typeof SortableItem> = {
@@ -408,7 +407,7 @@ export const HorizontalFilterChipsWithFilterItem: Story = {
               id={item.id}
               index={index}
               type={FILTER_ITEM_TYPE}
-              orientation={SORTABLE_ORIENTATION.HORIZONTAL}
+              orientation="horizontal"
               dropDetectionMode="hover"
               hideDefaultPreview
               className={storyStyles['chip-item']}

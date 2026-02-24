@@ -37,7 +37,6 @@ export {
   TreeSortableItem,
   TreeSortableContainer,
 } from './sortable';
-export { SORTABLE_ORIENTATION } from '@common/types';
 export { Table } from './table';
 export { ThemeProvider } from './themeProvider';
 export { Toggle } from './toggle';
