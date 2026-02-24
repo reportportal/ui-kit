@@ -1,13 +1,18 @@
 import classNames from 'classnames/bind';
+import { drop, take } from 'es-toolkit';
+import { isEmpty } from 'es-toolkit/compat';
+
 import { Breadcrumb } from './breadcrumb';
 import { HiddenBreadcrumbs } from './hiddenBreadcrumbs';
 import { Tree } from './tree';
 import { BreadcrumbsProvider } from './breadcrumbsProvider';
-import { BreadcrumbDescriptor, BreadcrumbsProps } from './types';
+import { BreadcrumbsProps } from './types';
+
 import styles from './breadcrumbs.module.scss';
 
 const cx = classNames.bind(styles);
-const MAX_SHOWN_DESCRIPTORS = 5;
+
+const DEFAULT_MAX_SHOWN_DESCRIPTORS = 5;
 
 export const Breadcrumbs = ({
   descriptors = [],
@@ -15,9 +20,14 @@ export const Breadcrumbs = ({
   LinkComponent,
   tree,
   isBackButton = false,
+  isLastClickable = false,
+  maxShownDescriptors = DEFAULT_MAX_SHOWN_DESCRIPTORS,
 }: BreadcrumbsProps) => {
-  const shownDescriptors = [...descriptors];
-  const firstDescriptor = shownDescriptors.shift();
+  const [firstDescriptor, ...remainingDescriptors] = descriptors;
+
+  const normalizedMaxShownDescriptors = Math.max(1, Math.floor(maxShownDescriptors));
+  const visibleTailCount = normalizedMaxShownDescriptors - 1;
+  const hiddenCount = Math.max(0, remainingDescriptors.length - visibleTailCount);
 
   const getBreadcrumbsCountClass = (count: number): string => {
     const suffix = count > 5 ? '6-plus' : count;
@@ -31,16 +41,12 @@ export const Breadcrumbs = ({
       3: 18,
       4: 13,
     };
+
     return widths[breadcrumbsCount] ?? 12;
   })(descriptors.length);
 
-  let hiddenDescriptors: BreadcrumbDescriptor[] = [];
-  if (shownDescriptors.length > MAX_SHOWN_DESCRIPTORS - 1) {
-    hiddenDescriptors = shownDescriptors.splice(
-      0,
-      shownDescriptors.length - (MAX_SHOWN_DESCRIPTORS - 1),
-    );
-  }
+  const hiddenDescriptors = take(remainingDescriptors, hiddenCount);
+  const shownDescriptors = drop(remainingDescriptors, hiddenCount);
 
   return (
     <BreadcrumbsProvider LinkComponent={LinkComponent}>
@@ -68,22 +74,22 @@ export const Breadcrumbs = ({
                   <Breadcrumb
                     descriptor={firstDescriptor}
                     titleTailNumChars={titleTailNumChars}
-                    isClickable={!!shownDescriptors.length}
+                    isClickable={!isEmpty(remainingDescriptors)}
                   />
                 </div>
               )}
-              {hiddenDescriptors.length > 0 && (
+              {!isEmpty(hiddenDescriptors) && (
                 <div className={cx('breadcrumb-item', 'hidden-breadcrumbs')}>
                   <HiddenBreadcrumbs descriptors={hiddenDescriptors} />
                 </div>
               )}
-              {shownDescriptors.length > 0 &&
+              {!isEmpty(shownDescriptors) &&
                 shownDescriptors.map((descriptor, index) => (
                   <div className={cx('breadcrumb-item')} key={index}>
                     <Breadcrumb
                       descriptor={descriptor}
                       titleTailNumChars={titleTailNumChars}
-                      isClickable={index !== shownDescriptors.length - 1}
+                      isClickable={isLastClickable || index !== shownDescriptors.length - 1}
                     />
                   </div>
                 ))}
