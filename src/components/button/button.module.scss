@@ -48,7 +48,7 @@
     border: 1px solid var(--rp-ui-color-primary-pressed);
     color: var(--rp-ui-color-primary-pressed);
   }
-  &:focus:not(.disabled, :active) {
+  &:focus-visible:not(.disabled, :active) {
     border: 2px solid var(--rp-ui-color-primary-focused);
     color: var(--rp-ui-color-primary-focused);
   }
@@ -69,7 +69,7 @@
     border: 1px solid var(--rp-ui-color-error-pressed);
     background-color: var(--rp-ui-color-error-pressed);
   }
-  &:focus:not(.disabled, :active) {
+  &:focus-visible:not(.disabled, :active) {
     border: 2px solid var(--rp-ui-color-error-focused);
   }
   svg * {
@@ -97,7 +97,7 @@
       fill: var(--rp-ui-color-primary-pressed);
     }
   }
-  &:focus:not(.disabled, :active) {
+  &:focus-visible:not(.disabled, :active) {
     padding: 0;
     border: 2px solid var(--rp-ui-color-primary-focused);
   }
@@ -118,7 +118,7 @@
     border: 1px solid var(--rp-ui-color-error-pressed);
     color: var(--rp-ui-color-error-pressed);
   }
-  &:focus:not(.disabled, :active) {
+  &:focus-visible:not(.disabled, :active) {
     border: 2px solid var(--rp-ui-color-error-focused);
   }
   svg * {
@@ -146,7 +146,7 @@
       fill: var(--rp-ui-color-error-pressed);
     }
   }
-  &:focus:not(.disabled, :active) {
+  &:focus-visible:not(.disabled, :active) {
     padding: 0;
     border: 2px solid var(--rp-ui-color-error-focused);
   }
