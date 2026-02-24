@@ -3,7 +3,7 @@
 ### Description:
 
 Breadcrumbs with possibility of ellipsis in the middle of each link that exceeds the size.
-Shows the first breadcrumb plus up to 4 additional breadcrumbs (total of 5 maximum).
+By default, shows the first breadcrumb plus up to 4 additional breadcrumbs (total of 5 maximum).
 If there is only 1 link, it displays as a single breadcrumb (not automatically a "back" button).
 If there are more than 5 links, then it shows the first one, hides the middle ones in the meatball menu, and shows the last 4.
 Optionally displays a tree icon that shows a hierarchical navigation menu in a popover.
@@ -20,6 +20,7 @@ The tree menu reuses the Breadcrumb component for consistent styling and behavio
 - **LinkComponent**: _React.ComponentType_, optional, custom link component for navigation
 - **tree**: _array_ of TreeDescriptor, optional, hierarchical tree structure for the tree menu
 - **isBackButton**: _boolean_, optional, default = false. When true and descriptors.length === 1, displays as a back button with left-pointing arrow
+- **maxShownDescriptors**: _number_, optional, default = 5. Maximum number of breadcrumbs shown inline before collapsing middle items into the meatball menu
 
 ### TreeDescriptor Interface:
 
@@ -104,8 +105,8 @@ const tree = [
 
 ### Behavior Details:
 
-- **1-5 breadcrumbs**: All breadcrumbs are shown normally
-- **6+ breadcrumbs**: Shows first breadcrumb + meatball menu (containing hidden middle breadcrumbs) + last 4 breadcrumbs
+- **1-N breadcrumbs**: All breadcrumbs are shown normally when `descriptors.length <= maxShownDescriptors`
+- **N+1+ breadcrumbs**: Shows first breadcrumb + meatball menu (containing hidden middle breadcrumbs) + last `maxShownDescriptors - 1` breadcrumbs
 - **Clickable behavior**: Only the last breadcrumb is non-clickable (represents current page)
 - **Title truncation**: Long titles are automatically truncated with ellipsis based on available space
 
