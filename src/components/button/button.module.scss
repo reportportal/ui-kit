@@ -28,7 +28,7 @@
     border: 1px solid var(--rp-ui-color-primary-pressed);
     background-color: var(--rp-ui-color-primary-pressed);
   }
-  &:focus:not(.disabled, :active) {
+  &:focus-visible:not(.disabled, :active) {
     border: 2px solid var(--rp-ui-color-primary-focused);
   }
   svg * {
