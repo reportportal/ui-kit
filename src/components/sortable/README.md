@@ -24,7 +24,7 @@ A wrapper component that makes its children draggable and droppable.
   - `'hover'` - uses cursor position with 70% threshold (for when dragged item disappears from original position)
 - **orientation**: _'vertical' | 'horizontal'_, optional, default = 'vertical' - Layout orientation:
   - `'vertical'` - drop indicator is a horizontal line (top/bottom), for vertical lists
-  - `'horizontal'` - drop indicator is a vertical line (left/right), for horizontal flex-wrap layouts
+  - `'horizontal'` - drop indicator is a vertical line (left/right), for horizontal layouts
 - **isLast**: _boolean_, optional, default = false - Marks item as last in list (shows bottom drop indicator)
 - **children**: _ReactNode | ((props: SortableItemRenderProps) => ReactNode)_, required - Content or render function
 
