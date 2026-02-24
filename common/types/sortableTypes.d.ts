@@ -11,6 +11,8 @@ export interface DragItem extends SortableItemData {
 export declare const DROP_POSITIONS: {
     readonly TOP: "top";
     readonly BOTTOM: "bottom";
+    readonly LEFT: "left";
+    readonly RIGHT: "right";
 };
 export type DropPositionValue = (typeof DROP_POSITIONS)[keyof typeof DROP_POSITIONS];
 export declare const DROP_DETECTION_MODE: {
@@ -18,6 +20,11 @@ export declare const DROP_DETECTION_MODE: {
     readonly HOVER: "hover";
 };
 export type DropDetectionMode = (typeof DROP_DETECTION_MODE)[keyof typeof DROP_DETECTION_MODE];
+export declare const SORTABLE_ORIENTATION: {
+    readonly VERTICAL: "vertical";
+    readonly HORIZONTAL: "horizontal";
+};
+export type SortableOrientation = (typeof SORTABLE_ORIENTATION)[keyof typeof SORTABLE_ORIENTATION];
 export interface UseSortableOptions {
     id: string | number;
     index: number;
@@ -27,6 +34,7 @@ export interface UseSortableOptions {
     onDrop?: (fromIndex: number, toIndex: number) => void;
     hideDefaultPreview?: boolean;
     dropDetectionMode?: DropDetectionMode;
+    orientation?: SortableOrientation;
 }
 export interface UseSortableReturn {
     isDragging: boolean;
@@ -54,6 +62,7 @@ export interface SortableItemProps {
     onDrop?: (fromIndex: number, toIndex: number) => void;
     hideDefaultPreview?: boolean;
     dropDetectionMode?: DropDetectionMode;
+    orientation?: SortableOrientation;
     children: ReactNode | ((props: SortableItemRenderProps) => ReactNode);
 }
 export interface SortableListProps<T extends {
@@ -81,7 +90,7 @@ export interface DragLayerCollectedProps {
     clientOffset: XYCoord | null;
     isDragging: boolean;
 }
-export type DropPosition = 'top' | 'bottom' | null;
+export type DropPosition = 'top' | 'bottom' | 'left' | 'right' | null;
 export declare const TREE_DROP_POSITIONS: {
     readonly BEFORE: "before";
     readonly INSIDE: "inside";

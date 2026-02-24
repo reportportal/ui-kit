@@ -9,3 +9,4 @@ export declare const calculateCursorBasedDropIndex: ({ fromIndex, targetIndex, i
     isTopZone: boolean;
 }) => number;
 export declare const getDropZone: (cursorY: number, elementHeight: number) => DropPosition;
+export declare const getDropZoneHorizontal: (cursorX: number, elementWidth: number) => DropPosition;
