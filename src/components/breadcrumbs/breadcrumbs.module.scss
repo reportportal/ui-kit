@@ -4,26 +4,30 @@
   display: flex;
   align-items: center;
   gap: 16px;
-  width: 740px;
+  width: 100%;
 }
 
 .breadcrumbs {
   flex-shrink: 1;
   min-width: 0;
-  display: inline-flex;
+  display: flex;
   align-items: center;
   height: 100%;
 
   .breadcrumb-item {
     position: relative;
-    display: inline-flex;
+    display: flex;
     align-items: center;
     max-width: 100%;
     @include font-scale();
 
     &:not(.hidden-breadcrumbs) {
-      flex-shrink: 1;
+      flex: 1 1 auto;
       min-width: 0;
+    }
+
+    &.hidden-breadcrumbs {
+      flex: 0 0 auto;
     }
 
     &:not(:last-child) {
@@ -52,22 +56,5 @@
         transform: rotate(180deg);
       }
     }
-  }
-
-  &.breadcrumbs-2 .breadcrumb-item {
-    max-width: 360px;
-  }
-
-  &.breadcrumbs-3 .breadcrumb-item {
-    max-width: 233px;
-  }
-
-  &.breadcrumbs-4 .breadcrumb-item {
-    max-width: 170px;
-  }
-
-  &.breadcrumbs-5 .breadcrumb-item,
-  &.breadcrumbs-6-plus .breadcrumb-item {
-    max-width: 132px;
   }
 }
