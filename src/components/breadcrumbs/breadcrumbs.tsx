@@ -22,17 +22,13 @@ export const Breadcrumbs = ({
   isBackButton = false,
   isLastClickable = false,
   maxShownDescriptors = DEFAULT_MAX_SHOWN_DESCRIPTORS,
+  className,
 }: BreadcrumbsProps) => {
   const [firstDescriptor, ...remainingDescriptors] = descriptors;
 
   const normalizedMaxShownDescriptors = Math.max(1, Math.floor(maxShownDescriptors));
   const visibleTailCount = normalizedMaxShownDescriptors - 1;
   const hiddenCount = Math.max(0, remainingDescriptors.length - visibleTailCount);
-
-  const getBreadcrumbsCountClass = (count: number): string => {
-    const suffix = count > 5 ? '6-plus' : count;
-    return `breadcrumbs-${suffix}`;
-  };
 
   const titleTailNumChars = ((breadcrumbsCount: number) => {
     const widths: Record<number, number> = {
@@ -51,7 +47,7 @@ export const Breadcrumbs = ({
   return (
     <BreadcrumbsProvider LinkComponent={LinkComponent}>
       <div
-        className={cx('breadcrumbs-container')}
+        className={cx('breadcrumbs-container', className)}
         data-automation-id={dataAutomationId}
         data-testid={dataAutomationId}
       >
@@ -68,7 +64,7 @@ export const Breadcrumbs = ({
                 <Tree tree={tree} />
               </div>
             )}
-            <div className={cx('breadcrumbs', getBreadcrumbsCountClass(descriptors.length))}>
+            <div className={cx('breadcrumbs')}>
               {firstDescriptor && (
                 <div className={cx('breadcrumb-item')}>
                   <Breadcrumb

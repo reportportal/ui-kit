@@ -26,4 +26,5 @@ export interface BreadcrumbsProps {
   isBackButton?: boolean;
   isLastClickable?: boolean;
   maxShownDescriptors?: number;
+  className?: string;
 }
