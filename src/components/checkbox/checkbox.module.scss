@@ -88,7 +88,7 @@
     opacity: var(--rp-ui-opacity-default);
     pointer-events: none;
   }
-  &:focus + .control {
+  &:focus-visible + .control {
     border: 2px solid var(--rp-ui-color-primary-focused);
   }
 
