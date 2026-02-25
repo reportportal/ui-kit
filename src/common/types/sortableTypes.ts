@@ -107,6 +107,7 @@ export type TreeDropPosition = TreeDropPositionValue | null;
 export interface TreeDragItem extends DragItem {
   parentId?: string | number | null;
   depth?: number;
+  isExternal?: boolean;
 }
 
 // Reusable callback type for tree drop operations
@@ -127,6 +128,8 @@ export interface UseTreeSortableOptions {
   canDropOn?: (draggedItem: TreeDragItem, targetId: string | number) => boolean;
   onDrop?: TreeDropHandler;
   hideDefaultPreview?: boolean;
+  acceptExternalDrop?: boolean;
+  externalDropType?: string;
 }
 
 export interface TreeSortableState {
@@ -153,6 +156,8 @@ export interface TreeSortableItemProps {
   acceptDrop?: boolean;
   isLast?: boolean;
   canDropOn?: (draggedItem: TreeDragItem, targetId: string | number) => boolean;
+  acceptExternalDrop?: boolean;
+  externalDropType?: string;
   className?: string;
   style?: CSSProperties;
   draggingClassName?: string;
@@ -199,5 +204,7 @@ export interface TreeSortableContainerProps {
   portalTarget?: Element | null;
   onMove?: TreeDropHandler;
   onDuplicate?: TreeDropHandler;
+  onMoveExternal?: TreeDropHandler;
+  onDuplicateExternal?: TreeDropHandler;
   onCancel?: () => void;
 }
