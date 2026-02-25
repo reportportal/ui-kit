@@ -22,6 +22,7 @@ export const Breadcrumbs = ({
   isBackButton = false,
   isLastClickable = false,
   maxShownDescriptors = DEFAULT_MAX_SHOWN_DESCRIPTORS,
+  titleTailNumChars: customTitleTailNumChars,
   className,
 }: BreadcrumbsProps) => {
   const [firstDescriptor, ...remainingDescriptors] = descriptors;
@@ -54,7 +55,10 @@ export const Breadcrumbs = ({
         {isBackButton && firstDescriptor ? (
           <div className={cx('breadcrumbs')}>
             <div className={cx('breadcrumb-item', 'back-button')} data-testid="back-breadcrumb">
-              <Breadcrumb descriptor={firstDescriptor} titleTailNumChars={titleTailNumChars} />
+              <Breadcrumb
+                descriptor={firstDescriptor}
+                titleTailNumChars={customTitleTailNumChars ?? titleTailNumChars}
+              />
             </div>
           </div>
         ) : (
@@ -69,7 +73,7 @@ export const Breadcrumbs = ({
                 <div className={cx('breadcrumb-item')}>
                   <Breadcrumb
                     descriptor={firstDescriptor}
-                    titleTailNumChars={titleTailNumChars}
+                    titleTailNumChars={customTitleTailNumChars ?? titleTailNumChars}
                     isClickable={!isEmpty(remainingDescriptors)}
                   />
                 </div>
@@ -84,7 +88,7 @@ export const Breadcrumbs = ({
                   <div className={cx('breadcrumb-item')} key={index}>
                     <Breadcrumb
                       descriptor={descriptor}
-                      titleTailNumChars={titleTailNumChars}
+                      titleTailNumChars={customTitleTailNumChars ?? titleTailNumChars}
                       isClickable={isLastClickable || index !== shownDescriptors.length - 1}
                     />
                   </div>
