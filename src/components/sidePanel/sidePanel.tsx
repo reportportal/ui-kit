@@ -14,6 +14,7 @@ export interface SidePanelProps {
   title?: ReactNode;
   headerComponent?: ReactNode;
   descriptionComponent?: ReactNode;
+  contentClassName?: string;
   contentComponent?: ReactNode;
   footerComponent?: ReactNode;
   top?: number;
@@ -32,6 +33,7 @@ export const SidePanel = ({
   title,
   descriptionComponent,
   headerComponent,
+  contentClassName,
   contentComponent,
   footerComponent,
   top = 0,
@@ -123,7 +125,9 @@ export const SidePanel = ({
       </div>
       <div className={cx('divider')}></div>
 
-      {contentComponent && <div className={cx('content')}>{contentComponent}</div>}
+      {contentComponent && (
+        <div className={cx('content', contentClassName)}>{contentComponent}</div>
+      )}
 
       {footerComponent && (
         <>

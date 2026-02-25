@@ -13,6 +13,8 @@ export interface DragItem extends SortableItemData {
 export const DROP_POSITIONS = {
   TOP: 'top',
   BOTTOM: 'bottom',
+  LEFT: 'left',
+  RIGHT: 'right',
 } as const;
 
 export type DropPositionValue = (typeof DROP_POSITIONS)[keyof typeof DROP_POSITIONS];
@@ -24,6 +26,13 @@ export const DROP_DETECTION_MODE = {
 
 export type DropDetectionMode = (typeof DROP_DETECTION_MODE)[keyof typeof DROP_DETECTION_MODE];
 
+export const SORTABLE_ORIENTATION = {
+  VERTICAL: 'vertical',
+  HORIZONTAL: 'horizontal',
+} as const;
+
+export type SortableOrientation = (typeof SORTABLE_ORIENTATION)[keyof typeof SORTABLE_ORIENTATION];
+
 export interface UseSortableOptions {
   id: string | number;
   index: number;
@@ -33,6 +42,7 @@ export interface UseSortableOptions {
   onDrop?: (fromIndex: number, toIndex: number) => void;
   hideDefaultPreview?: boolean;
   dropDetectionMode?: DropDetectionMode;
+  orientation?: SortableOrientation;
 }
 
 export interface UseSortableReturn {
@@ -63,6 +73,7 @@ export interface SortableItemProps {
   onDrop?: (fromIndex: number, toIndex: number) => void;
   hideDefaultPreview?: boolean;
   dropDetectionMode?: DropDetectionMode;
+  orientation?: SortableOrientation;
   children: ReactNode | ((props: SortableItemRenderProps) => ReactNode);
 }
 
@@ -93,7 +104,7 @@ export interface DragLayerCollectedProps {
 }
 
 // Tree Sortable Types (for nested structures like folders)
-export type DropPosition = 'top' | 'bottom' | null;
+export type DropPosition = 'top' | 'bottom' | 'left' | 'right' | null;
 
 export const TREE_DROP_POSITIONS = {
   BEFORE: 'before',

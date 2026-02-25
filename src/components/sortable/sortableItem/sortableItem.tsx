@@ -20,7 +20,7 @@ import { isFunction } from 'es-toolkit';
 import { useSortable } from '@common/hooks';
 import { DEFAULT_SORTABLE_TYPE } from '@common/constants/sortable';
 import type { SortableItemProps } from '@common/types';
-import { DROP_POSITIONS, DROP_DETECTION_MODE } from '@common/types';
+import { DROP_POSITIONS, DROP_DETECTION_MODE, SORTABLE_ORIENTATION } from '@common/types';
 import styles from './sortableItem.module.scss';
 
 const cx = classNames.bind(styles);
@@ -36,6 +36,7 @@ export const SortableItem = ({
   onDrop,
   hideDefaultPreview = false,
   dropDetectionMode = DROP_DETECTION_MODE.INDEX_BASED,
+  orientation = SORTABLE_ORIENTATION.VERTICAL,
   isLast = false,
   children,
 }: SortableItemProps) => {
@@ -47,6 +48,7 @@ export const SortableItem = ({
     onDrop,
     hideDefaultPreview,
     dropDetectionMode,
+    orientation,
     isLast,
   });
 
@@ -54,11 +56,16 @@ export const SortableItem = ({
 
   const isHoverMode = dropDetectionMode === DROP_DETECTION_MODE.HOVER;
 
+  const isHorizontal = orientation === SORTABLE_ORIENTATION.HORIZONTAL;
+
   const itemClassName = cx('sortable-item', className, {
+    'sortable-item--horizontal': isHorizontal,
     'sortable-item--dragging': isDragging,
     'sortable-item--hover-mode': isHoverMode,
     'sortable-item--drop-target-top': dropPosition === DROP_POSITIONS.TOP,
     'sortable-item--drop-target-bottom': dropPosition === DROP_POSITIONS.BOTTOM,
+    'sortable-item--drop-target-left': dropPosition === DROP_POSITIONS.LEFT,
+    'sortable-item--drop-target-right': dropPosition === DROP_POSITIONS.RIGHT,
     [draggingClassName || '']: isDragging && draggingClassName,
     [dropTargetClassName || '']: dropPosition && dropTargetClassName,
   });

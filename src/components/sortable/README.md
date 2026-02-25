@@ -22,6 +22,9 @@ A wrapper component that makes its children draggable and droppable.
 - **dropDetectionMode**: _'indexBased' | 'hover'_, optional, default = 'indexBased' - Detection mode for drop position calculation:
   - `'indexBased'` - uses dragged item index comparison (item stays visible during drag)
   - `'hover'` - uses cursor position with 70% threshold (for when dragged item disappears from original position)
+- **orientation**: _'vertical' | 'horizontal'_, optional, default = 'vertical' - Layout orientation:
+  - `'vertical'` - drop indicator is a horizontal line (top/bottom), for vertical lists
+  - `'horizontal'` - drop indicator is a vertical line (left/right), for horizontal layouts
 - **isLast**: _boolean_, optional, default = false - Marks item as last in list (shows bottom drop indicator)
 - **children**: _ReactNode | ((props: SortableItemRenderProps) => ReactNode)_, required - Content or render function
 
@@ -110,6 +113,7 @@ A reusable hook for implementing drag-and-drop sortable functionality.
 - **dropDetectionMode**: _'indexBased' | 'hover'_, optional, default = 'indexBased' - Detection mode for drop position:
   - `'indexBased'` - uses index comparison (item stays visible)
   - `'hover'` - uses cursor position (for cases where need that item disappears during drag)
+- **orientation**: _'vertical' | 'horizontal'_, optional, default = 'vertical' - Layout orientation for drop zone detection and visual indicator axis
 - **isLast**: _boolean_, optional - Marks item as last in list
 
 ##### Returns:
@@ -117,7 +121,7 @@ A reusable hook for implementing drag-and-drop sortable functionality.
 - **isDragging**: _boolean_ - Whether item is being dragged
 - **isOver**: _boolean_ - Whether a dragged item is over this target
 - **draggedItemIndex**: _number | null_ - Index of dragged item
-- **dropPosition**: _'top' | 'bottom' | null_ - Where the item would be dropped
+- **dropPosition**: _DropPosition_ (`'top' | 'bottom' | 'left' | 'right' | null`) - Where the item would be dropped relative to the target; `'left'`/`'right'` are used for horizontal orientation
 - **dragRef**: _Ref_ - Ref for drag handle element
 - **dropRef**: _Ref_ - Ref for drop target element
 - **previewRef**: _Ref_ - Ref for drag preview element

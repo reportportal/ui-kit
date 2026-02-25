@@ -48,3 +48,13 @@ export const getDropZone = (cursorY: number, elementHeight: number): DropPositio
 
   return DROP_POSITIONS.BOTTOM;
 };
+
+export const getDropZoneHorizontal = (cursorX: number, elementWidth: number): DropPosition => {
+  const relativeX = cursorX / elementWidth;
+
+  if (relativeX < 0.5) {
+    return DROP_POSITIONS.LEFT;
+  }
+
+  return DROP_POSITIONS.RIGHT;
+};
