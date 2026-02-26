@@ -1,1 +1,2 @@
 export declare const DEFAULT_SORTABLE_TYPE = "SORTABLE_ITEM";
+export declare const EXTERNAL_TREE_DROP_TYPE = "EXTERNAL_TREE_DROP";
