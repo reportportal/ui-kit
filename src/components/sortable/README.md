@@ -58,7 +58,7 @@ A wrapper component for tree-like structures (e.g., folders) that supports dropp
 - **isLast**: _boolean_, optional, default = false - Marks item as last in list (shows bottom drop indicator)
 - **canDropOn**: _(draggedItem: TreeDragItem, targetId: string | number) => boolean_, optional - Custom validation function to check if item can be dropped on this target (e.g., prevent dropping a folder into itself or its descendants)
 - **acceptExternalDrop**: _boolean_, optional, default = false - When true, this item accepts drag from outside the tree (e.g. test case); only "inside" drop zone is shown (no before/after)
-- **externalDropType**: _string_, optional - DnD type for external items; must match the type used by the external draggable (default: `EXTERNAL_TREE_DROP` from `@common/constants/sortable`)
+- **externalDropType**: _string_, optional - DnD type for external items; must match the type used by the external draggable (default: `EXTERNAL_TREE_DROP_TYPE` from `@common/constants/sortable`)
 - **className**: _string_, optional - Additional CSS class
 - **draggingClassName**: _string_, optional - CSS class applied when dragging
 - **dropBeforeClassName**: _string_, optional - CSS class applied when dropping before
