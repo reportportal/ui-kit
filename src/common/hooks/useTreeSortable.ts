@@ -31,13 +31,13 @@ const calculateDropPosition = (
   clientOffset: { x: number; y: number } | null,
   dropTargetRect: DOMRect | null,
   isLast = false,
-  onlyInside = false,
+  isOnlyInside = false,
 ): TreeDropPosition => {
   if (!clientOffset || !dropTargetRect) {
     return null;
   }
 
-  if (onlyInside) {
+  if (isOnlyInside) {
     return TREE_DROP_POSITIONS.INSIDE;
   }
 
@@ -58,8 +58,8 @@ const calculateDropPosition = (
   return TREE_DROP_POSITIONS.INSIDE;
 };
 
-const isExternalDragItem = (item: TreeDragItem | null, externalDropType: string): boolean =>
-  !!item && (item.isExternal === true || item.type === externalDropType);
+const isExternalDragItem = (item: TreeDragItem | null, externalDropType: string) =>
+  Boolean(item && (item.isExternal || item.type === externalDropType));
 
 export const useTreeSortable = ({
   id,
@@ -107,8 +107,8 @@ export const useTreeSortable = ({
       accept: acceptedTypes,
       hover: (draggedItem: TreeDragItem, monitor: DropTargetMonitor) => {
         const isExternal = isExternalDragItem(draggedItem, externalDropType);
-        const allowedDrop = acceptDrop || (acceptExternalDrop && isExternal);
-        if (!dropTargetRef.current || draggedItem.id === id || !allowedDrop) {
+        const isAllowedDrop = acceptDrop || (acceptExternalDrop && isExternal);
+        if (!dropTargetRef.current || draggedItem.id === id || !isAllowedDrop) {
           return;
         }
         const isValidDropTarget = !canDropOn || canDropOn(draggedItem, id);
@@ -118,8 +118,8 @@ export const useTreeSortable = ({
           const rect = dropTargetRef.current.getBoundingClientRect();
 
           if (clientOffset && rect) {
-            const onlyInside = isExternal && acceptExternalDrop;
-            const newPosition = calculateDropPosition(clientOffset, rect, isLast, onlyInside);
+            const isOnlyInside = isExternal && acceptExternalDrop;
+            const newPosition = calculateDropPosition(clientOffset, rect, isLast, isOnlyInside);
 
             if (newPosition !== dropPosition) {
               setDropPosition(newPosition);

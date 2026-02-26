@@ -71,11 +71,8 @@ export const TreeSortableContainer = ({
       dropElement: HTMLElement,
     ) => {
       if (!showDropConfirmation) {
-        if (draggedItem.isExternal) {
-          onMoveExternal?.(draggedItem, targetId, position);
-        } else {
-          onMove?.(draggedItem, targetId, position);
-        }
+        const onMoveHandler = draggedItem.isExternal ? onMoveExternal : onMove;
+        onMoveHandler?.(draggedItem, targetId, position);
 
         return;
       }
