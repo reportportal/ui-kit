@@ -90,6 +90,8 @@ export interface MultipleAutocompleteProps<T> {
   selectedItemSingleLine?: boolean;
   selectedItemClassName?: string;
   selectedItemTextClassName?: string;
+  optionsLimit?: number;
+  limitationText?: string;
 }
 
 export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompleteProps<T>) => {

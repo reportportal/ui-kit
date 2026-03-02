@@ -22,6 +22,9 @@ A wrapper component that makes its children draggable and droppable.
 - **dropDetectionMode**: _'indexBased' | 'hover'_, optional, default = 'indexBased' - Detection mode for drop position calculation:
   - `'indexBased'` - uses dragged item index comparison (item stays visible during drag)
   - `'hover'` - uses cursor position with 70% threshold (for when dragged item disappears from original position)
+- **orientation**: _'vertical' | 'horizontal'_, optional, default = 'vertical' - Layout orientation:
+  - `'vertical'` - drop indicator is a horizontal line (top/bottom), for vertical lists
+  - `'horizontal'` - drop indicator is a vertical line (left/right), for horizontal layouts
 - **isLast**: _boolean_, optional, default = false - Marks item as last in list (shows bottom drop indicator)
 - **children**: _ReactNode | ((props: SortableItemRenderProps) => ReactNode)_, required - Content or render function
 
@@ -54,6 +57,8 @@ A wrapper component for tree-like structures (e.g., folders) that supports dropp
 - **acceptDrop**: _boolean_, optional, default = true - Whether this item accepts drops
 - **isLast**: _boolean_, optional, default = false - Marks item as last in list (shows bottom drop indicator)
 - **canDropOn**: _(draggedItem: TreeDragItem, targetId: string | number) => boolean_, optional - Custom validation function to check if item can be dropped on this target (e.g., prevent dropping a folder into itself or its descendants)
+- **acceptExternalDrop**: _boolean_, optional, default = false - When true, this item accepts drag from outside the tree (e.g. test case); only "inside" drop zone is shown (no before/after)
+- **externalDropType**: _string_, optional - DnD type for external items; must match the type used by the external draggable (default: `EXTERNAL_TREE_DROP_TYPE` from `@common/constants/sortable`)
 - **className**: _string_, optional - Additional CSS class
 - **draggingClassName**: _string_, optional - CSS class applied when dragging
 - **dropBeforeClassName**: _string_, optional - CSS class applied when dropping before
@@ -73,8 +78,10 @@ A container component that wraps `TreeSortableItem` components and provides drop
 - **showDropConfirmation**: _boolean_, optional, default = false - Show confirmation popup on drop
 - **confirmationLabels**: _DropConfirmationLabels_, optional - Custom labels for confirmation buttons (e.g., `{ move: 'Move here', duplicate: 'Copy', cancel: 'Nevermind' }`)
 - **portalTarget**: _Element | null_, optional, default = document.body - DOM element to render the confirmation popup into
-- **onMove**: _(draggedItem: TreeDragItem, targetId: string | number, position: TreeDropPosition) => void_, optional - Callback when "Move" is selected
-- **onDuplicate**: _(draggedItem: TreeDragItem, targetId: string | number, position: TreeDropPosition) => void_, optional - Callback when "Duplicate" is selected
+- **onMove**: _(draggedItem: TreeDragItem, targetId: string | number, position: TreeDropPosition) => void_, optional - Callback when "Move" is selected (tree items)
+- **onDuplicate**: _(draggedItem: TreeDragItem, targetId: string | number, position: TreeDropPosition) => void_, optional - Callback when "Duplicate" is selected (tree items)
+- **onMoveExternal**: _(draggedItem: TreeDragItem, targetId: string | number, position: TreeDropPosition) => void_, optional - Callback when "Move" is selected for an external drop (e.g. test case into folder)
+- **onDuplicateExternal**: _(draggedItem: TreeDragItem, targetId: string | number, position: TreeDropPosition) => void_, optional - Callback when "Duplicate" is selected for an external drop
 - **onCancel**: _() => void_, optional - Callback when "Cancel" is selected
 
 #### DragLayer
@@ -106,6 +113,7 @@ A reusable hook for implementing drag-and-drop sortable functionality.
 - **dropDetectionMode**: _'indexBased' | 'hover'_, optional, default = 'indexBased' - Detection mode for drop position:
   - `'indexBased'` - uses index comparison (item stays visible)
   - `'hover'` - uses cursor position (for cases where need that item disappears during drag)
+- **orientation**: _'vertical' | 'horizontal'_, optional, default = 'vertical' - Layout orientation for drop zone detection and visual indicator axis
 - **isLast**: _boolean_, optional - Marks item as last in list
 
 ##### Returns:
@@ -113,7 +121,7 @@ A reusable hook for implementing drag-and-drop sortable functionality.
 - **isDragging**: _boolean_ - Whether item is being dragged
 - **isOver**: _boolean_ - Whether a dragged item is over this target
 - **draggedItemIndex**: _number | null_ - Index of dragged item
-- **dropPosition**: _'top' | 'bottom' | null_ - Where the item would be dropped
+- **dropPosition**: _DropPosition_ (`'top' | 'bottom' | 'left' | 'right' | null`) - Where the item would be dropped relative to the target; `'left'`/`'right'` are used for horizontal orientation
 - **dragRef**: _Ref_ - Ref for drag handle element
 - **dropRef**: _Ref_ - Ref for drop target element
 - **previewRef**: _Ref_ - Ref for drag preview element
@@ -170,3 +178,13 @@ const { canDropOn } = useTreeDropValidation({
 //   ...
 // />
 ```
+
+#### External drop (e.g. test case into folder)
+
+To allow dragging an entity from outside the tree (e.g. a test case) into folders:
+
+1. Use the same DnD provider as the tree. For the external draggable, use `useDrag` with `type: EXTERNAL_TREE_DROP_TYPE` (from `@common/constants/sortable`) and `item: { id, type, isExternal: true, ... }`.
+2. On folders that should accept the external item, set **acceptExternalDrop** on `TreeSortableItem` (and optionally **externalDropType** if not using the default).
+3. On `TreeSortableContainer`, pass **onMoveExternal** and **onDuplicateExternal**; they are called when the user chooses Move/Duplicate for an external drop. The same confirmation popover is shown; only the handlers differ.
+
+External items can only be dropped **inside** a folder (no before/after zones). Use **canDropOn** to restrict which tree items accept external drops (e.g. only folders).

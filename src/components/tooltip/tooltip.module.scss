@@ -21,6 +21,10 @@
   width: 100%;
   height: fit-content;
   cursor: pointer;
+
+  &:focus-visible {
+    outline: 2px auto var(--rp-ui-base-topaz-focused);
+  }
 }
 
 .tooltip-content {

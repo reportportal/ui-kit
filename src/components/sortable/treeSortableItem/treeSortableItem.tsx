@@ -37,6 +37,8 @@ export const TreeSortableItem = ({
   acceptDrop = true,
   isLast = false,
   canDropOn,
+  acceptExternalDrop = false,
+  externalDropType,
   className,
   style,
   draggingClassName,
@@ -70,6 +72,8 @@ export const TreeSortableItem = ({
     acceptDrop,
     isLast,
     canDropOn,
+    acceptExternalDrop,
+    externalDropType,
     onDrop: handleDrop,
     hideDefaultPreview,
   });

@@ -49,6 +49,8 @@ export const TreeSortableContainer = ({
   portalTarget,
   onMove,
   onDuplicate,
+  onMoveExternal,
+  onDuplicateExternal,
   onCancel,
 }: TreeSortableContainerProps) => {
   const [pendingDrop, setPendingDrop] = useState<PendingDropInfo | null>(null);
@@ -71,7 +73,9 @@ export const TreeSortableContainer = ({
       dropElement: HTMLElement,
     ) => {
       if (!showDropConfirmation) {
-        onMove?.(draggedItem, targetId, position);
+        const onMoveHandler = draggedItem.isExternal ? onMoveExternal : onMove;
+        onMoveHandler?.(draggedItem, targetId, position);
+
         return;
       }
 
@@ -94,7 +98,7 @@ export const TreeSortableContainer = ({
       });
       setPendingDrop({ draggedItem, targetId, position });
     },
-    [showDropConfirmation, onMove],
+    [showDropConfirmation, onMove, onMoveExternal],
   );
 
   const handleAction = useCallback(
@@ -105,13 +109,22 @@ export const TreeSortableContainer = ({
       }
 
       const { draggedItem, targetId, position } = pendingDrop;
+      const isExternal = draggedItem.isExternal === true;
 
       switch (action) {
         case DROP_ACTIONS.MOVE:
-          onMove?.(draggedItem, targetId, position);
+          if (isExternal) {
+            onMoveExternal?.(draggedItem, targetId, position);
+          } else {
+            onMove?.(draggedItem, targetId, position);
+          }
           break;
         case DROP_ACTIONS.DUPLICATE:
-          onDuplicate?.(draggedItem, targetId, position);
+          if (isExternal) {
+            onDuplicateExternal?.(draggedItem, targetId, position);
+          } else {
+            onDuplicate?.(draggedItem, targetId, position);
+          }
           break;
         case DROP_ACTIONS.CANCEL:
           onCancel?.();
@@ -120,7 +133,15 @@ export const TreeSortableContainer = ({
 
       resetDropState();
     },
-    [pendingDrop, onMove, onDuplicate, onCancel, resetDropState],
+    [
+      pendingDrop,
+      onMove,
+      onDuplicate,
+      onMoveExternal,
+      onDuplicateExternal,
+      onCancel,
+      resetDropState,
+    ],
   );
 
   useOnClickOutside(

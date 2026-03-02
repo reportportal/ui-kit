@@ -1,13 +1,18 @@
 import classNames from 'classnames/bind';
+import { drop, take } from 'es-toolkit';
+import { isEmpty } from 'es-toolkit/compat';
+
 import { Breadcrumb } from './breadcrumb';
 import { HiddenBreadcrumbs } from './hiddenBreadcrumbs';
 import { Tree } from './tree';
 import { BreadcrumbsProvider } from './breadcrumbsProvider';
-import { BreadcrumbDescriptor, BreadcrumbsProps } from './types';
+import { BreadcrumbsProps } from './types';
+
 import styles from './breadcrumbs.module.scss';
 
 const cx = classNames.bind(styles);
-const MAX_SHOWN_DESCRIPTORS = 5;
+
+const DEFAULT_MAX_SHOWN_DESCRIPTORS = 5;
 
 export const Breadcrumbs = ({
   descriptors = [],
@@ -15,14 +20,16 @@ export const Breadcrumbs = ({
   LinkComponent,
   tree,
   isBackButton = false,
+  isLastClickable = false,
+  maxShownDescriptors = DEFAULT_MAX_SHOWN_DESCRIPTORS,
+  titleTailNumChars: customTitleTailNumChars,
+  className,
 }: BreadcrumbsProps) => {
-  const shownDescriptors = [...descriptors];
-  const firstDescriptor = shownDescriptors.shift();
+  const [firstDescriptor, ...remainingDescriptors] = descriptors;
 
-  const getBreadcrumbsCountClass = (count: number): string => {
-    const suffix = count > 5 ? '6-plus' : count;
-    return `breadcrumbs-${suffix}`;
-  };
+  const normalizedMaxShownDescriptors = Math.max(1, Math.floor(maxShownDescriptors));
+  const visibleTailCount = normalizedMaxShownDescriptors - 1;
+  const hiddenCount = Math.max(0, remainingDescriptors.length - visibleTailCount);
 
   const titleTailNumChars = ((breadcrumbsCount: number) => {
     const widths: Record<number, number> = {
@@ -31,28 +38,27 @@ export const Breadcrumbs = ({
       3: 18,
       4: 13,
     };
+
     return widths[breadcrumbsCount] ?? 12;
   })(descriptors.length);
 
-  let hiddenDescriptors: BreadcrumbDescriptor[] = [];
-  if (shownDescriptors.length > MAX_SHOWN_DESCRIPTORS - 1) {
-    hiddenDescriptors = shownDescriptors.splice(
-      0,
-      shownDescriptors.length - (MAX_SHOWN_DESCRIPTORS - 1),
-    );
-  }
+  const hiddenDescriptors = take(remainingDescriptors, hiddenCount);
+  const shownDescriptors = drop(remainingDescriptors, hiddenCount);
 
   return (
     <BreadcrumbsProvider LinkComponent={LinkComponent}>
       <div
-        className={cx('breadcrumbs-container')}
+        className={cx('breadcrumbs-container', className)}
         data-automation-id={dataAutomationId}
         data-testid={dataAutomationId}
       >
         {isBackButton && firstDescriptor ? (
           <div className={cx('breadcrumbs')}>
             <div className={cx('breadcrumb-item', 'back-button')} data-testid="back-breadcrumb">
-              <Breadcrumb descriptor={firstDescriptor} titleTailNumChars={titleTailNumChars} />
+              <Breadcrumb
+                descriptor={firstDescriptor}
+                titleTailNumChars={customTitleTailNumChars ?? titleTailNumChars}
+              />
             </div>
           </div>
         ) : (
@@ -62,28 +68,28 @@ export const Breadcrumbs = ({
                 <Tree tree={tree} />
               </div>
             )}
-            <div className={cx('breadcrumbs', getBreadcrumbsCountClass(descriptors.length))}>
+            <div className={cx('breadcrumbs')}>
               {firstDescriptor && (
                 <div className={cx('breadcrumb-item')}>
                   <Breadcrumb
                     descriptor={firstDescriptor}
-                    titleTailNumChars={titleTailNumChars}
-                    isClickable={!!shownDescriptors.length}
+                    titleTailNumChars={customTitleTailNumChars ?? titleTailNumChars}
+                    isClickable={!isEmpty(remainingDescriptors)}
                   />
                 </div>
               )}
-              {hiddenDescriptors.length > 0 && (
+              {!isEmpty(hiddenDescriptors) && (
                 <div className={cx('breadcrumb-item', 'hidden-breadcrumbs')}>
                   <HiddenBreadcrumbs descriptors={hiddenDescriptors} />
                 </div>
               )}
-              {shownDescriptors.length > 0 &&
+              {!isEmpty(shownDescriptors) &&
                 shownDescriptors.map((descriptor, index) => (
                   <div className={cx('breadcrumb-item')} key={index}>
                     <Breadcrumb
                       descriptor={descriptor}
-                      titleTailNumChars={titleTailNumChars}
-                      isClickable={index !== shownDescriptors.length - 1}
+                      titleTailNumChars={customTitleTailNumChars ?? titleTailNumChars}
+                      isClickable={isLastClickable || index !== shownDescriptors.length - 1}
                     />
                   </div>
                 ))}

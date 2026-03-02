@@ -3,8 +3,12 @@ import { useDrag, useDrop, DragSourceMonitor, DropTargetMonitor } from 'react-dn
 import { getEmptyImage } from 'react-dnd-html5-backend';
 import { DEFAULT_SORTABLE_TYPE } from '@common/constants/sortable';
 import type { UseSortableOptions, UseSortableReturn, DragItem, DropPosition } from '@common/types';
-import { DROP_POSITIONS, DROP_DETECTION_MODE } from '@common/types';
-import { calculateCursorBasedDropIndex, getDropZone } from '@components/sortable/helpers';
+import { DROP_POSITIONS, DROP_DETECTION_MODE, SORTABLE_ORIENTATION } from '@common/types';
+import {
+  calculateCursorBasedDropIndex,
+  getDropZone,
+  getDropZoneHorizontal,
+} from '@components/sortable/helpers';
 
 export const useSortable = ({
   id,
@@ -15,8 +19,10 @@ export const useSortable = ({
   onDrop,
   hideDefaultPreview = false,
   dropDetectionMode = DROP_DETECTION_MODE.INDEX_BASED,
+  orientation = SORTABLE_ORIENTATION.VERTICAL,
 }: UseSortableOptions): UseSortableReturn => {
   const isHoverMode = dropDetectionMode === DROP_DETECTION_MODE.HOVER;
+  const isHorizontal = orientation === SORTABLE_ORIENTATION.HORIZONTAL;
   const elementRef = useRef<HTMLElement | null>(null);
   const lastValidDropZoneRef = useRef<DropPosition>(null);
   const [cursorDropPosition, setCursorDropPosition] = useState<DropPosition>(null);
@@ -70,7 +76,6 @@ export const useSortable = ({
         }
 
         const hoverBoundingRect = element.getBoundingClientRect();
-        const elementHeight = hoverBoundingRect.bottom - hoverBoundingRect.top;
         const clientOffset = monitor.getClientOffset();
 
         if (!clientOffset) {
@@ -78,19 +83,24 @@ export const useSortable = ({
           return;
         }
 
-        const hoverClientY = clientOffset.y - hoverBoundingRect.top;
+        let dropZone: DropPosition;
 
-        const dropZone = getDropZone(hoverClientY, elementHeight);
+        if (isHorizontal) {
+          const elementWidth = hoverBoundingRect.right - hoverBoundingRect.left;
+          const hoverClientX = clientOffset.x - hoverBoundingRect.left;
+          dropZone = getDropZoneHorizontal(hoverClientX, elementWidth);
+        } else {
+          const elementHeight = hoverBoundingRect.bottom - hoverBoundingRect.top;
+          const hoverClientY = clientOffset.y - hoverBoundingRect.top;
+          dropZone = getDropZone(hoverClientY, elementHeight);
+        }
 
         if (dropZone === null) {
           setCursorDropPosition(null);
           lastValidDropZoneRef.current = null;
-        } else if (dropZone === DROP_POSITIONS.TOP) {
-          setCursorDropPosition(DROP_POSITIONS.TOP);
-          lastValidDropZoneRef.current = DROP_POSITIONS.TOP;
         } else {
-          setCursorDropPosition(DROP_POSITIONS.BOTTOM);
-          lastValidDropZoneRef.current = DROP_POSITIONS.BOTTOM;
+          setCursorDropPosition(dropZone);
+          lastValidDropZoneRef.current = dropZone;
         }
       },
       drop: (dragObject: DragItem) => {
@@ -104,11 +114,13 @@ export const useSortable = ({
             return;
           }
 
-          const isTop = dropZone === DROP_POSITIONS.TOP;
+          const isBeforeZone = isHorizontal
+            ? dropZone === DROP_POSITIONS.LEFT
+            : dropZone === DROP_POSITIONS.TOP;
           const toIndex = calculateCursorBasedDropIndex({
             fromIndex: dragObject.index,
             targetIndex: index,
-            isTopZone: isTop,
+            isTopZone: isBeforeZone,
           });
 
           onDrop(dragObject.index, toIndex);
@@ -117,7 +129,7 @@ export const useSortable = ({
         }
       },
     }),
-    [id, index, type, onDrop, isLast, isHoverMode],
+    [id, index, type, onDrop, isLast, isHoverMode, isHorizontal],
   );
 
   // Wrap dropRef to also store element reference (needed for hover detection mode)
@@ -139,6 +151,10 @@ export const useSortable = ({
   const getIndexBasedDropPosition = (): DropPosition => {
     if (draggedItemIndex === null) {
       return null;
+    }
+
+    if (isHorizontal) {
+      return draggedItemIndex > index ? DROP_POSITIONS.LEFT : DROP_POSITIONS.RIGHT;
     }
 
     return draggedItemIndex > index ? DROP_POSITIONS.TOP : DROP_POSITIONS.BOTTOM;

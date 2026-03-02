@@ -64,6 +64,20 @@ describe('Breadcrumbs', () => {
     expect(screen.getAllByTestId('breadcrumb')).toHaveLength(5);
   });
 
+  it('respects custom maxShownDescriptors value', () => {
+    render(<Breadcrumbs descriptors={mockDescriptors} maxShownDescriptors={3} />);
+    expect(screen.getByTestId('hidden-breadcrumbs-trigger')).toBeInTheDocument();
+    expect(screen.getAllByTestId('breadcrumb')).toHaveLength(3);
+  });
+
+  it('keeps first breadcrumb clickable when maxShownDescriptors is 1', () => {
+    render(<Breadcrumbs descriptors={mockDescriptors.slice(0, 3)} maxShownDescriptors={1} />);
+
+    expect(screen.getByTestId('hidden-breadcrumbs-trigger')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Home' })).toBeInTheDocument();
+    expect(screen.getAllByTestId('breadcrumb')).toHaveLength(1);
+  });
+
   it('shows correct hidden breadcrumbs content', () => {
     render(<Breadcrumbs descriptors={mockDescriptors} />);
     expect(screen.queryByTestId('hidden-breadcrumbs-content')).not.toBeInTheDocument();

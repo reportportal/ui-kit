@@ -24,4 +24,8 @@ export interface BreadcrumbsProps {
   tree?: TreeDescriptor[];
   dataAutomationId?: string;
   isBackButton?: boolean;
+  isLastClickable?: boolean;
+  maxShownDescriptors?: number;
+  titleTailNumChars?: number;
+  className?: string;
 }
