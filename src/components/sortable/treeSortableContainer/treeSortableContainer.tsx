@@ -26,13 +26,15 @@ import type {
   DropConfirmationLabels,
   DropAction,
 } from '@common/types';
-import { DROP_ACTIONS } from '@common/types';
+import { DROP_ACTIONS, TREE_DROP_POSITIONS } from '@common/types';
 import { useOnClickOutside } from '@common/hooks';
 
 import { TreeSortableContext, TreeSortableContextValue } from './TreeSortableContext';
 import styles from './treeSortableContainer.module.scss';
 
 const cx = classNames.bind(styles);
+
+const POPOVER_OFFSET_PX = 2;
 
 const DEFAULT_LABELS: DropConfirmationLabels = {
   [DROP_ACTIONS.MOVE]: 'Move',
@@ -82,10 +84,10 @@ export const TreeSortableContainer = ({
 
       let top: number;
 
-      if (position === 'before') {
-        top = rect.top;
-      } else if (position === 'after') {
-        top = rect.top + rect.height;
+      if (position === TREE_DROP_POSITIONS.BEFORE) {
+        top = rect.top + POPOVER_OFFSET_PX;
+      } else if (position === TREE_DROP_POSITIONS.AFTER) {
+        top = rect.top + rect.height + POPOVER_OFFSET_PX;
       } else {
         top = rect.top;
       }
@@ -167,8 +169,12 @@ export const TreeSortableContainer = ({
           <div
             ref={popoverRef}
             className={cx('drop-confirmation-popover', {
-              'drop-confirmation-popover--before': pendingDrop.position === 'before',
-              'drop-confirmation-popover--after': pendingDrop.position === 'after',
+              'drop-confirmation-popover--before':
+                pendingDrop.position === TREE_DROP_POSITIONS.BEFORE,
+              'drop-confirmation-popover--after':
+                pendingDrop.position === TREE_DROP_POSITIONS.AFTER,
+              'drop-confirmation-popover--inside':
+                pendingDrop.position === TREE_DROP_POSITIONS.INSIDE,
             })}
             style={{
               top: popoverPosition.top,
