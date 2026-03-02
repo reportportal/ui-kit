@@ -40,6 +40,11 @@
     margin-bottom: 0;
   }
 
+  &--inside {
+    transform: translate(-50%, -108%);
+    margin-bottom: 0;
+  }
+
   &::after {
     content: '';
     position: absolute;
@@ -56,9 +61,15 @@
 
   &--after::after {
     top: -8px;
+    left: 50%;
     bottom: auto;
     border-top: none;
     border-bottom: 8px solid var(--rp-ui-base-bg-000);
+  }
+
+  &--inside::after {
+    bottom: -8px;
+    border-top: 8px solid var(--rp-ui-base-bg-000);
   }
 
   &__button {
@@ -75,7 +86,7 @@
     transition: background-color 0.15s ease;
 
     &:hover {
-      background-color: var(--rp-ui-color-primary-hover);
+      background-color: var(--rp-ui-base-bg-200);
     }
   }
 
