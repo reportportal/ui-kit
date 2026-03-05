@@ -104,6 +104,8 @@
 
   /* shadows */
   --rp-ui-shadow-rgb: 55, 67, 98;
+  --rp-ui-shadow-image-rgb: 213, 219, 227;
+  --rp-ui-image-shadow: 0px 1px 3px rgb(var(--rp-ui-shadow-image-rgb));
   --rp-ui-base-shadow: 0px 1px 3px rgba(var(--rp-ui-shadow-rgb), 0.1);
   --rp-ui-base-shadow-hover: 0px 1px 3px rgba(var(--rp-ui-shadow-rgb), 0.2);
   --rp-ui-base-shadow-secondary: 0 8px 40px rgba(0, 0, 0, 0.15);

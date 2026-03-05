@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 EPAM Systems
+ * Copyright 2026 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,8 +14,14 @@
  * limitations under the License.
  */
 
-export { getFileExtension } from './getFileExtension';
-export { isString } from './isString';
-export { getAlignmentAxisOffset } from './floatingUi';
-export { splitHtmlAttributes } from './htmlAttributes';
-export { addMiddleEllipsis } from './addMiddleEllipsis';
+export const addMiddleEllipsis = (fileName: string): string => {
+  const maxLength = 15;
+  const startLength = 4;
+  const endLength = 8;
+
+  if (fileName.length <= maxLength) {
+    return fileName;
+  }
+
+  return fileName.slice(0, startLength) + '...' + fileName.slice(-endLength);
+};

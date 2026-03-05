@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
-import { AttachedFile } from './attachedFile';
+import { AttachedFile, TextPosition } from './attachedFile';
 
 const meta: Meta<typeof AttachedFile> = {
   title: 'Data display/AttachedFile',
@@ -68,6 +68,15 @@ export const UploadFailedCustomMessage = {
   },
 } satisfies Story;
 
+export const WithPreview = {
+  args: {
+    fileName: 'Picture.png',
+    size: 1.2,
+    textPosition: TextPosition.bottom,
+    withPreview: true,
+  },
+} satisfies Story;
+
 export const DifferentFileTypes: Story = {
   render: () => (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
@@ -81,6 +90,13 @@ export const DifferentFileTypes: Story = {
       <AttachedFile fileName="image.jpg" size={2.1} onRemove={() => {}} onDownload={() => {}} />
       <AttachedFile fileName="library.jar" size={15.2} onRemove={() => {}} onDownload={() => {}} />
       <AttachedFile fileName="unknown.xyz" size={0.5} onRemove={() => {}} onDownload={() => {}} />
+      <AttachedFile
+        fileName="123_some_Long_picture_file_name.jpg"
+        size={2.1}
+        textPosition={TextPosition.bottom}
+        withPreview
+      />
+      <AttachedFile fileName="Data.csv" size={2.1} textPosition={TextPosition.bottom} />
     </div>
   ),
 };
