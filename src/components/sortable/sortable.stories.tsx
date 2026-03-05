@@ -366,15 +366,27 @@ export const HorizontalFilterChipsWithFilterItem: Story = {
     }) => {
       // eslint-disable-next-line react-hooks/rules-of-hooks
       const shouldHide = useHideOnDrag(isDragging);
-      if (shouldHide) return null;
       return (
-        <div className={storyStyles['chip-wrapper']}>
+        <div
+          className={storyStyles['chip-wrapper']}
+          style={
+            shouldHide
+              ? {
+                  position: 'absolute',
+                  width: 0,
+                  height: 0,
+                  overflow: 'hidden',
+                  pointerEvents: 'none',
+                }
+              : undefined
+          }
+        >
           <span ref={dragRef as Ref<HTMLSpanElement>} className={storyStyles['chip-handle']}>
             <span className={storyStyles['chip-handle-icon']}>
               <DragNDropIcon />
             </span>
           </span>
-          <FilterItem id={String(item.id)} caption={item.name} actions={[]} />
+          {!shouldHide && <FilterItem id={String(item.id)} caption={item.name} actions={[]} />}
         </div>
       );
     };
