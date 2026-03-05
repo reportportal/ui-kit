@@ -22,6 +22,7 @@ export interface BreadcrumbsProps {
     dataAutomationId?: string;
     isBackButton?: boolean;
     isLastClickable?: boolean;
+    isSingleItemClickable?: boolean;
     maxShownDescriptors?: number;
     titleTailNumChars?: number;
     className?: string;
