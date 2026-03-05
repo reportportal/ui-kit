@@ -78,6 +78,13 @@ describe('Breadcrumbs', () => {
     expect(screen.getAllByTestId('breadcrumb')).toHaveLength(1);
   });
 
+  it('keeps first breadcrumb clickable when there is one item and isSingleItemClickable=true', () => {
+    render(<Breadcrumbs descriptors={[mockDescriptors[0]]} isSingleItemClickable />);
+
+    expect(screen.getByRole('link', { name: 'Home' })).toBeInTheDocument();
+    expect(screen.getAllByTestId('breadcrumb')).toHaveLength(1);
+  });
+
   it('shows correct hidden breadcrumbs content', () => {
     render(<Breadcrumbs descriptors={mockDescriptors} />);
     expect(screen.queryByTestId('hidden-breadcrumbs-content')).not.toBeInTheDocument();

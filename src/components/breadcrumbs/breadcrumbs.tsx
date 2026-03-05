@@ -21,6 +21,7 @@ export const Breadcrumbs = ({
   tree,
   isBackButton = false,
   isLastClickable = false,
+  isSingleItemClickable = false,
   maxShownDescriptors = DEFAULT_MAX_SHOWN_DESCRIPTORS,
   titleTailNumChars: customTitleTailNumChars,
   className,
@@ -74,7 +75,7 @@ export const Breadcrumbs = ({
                   <Breadcrumb
                     descriptor={firstDescriptor}
                     titleTailNumChars={customTitleTailNumChars ?? titleTailNumChars}
-                    isClickable={!isEmpty(remainingDescriptors)}
+                    isClickable={isSingleItemClickable || !isEmpty(remainingDescriptors)}
                   />
                 </div>
               )}
