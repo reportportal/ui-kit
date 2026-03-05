@@ -105,12 +105,19 @@ export const Modal: FC<ModalProps> = ({
   };
 
   useEffect(() => {
-    if (!modalRef.current) return;
-    const observer = new ResizeObserver(() => {
+    if (!isShown || !modalRef.current) return;
+
+    const updateHeight = () => {
       if (modalRef.current) {
         setModalHeight(modalRef.current.clientHeight);
       }
-    });
+    };
+
+    updateHeight();
+
+    if (typeof ResizeObserver === 'undefined') return;
+
+    const observer = new ResizeObserver(updateHeight);
     observer.observe(modalRef.current);
     return () => observer.disconnect();
   }, [isShown]);
