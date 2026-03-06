@@ -27,12 +27,17 @@ import {
   XlsIcon,
   FileOtherIcon,
 } from '@components/icons';
-import { getFileExtension } from '@common/utils';
+import { getFileExtension, addMiddleEllipsis } from '@common/utils';
 import { VoidFn } from '@common/types';
 
 import styles from './attachedFile.module.scss';
 
 const cx = classNames.bind(styles);
+
+export enum TextPosition {
+  bottom = 'bottom',
+  right = 'right',
+}
 
 export interface AttachedFileProps {
   fileName: string;
@@ -44,6 +49,9 @@ export interface AttachedFileProps {
   uploadFailedMessage?: string;
   onRemove?: VoidFn;
   onDownload?: VoidFn;
+  withPreview?: boolean;
+  textPosition?: TextPosition;
+  imageSrc?: string;
 }
 
 const FILE_ICON_MAP = {
@@ -73,6 +81,9 @@ export const AttachedFile = ({
   isFullWidth = false,
   onDownload,
   onRemove,
+  withPreview = false,
+  textPosition = TextPosition.right,
+  imageSrc,
 }: AttachedFileProps) => {
   const fileExtension = useMemo(() => getFileExtension(fileName), [fileName]);
   const upperCaseExtension = fileExtension.toUpperCase();
@@ -100,21 +111,28 @@ export const AttachedFile = ({
     [isUploadFailed, isUploading, onDownload],
   );
 
+  const isBottomTextPosition = textPosition === TextPosition.bottom;
+
   return (
     <div
       className={cx('attached-file', {
         'attached-file--failed': isUploadFailed,
         'attached-file--uploading': isUploading,
         'attached-file--full-width': isFullWidth,
+        'attached-file--bottom-placed': isBottomTextPosition,
       })}
     >
       <div className={cx('attached-file__icon')}>
-        <div className={cx('attached-file__file-icon')}>
-          <FileIcon />
-        </div>
+        {withPreview && imageSrc ? (
+          <img className={cx('attached-file__thumbnail')} src={imageSrc} alt={fileName} />
+        ) : (
+          <div className={cx('attached-file__file-icon')}>
+            <FileIcon />
+          </div>
+        )}
       </div>
       <div className={cx('attached-file__info')}>
-        {onDownload ? (
+        {!isBottomTextPosition && onDownload ? (
           <button type="button" className={cx('attached-file__file-name')} onClick={downloadFile}>
             <span className={cx('attached-file__name-text')}>{fileName}</span>
             {!isUploading && !isUploadFailed && (
@@ -124,39 +142,53 @@ export const AttachedFile = ({
             )}
           </button>
         ) : (
-          <div className={cx('attached-file__file-name')}>
-            <span className={cx('attached-file__name-text')}>{fileName}</span>
-          </div>
-        )}
-        {!isUploadFailed && (
-          <div className={cx('attached-file__file-details')}>
-            {upperCaseExtension}, {size} MB
-          </div>
-        )}
-        {isUploadFailed && (
-          <div className={cx('attached-file__error-message')}>{uploadFailedMessage}</div>
-        )}
-      </div>
-      {onRemove && (
-        <button
-          type="button"
-          className={cx('attached-file__remove-button', {
-            'attached-file__remove-button--disabled': isUploading,
-          })}
-          disabled={isUploading}
-          onClick={handleRemove}
-        >
-          <CloseIcon />
-        </button>
-      )}
-      {isUploading && uploadingProgress > 0 && (
-        <div className={cx('attached-file__upload-progress')}>
           <div
-            className={cx('attached-file__upload-progress-bar')}
-            style={{ width: `${uploadingProgress}%` }}
-          />
-        </div>
-      )}
+            className={cx('attached-file__file-name', {
+              'attached-file__file-name--bottom-placed': isBottomTextPosition,
+            })}
+          >
+            <span className={cx('attached-file__name-text')}>
+              {isBottomTextPosition ? addMiddleEllipsis(fileName) : fileName}
+            </span>
+          </div>
+        )}
+        {!isBottomTextPosition ? (
+          <>
+            {!isUploadFailed && (
+              <div className={cx('attached-file__file-details')}>
+                {upperCaseExtension}, {size} MB
+              </div>
+            )}
+            {isUploadFailed && (
+              <div className={cx('attached-file__error-message')}>{uploadFailedMessage}</div>
+            )}
+          </>
+        ) : null}
+      </div>
+      {!isBottomTextPosition ? (
+        <>
+          {onRemove && (
+            <button
+              type="button"
+              className={cx('attached-file__remove-button', {
+                'attached-file__remove-button--disabled': isUploading,
+              })}
+              disabled={isUploading}
+              onClick={handleRemove}
+            >
+              <CloseIcon />
+            </button>
+          )}
+          {isUploading && uploadingProgress > 0 && (
+            <div className={cx('attached-file__upload-progress')}>
+              <div
+                className={cx('attached-file__upload-progress-bar')}
+                style={{ width: `${uploadingProgress}%` }}
+              />
+            </div>
+          )}
+        </>
+      ) : null}
     </div>
   );
 };

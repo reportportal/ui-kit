@@ -45,6 +45,29 @@
     }
   }
 
+  &--bottom-placed {
+    flex-direction: column;
+    padding: 0;
+    width: 89px;
+    max-height: 96px;
+    min-width: auto;
+    box-shadow: none;
+    gap: 8px;
+
+    .attached-file {
+      &__icon {
+        width: 75px;
+        height: 56px;
+        border-radius: 4px;
+        box-shadow: var(--rp-ui-image-shadow);
+      }
+
+      &__file-icon path {
+        fill: var(--rp-ui-base-e-300);
+      }
+    }
+  }
+
   &--failed {
     @include disabled-state();
 
@@ -92,6 +115,14 @@
     }
   }
 
+  &__thumbnail {
+    max-width: 67px;
+    max-height: 48px;
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+  }
+
   &__info {
     flex: 1;
     min-width: 0;
@@ -113,6 +144,13 @@
     border: none;
     background-color: transparent;
     padding: 0;
+
+    &--bottom-placed {
+      @include font-scale('s-small');
+
+      font-weight: var(--rp-ui-base-fw-regular);
+      color: var(--rp-ui-base-e-300);
+    }
 
     &:hover {
       color: var(--rp-ui-base-topaz-hover);
