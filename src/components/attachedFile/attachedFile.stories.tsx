@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
-import { AttachedFile, TextPosition } from './attachedFile';
+import { AttachedFile } from './attachedFile';
+import { TextPosition } from './types';
 
 const meta: Meta<typeof AttachedFile> = {
   title: 'Data display/AttachedFile',

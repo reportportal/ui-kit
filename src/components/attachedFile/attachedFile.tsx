@@ -30,14 +30,10 @@ import {
 import { getFileExtension, addMiddleEllipsis } from '@common/utils';
 import { VoidFn } from '@common/types';
 
+import { TextPosition } from './types';
 import styles from './attachedFile.module.scss';
 
 const cx = classNames.bind(styles);
-
-export enum TextPosition {
-  bottom = 'bottom',
-  right = 'right',
-}
 
 export interface AttachedFileProps {
   fileName: string;
