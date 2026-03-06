@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useMemo, useRef, useState, FC } from 'react';
+import { ReactNode, useCallback, useEffect, useMemo, useRef, useState, FC } from 'react';
 import { Scrollbars } from 'rc-scrollbars';
 import { motion, AnimatePresence } from 'framer-motion';
 import classNames from 'classnames/bind';
@@ -82,17 +82,20 @@ export const Modal: FC<ModalProps> = ({
     return contentMaxHeight;
   };
 
-  const closeModal = () => {
+  const closeModal = useCallback(() => {
     setShown(false);
-  };
+  }, []);
 
-  const onKeydown = (event: KeyboardEvent) => {
-    const { keyCode } = event;
+  const onKeydown = useCallback(
+    (event: KeyboardEvent) => {
+      const { keyCode } = event;
 
-    if (keyCode === KeyCodes.ESCAPE_KEY_CODE) {
-      closeModal();
-    }
-  };
+      if (keyCode === KeyCodes.ESCAPE_KEY_CODE) {
+        closeModal();
+      }
+    },
+    [closeModal],
+  );
 
   const onFocus = () => {
     if (!initiallyFocused) {
@@ -102,11 +105,22 @@ export const Modal: FC<ModalProps> = ({
   };
 
   useEffect(() => {
-    if (modalRef && modalRef.current) {
-      const { clientHeight } = modalRef.current;
-      setModalHeight(clientHeight);
-    }
-  }, [children, windowSize]);
+    if (!isShown || !modalRef.current) return;
+
+    const updateHeight = () => {
+      if (modalRef.current) {
+        setModalHeight(modalRef.current.clientHeight);
+      }
+    };
+
+    updateHeight();
+
+    if (typeof ResizeObserver === 'undefined') return;
+
+    const observer = new ResizeObserver(updateHeight);
+    observer.observe(modalRef.current);
+    return () => observer.disconnect();
+  }, [isShown]);
 
   useEffect(() => {
     setShown(true);
@@ -114,7 +128,7 @@ export const Modal: FC<ModalProps> = ({
     document.addEventListener('keydown', onKeydown, false);
 
     return () => document.removeEventListener('keydown', onKeydown, false);
-  }, []);
+  }, [onKeydown]);
 
   const clickOutsideOptions = useMemo(
     () => ({
