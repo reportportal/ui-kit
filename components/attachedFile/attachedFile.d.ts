@@ -1,9 +1,5 @@
 import { VoidFn } from '../../common/types';
 
-export declare enum TextPosition {
-    bottom = "bottom",
-    right = "right"
-}
 export interface AttachedFileProps {
     fileName: string;
     size: number;
@@ -15,7 +11,7 @@ export interface AttachedFileProps {
     onRemove?: VoidFn;
     onDownload?: VoidFn;
     withPreview?: boolean;
-    textPosition?: TextPosition;
+    textPosition?: 'bottom' | 'right';
     imageSrc?: string;
 }
 export declare const AttachedFile: ({ fileName, size, uploadingProgress, isUploadFailed, uploadFailedMessage, isUploading, isFullWidth, onDownload, onRemove, withPreview, textPosition, imageSrc, }: AttachedFileProps) => import("react/jsx-runtime").JSX.Element;
