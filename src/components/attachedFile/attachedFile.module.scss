@@ -53,12 +53,14 @@
     min-width: auto;
     box-shadow: none;
     gap: 8px;
+    background: none;
 
     .attached-file {
       &__icon {
         width: 75px;
         height: 56px;
         border-radius: 4px;
+        background-color: var(--rp-ui-base-bg-000);
         box-shadow: var(--rp-ui-image-shadow);
       }
 
