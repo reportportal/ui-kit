@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
-import { AttachedFile, TextPosition } from './attachedFile';
+import { AttachedFile } from './attachedFile';
 
 const meta: Meta<typeof AttachedFile> = {
   title: 'Data display/AttachedFile',
@@ -72,7 +72,7 @@ export const WithPreview = {
   args: {
     fileName: 'Picture.png',
     size: 1.2,
-    textPosition: TextPosition.bottom,
+    textPosition: 'bottom',
     withPreview: true,
   },
 } satisfies Story;
@@ -93,10 +93,10 @@ export const DifferentFileTypes: Story = {
       <AttachedFile
         fileName="123_some_Long_picture_file_name.jpg"
         size={2.1}
-        textPosition={TextPosition.bottom}
+        textPosition="bottom"
         withPreview
       />
-      <AttachedFile fileName="Data.csv" size={2.1} textPosition={TextPosition.bottom} />
+      <AttachedFile fileName="Data.csv" size={2.1} textPosition="bottom" />
     </div>
   ),
 };

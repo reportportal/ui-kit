@@ -34,11 +34,6 @@ import styles from './attachedFile.module.scss';
 
 const cx = classNames.bind(styles);
 
-export enum TextPosition {
-  bottom = 'bottom',
-  right = 'right',
-}
-
 export interface AttachedFileProps {
   fileName: string;
   size: number;
@@ -50,7 +45,7 @@ export interface AttachedFileProps {
   onRemove?: VoidFn;
   onDownload?: VoidFn;
   withPreview?: boolean;
-  textPosition?: TextPosition;
+  textPosition?: 'bottom' | 'right';
   imageSrc?: string;
 }
 
@@ -82,7 +77,7 @@ export const AttachedFile = ({
   onDownload,
   onRemove,
   withPreview = false,
-  textPosition = TextPosition.right,
+  textPosition = 'right',
   imageSrc,
 }: AttachedFileProps) => {
   const fileExtension = useMemo(() => getFileExtension(fileName), [fileName]);
@@ -111,7 +106,7 @@ export const AttachedFile = ({
     [isUploadFailed, isUploading, onDownload],
   );
 
-  const isBottomTextPosition = textPosition === TextPosition.bottom;
+  const isBottomTextPosition = textPosition === 'bottom';
 
   return (
     <div
