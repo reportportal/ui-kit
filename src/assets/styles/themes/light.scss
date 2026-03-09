@@ -43,6 +43,9 @@
 
   --rp-ui-opacity-default: 30%;
 
+  --rp-ui-color-execution-status-btn-failed: var(--rp-ui-base-a-red-700);
+  --rp-ui-color-execution-status-btn-passed: var(--rp-ui-base-a-green-800);
+
   /* New Autocomplete themable colors */
   --rp-ui-divider-bg: var(--rp-ui-base-e-100);
   --rp-ui-box-shadow: var(--rp-ui-base-shadow-secondary);
