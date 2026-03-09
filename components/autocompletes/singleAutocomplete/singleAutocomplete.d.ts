@@ -34,6 +34,7 @@ export interface SingleAutocompleteProps<T> {
     refFunction?: Ref<HTMLInputElement>;
     stateReducer?: (state: DownshiftState<T>, changes: StateChangeOptions<T>) => Partial<StateChangeOptions<T>>;
     useFixedPositioning: boolean;
+    dropdownMatchInputWidth?: boolean;
     getUniqKey?: (item: T) => string;
     customEmptyListMessage?: string;
     customNoMatchesMessage?: string;

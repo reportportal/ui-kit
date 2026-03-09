@@ -34,6 +34,7 @@ export { default as HideIcon } from './svg/hide.svg';
 export { default as ImageIcon } from './svg/image.svg';
 export { default as InfoIcon } from './svg/info.svg';
 export { default as JarIcon } from './svg/jar.svg';
+export { default as MailIcon } from './svg/mail.svg';
 export { default as MaximizeIcon } from './svg/maximize.svg';
 export { default as MeatballMenuIcon } from './svg/meatballMenu.svg';
 export { default as MinusIcon } from './svg/minus.svg';
