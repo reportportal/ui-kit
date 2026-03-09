@@ -18,7 +18,7 @@ import { ComponentProps, FocusEvent, KeyboardEvent, ReactNode, Ref } from 'react
 import classNames from 'classnames/bind';
 import { isEmpty } from 'es-toolkit/compat';
 import Downshift, { DownshiftState, StateChangeOptions } from 'downshift';
-import { autoUpdate, useFloating } from '@floating-ui/react';
+import { autoUpdate, useFloating, size } from '@floating-ui/react';
 
 import { default as FieldText } from '@/components/fieldText';
 import { DropdownIcon } from '@/components/icons';
@@ -71,6 +71,7 @@ export interface SingleAutocompleteProps<T> {
     changes: StateChangeOptions<T>,
   ) => Partial<StateChangeOptions<T>>;
   useFixedPositioning: boolean;
+  dropdownMatchInputWidth?: boolean;
   getUniqKey?: (item: T) => string;
   customEmptyListMessage?: string;
   customNoMatchesMessage?: string;
@@ -107,6 +108,7 @@ export const SingleAutocomplete = <T,>(componentProps: SingleAutocompleteProps<T
     stateReducer,
     onStateChange,
     useFixedPositioning,
+    dropdownMatchInputWidth = false,
     newItemButtonText = '',
     ...props
   } = componentProps;
@@ -115,6 +117,17 @@ export const SingleAutocomplete = <T,>(componentProps: SingleAutocompleteProps<T
     placement: 'bottom-start',
     strategy: useFixedPositioning ? 'fixed' : 'absolute',
     whileElementsMounted: autoUpdate,
+    middleware: dropdownMatchInputWidth
+      ? [
+          size({
+            apply({ rects, elements }) {
+              Object.assign(elements.floating.style, {
+                width: `${rects.reference.width}px`,
+              });
+            },
+          }),
+        ]
+      : [],
   });
 
   const getOptionProps =
