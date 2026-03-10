@@ -5,7 +5,6 @@ import classNames from 'classnames/bind';
 import { CloseIcon, ErrorIcon, InfoIcon, SuccessIcon } from '@components/icons';
 
 const cx = classNames.bind(styles);
-const ERROR_DURATION = 7000;
 const DEFAULT_DURATION = 4000;
 
 export const SystemAlert: FC<SystemAlertProps> = ({
@@ -18,7 +17,6 @@ export const SystemAlert: FC<SystemAlertProps> = ({
   className,
   dataAutomationId,
 }): ReactElement => {
-  const adjustedDuration = type === SystemAlertType.ERROR ? ERROR_DURATION : duration;
   const [systemTitle, setSystemTitle] = useState('');
   const refSystemAlert = useRef<HTMLDivElement>(null);
 
@@ -31,12 +29,13 @@ export const SystemAlert: FC<SystemAlertProps> = ({
   }, [title]);
 
   useEffect(() => {
+    if ([SystemAlertType.WARNING, SystemAlertType.ERROR].includes(type)) return;
     const timer = setTimeout(() => {
       onClose();
-    }, adjustedDuration);
+    }, duration);
 
     return () => clearTimeout(timer);
-  }, [adjustedDuration, onClose]);
+  }, [type, duration, onClose]);
 
   const getIcon = (): ReactElement | null => {
     switch (type) {

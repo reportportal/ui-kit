@@ -168,19 +168,24 @@ describe('SystemAlert Component', () => {
       expect(handleClose).toHaveBeenCalledTimes(1);
     });
 
-    it('auto-closes with longer duration for error alert', () => {
+    it('does not auto-close for error alert (user must close)', () => {
       const handleClose = vi.fn();
       render(
         <SystemAlert title="Error Alert" onClose={handleClose} type={SystemAlertType.ERROR} />,
       );
 
+      vi.advanceTimersByTime(10000);
       expect(handleClose).not.toHaveBeenCalled();
+    });
 
-      vi.advanceTimersByTime(6999);
+    it('does not auto-close for warning alert (user must close)', () => {
+      const handleClose = vi.fn();
+      render(
+        <SystemAlert title="Warning Alert" onClose={handleClose} type={SystemAlertType.WARNING} />,
+      );
+
+      vi.advanceTimersByTime(10000);
       expect(handleClose).not.toHaveBeenCalled();
-
-      vi.advanceTimersByTime(1);
-      expect(handleClose).toHaveBeenCalledTimes(1);
     });
 
     it('auto-closes with custom duration when provided', () => {
