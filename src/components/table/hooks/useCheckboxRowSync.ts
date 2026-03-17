@@ -6,26 +6,28 @@ interface UseCheckboxRowSyncProps {
 }
 
 export const useCheckboxRowSync = ({ enabled, rowCount }: UseCheckboxRowSyncProps) => {
-  const tableRowRefs = useRef<Map<number, HTMLElement>>(new Map());
-  const checkboxRowRefs = useRef<Map<number, HTMLElement>>(new Map());
+  const tableRowRefs = useRef<Map<string, HTMLElement>>(new Map());
+  const checkboxRowRefs = useRef<Map<string, HTMLElement>>(new Map());
 
   const setTableRowRef = useCallback(
-    (index: number) => (el: HTMLElement | null) => {
+    (rowId: string | number) => (el: HTMLElement | null) => {
+      const key = String(rowId);
       if (el) {
-        tableRowRefs.current.set(index, el);
+        tableRowRefs.current.set(key, el);
       } else {
-        tableRowRefs.current.delete(index);
+        tableRowRefs.current.delete(key);
       }
     },
     [],
   );
 
   const setCheckboxRowRef = useCallback(
-    (index: number) => (el: HTMLElement | null) => {
+    (rowId: string | number) => (el: HTMLElement | null) => {
+      const key = String(rowId);
       if (el) {
-        checkboxRowRefs.current.set(index, el);
+        checkboxRowRefs.current.set(key, el);
       } else {
-        checkboxRowRefs.current.delete(index);
+        checkboxRowRefs.current.delete(key);
       }
     },
     [],
@@ -39,8 +41,8 @@ export const useCheckboxRowSync = ({ enabled, rowCount }: UseCheckboxRowSyncProp
   }, []);
 
   const syncAllHeights = useCallback(() => {
-    tableRowRefs.current.forEach((tableRow, index) => {
-      const checkboxRow = checkboxRowRefs.current.get(index);
+    tableRowRefs.current.forEach((tableRow, rowId) => {
+      const checkboxRow = checkboxRowRefs.current.get(rowId);
       if (checkboxRow) {
         syncRowHeight(tableRow, checkboxRow);
       }
@@ -54,10 +56,10 @@ export const useCheckboxRowSync = ({ enabled, rowCount }: UseCheckboxRowSyncProp
       requestAnimationFrame(() => {
         entries.forEach((entry) => {
           const tableRow = entry.target as HTMLElement;
-          const index = parseInt(tableRow.dataset.rowIndex || '-1', 10);
-          const checkboxRow = checkboxRowRefs.current.get(index);
+          const rowId = tableRow.dataset.rowId;
+          const checkboxRow = rowId ? checkboxRowRefs.current.get(rowId) : undefined;
 
-          if (checkboxRow && index >= 0) {
+          if (checkboxRow) {
             syncRowHeight(tableRow, checkboxRow);
           }
         });

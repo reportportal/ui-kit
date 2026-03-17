@@ -335,12 +335,7 @@ $EXPANDABLE_CHECKBOX_Z_INDEX: 10;
     label {
       height: 18px;
       width: 16px;
-
-      span {
-        background-color: var(--rp-ui-base-bg-000);
-      }
     }
-
   }
 
   &.expand-cell {
@@ -527,10 +522,6 @@ $EXPANDABLE_CHECKBOX_Z_INDEX: 10;
   flex-direction: column;
   overflow: hidden;
   max-height: 100%;
-
-  .checkbox-cell {
-    margin-left: 8px;
-  }
 }
 
 .checkbox-header {
@@ -554,10 +545,6 @@ $EXPANDABLE_CHECKBOX_Z_INDEX: 10;
   label {
     height: 18px;
     width: 16px;
-
-    span {
-      background-color: var(--rp-ui-base-bg-000);
-    }
   }
 }
 
@@ -576,10 +563,10 @@ $EXPANDABLE_CHECKBOX_Z_INDEX: 10;
   label {
     height: 18px;
     width: 16px;
-
-    span {
-      background-color: var(--rp-ui-base-bg-000);
-    }
   }
 }
 /* Checkbox outside styles end */
+
+.checkbox-tooltip-wrapper {
+  max-width: fit-content;
+}

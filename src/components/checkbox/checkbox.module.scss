@@ -32,10 +32,10 @@
   position: relative;
   display: inline-flex;
   align-items: center;
-  padding-left: 24px;
+  gap: 8px;
   color: var(--rp-ui-color-text-2);
   font-family: var(--rp-ui-base-font-family);
-  font-weight: var(--rp-ui-base-fw-medium);
+  font-weight: var(--rp-ui-base-fw-regular);
   @include font-scale();
 
   .disabled {
@@ -52,12 +52,12 @@
 }
 
 .control {
-  position: absolute;
+  position: relative;
+  flex-shrink: 0;
   width: 16px;
   height: 16px;
   border: 1px solid var(--rp-ui-color-field-border-2);
   border-radius: 3px;
-  margin-left: -24px;
   box-sizing: border-box;
   cursor: pointer;
 }

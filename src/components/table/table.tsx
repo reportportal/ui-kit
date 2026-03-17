@@ -4,7 +4,7 @@ import { isEmpty } from 'es-toolkit/compat';
 import styles from './table.module.scss';
 import classNames from 'classnames/bind';
 import { ArrowDownIcon, ArrowUpIcon, ChevronDownDropdownIcon } from '@components/icons';
-import { TableComponentProps, FixedColumn, Column, PrimaryColumn } from './types';
+import { TableComponentProps, FixedColumn, Column, PrimaryColumn, RowData } from './types';
 import { Checkbox } from '@components/checkbox';
 import { Tooltip } from '@components/tooltip';
 import {
@@ -77,12 +77,14 @@ export const Table: FC<TableComponentProps> = ({
   maxColumnWidth = 500,
   isSelectAllCheckboxAlwaysVisible = false,
   isCheckboxOutside = false,
+  disabledRowIds,
   onChangeSorting = () => {},
   onToggleRowSelection = () => {},
   onToggleAllRowsSelection = () => {},
   onToggleRowExpansion = () => {},
   onToggleAllRowsExpansion = () => {},
   onColumnResize = () => {},
+  getRowCheckboxTooltip = () => {},
   externalScrollContainerRef,
   portalContainer = typeof document !== 'undefined' ? document.body : null,
   rightGradientClassName,
@@ -273,8 +275,13 @@ export const Table: FC<TableComponentProps> = ({
     return <ArrowUpIcon />;
   };
 
-  const isAllRowsSelected: boolean = data.every((row) => selectedRowIds.includes(row.id));
-  const isAnyRowSelected: boolean = data.some((row) => selectedRowIds.includes(row.id));
+  const isRowDisabled = (id: string | number) => disabledRowIds?.includes(id) ?? false;
+  const isAllRowsSelected: boolean = data.every(
+    (row) => isRowDisabled(row.id) || selectedRowIds.includes(row.id),
+  );
+  const isAnyRowSelected: boolean = data.some(
+    (row) => !isRowDisabled(row.id) && selectedRowIds.includes(row.id),
+  );
   const hasSelectedRows = selectedRowIds?.length > 0;
   const hasRows = !isEmpty(data);
   const isSelectAllCheckboxVisible =
@@ -678,6 +685,31 @@ export const Table: FC<TableComponentProps> = ({
     return () => observer.disconnect();
   }, []);
 
+  const renderRowCheckbox = (item: RowData) => {
+    const isDisabled = isRowDisabled(item.id);
+    const tooltipContent = getRowCheckboxTooltip?.(item.id);
+    const checkbox = (
+      <Checkbox
+        value={selectedRowIds.includes(item.id)}
+        disabled={isDisabled}
+        onChange={() => handleSingleRowSelection(item.id)}
+        className={cx('checkbox-cell')}
+      />
+    );
+    return tooltipContent ? (
+      <Tooltip
+        content={tooltipContent}
+        placement="top"
+        wrapperClassName={cx('checkbox-tooltip-wrapper')}
+        portalRoot={portalContainer ?? undefined}
+      >
+        {checkbox}
+      </Tooltip>
+    ) : (
+      checkbox
+    );
+  };
+
   const renderCheckboxColumn = () => (
     <div className={cx('checkbox-column')} ref={checkboxColumnRef}>
       <div
@@ -702,18 +734,12 @@ export const Table: FC<TableComponentProps> = ({
         {data.map((item, index) => (
           <div
             key={item.id}
-            ref={setCheckboxRowRef(index)}
+            ref={setCheckboxRowRef(item.id)}
             className={cx('checkbox-row', 'table-row', getRowSizeClassName(item), rowClassName)}
             onMouseEnter={() => handleRowMouseEnter(index)}
             onMouseLeave={handleRowMouseLeave}
           >
-            {(hasSelectedRows || hoveredRow === index) && (
-              <Checkbox
-                value={selectedRowIds.includes(item.id)}
-                onChange={() => handleSingleRowSelection(item.id)}
-                className={cx('checkbox-cell')}
-              />
-            )}
+            {(hasSelectedRows || hoveredRow === index) && renderRowCheckbox(item)}
           </div>
         ))}
       </div>
@@ -874,7 +900,8 @@ export const Table: FC<TableComponentProps> = ({
           <div
             key={item.id}
             data-row-index={index}
-            ref={setTableRowRef(index)}
+            data-row-id={item.id}
+            ref={setTableRowRef(item.id)}
             className={cx('table-row', getRowSizeClassName(item), rowClassName, {
               selectable: selectable && !isCheckboxOutside,
             })}
@@ -886,13 +913,7 @@ export const Table: FC<TableComponentProps> = ({
                 className={cx('table-cell', 'checkbox-cell')}
                 data-base-left={isRowsExpandable ? EXPANDABLE_CHECKBOX_COLUMN_WIDTH : 0}
               >
-                {(hasSelectedRows || hoveredRow === index) && (
-                  <Checkbox
-                    value={selectedRowIds.includes(item.id)}
-                    onChange={() => handleSingleRowSelection(item.id)}
-                    className={cx('checkbox-cell')}
-                  />
-                )}
+                {(hasSelectedRows || hoveredRow === index) && renderRowCheckbox(item)}
               </div>
             )}
             <div className={cx('row-content-wrapper')}>
