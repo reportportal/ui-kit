@@ -64,6 +64,7 @@ export interface TableComponentProps {
     isRowsExpandable?: boolean;
     expandedRowIds?: (string | number)[];
     isSelectAllCheckboxAlwaysVisible?: boolean;
+    disabledRowIds?: (string | number)[];
     setExpandedRowIds?: Dispatch<SetStateAction<Set<string | number>>>;
     isAllExpandedByDefault?: boolean;
     expandAllTooltip?: ReactNode;
@@ -76,6 +77,7 @@ export interface TableComponentProps {
     onToggleRowExpansion?: (id: string | number) => void;
     onToggleAllRowsExpansion?: () => void;
     onColumnResize?: (columnKey: string, width: number) => void;
+    getRowCheckboxTooltip?: (rowId: string | number) => ReactNode;
     externalScrollContainerRef?: RefObject<HTMLElement> | RefObject<Element> | null | undefined;
     portalContainer?: HTMLElement | null;
     rightGradientClassName?: string;
