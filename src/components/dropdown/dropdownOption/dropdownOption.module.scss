@@ -19,6 +19,10 @@
     display: none;
   }
 
+  &.multi-select {
+    gap: 8px;
+  }
+
   &:hover:not(:active) {
     background: var(--rp-ui-color-bg-3);
   }
