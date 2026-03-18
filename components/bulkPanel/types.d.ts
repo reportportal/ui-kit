@@ -41,6 +41,7 @@ export interface BulkPanelProps {
     infoMessage?: ReactNode;
     className?: string;
     portalRoot?: Element;
+    zIndex?: number;
     onRemoveItem: (id: string | number) => void;
     onClearSelection: () => void;
 }
