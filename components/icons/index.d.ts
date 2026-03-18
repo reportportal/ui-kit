@@ -17,6 +17,7 @@ export { default as CopyIcon } from './svg/copy.svg';
 export { default as CoveredManuallyIcon } from './svg/coveredManually.svg';
 export { default as CsvIcon } from './svg/csv.svg';
 export { default as DeleteIcon } from './svg/delete.svg';
+export { default as DetailsIcon } from './svg/details.svg';
 export { default as DragAndDropIcon } from './svg/dragAndDrop.svg';
 export { default as DragNDropIcon } from './svg/dragNDrop.svg';
 export { default as DropdownIcon } from './svg/dropdown.svg';
