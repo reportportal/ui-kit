@@ -26,7 +26,7 @@ import {
   KeyboardEvent,
   ReactElement,
 } from 'react';
-import { MeatballMenuIcon } from '../icons';
+import { DetailsIcon } from '../icons';
 import { BaseIconButton } from '../baseIconButton';
 import { Popover } from '../popover';
 import { PopoverProps } from '../popover/popover';
@@ -307,7 +307,7 @@ export const ActionMenu = ({
             aria-expanded={isMenuOpen}
             aria-haspopup="menu"
           >
-            <MeatballMenuIcon />
+            <DetailsIcon />
           </BaseIconButton>
         )}
       </Popover>

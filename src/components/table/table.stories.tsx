@@ -1,7 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { Table } from './table';
-import { Popover } from '@components/popover';
-import { MeatballMenuIcon } from '@components/icons';
+import { ActionMenu } from '@components/actionMenu';
 import {
   Column,
   FixedColumn,
@@ -200,17 +199,10 @@ export default meta;
 type Story = StoryObj<TableComponentProps>;
 
 const renderRowActions = () => (
-  <Popover
-    placement={'bottom-end'}
-    content={
-      <div>
-        <p>Edit</p>
-        <p>Rename</p>
-      </div>
-    }
-  >
-    <MeatballMenuIcon />
-  </Popover>
+  <ActionMenu
+    items={[{ label: 'Edit' }, { label: 'Rename' }, { type: 'divider' }, { label: 'Delete' }]}
+    placement="bottom-end"
+  />
 );
 
 const data: RowData[] = [

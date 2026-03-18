@@ -18,10 +18,11 @@
 
 .action-menu {
   display: inline-flex;
-}
+  vertical-align: middle;
 
-.actions-popover {
-  padding: 8px 0;
+  .actions-popover {
+    padding: 8px 0;
+  }
 }
 
 .action-dropdown {
@@ -34,8 +35,8 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  width: 24px;
-  height: 24px;
+  width: 16px;
+  height: 16px;
 
   svg {
     width: 16px;
