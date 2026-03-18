@@ -43,6 +43,7 @@ export const BulkPanel = ({
   infoMessage,
   className,
   portalRoot,
+  zIndex = 2,
   onRemoveItem,
   onClearSelection,
 }: BulkPanelProps) => {
@@ -192,6 +193,7 @@ export const BulkPanel = ({
       className={cx('bulk-panel', { expanded: isExpanded }, className)}
       role="region"
       aria-label="Bulk actions panel"
+      style={isExpanded ? { zIndex } : undefined}
     >
       <div className={cx('panel-content', { expanded: isExpanded })} ref={panelContentRef}>
         <div className={cx('header')}>
