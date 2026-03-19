@@ -20,14 +20,16 @@ export const DropdownOption: FC<DropdownOptionProps> = forwardRef(
       depth = 0,
       hasChildren = false,
     } = props;
+
     const onChangeHandler: MouseEventHandler<HTMLDivElement | HTMLInputElement> = (e) => {
+      const target = e.target as HTMLElement;
       if (
-        e.target instanceof HTMLDivElement ||
-        e.target instanceof HTMLInputElement ||
-        e.target instanceof HTMLSpanElement
+        target.closest('label') &&
+        !(target instanceof HTMLInputElement || target instanceof HTMLDivElement)
       ) {
-        onChange?.(value);
+        return;
       }
+      onChange?.(value);
     };
 
     return (
