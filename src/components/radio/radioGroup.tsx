@@ -2,7 +2,7 @@ import { FC, ReactElement } from 'react';
 import { Radio, RadioProps } from './index';
 import { RadioOption } from './radio';
 
-interface RadioGroupProps extends Omit<RadioProps, 'option'> {
+export interface RadioGroupProps extends Omit<RadioProps, 'option'> {
   options: RadioOption[];
 }
 
