@@ -18,14 +18,33 @@ export const SystemAlert: FC<SystemAlertProps> = ({
   dataAutomationId,
 }): ReactElement => {
   const [systemTitle, setSystemTitle] = useState('');
-  const refSystemAlert = useRef<HTMLDivElement>(null);
+  const titleRef = useRef<HTMLHeadingElement>(null);
 
   useEffect(() => {
-    const { offsetHeight, scrollHeight } = refSystemAlert?.current as HTMLDivElement;
-
-    if (offsetHeight < scrollHeight) {
-      setSystemTitle(title);
+    const el = titleRef.current;
+    if (!el) {
+      return;
     }
+
+    const checkOverflow = () => {
+      const { offsetHeight, scrollHeight } = el;
+      if (offsetHeight < scrollHeight) {
+        setSystemTitle(title);
+      } else {
+        setSystemTitle('');
+      }
+    };
+
+    checkOverflow();
+
+    if (typeof ResizeObserver === 'undefined') {
+      return;
+    }
+
+    const resizeObserver = new ResizeObserver(checkOverflow);
+    resizeObserver.observe(el);
+
+    return () => resizeObserver.disconnect();
   }, [title]);
 
   useEffect(() => {
@@ -54,12 +73,15 @@ export const SystemAlert: FC<SystemAlertProps> = ({
   return (
     <div
       className={cx('system-alert', type, className, `system-alert--${typographyColor}`)}
-      title={systemTitle}
       data-automation-id={dataAutomationId}
     >
       <div className={cx('icon-wrapper')}>{getIcon()}</div>
       <div className={cx('content-wrapper')}>
-        <h2 ref={refSystemAlert} className={cx('title', `title--${typographyColor}`)}>
+        <h2
+          ref={titleRef}
+          className={cx('title', `title--${typographyColor}`)}
+          title={systemTitle || undefined}
+        >
           {title}
         </h2>
       </div>
