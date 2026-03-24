@@ -231,6 +231,26 @@ describe('SystemAlert Component', () => {
     });
   });
 
+  describe('Long text overflow', () => {
+    it('renders close button and title for long unbroken text', () => {
+      const handleClose = vi.fn();
+      const longUnbrokenTitle = 'A'.repeat(500);
+      const { container } = render(
+        <SystemAlert
+          title={longUnbrokenTitle}
+          onClose={handleClose}
+          type={SystemAlertType.ERROR}
+        />,
+      );
+
+      const alertElement = container.querySelector('[class*="system-alert"]');
+      const closeButton = screen.getByRole('button', { name: /close system alert/i });
+
+      expect(alertElement).toContainElement(closeButton);
+      expect(screen.getByText(longUnbrokenTitle)).toBeInTheDocument();
+    });
+  });
+
   describe('Accessibility', () => {
     it('has accessible close button with aria-label', () => {
       const handleClose = vi.fn();
