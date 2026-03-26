@@ -1,12 +1,12 @@
 import { ReactNode } from '../../../node_modules/react';
 
 export interface BreadcrumbDescriptor {
+    className?: string;
     title: string | ReactNode;
     link?: object | string;
     onClick?: () => void;
 }
 export interface TreeDescriptor extends BreadcrumbDescriptor {
-    link: object | string;
     children?: TreeDescriptor[];
 }
 export type LinkComponentType = React.ComponentType<{
