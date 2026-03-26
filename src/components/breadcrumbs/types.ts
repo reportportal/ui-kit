@@ -1,13 +1,13 @@
 import { ReactNode } from 'react';
 
 export interface BreadcrumbDescriptor {
+  className?: string;
   title: string | ReactNode;
   link?: object | string;
   onClick?: () => void;
 }
 
 export interface TreeDescriptor extends BreadcrumbDescriptor {
-  link: object | string;
   children?: TreeDescriptor[];
 }
 

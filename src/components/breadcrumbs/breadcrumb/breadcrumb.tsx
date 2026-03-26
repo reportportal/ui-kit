@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import classNames from 'classnames/bind';
-import { BreadcrumbDescriptor } from '../types';
+import { BreadcrumbDescriptor, LinkComponentType } from '../types';
 import { useBreadcrumbsContext } from '../breadcrumbsProvider/hooks';
 import styles from './breadcrumb.module.scss';
 
@@ -13,9 +13,63 @@ interface BreadcrumbProps {
   variant?: 'default' | 'dark';
 }
 
+interface GetCrumbContent {
+  ({
+    LinkComponent,
+    link,
+    onClick,
+    isClickable,
+    breadcrumbContent,
+  }: {
+    LinkComponent?: LinkComponentType;
+    link?: object | string;
+    onClick?: () => void;
+    isClickable?: boolean;
+    breadcrumbContent: React.ReactNode;
+  }): React.ReactNode;
+}
+
+const getCrumbContent: GetCrumbContent = ({
+  LinkComponent,
+  link,
+  onClick,
+  isClickable,
+  breadcrumbContent,
+}) => {
+  if (!isClickable) {
+    return breadcrumbContent;
+  }
+
+  if (link) {
+    if (LinkComponent) {
+      return (
+        <LinkComponent className={cx('link')} to={link} onClick={onClick}>
+          {breadcrumbContent}
+        </LinkComponent>
+      );
+    }
+
+    return (
+      <a className={cx('link')} href={typeof link === 'string' ? link : '#'} onClick={onClick}>
+        {breadcrumbContent}
+      </a>
+    );
+  }
+
+  if (onClick) {
+    return (
+      <button type="button" className={cx('link')} onClick={onClick}>
+        {breadcrumbContent}
+      </button>
+    );
+  }
+
+  return breadcrumbContent;
+};
+
 export const Breadcrumb: React.FC<BreadcrumbProps> = ({
   titleTailNumChars = 8,
-  descriptor: { title, link, onClick },
+  descriptor: { title, link, onClick, className },
   isClickable = true,
   variant = 'default',
 }) => {
@@ -36,7 +90,7 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = ({
   }, [title, titleTailNumChars]);
 
   const breadcrumbContent = (
-    <div ref={ref} className={cx('breadcrumb-text', variant)}>
+    <div ref={ref} className={cx('breadcrumb-text', variant, className)}>
       {title}
     </div>
   );
@@ -47,23 +101,7 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = ({
       title={breadcrumbTitle || undefined}
       data-testid="breadcrumb"
     >
-      {isClickable ? (
-        LinkComponent && link ? (
-          <LinkComponent className={cx('link')} to={link} onClick={onClick}>
-            {breadcrumbContent}
-          </LinkComponent>
-        ) : link ? (
-          <a className={cx('link')} href={typeof link === 'string' ? link : '#'} onClick={onClick}>
-            {breadcrumbContent}
-          </a>
-        ) : (
-          <button type="button" className={cx('link')} onClick={onClick}>
-            {breadcrumbContent}
-          </button>
-        )
-      ) : (
-        breadcrumbContent
-      )}
+      {getCrumbContent({ LinkComponent, link, onClick, isClickable, breadcrumbContent })}
     </div>
   );
 };
