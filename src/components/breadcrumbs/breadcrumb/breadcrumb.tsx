@@ -69,7 +69,7 @@ const getCrumbContent: GetCrumbContent = ({
 
 export const Breadcrumb: React.FC<BreadcrumbProps> = ({
   titleTailNumChars = 8,
-  descriptor: { title, link, onClick },
+  descriptor: { title, link, onClick, className },
   isClickable = true,
   variant = 'default',
 }) => {
@@ -90,7 +90,7 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = ({
   }, [title, titleTailNumChars]);
 
   const breadcrumbContent = (
-    <div ref={ref} className={cx('breadcrumb-text', variant)}>
+    <div ref={ref} className={cx('breadcrumb-text', variant, className)}>
       {title}
     </div>
   );

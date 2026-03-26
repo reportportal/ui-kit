@@ -1,6 +1,7 @@
 import { ReactNode } from 'react';
 
 export interface BreadcrumbDescriptor {
+  className?: string;
   title: string | ReactNode;
   link?: object | string;
   onClick?: () => void;

@@ -193,8 +193,7 @@ const treeData: TreeDescriptor[] = [
           },
           {
             title: 'Item B2',
-            link: { pathname: '/categories/item-b2' },
-            onClick: () => console.log('Item B2 clicked'),
+            className: 'active-color', // Example of custom class for styling
           },
         ],
       },
