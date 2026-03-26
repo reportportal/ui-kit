@@ -8,8 +8,6 @@ export interface BreadcrumbDescriptor {
 }
 
 export interface TreeDescriptor extends BreadcrumbDescriptor {
-  link?: object | string;
-  onClick?: () => void;
   children?: TreeDescriptor[];
 }
 
