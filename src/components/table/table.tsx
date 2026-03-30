@@ -1,4 +1,13 @@
-import { useMemo, FC, useEffect, useRef, useState, useCallback, useLayoutEffect } from 'react';
+import {
+  useMemo,
+  FC,
+  useEffect,
+  useRef,
+  useState,
+  useCallback,
+  useLayoutEffect,
+  ReactNode,
+} from 'react';
 import { Resizable } from 'react-resizable';
 import { isEmpty } from 'es-toolkit/compat';
 import styles from './table.module.scss';
@@ -28,8 +37,42 @@ import {
 } from './hooks';
 import { ResizeHandle } from './resizeHandle';
 import { GradientOverlay } from './gradientOverlay';
+import { useEllipsisTitle } from '@common/hooks';
 
 const cx = classNames.bind(styles);
+
+const TablePrimitiveCell: FC<{ value: string | number; expanded: boolean }> = ({
+  value,
+  expanded,
+}) => {
+  const { ref, title } = useEllipsisTitle(expanded ? undefined : value);
+  const text = String(value);
+  return (
+    <span ref={ref} title={expanded ? undefined : title} className={cx('primitive-cell-text')}>
+      {text}
+    </span>
+  );
+};
+
+const renderTableBodyCellContent = (raw: unknown, expanded: boolean): ReactNode => {
+  if (raw == null) {
+    return null;
+  }
+  let node: ReactNode;
+  if (typeof raw === 'object' && ('component' in raw || 'content' in raw)) {
+    const cell = raw as { component?: ReactNode; content?: string | number };
+    node = cell.component || cell.content;
+    if (node == null) {
+      return null;
+    }
+  } else {
+    node = raw as ReactNode;
+  }
+  if (typeof node === 'string' || typeof node === 'number') {
+    return <TablePrimitiveCell value={node} expanded={expanded} />;
+  }
+  return node;
+};
 
 const ColumnHeaderText: FC<{ column: PrimaryColumn | FixedColumn }> = ({ column }) => {
   const spanRef = useRef<HTMLSpanElement>(null);
@@ -964,7 +1007,7 @@ export const Table: FC<TableComponentProps> = ({
                         isCheckboxOutside,
                       )}
                     >
-                      {item[column.key].component || item[column.key].content || item[column.key]}
+                      {renderTableBodyCellContent(item[column.key], isExpanded)}
                     </div>
                   );
                 })}
@@ -991,7 +1034,7 @@ export const Table: FC<TableComponentProps> = ({
                         isCheckboxOutside,
                       )}
                     >
-                      {item[column.key].component || item[column.key].content || item[column.key]}
+                      {renderTableBodyCellContent(item[column.key], isExpanded)}
                     </div>
                   );
                 })}

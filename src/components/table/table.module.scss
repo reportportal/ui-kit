@@ -283,6 +283,15 @@ $EXPANDABLE_CHECKBOX_Z_INDEX: 10;
   }
 }
 
+.primitive-cell-text {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .table-header-cell,
 .table-cell {
   font-family: var(--rp-ui-base-font-family);
