@@ -61,7 +61,7 @@ const renderTableBodyCellContent = (raw: unknown, expanded: boolean): ReactNode 
   let node: ReactNode;
   if (typeof raw === 'object' && ('component' in raw || 'content' in raw)) {
     const cell = raw as { component?: ReactNode; content?: string | number };
-    node = cell.component || cell.content;
+    node = cell.component ?? cell.content;
     if (node == null) {
       return null;
     }
