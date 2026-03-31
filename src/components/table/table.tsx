@@ -48,7 +48,11 @@ const TablePrimitiveCell: FC<{ value: string | number; expanded: boolean }> = ({
   const { ref, title } = useEllipsisTitle(expanded ? undefined : value);
   const text = String(value);
   return (
-    <span ref={ref} title={expanded ? undefined : title} className={cx('primitive-cell-text')}>
+    <span
+      ref={ref}
+      title={expanded ? undefined : title}
+      className={cx({ 'primitive-cell-text': !expanded })}
+    >
       {text}
     </span>
   );
