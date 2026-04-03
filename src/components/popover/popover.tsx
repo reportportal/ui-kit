@@ -27,6 +27,7 @@ import {
   useRole,
   useInteractions,
   FloatingFocusManager,
+  FloatingPortal,
   Placement,
   Strategy,
   ElementRects,
@@ -58,6 +59,7 @@ export interface PopoverProps {
   isOpened?: boolean;
   isCentered?: boolean;
   strategy?: Strategy;
+  shouldUsePortal?: boolean;
   setIsOpened?: (isOpened: boolean) => void;
 }
 
@@ -74,7 +76,8 @@ export const Popover: FC<PopoverProps> = ({
   dataAutomationId,
   isOpened,
   isCentered = true,
-  strategy = 'absolute',
+  strategy: positionStrategy = 'absolute',
+  shouldUsePortal = false,
   setIsOpened,
 }): ReactElement => {
   const arrowRef = useRef(null);
@@ -101,7 +104,7 @@ export const Popover: FC<PopoverProps> = ({
     open: isPopoverOpen,
     onOpenChange,
     placement: initialPlacement,
-    strategy,
+    strategy: positionStrategy,
     middleware: [
       offset(({ rects, placement: currentPlacement }) => ({
         mainAxis: safeZone + TRIANGLE_HEIGHT,
@@ -124,33 +127,39 @@ export const Popover: FC<PopoverProps> = ({
 
   const { getReferenceProps, getFloatingProps } = useInteractions([click, dismiss, role]);
 
+  const renderFloatingElement = () => {
+    const floatingElement = (
+      <FloatingFocusManager context={context} modal={false}>
+        <div
+          className={cx('popover', className)}
+          data-automation-id={dataAutomationId}
+          ref={refs.setFloating}
+          style={floatingStyles}
+          {...getFloatingProps()}
+        >
+          <FloatingArrow
+            ref={arrowRef}
+            context={context}
+            width={TRIANGLE_WIDTH}
+            height={TRIANGLE_HEIGHT}
+            fill={arrowColor}
+            staticOffset={middlePlacements.includes(placement) ? null : arrowOffset}
+          />
+          {title && <div className={cx('title')}>{title}</div>}
+          {content}
+        </div>
+      </FloatingFocusManager>
+    );
+
+    return shouldUsePortal ? <FloatingPortal>{floatingElement}</FloatingPortal> : floatingElement;
+  };
+
   return (
     <>
       <div ref={refs.setReference} {...getReferenceProps()} className={cx('popover-wrapper')}>
         {children}
       </div>
-      {isPopoverOpen && (
-        <FloatingFocusManager context={context} modal={false}>
-          <div
-            className={cx('popover', className)}
-            data-automation-id={dataAutomationId}
-            ref={refs.setFloating}
-            style={floatingStyles}
-            {...getFloatingProps}
-          >
-            <FloatingArrow
-              ref={arrowRef}
-              context={context}
-              width={TRIANGLE_WIDTH}
-              height={TRIANGLE_HEIGHT}
-              fill={arrowColor}
-              staticOffset={middlePlacements.includes(placement) ? null : arrowOffset}
-            />
-            {title && <div className={cx('title')}>{title}</div>}
-            {content}
-          </div>
-        </FloatingFocusManager>
-      )}
+      {isPopoverOpen && renderFloatingElement()}
     </>
   );
 };
