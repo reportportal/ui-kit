@@ -28,6 +28,7 @@ import {
   useInteractions,
   FloatingFocusManager,
   Placement,
+  Strategy,
   ElementRects,
 } from '@floating-ui/react';
 import classNames from 'classnames/bind';
@@ -44,25 +45,26 @@ import styles from './popover.module.scss';
 const cx = classNames.bind(styles);
 
 export interface PopoverProps {
-  className?: string;
   content: ReactNode;
   children: ReactNode;
   placement?: Placement;
   fallbackPlacements?: Placement[];
+  className?: string;
   title?: string;
   arrowOffset?: number;
   safeZone?: number;
   arrowColor?: string;
   dataAutomationId?: string;
   isOpened?: boolean;
-  setIsOpened?: (isOpened: boolean) => void;
   isCentered?: boolean;
+  strategy?: Strategy;
+  setIsOpened?: (isOpened: boolean) => void;
 }
 
 export const Popover: FC<PopoverProps> = ({
-  className,
   content,
   children,
+  className,
   placement: initialPlacement = 'bottom',
   fallbackPlacements = allPlacements,
   title,
@@ -71,8 +73,9 @@ export const Popover: FC<PopoverProps> = ({
   arrowColor = 'white',
   dataAutomationId,
   isOpened,
-  setIsOpened,
   isCentered = true,
+  strategy = 'absolute',
+  setIsOpened,
 }): ReactElement => {
   const arrowRef = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
@@ -98,6 +101,7 @@ export const Popover: FC<PopoverProps> = ({
     open: isPopoverOpen,
     onOpenChange,
     placement: initialPlacement,
+    strategy,
     middleware: [
       offset(({ rects, placement: currentPlacement }) => ({
         mainAxis: safeZone + TRIANGLE_HEIGHT,
