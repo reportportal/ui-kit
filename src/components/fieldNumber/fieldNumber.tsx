@@ -54,31 +54,33 @@ export const FieldNumber = ({
   const inputId = useId();
 
   const normalizeValue = (val: number): number => {
+    if (Number.isNaN(val)) return min;
+    if (val === Number.POSITIVE_INFINITY) return max;
+    if (val === Number.NEGATIVE_INFINITY) return min;
     if (val < min) return min;
     if (val > max) return max;
     return val;
   };
 
   const handleChange: ChangeEventHandler<HTMLInputElement> = (event) => {
-    let newValue: FieldNumberValue = event.target.value.replace(/^0(?=\d+|^\d)/g, '');
+    const newValue: FieldNumberValue = event.target.value.replace(/^0(?=\d+|^\d)/g, '');
     if (newValue === '') {
       onChange('');
       return;
     }
-    newValue = +newValue;
-    onChange(newValue);
+    onChange(+newValue);
   };
 
   const handleBlur: FocusEventHandler<HTMLInputElement> = (event) => {
+    if (onBlur) {
+      onBlur(event);
+    }
+
     const numValue = +event.currentTarget.value;
     const normalizedValue = normalizeValue(numValue);
 
     if (normalizedValue !== numValue) {
       onChange(normalizedValue);
-    }
-
-    if (onBlur) {
-      onBlur(event);
     }
   };
 
@@ -98,13 +100,15 @@ export const FieldNumber = ({
     }
   };
   const handleDecrease = () => {
-    const newValue = +value - 1;
+    const clamped = normalizeValue(+value);
+    const newValue = clamped - 1;
     if (newValue >= min && newValue <= max) {
       onChange(newValue);
     }
   };
   const handleIncrease = () => {
-    const newValue = +value + 1;
+    const clamped = normalizeValue(+value);
+    const newValue = clamped + 1;
     if (newValue >= min && newValue <= max) {
       onChange(newValue);
     }
