@@ -15,6 +15,7 @@ export interface PopoverProps {
     isOpened?: boolean;
     isCentered?: boolean;
     strategy?: Strategy;
+    shouldUsePortal?: boolean;
     setIsOpened?: (isOpened: boolean) => void;
 }
 export declare const Popover: FC<PopoverProps>;
