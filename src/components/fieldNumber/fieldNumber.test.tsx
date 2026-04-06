@@ -288,6 +288,16 @@ describe('FieldNumber Component', () => {
       expect(handleChange).toHaveBeenCalledWith(5);
     });
 
+    it('decrements from a value above max after clamping on first click', () => {
+      const handleChange = vi.fn();
+      render(<FieldNumber onChange={handleChange} value={999999911199} min={0} max={999999999} />);
+      const minusButton = screen.getByText('-').closest('button');
+      if (minusButton) {
+        fireEvent.click(minusButton);
+      }
+      expect(handleChange).toHaveBeenCalledWith(999999998);
+    });
+
     it('normalizes value to min on blur when below min', () => {
       const handleChange = vi.fn();
       render(<FieldNumber onChange={handleChange} value={5} min={10} max={20} />);
