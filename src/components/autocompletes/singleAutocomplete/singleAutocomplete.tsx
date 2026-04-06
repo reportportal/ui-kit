@@ -47,7 +47,7 @@ const DEFAULT_OPTIONS_INDEX = 0;
 
 const flipMiddleware = flip({
   fallbackPlacements: ['bottom-start', 'top-start', 'bottom', 'top'],
-  boundary: document.documentElement,
+  boundary: document?.documentElement,
   rootBoundary: 'viewport',
 });
 
