@@ -14,17 +14,29 @@
  * limitations under the License.
  */
 
-import { ComponentProps, FocusEvent, KeyboardEvent, ReactNode, Ref } from 'react';
+import {
+  ComponentProps,
+  FocusEvent,
+  KeyboardEvent,
+  ReactNode,
+  Ref,
+  useState,
+  useCallback,
+  useMemo,
+} from 'react';
+import { createPortal } from 'react-dom';
 import classNames from 'classnames/bind';
 import { isEmpty } from 'es-toolkit/compat';
 import Downshift, { DownshiftState, StateChangeOptions } from 'downshift';
-import { autoUpdate, useFloating, size } from '@floating-ui/react';
+import { autoUpdate, useFloating, size, flip } from '@floating-ui/react';
 
 import { default as FieldText } from '@/components/fieldText';
 import { DropdownIcon } from '@/components/icons';
 
 import { AutocompleteMenu } from '../common/autocompleteMenu';
 import { ENTER_KEY_NAME, TAB_KEY_NAME } from '../constants';
+import { usePreventInitialScroll } from '../hooks/usePreventInitialScroll';
+import { useResizeClose } from '../hooks/useResizeClose';
 import { GetItemPropsT } from '../types';
 
 import styles from './singleAutocomplete.module.scss';
@@ -32,6 +44,20 @@ import styles from './singleAutocomplete.module.scss';
 const cx = classNames.bind(styles);
 
 const DEFAULT_OPTIONS_INDEX = 0;
+
+const flipMiddleware = flip({
+  fallbackPlacements: ['bottom-start', 'top-start', 'bottom', 'top'],
+  boundary: document?.documentElement,
+  rootBoundary: 'viewport',
+});
+
+const sizeMiddleware = size({
+  apply({ rects, elements }) {
+    Object.assign(elements.floating.style, {
+      width: `${rects.reference.width}px`,
+    });
+  },
+});
 
 export interface SingleAutocompleteProps<T> {
   options: T[];
@@ -72,12 +98,20 @@ export interface SingleAutocompleteProps<T> {
   ) => Partial<StateChangeOptions<T>>;
   useFixedPositioning: boolean;
   dropdownMatchInputWidth?: boolean;
+  withMenuFlip?: boolean;
   getUniqKey?: (item: T) => string;
   customEmptyListMessage?: string;
   customNoMatchesMessage?: string;
   newItemButtonText?: string;
   optionsLimit?: number;
   limitationText?: string;
+  /**
+   * Portal root element for autocomplete menu rendering.
+   * When provided, the menu will be rendered in this element using React Portal.
+   * Useful for preventing clipping in containers with overflow: hidden (e.g., Modal, SidePanel).
+   * @example menuPortalRoot={document.body}
+   */
+  menuPortalRoot?: Element;
 }
 
 export const SingleAutocomplete = <T,>(componentProps: SingleAutocompleteProps<T>) => {
@@ -109,26 +143,33 @@ export const SingleAutocomplete = <T,>(componentProps: SingleAutocompleteProps<T
     onStateChange,
     useFixedPositioning,
     dropdownMatchInputWidth = false,
+    withMenuFlip = false,
     newItemButtonText = '',
+    menuPortalRoot,
     ...props
   } = componentProps;
 
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const shouldSkipPortalActions = !isMenuOpen || !menuPortalRoot;
+  const strategy = menuPortalRoot || useFixedPositioning ? 'fixed' : 'absolute';
+
+  const middleware = useMemo(
+    () => [
+      ...(withMenuFlip ? [flipMiddleware] : []),
+      ...(dropdownMatchInputWidth ? [sizeMiddleware] : []),
+    ],
+    [withMenuFlip, dropdownMatchInputWidth],
+  );
+
   const { refs, floatingStyles } = useFloating({
     placement: 'bottom-start',
-    strategy: useFixedPositioning ? 'fixed' : 'absolute',
     whileElementsMounted: autoUpdate,
-    middleware: dropdownMatchInputWidth
-      ? [
-          size({
-            apply({ rects, elements }) {
-              Object.assign(elements.floating.style, {
-                width: `${rects.reference.width}px`,
-              });
-            },
-          }),
-        ]
-      : [],
+    strategy,
+    middleware,
   });
+
+  usePreventInitialScroll({ skip: shouldSkipPortalActions });
+  useResizeClose({ skip: shouldSkipPortalActions, reference: refs.reference });
 
   const getOptionProps =
     (
@@ -155,12 +196,24 @@ export const SingleAutocomplete = <T,>(componentProps: SingleAutocompleteProps<T
     }
   };
 
+  const handleStateChange = useCallback<
+    NonNullable<ComponentProps<typeof Downshift<T>>['onStateChange']>
+  >(
+    (changes, ...args) => {
+      if (changes?.isOpen !== undefined) {
+        setIsMenuOpen(changes.isOpen);
+      }
+      onStateChange?.(changes, ...args);
+    },
+    [onStateChange],
+  );
+
   return (
     <Downshift<T>
       onChange={onChange}
       itemToString={parseValueToString}
       selectedItem={value}
-      onStateChange={onStateChange}
+      onStateChange={handleStateChange}
       defaultHighlightedIndex={DEFAULT_OPTIONS_INDEX}
       stateReducer={stateReducer}
     >
@@ -196,6 +249,25 @@ export const SingleAutocomplete = <T,>(componentProps: SingleAutocompleteProps<T
           selectItem(null as T);
           inputOnClear?.(...args);
         };
+
+        const menuElement = (
+          <AutocompleteMenu
+            isOpen={isOpen}
+            isDropdownMode={isDropdownMode}
+            style={floatingStyles}
+            ref={refs.setFloating}
+            minLength={minLength}
+            inputValue={(inputValue || '').trim()}
+            getItemProps={getOptionProps(getItemProps, highlightedIndex, value)}
+            parseValueToString={parseValueToString}
+            optionVariant={optionVariant}
+            createWithoutConfirmation={createWithoutConfirmation}
+            className={menuClassName}
+            options={options}
+            newItemButtonText={newItemButtonText}
+            {...props}
+          />
+        );
 
         return (
           <>
@@ -270,23 +342,9 @@ export const SingleAutocomplete = <T,>(componentProps: SingleAutocompleteProps<T
                   minLength: isDropdownMode ? 0 : minLength,
                 })}
               />
-              <AutocompleteMenu
-                isOpen={isOpen}
-                isDropdownMode={isDropdownMode}
-                style={floatingStyles}
-                ref={refs.setFloating}
-                minLength={minLength}
-                inputValue={(inputValue || '').trim()}
-                getItemProps={getOptionProps(getItemProps, highlightedIndex, value)}
-                parseValueToString={parseValueToString}
-                optionVariant={optionVariant}
-                createWithoutConfirmation={createWithoutConfirmation}
-                className={menuClassName}
-                options={options}
-                newItemButtonText={newItemButtonText}
-                {...props}
-              />
+              {!menuPortalRoot && menuElement}
             </div>
+            {menuPortalRoot && createPortal(menuElement, menuPortalRoot)}
           </>
         );
       }}

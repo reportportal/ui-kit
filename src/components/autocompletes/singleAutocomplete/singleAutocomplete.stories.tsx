@@ -196,3 +196,37 @@ export const SingleSelectStrings: Story<(typeof OPTIONS_STRINGS)[number]> = {
     );
   },
 };
+
+export const SingleSelectWithMenuPortal: Story<string> = {
+  args: {
+    ...TEST_DATA_STRINGS,
+    dropdownMatchInputWidth: true,
+    withMenuFlip: true,
+    menuPortalRoot: document.body,
+    isDropdownMode: true,
+  },
+  render: (args) => {
+    return (
+      <div>
+        <p style={{ marginBottom: '16px', maxWidth: '400px' }}>
+          This example demonstrates menu rendering in a portal to prevent clipping when the
+          autocomplete is inside a container with <code>overflow: hidden</code> (e.g., Modal,
+          SidePanel).
+        </p>
+        <div
+          style={{
+            width: '400px',
+            height: '80px',
+            overflow: 'hidden',
+            border: '2px dashed #aaa',
+            padding: '16px',
+            display: 'flex',
+            alignItems: 'center',
+          }}
+        >
+          <SingleAutocomplete {...args} />
+        </div>
+      </div>
+    );
+  },
+};
