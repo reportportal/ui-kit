@@ -23,6 +23,7 @@ import {
   useState,
   useCallback,
   useMemo,
+  useRef,
 } from 'react';
 import { createPortal } from 'react-dom';
 import classNames from 'classnames/bind';
@@ -37,6 +38,7 @@ import { AutocompleteMenu } from '../common/autocompleteMenu';
 import { ENTER_KEY_NAME, TAB_KEY_NAME } from '../constants';
 import { usePreventInitialScroll } from '../hooks/usePreventInitialScroll';
 import { useResizeClose } from '../hooks/useResizeClose';
+import { useScrollClose } from '../hooks/useScrollClose';
 import { GetItemPropsT } from '../types';
 
 import styles from './singleAutocomplete.module.scss';
@@ -150,8 +152,12 @@ export const SingleAutocomplete = <T,>(componentProps: SingleAutocompleteProps<T
   } = componentProps;
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const closeMenuRef = useRef<(() => void) | null>(null);
+  const handleScrollClose = useCallback(() => closeMenuRef.current?.(), []);
+
   const shouldSkipPortalActions = !isMenuOpen || !menuPortalRoot;
   const strategy = menuPortalRoot || useFixedPositioning ? 'fixed' : 'absolute';
+  const shouldSkipScrollClose = !isMenuOpen || strategy === 'absolute';
 
   const middleware = useMemo(
     () => [
@@ -170,6 +176,11 @@ export const SingleAutocomplete = <T,>(componentProps: SingleAutocompleteProps<T
 
   usePreventInitialScroll({ skip: shouldSkipPortalActions });
   useResizeClose({ skip: shouldSkipPortalActions, reference: refs.reference });
+  useScrollClose({
+    skip: shouldSkipScrollClose,
+    onClose: handleScrollClose,
+    menuRef: refs.floating,
+  });
 
   const getOptionProps =
     (
@@ -223,6 +234,7 @@ export const SingleAutocomplete = <T,>(componentProps: SingleAutocompleteProps<T
         setHighlightedIndex,
         toggleMenu,
         openMenu,
+        closeMenu,
         isOpen,
         inputValue,
         highlightedIndex,
@@ -237,6 +249,10 @@ export const SingleAutocomplete = <T,>(componentProps: SingleAutocompleteProps<T
             return rootProps.ref(node);
           },
         };
+
+        if (!closeMenuRef.current) {
+          closeMenuRef.current = closeMenu;
+        }
 
         const downshiftValue = inputValue ?? '';
 
