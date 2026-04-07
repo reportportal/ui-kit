@@ -35,11 +35,19 @@ export interface SingleAutocompleteProps<T> {
     stateReducer?: (state: DownshiftState<T>, changes: StateChangeOptions<T>) => Partial<StateChangeOptions<T>>;
     useFixedPositioning: boolean;
     dropdownMatchInputWidth?: boolean;
+    withMenuFlip?: boolean;
     getUniqKey?: (item: T) => string;
     customEmptyListMessage?: string;
     customNoMatchesMessage?: string;
     newItemButtonText?: string;
     optionsLimit?: number;
     limitationText?: string;
+    /**
+     * Portal root element for autocomplete menu rendering.
+     * When provided, the menu will be rendered in this element using React Portal.
+     * Useful for preventing clipping in containers with overflow: hidden (e.g., Modal, SidePanel).
+     * @example menuPortalRoot={document.body}
+     */
+    menuPortalRoot?: Element;
 }
 export declare const SingleAutocomplete: <T>(componentProps: SingleAutocompleteProps<T>) => import("react/jsx-runtime").JSX.Element;
