@@ -16,6 +16,11 @@ const OPTIONS_STRINGS: string[] = [
   'Demo Api Tests 1',
   'Demo Api Tests 2',
   'Demo Api Tests 3',
+  'Demo Api Tests 4',
+  'Demo Api Tests 5',
+  'Demo Api Tests 6',
+  'Demo Api Tests 7',
+  'Demo Api Tests 8',
 ];
 
 type WithStorybookProps<T, K> = T & { value: K };
@@ -226,6 +231,56 @@ export const SingleSelectWithMenuPortal: Story<string> = {
         >
           <SingleAutocomplete {...args} />
         </div>
+      </div>
+    );
+  },
+};
+
+export const SingleSelectWithHideByScroll: Story<string> = {
+  args: {
+    ...TEST_DATA_STRINGS,
+    dropdownMatchInputWidth: true,
+    withMenuFlip: true,
+    menuPortalRoot: document.body,
+    isDropdownMode: true,
+  },
+  render: (args) => {
+    return (
+      <div
+        style={{
+          width: '500px',
+          height: '150px',
+          overflow: 'auto',
+          border: '2px dashed #aaa',
+          display: 'flex',
+          flexDirection: 'column',
+          padding: '16px',
+        }}
+      >
+        <div
+          style={{
+            width: '400px',
+          }}
+        >
+          <SingleAutocomplete {...args} />
+        </div>
+
+        <p style={{ marginBottom: '16px', maxWidth: '400px' }}>
+          This is a very long text to enable scrolling. This example demonstrates that the dropdown
+          will close when the user scrolls the page, which is a common UX pattern to prevent the
+          dropdown from being detached from the input. Try scrolling the page to see it in action.
+          So i need to scroll the page to see the effect of the dropdown closing when the user
+          scrolls. This is a very long text to enable scrolling. This example demonstrates that the
+          dropdown will close when the user scrolls the page, which is a common UX pattern to
+          prevent the dropdown from being detached from the input. Try scrolling the page to see it
+          in action. This is a very long text to enable scrolling. This example demonstrates that
+          the dropdown will close when the user scrolls the page, which is a common UX pattern to
+          prevent the dropdown from being detached from the input. Try scrolling the page to see it
+          in action. This is a very long text to enable scrolling. This example demonstrates that
+          the dropdown will close when the user scrolls the page, which is a common UX pattern to
+          prevent the dropdown from being detached from the input. Try scrolling the page to see it
+          in action.
+        </p>
       </div>
     );
   },
