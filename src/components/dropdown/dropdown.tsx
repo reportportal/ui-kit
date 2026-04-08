@@ -216,9 +216,17 @@ export const Dropdown: FC<DropdownProps> = ({
     }
     return normalizeSelectedValues(new Set<DropdownValue>(value));
   }, [multiSelect, value, normalizeSelectedValues]);
-  const hasSelectedValue = multiSelect
-    ? Array.isArray(value) && value.length > 0
-    : value || value === false || value === 0;
+  const hasSelectedValue = useMemo(() => {
+    if (multiSelect) {
+      return Array.isArray(value) && value.length > 0;
+    }
+    return (
+      selectableOptions.some((option) => option.value === value) ||
+      value === false ||
+      value === 0 ||
+      Boolean(value)
+    );
+  }, [multiSelect, value, selectableOptions]);
   const shouldShowClearButton = clearable && hasSelectedValue && !disabled;
 
   const handleScrollFrame = useCallback((values: { scrollTop: number }) => {
