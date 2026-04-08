@@ -28,6 +28,7 @@ import {
   useInteractions,
   FloatingFocusManager,
   FloatingPortal,
+  useTransitionStyles,
   Placement,
   Strategy,
   ElementRects,
@@ -56,9 +57,16 @@ export interface PopoverProps {
   safeZone?: number;
   arrowColor?: string;
   dataAutomationId?: string;
-  isOpened?: boolean;
-  isCentered?: boolean;
   strategy?: Strategy;
+  transitionDuration?:
+    | number
+    | Partial<{
+        open: number;
+        close: number;
+      }>;
+  isCentered?: boolean;
+  isFocusDisabled?: boolean;
+  isOpened?: boolean;
   shouldUsePortal?: boolean;
   setIsOpened?: (isOpened: boolean) => void;
 }
@@ -66,17 +74,19 @@ export interface PopoverProps {
 export const Popover: FC<PopoverProps> = ({
   content,
   children,
-  className,
   placement: initialPlacement = 'bottom',
   fallbackPlacements = allPlacements,
+  className,
   title,
   arrowOffset = ARROW_OFFSET,
   safeZone = 4,
   arrowColor = 'white',
   dataAutomationId,
-  isOpened,
-  isCentered = true,
   strategy: positionStrategy = 'absolute',
+  transitionDuration = 0,
+  isCentered = true,
+  isFocusDisabled = false,
+  isOpened,
   shouldUsePortal = false,
   setIsOpened,
 }): ReactElement => {
@@ -127,14 +137,23 @@ export const Popover: FC<PopoverProps> = ({
 
   const { getReferenceProps, getFloatingProps } = useInteractions([click, dismiss, role]);
 
+  const { isMounted, styles: transitionStyles } = useTransitionStyles(context, {
+    duration: transitionDuration,
+    initial: { opacity: 0 },
+  });
+
   const renderFloatingElement = () => {
     const floatingElement = (
-      <FloatingFocusManager context={context} modal={false}>
+      <FloatingFocusManager context={context} modal={false} disabled={isFocusDisabled}>
         <div
           className={cx('popover', className)}
           data-automation-id={dataAutomationId}
           ref={refs.setFloating}
-          style={floatingStyles}
+          style={{
+            ...floatingStyles,
+            ...transitionStyles,
+            pointerEvents: isPopoverOpen ? 'auto' : 'none',
+          }}
           {...getFloatingProps()}
         >
           <FloatingArrow
@@ -159,7 +178,7 @@ export const Popover: FC<PopoverProps> = ({
       <div ref={refs.setReference} {...getReferenceProps()} className={cx('popover-wrapper')}>
         {children}
       </div>
-      {isPopoverOpen && renderFloatingElement()}
+      {isMounted && renderFloatingElement()}
     </>
   );
 };
