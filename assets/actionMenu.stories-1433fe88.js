@@ -1,4 +1,4 @@
-import{j as e}from"./jsx-runtime-2f188e98.js";import{A as J,a as s}from"./actionMenu-44ea370c.js";import"./index-3553ef47.js";import{S as Q,a as X}from"./userIcon-b6d51b3b.js";import"./details-d199936c.js";import"./baseIconButton-9b03f096.js";import"./bind-d8141dee.js";import"./popover-3d6893b1.js";import"./floating-ui.react-eea5639b.js";import"./floating-ui.react-dom-a5cc5ea5.js";import"./index-d0bd1ed5.js";import"./floatingUi-c696ea36.js";/*!
+import{j as e}from"./jsx-runtime-2f188e98.js";import{A as J,a as s}from"./actionMenu-0a609ef7.js";import"./index-3553ef47.js";import{S as Q,a as X}from"./userIcon-b6d51b3b.js";import"./details-d199936c.js";import"./baseIconButton-9b03f096.js";import"./bind-d8141dee.js";import"./popover-8514a65e.js";import"./floating-ui.react-4b64b9af.js";import"./floating-ui.react-dom-a5cc5ea5.js";import"./index-d0bd1ed5.js";import"./floatingUi-c696ea36.js";/*!
  * Copyright 2026 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");

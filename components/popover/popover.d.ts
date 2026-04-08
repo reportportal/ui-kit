@@ -12,9 +12,14 @@ export interface PopoverProps {
     safeZone?: number;
     arrowColor?: string;
     dataAutomationId?: string;
-    isOpened?: boolean;
-    isCentered?: boolean;
     strategy?: Strategy;
+    transitionDuration?: number | Partial<{
+        open: number;
+        close: number;
+    }>;
+    isCentered?: boolean;
+    isFocusDisabled?: boolean;
+    isOpened?: boolean;
     shouldUsePortal?: boolean;
     setIsOpened?: (isOpened: boolean) => void;
 }
