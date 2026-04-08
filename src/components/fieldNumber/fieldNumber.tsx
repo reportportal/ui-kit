@@ -13,7 +13,12 @@ import { KeyCodes } from '@common/constants/keyCodes';
 import { BaseIconButton } from '@components/baseIconButton';
 import { PlusIcon, MinusIcon } from '@components/icons';
 import { FieldLabel } from '@components/fieldLabel';
-import { DEFAULT_WIDTH_CH, ALLOWED_KEY_CODES, MAX_WIDTH_CH } from './constants.js';
+import {
+  DEFAULT_WIDTH_CH,
+  ALLOWED_KEY_CODES,
+  MAX_WIDTH_CH,
+  SAFARI_CLIP_FIX_CH,
+} from './constants.js';
 import styles from './fieldNumber.module.scss';
 
 const cx = classNames.bind(styles);
@@ -115,7 +120,7 @@ export const FieldNumber = ({
   };
   const placeholderValue = placeholder + postfix;
   const inputWidth = useMemo(() => {
-    let width = (String(value) || placeholderValue).length;
+    let width = (String(value) || placeholderValue).length + SAFARI_CLIP_FIX_CH;
     if (postfix && !value) {
       width += 1;
     }
