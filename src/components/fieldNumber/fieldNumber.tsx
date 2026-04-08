@@ -120,12 +120,20 @@ export const FieldNumber = ({
   };
   const placeholderValue = placeholder + postfix;
   const inputWidth = useMemo(() => {
-    let width = (String(value) || placeholderValue).length + SAFARI_CLIP_FIX_CH;
+    let width = (String(value) || placeholderValue).length;
     if (postfix && !value) {
       width += 1;
     }
 
-    return width > MAX_WIDTH_CH ? `${MAX_WIDTH_CH}ch` : `${width || DEFAULT_WIDTH_CH}ch`;
+    if (!width) {
+      return `${DEFAULT_WIDTH_CH}ch`;
+    }
+
+    if (width > MAX_WIDTH_CH) {
+      return `${MAX_WIDTH_CH}ch`;
+    }
+
+    return `${width + SAFARI_CLIP_FIX_CH}ch`;
   }, [placeholderValue, postfix, value]);
   const handleInputFieldClick: MouseEventHandler<HTMLDivElement> = () => {
     if (inputRef && inputRef.current) {
