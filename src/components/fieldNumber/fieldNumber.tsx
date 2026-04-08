@@ -13,7 +13,12 @@ import { KeyCodes } from '@common/constants/keyCodes';
 import { BaseIconButton } from '@components/baseIconButton';
 import { PlusIcon, MinusIcon } from '@components/icons';
 import { FieldLabel } from '@components/fieldLabel';
-import { DEFAULT_WIDTH_CH, ALLOWED_KEY_CODES, MAX_WIDTH_CH } from './constants.js';
+import {
+  DEFAULT_WIDTH_CH,
+  ALLOWED_KEY_CODES,
+  MAX_WIDTH_CH,
+  SAFARI_CLIP_FIX_CH,
+} from './constants.js';
 import styles from './fieldNumber.module.scss';
 
 const cx = classNames.bind(styles);
@@ -120,7 +125,15 @@ export const FieldNumber = ({
       width += 1;
     }
 
-    return width > MAX_WIDTH_CH ? `${MAX_WIDTH_CH}ch` : `${width || DEFAULT_WIDTH_CH}ch`;
+    if (!width) {
+      return `${DEFAULT_WIDTH_CH}ch`;
+    }
+
+    if (width > MAX_WIDTH_CH) {
+      return `${MAX_WIDTH_CH}ch`;
+    }
+
+    return `${width + SAFARI_CLIP_FIX_CH}ch`;
   }, [placeholderValue, postfix, value]);
   const handleInputFieldClick: MouseEventHandler<HTMLDivElement> = () => {
     if (inputRef && inputRef.current) {

@@ -4,7 +4,7 @@ import { userEvent } from '@testing-library/user-event';
 import { KeyCodes } from '@common/constants/keyCodes';
 import DefaultExport, { FieldNumber as NamedExport } from './index';
 import { FieldNumber } from './fieldNumber';
-import { MAX_WIDTH_CH, DEFAULT_WIDTH_CH } from './constants';
+import { MAX_WIDTH_CH, DEFAULT_WIDTH_CH, SAFARI_CLIP_FIX_CH } from './constants';
 
 vi.mock('@components/icons', () => ({
   PlusIcon: () => <span>+</span>,
@@ -349,9 +349,14 @@ describe('FieldNumber Component', () => {
     });
 
     it('dynamically adjusts input width based on value length', () => {
-      render(<FieldNumber onChange={() => {}} value={12345} />);
+      const value = '12345';
+
+      render(<FieldNumber onChange={vi.fn()} value={value} />);
+
       const inputField = screen.getByRole('spinbutton');
-      expect(inputField).toHaveStyle({ width: '5ch' });
+      const expectedWidth = `${value.length + SAFARI_CLIP_FIX_CH}ch`;
+
+      expect(inputField).toHaveStyle({ width: expectedWidth });
     });
 
     it('applies postfix only when value is present', () => {
