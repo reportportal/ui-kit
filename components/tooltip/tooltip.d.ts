@@ -5,7 +5,6 @@ interface TooltipProps {
     content: ReactNode;
     children: ReactNode;
     wrapperClassName?: string;
-    wrapperTabIndex?: number;
     tooltipClassName?: string;
     contentClassName?: string;
     dynamicWidth?: boolean;
