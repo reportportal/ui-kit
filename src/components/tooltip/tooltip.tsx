@@ -38,6 +38,7 @@ interface TooltipProps {
   content: ReactNode;
   children: ReactNode;
   wrapperClassName?: string;
+  wrapperTabIndex?: number;
   tooltipClassName?: string;
   contentClassName?: string;
   dynamicWidth?: boolean;
@@ -56,6 +57,7 @@ interface TooltipProps {
 export const Tooltip: FC<TooltipProps> = ({
   content,
   wrapperClassName,
+  wrapperTabIndex = 0,
   tooltipClassName,
   contentClassName,
   dynamicWidth,
@@ -156,7 +158,7 @@ export const Tooltip: FC<TooltipProps> = ({
           handleShowTooltip();
         }}
         onBlur={handleHideTooltip}
-        tabIndex={0}
+        tabIndex={wrapperTabIndex}
       >
         {children}
       </div>
