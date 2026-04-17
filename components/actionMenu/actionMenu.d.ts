@@ -18,7 +18,7 @@ export declare const ActionMenuItem: ({ className, children, ...props }: {
     className?: string | undefined;
     children: ReactNode;
 }) => import("react/jsx-runtime").JSX.Element;
-export interface ActionMenuProps extends Pick<PopoverProps, 'placement'> {
+export interface ActionMenuProps extends Pick<PopoverProps, 'placement' | 'shouldUsePortal'> {
     items?: MenuItem[];
     cleanupDividers?: boolean;
     className?: string;
@@ -30,4 +30,4 @@ export interface ActionMenuProps extends Pick<PopoverProps, 'placement'> {
     trigger?: ReactNode;
     disabled?: boolean;
 }
-export declare const ActionMenu: ({ placement, items, cleanupDividers, className, contentClassName, buttonClassName, popoverClassName, menuClassName, ariaLabel, trigger, disabled, }: ActionMenuProps) => ReactElement | null;
+export declare const ActionMenu: ({ placement, items, cleanupDividers, className, contentClassName, buttonClassName, popoverClassName, menuClassName, ariaLabel, trigger, disabled, shouldUsePortal, }: ActionMenuProps) => ReactElement | null;
