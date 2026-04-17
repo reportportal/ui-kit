@@ -12,7 +12,8 @@
 
   &.disabled {
     pointer-events: none;
-    background-color: var(--rp-ui-color-field-bg-2);
+    background-color: var(--rp-ui-base-bg-000);
+    color: var(--rp-ui-color-disabled);
   }
 
   &.hidden {
