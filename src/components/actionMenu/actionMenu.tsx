@@ -65,7 +65,7 @@ export const ActionMenuItem = ({
   </div>
 );
 
-export interface ActionMenuProps extends Pick<PopoverProps, 'placement'> {
+export interface ActionMenuProps extends Pick<PopoverProps, 'placement' | 'shouldUsePortal'> {
   items?: MenuItem[];
   cleanupDividers?: boolean;
   className?: string;
@@ -90,6 +90,7 @@ export const ActionMenu = ({
   ariaLabel,
   trigger,
   disabled = false,
+  shouldUsePortal,
 }: ActionMenuProps): ReactElement | null => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -283,6 +284,7 @@ export const ActionMenu = ({
         placement={placement}
         isOpened={disabled ? false : isMenuOpen}
         setIsOpened={handleSetIsOpened}
+        shouldUsePortal={shouldUsePortal}
         content={
           <div
             ref={menuRef}
