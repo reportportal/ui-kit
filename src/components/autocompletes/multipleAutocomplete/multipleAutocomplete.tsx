@@ -92,6 +92,7 @@ export interface MultipleAutocompleteProps<T> {
   selectedItemTextClassName?: string;
   optionsLimit?: number;
   limitationText?: string;
+  shouldShowEmptyListMessage?: boolean;
 }
 
 export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompleteProps<T>) => {
