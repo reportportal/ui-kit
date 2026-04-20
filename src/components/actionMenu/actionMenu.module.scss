@@ -19,10 +19,12 @@
 .action-menu {
   display: inline-flex;
   vertical-align: middle;
+}
 
-  .actions-popover {
-    padding: 8px 0;
-  }
+// .actions-popover.actions-popover has two-class specificity, same as the old nested rule, 
+// so it beats .popover { padding: 16px } regardless of load order.
+.actions-popover.actions-popover {
+  padding: 8px 0;
 }
 
 .action-dropdown {
