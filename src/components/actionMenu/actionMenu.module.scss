@@ -19,10 +19,10 @@
 .action-menu {
   display: inline-flex;
   vertical-align: middle;
+}
 
-  .actions-popover {
-    padding: 8px 0;
-  }
+.actions-popover.actions-popover {
+  padding: 8px 0;
 }
 
 .action-dropdown {
