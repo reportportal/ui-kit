@@ -50,6 +50,7 @@ export interface AutocompleteOptionsProps<T> {
   newItemButtonText: string;
   limitationText?: string;
   optionsLimit?: number;
+  shouldShowEmptyListMessage?: boolean;
 }
 
 export const AutocompleteOptions = <T,>(props: AutocompleteOptionsProps<T>) => {
@@ -69,6 +70,7 @@ export const AutocompleteOptions = <T,>(props: AutocompleteOptionsProps<T>) => {
     parseValueToString,
     limitationText = 'Too many results. Type to search',
     optionsLimit = 0,
+    shouldShowEmptyListMessage = true,
   } = props;
 
   const filterStaticOptions = useCallback(() => {
@@ -156,13 +158,19 @@ export const AutocompleteOptions = <T,>(props: AutocompleteOptionsProps<T>) => {
 
   const availableOptions = async ? options : filterStaticOptions();
   const prompt = getPrompt(options);
-
   if (prompt) return prompt;
+
+  const areAvailableOptionsEmpty = isEmpty(availableOptions);
+
+  if (areAvailableOptionsEmpty && !shouldShowEmptyListMessage && createWithoutConfirmation)
+    return null;
 
   return (
     <div className={cx({ container: options.length })}>
       <Scrollbars autoHeight autoHeightMax={216} hideTracksWhenNotNeeded>
-        {!isEmpty(availableOptions) ? renderItems(availableOptions) : renderEmptyList()}
+        {areAvailableOptionsEmpty
+          ? shouldShowEmptyListMessage && renderEmptyList()
+          : renderItems(availableOptions)}
         {availableOptions?.length > optionsLimit && optionsLimit > 0 && limitationText ? (
           <li className={cx('limitation-item')} aria-hidden="true">
             {limitationText}
