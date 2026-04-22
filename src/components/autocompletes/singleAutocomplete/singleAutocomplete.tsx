@@ -35,7 +35,7 @@ import { default as FieldText } from '@/components/fieldText';
 import { DropdownIcon } from '@/components/icons';
 
 import { AutocompleteMenu } from '../common/autocompleteMenu';
-import { ENTER_KEY_NAME, TAB_KEY_NAME } from '../constants';
+import { AUTOCOMPLETE_PORTAL_MENU_ATTR, ENTER_KEY_NAME, TAB_KEY_NAME } from '../constants';
 import { usePreventInitialScroll } from '../hooks/usePreventInitialScroll';
 import { useResizeClose } from '../hooks/useResizeClose';
 import { useScrollClose } from '../hooks/useScrollClose';
@@ -273,6 +273,7 @@ export const SingleAutocomplete = <T,>(componentProps: SingleAutocompleteProps<T
             isDropdownMode={isDropdownMode}
             style={floatingStyles}
             ref={refs.setFloating}
+            portalMenuAttribute={Boolean(menuPortalRoot) ? AUTOCOMPLETE_PORTAL_MENU_ATTR : null}
             minLength={minLength}
             inputValue={(inputValue || '').trim()}
             getItemProps={getOptionProps(getItemProps, highlightedIndex, value)}
