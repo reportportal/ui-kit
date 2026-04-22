@@ -3,6 +3,7 @@ import { Scrollbars } from 'rc-scrollbars';
 import { motion, AnimatePresence } from 'framer-motion';
 import classNames from 'classnames/bind';
 import { useOnClickOutside, useWindowResize } from '@common/hooks';
+import { AUTOCOMPLETE_PORTAL_MENU_ATTR } from '@components/autocompletes/constants';
 import { DROPDOWN_PORTAL_MENU_ATTR } from '@components/dropdown';
 import { KeyCodes } from '@common/constants/keyCodes';
 import { ButtonProps } from '@components/button';
@@ -132,7 +133,7 @@ export const Modal: FC<ModalProps> = ({
 
   const clickOutsideOptions = useMemo(
     () => ({
-      ignoreSelectors: [`[${DROPDOWN_PORTAL_MENU_ATTR}]`],
+      ignoreSelectors: [`[${DROPDOWN_PORTAL_MENU_ATTR}]`, `[${AUTOCOMPLETE_PORTAL_MENU_ATTR}]`],
     }),
     [],
   );
