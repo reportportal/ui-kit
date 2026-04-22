@@ -42,6 +42,7 @@ export interface SingleAutocompleteProps<T> {
     newItemButtonText?: string;
     optionsLimit?: number;
     limitationText?: string;
+    shouldShowEmptyListMessage?: boolean;
     /**
      * Portal root element for autocomplete menu rendering.
      * When provided, the menu will be rendered in this element using React Portal.

@@ -51,5 +51,6 @@ export interface MultipleAutocompleteProps<T> {
     selectedItemTextClassName?: string;
     optionsLimit?: number;
     limitationText?: string;
+    shouldShowEmptyListMessage?: boolean;
 }
 export declare const MultipleAutocomplete: <T>(componentsProps: MultipleAutocompleteProps<T>) => import("react/jsx-runtime").JSX.Element;

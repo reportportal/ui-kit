@@ -17,5 +17,6 @@ export interface AutocompleteOptionsProps<T> {
     newItemButtonText: string;
     limitationText?: string;
     optionsLimit?: number;
+    shouldShowEmptyListMessage?: boolean;
 }
-export declare const AutocompleteOptions: <T>(props: AutocompleteOptionsProps<T>) => import("react/jsx-runtime").JSX.Element;
+export declare const AutocompleteOptions: <T>(props: AutocompleteOptionsProps<T>) => import("react/jsx-runtime").JSX.Element | null;
