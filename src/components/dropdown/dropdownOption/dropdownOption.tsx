@@ -3,6 +3,7 @@ import classNames from 'classnames/bind';
 import { DropdownOptionProps } from '../types';
 import styles from './dropdownOption.module.scss';
 import { Checkbox } from '@components/checkbox';
+import { Tooltip } from '@components/tooltip';
 
 const cx = classNames.bind(styles);
 
@@ -63,8 +64,20 @@ export const DropdownOption: FC<DropdownOptionProps> = forwardRef(
     );
 
     if (disabled && title) {
-      // Disabled option root has pointer-events: none; wrapper keeps native title tooltip available.
-      return <div title={title}>{optionElement}</div>;
+      return (
+        <Tooltip
+          content={title}
+          placement="top"
+          wrapperTabIndex={-1}
+          isFloating={false}
+          portalRoot={
+            props.disabledOptionTooltipPortalRoot ??
+            (typeof document !== 'undefined' ? document.body : undefined)
+          }
+        >
+          {optionElement}
+        </Tooltip>
+      );
     }
 
     return optionElement;
