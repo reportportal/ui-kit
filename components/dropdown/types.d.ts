@@ -23,6 +23,7 @@ export interface DropdownOptionProps {
     depth?: number;
     hasChildren?: boolean;
     option: DropdownOptionType;
+    disabledOptionTooltipPortalRoot?: Element;
 }
 export type FlattenedDropdownOption = {
     option: DropdownOptionType;

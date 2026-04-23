@@ -47,6 +47,11 @@ export interface DropdownProps extends Omit<ComponentPropsWithRef<'div'>, 'onCha
      * @example menuPortalRoot={document.body}
      */
     menuPortalRoot?: Element;
+    /**
+     * Portal root for the Tooltip shown on disabled options that have an explicit `title`.
+     * When omitted, defaults to `document.body` in the browser (guarded for SSR).
+     */
+    disabledOptionTooltipPortalRoot?: Element;
     /** Whether to render selected values as tags using AdaptiveTagList (only for multiSelect mode) */
     isMultiSelectWithTags?: boolean;
     /** Message to display when no options match the search term */
