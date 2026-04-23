@@ -70,7 +70,7 @@ export const DropdownOption: FC<DropdownOptionProps> = forwardRef(
           placement="top"
           wrapperTabIndex={-1}
           isFloating={false}
-          portalRoot={document.body}
+          portalRoot={typeof document !== 'undefined' ? document.body : undefined}
         >
           {optionElement}
         </Tooltip>
