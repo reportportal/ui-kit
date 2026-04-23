@@ -35,6 +35,7 @@ type AutocompleteMenuProps<T> = {
   className?: string;
   optionsLimit?: number;
   limitationText?: string;
+  portalMenuAttribute?: string | null;
 } & AutocompleteOptionsProps<T>;
 
 export const AutocompleteMenu = forwardRef(
@@ -46,6 +47,7 @@ export const AutocompleteMenu = forwardRef(
       isDropdownMode,
       inputValue = '',
       className = '',
+      portalMenuAttribute = null,
       ...props
     }: AutocompleteMenuProps<T>,
     ref: ForwardedRef<HTMLUListElement>,
@@ -59,6 +61,7 @@ export const AutocompleteMenu = forwardRef(
           className,
         )}
         style={style}
+        {...(portalMenuAttribute ? { [portalMenuAttribute]: '' } : {})}
       >
         <AutocompleteOptions inputValue={inputValue} {...props} />
       </ul>

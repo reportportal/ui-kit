@@ -34,6 +34,7 @@ export { default as FileOtherIcon } from './svg/fileOther.svg';
 export { default as FilterFilledIcon } from './svg/filterFilled.svg';
 export { default as FilterOutlineIcon } from './svg/filterOutline.svg';
 export { default as FlagIcon } from './svg/flag.svg';
+export { default as FolderIcon } from './svg/folder.svg';
 export { default as GroupByIcon } from './svg/groupBy.svg';
 export { default as HashIcon } from './svg/hash.svg';
 export { default as HideIcon } from './svg/hide.svg';
