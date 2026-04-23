@@ -70,7 +70,10 @@ export const DropdownOption: FC<DropdownOptionProps> = forwardRef(
           placement="top"
           wrapperTabIndex={-1}
           isFloating={false}
-          portalRoot={props.disabledOptionTooltipPortalRoot ?? undefined}
+          portalRoot={
+            props.disabledOptionTooltipPortalRoot ??
+            (typeof document !== 'undefined' ? document.body : undefined)
+          }
         >
           {optionElement}
         </Tooltip>

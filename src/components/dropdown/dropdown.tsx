@@ -100,10 +100,9 @@ export interface DropdownProps
   menuPortalRoot?: Element;
   /**
    * Portal root for the Tooltip shown on disabled options that have an explicit `title`.
-   * When omitted, defaults to `document.body` in the browser (guarded for SSR).
-   * Pass `null` to render the tooltip without a portal (same stacking context as the menu).
+    * When omitted, defaults to `document.body` in the browser (guarded for SSR).
    */
-  disabledOptionTooltipPortalRoot?: Element | null;
+  disabledOptionTooltipPortalRoot?: Element;
   /** Whether to render selected values as tags using AdaptiveTagList (only for multiSelect mode) */
   isMultiSelectWithTags?: boolean;
   /** Message to display when no options match the search term */
@@ -150,13 +149,6 @@ export const Dropdown: FC<DropdownProps> = ({
   ...rest
 }): ReactElement => {
   const { transformed: transformedAttributes, remaining: restProps } = splitHtmlAttributes(rest);
-
-  const resolvedDisabledOptionTooltipPortalRoot =
-    disabledOptionTooltipPortalRoot === undefined
-      ? typeof document === 'undefined'
-        ? undefined
-        : document.body
-      : disabledOptionTooltipPortalRoot;
 
   const [opened, setOpened] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -711,7 +703,7 @@ export const Dropdown: FC<DropdownProps> = ({
               leafValues.some((leafValue) => selectedValuesSet.has(leafValue)) &&
               !leafValues.every((leafValue) => selectedValuesSet.has(leafValue))
             }
-            disabledOptionTooltipPortalRoot={resolvedDisabledOptionTooltipPortalRoot}
+            disabledOptionTooltipPortalRoot={disabledOptionTooltipPortalRoot}
           />
           <div className={cx('divider')} />{' '}
         </>
@@ -744,7 +736,7 @@ export const Dropdown: FC<DropdownProps> = ({
               depth={depth}
               hasChildren={!!option.children?.length}
               isPartiallyChecked={isPartiallyChecked}
-              disabledOptionTooltipPortalRoot={resolvedDisabledOptionTooltipPortalRoot}
+              disabledOptionTooltipPortalRoot={disabledOptionTooltipPortalRoot}
             />
           );
         })
