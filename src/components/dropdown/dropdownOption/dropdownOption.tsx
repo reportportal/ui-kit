@@ -46,7 +46,7 @@ export const DropdownOption: FC<DropdownOptionProps> = forwardRef(
           'has-children': hasChildren,
           [`depth-${depth}`]: depth > 0,
         })}
-        title={title}
+        title={!disabled ? title : undefined}
         onClick={onChangeHandler}
         ref={ref}
         onMouseEnter={onMouseEnter}
@@ -61,6 +61,11 @@ export const DropdownOption: FC<DropdownOptionProps> = forwardRef(
         </div>
       </div>
     );
+
+    if (disabled && title) {
+      // Disabled option root has pointer-events: none; wrapper keeps native title tooltip available.
+      return <div title={title}>{optionElement}</div>;
+    }
 
     return optionElement;
   },
