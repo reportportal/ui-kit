@@ -661,7 +661,7 @@ export const Dropdown: FC<DropdownProps> = ({
     const { keyCode } = event;
     if (keyCode === KeyCodes.ENTER_KEY_CODE || keyCode === KeyCodes.SPACE_KEY_CODE) {
       const option = selectableOptions[highlightedIndex];
-      if (!option) {
+      if (!option || option.disabled) {
         return;
       }
       if (multiSelect) {
