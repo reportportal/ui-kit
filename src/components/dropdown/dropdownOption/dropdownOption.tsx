@@ -23,6 +23,9 @@ export const DropdownOption: FC<DropdownOptionProps> = forwardRef(
 
     const onChangeHandler: MouseEventHandler<HTMLDivElement | HTMLInputElement> = (e) => {
       const target = e.target as HTMLElement;
+      if (disabled) {
+        return;
+      }
       if (
         target.closest('label') &&
         !(target instanceof HTMLInputElement || target instanceof HTMLDivElement)
@@ -32,7 +35,7 @@ export const DropdownOption: FC<DropdownOptionProps> = forwardRef(
       onChange?.(value);
     };
 
-    return (
+    const optionElement = (
       <div
         className={cx('dropdown-option', {
           selected,
@@ -43,7 +46,7 @@ export const DropdownOption: FC<DropdownOptionProps> = forwardRef(
           'has-children': hasChildren,
           [`depth-${depth}`]: depth > 0,
         })}
-        title={title}
+        title={!disabled ? title : undefined}
         onClick={onChangeHandler}
         ref={ref}
         onMouseEnter={onMouseEnter}
@@ -58,5 +61,12 @@ export const DropdownOption: FC<DropdownOptionProps> = forwardRef(
         </div>
       </div>
     );
+
+    if (disabled && title) {
+      // Disabled option root has pointer-events: none; wrapper keeps native title tooltip available.
+      return <div title={title}>{optionElement}</div>;
+    }
+
+    return optionElement;
   },
 );
