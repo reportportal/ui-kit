@@ -151,15 +151,12 @@ export const Dropdown: FC<DropdownProps> = ({
 }): ReactElement => {
   const { transformed: transformedAttributes, remaining: restProps } = splitHtmlAttributes(rest);
 
-  let resolvedDisabledOptionTooltipPortalRoot: Element | undefined;
-  if (disabledOptionTooltipPortalRoot === null) {
-    resolvedDisabledOptionTooltipPortalRoot = undefined;
-  } else if (disabledOptionTooltipPortalRoot === undefined) {
-    resolvedDisabledOptionTooltipPortalRoot =
-      typeof document === 'undefined' ? undefined : document.body;
-  } else {
-    resolvedDisabledOptionTooltipPortalRoot = disabledOptionTooltipPortalRoot;
-  }
+  const resolvedDisabledOptionTooltipPortalRoot =
+    disabledOptionTooltipPortalRoot === undefined
+      ? typeof document === 'undefined'
+        ? undefined
+        : document.body
+      : disabledOptionTooltipPortalRoot;
 
   const [opened, setOpened] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
