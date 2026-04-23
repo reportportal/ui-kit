@@ -46,7 +46,7 @@ export const DropdownOption: FC<DropdownOptionProps> = forwardRef(
           'has-children': hasChildren,
           [`depth-${depth}`]: depth > 0,
         })}
-        title={!disabled ? title : undefined}
+        title={title}
         onClick={onChangeHandler}
         ref={ref}
         onMouseEnter={onMouseEnter}
@@ -61,10 +61,6 @@ export const DropdownOption: FC<DropdownOptionProps> = forwardRef(
         </div>
       </div>
     );
-
-    if (disabled && title) {
-      return <div title={title}>{optionElement}</div>;
-    }
 
     return optionElement;
   },
