@@ -47,7 +47,7 @@ export const DropdownOption: FC<DropdownOptionProps> = forwardRef(
           'has-children': hasChildren,
           [`depth-${depth}`]: depth > 0,
         })}
-        title={!disabled ? title : undefined}
+        title={!disabled ? (title ?? label) : undefined}
         onClick={onChangeHandler}
         ref={ref}
         onMouseEnter={onMouseEnter}
@@ -70,7 +70,7 @@ export const DropdownOption: FC<DropdownOptionProps> = forwardRef(
           placement="top"
           wrapperTabIndex={-1}
           isFloating={false}
-          portalRoot={typeof document !== 'undefined' ? document.body : undefined}
+          portalRoot={props.disabledOptionTooltipPortalRoot}
         >
           {optionElement}
         </Tooltip>
