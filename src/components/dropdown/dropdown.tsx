@@ -100,7 +100,7 @@ export interface DropdownProps
   menuPortalRoot?: Element;
   /**
    * Portal root for the Tooltip shown on disabled options that have an explicit `title`.
-    * When omitted, defaults to `document.body` in the browser (guarded for SSR).
+   * When omitted, defaults to `document.body` in the browser (guarded for SSR).
    */
   disabledOptionTooltipPortalRoot?: Element;
   /** Whether to render selected values as tags using AdaptiveTagList (only for multiSelect mode) */
