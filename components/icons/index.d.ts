@@ -75,3 +75,6 @@ export { default as LaunchTypeIcon } from './svg/launchType.svg';
 export { default as RunManualIcon } from './svg/runManual.svg';
 export { default as CoverageFullIcon } from './svg/coverageFull.svg';
 export { default as CoveragePartialIcon } from './svg/coveragePartially.svg';
+export { default as DownloadIcon } from './svg/download.svg';
+export { default as ArrowRightIcon } from './svg/arrowRight.svg';
+export { default as ArrowLeftIcon } from './svg/arrowLeft.svg';
