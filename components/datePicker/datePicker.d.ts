@@ -18,6 +18,8 @@ interface DatePickerBaseProps {
     placeholder?: string;
     dateFormat?: string;
     popperPlacement?: Placement;
+    minDate?: Date | null;
+    maxDate?: Date | null;
 }
 interface DatePickerSingleProps extends DatePickerBaseProps {
     selectsRange?: false;
