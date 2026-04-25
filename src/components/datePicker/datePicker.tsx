@@ -1,4 +1,5 @@
 import { ReactNode, useRef, ReactElement, forwardRef } from 'react';
+import { isNil } from 'es-toolkit/compat';
 import { default as ReactDatePicker } from 'react-datepicker/dist/es/index.js';
 import { Placement } from '@floating-ui/react';
 import { ReactDatePickerCustomHeaderProps } from 'react-datepicker';
@@ -14,6 +15,9 @@ const DEFAULT_DATE_FORMAT = 'MM-dd-yyyy';
 const DATE_RANGE_SEPARATOR = ' to ';
 
 type DateRangeValue = [Date | null, Date | null];
+
+const dateBoundForPicker = (value: Date | null | undefined): Date | undefined =>
+  isNil(value) ? undefined : value;
 
 interface DatePickerBaseProps {
   onBlur?: () => void;
@@ -31,6 +35,8 @@ interface DatePickerBaseProps {
   placeholder?: string;
   dateFormat?: string;
   popperPlacement?: Placement;
+  minDate?: Date | null;
+  maxDate?: Date | null;
 }
 
 interface DatePickerSingleProps extends DatePickerBaseProps {
@@ -81,6 +87,9 @@ export const DatePicker = (props: DatePickerProps) => {
     dateFormat = DEFAULT_DATE_FORMAT,
     value = null,
   } = props;
+  const { minDate, maxDate } = props;
+  const pickerMinDate = dateBoundForPicker(minDate);
+  const pickerMaxDate = dateBoundForPicker(maxDate);
 
   const selectsRange = 'selectsRange' in props && props.selectsRange === true;
   const inputRef = useRef(null);
@@ -158,6 +167,8 @@ export const DatePicker = (props: DatePickerProps) => {
         startDate={startDate}
         endDate={endDate}
         onChange={onChange as (dates: DateRangeValue) => void}
+        minDate={pickerMinDate}
+        maxDate={pickerMaxDate}
       />
     );
   }
@@ -167,6 +178,8 @@ export const DatePicker = (props: DatePickerProps) => {
       {...commonProps}
       selected={value as Date | null}
       onChange={onChange as (date: Date | null) => void}
+      minDate={pickerMinDate}
+      maxDate={pickerMaxDate}
     />
   );
 };

@@ -102,6 +102,18 @@ const meta: Meta<typeof DatePicker> = {
         'Enables range selection mode. When true, allows selecting a date range in a single field.',
       table: { type: { summary: 'boolean' } },
     },
+    minDate: {
+      control: 'date',
+      description:
+        'Earliest selectable calendar day (react-datepicker minDate). Omitted when unset; null is normalized to undefined.',
+      table: { type: { summary: 'Date | null | undefined' } },
+    },
+    maxDate: {
+      control: 'date',
+      description:
+        'Latest selectable calendar day (react-datepicker maxDate). Omitted when unset; null is normalized to undefined.',
+      table: { type: { summary: 'Date | null | undefined' } },
+    },
   },
   args: {
     disabled: false,
@@ -231,6 +243,71 @@ export const Disabled: Story = {
       >
         <div>Disabled DatePicker:</div>
         <DatePicker disabled />
+      </div>
+    );
+  },
+};
+
+export const WithMinMaxBounds: Story = {
+  render: () => {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const [date, setDate] = useState<Date | null>(new Date(2026, 3, 15));
+    const minDate = new Date(2026, 3, 10);
+    const maxDate = new Date(2026, 3, 22);
+
+    return (
+      <div
+        style={{
+          padding: '100px 200px 400px 200px',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '10px',
+          maxWidth: 420,
+        }}
+      >
+        <div>
+          Single DatePicker with <strong>minDate</strong> and <strong>maxDate</strong> (April 10–22,
+          2026). Open the calendar: days outside the range are disabled and shown with reduced
+          opacity.
+        </div>
+        <DatePicker value={date} onChange={setDate} minDate={minDate} maxDate={maxDate} />
+        {date && (
+          <div style={{ fontSize: '12px', color: '#666' }}>
+            Selected: {date.toLocaleDateString()}
+          </div>
+        )}
+      </div>
+    );
+  },
+};
+
+export const RangeWithMinMaxBounds: Story = {
+  render: () => {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const [dateRange, setDateRange] = useState<[Date | null, Date | null]>([
+      new Date(2026, 3, 12),
+      new Date(2026, 3, 18),
+    ]);
+    const rangeMin = new Date(2026, 3, 5);
+    const rangeMax = new Date(2026, 3, 25);
+    const [startDate, endDate] = dateRange;
+
+    return (
+      <div style={{ padding: '200px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+        <div>
+          Range DatePicker with calendar bounds (Apr 5–25, 2026). Same props apply in range mode.
+        </div>
+        <DatePicker
+          selectsRange
+          value={dateRange}
+          onChange={(dates) => setDateRange(dates)}
+          minDate={rangeMin}
+          maxDate={rangeMax}
+        />
+        <div style={{ marginTop: '10px', fontSize: '12px', color: '#666' }}>
+          <div>Start: {startDate?.toLocaleDateString() ?? 'Not selected'}</div>
+          <div>End: {endDate?.toLocaleDateString() ?? 'Not selected'}</div>
+        </div>
       </div>
     );
   },
