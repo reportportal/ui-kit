@@ -94,6 +94,7 @@ $POPOVER_Z_INDEX: 10;
 
   .react-datepicker__day--disabled {
     cursor: default;
+    opacity: 0.3;
 
     &:hover {
       border: none !important;
@@ -210,6 +211,7 @@ $POPOVER_Z_INDEX: 10;
   .date.disabled {
     color: var(--rp-ui-base-e-400);
     background-color: transparent;
+    opacity: 0.3;
     @include removeOutline;
   }
 }
