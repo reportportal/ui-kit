@@ -251,10 +251,6 @@ export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompletePr
           const rootProps = getRootProps(undefined, { suppressRefError: true });
           const modifiedRootProps = {
             ...rootProps,
-            ref: (node: HTMLDivElement | null) => {
-              refs.setReference(node);
-              return rootProps.ref(node);
-            },
           };
 
           const downshiftValue = inputValue ?? '';
@@ -263,6 +259,7 @@ export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompletePr
             <div {...modifiedRootProps} className={cx('autocomplete-wrapper')}>
               <>
                 <div
+                  ref={refs.setReference}
                   className={cx('autocomplete', customClass, {
                     'mobile-disabled': mobileDisabled,
                     error,
