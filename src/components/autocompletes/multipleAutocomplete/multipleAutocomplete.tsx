@@ -142,7 +142,8 @@ export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompletePr
   const { refs, floatingStyles } = useFloating({
     placement: 'bottom-start',
     strategy: useFixedPositioning ? 'fixed' : 'absolute',
-    whileElementsMounted: autoUpdate,
+    whileElementsMounted: (reference, floating, update) =>
+      autoUpdate(reference, floating, update, { elementResize: false }),
   });
 
   const placeholderIfEmptyField = value.length === 0 && !disabled ? placeholder : '';
@@ -200,7 +201,7 @@ export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompletePr
     if (parseInputValueFn) {
       const parsedItems = parseInputValueFn(inputValue);
       const items = parsedItems.length ? parsedItems : [inputValue as unknown as T];
-      items.forEach((item) => selectItem(item));
+      selectItem(items as unknown as T);
       clearSelection();
     } else {
       selectItem(inputValue as unknown as T);
