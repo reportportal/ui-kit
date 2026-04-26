@@ -105,15 +105,22 @@ export const MultipleDownshift = <T,>({
       const customizedNewItemData = customizeNewSelectedValue(item);
       return Array.isArray(customizedNewItemData) ? customizedNewItemData : [customizedNewItemData];
     });
+    const deduplicatedNormalizedNewItems = normalizedNewItems.reduce<T[]>((acc, item) => {
+      if (!acc.some((existingItem) => isEqual(existingItem, item))) {
+        acc.push(item);
+      }
+      return acc;
+    }, []);
 
     const filteredSelectedItems = selectedItems.filter(
-      (selectedItem) => !normalizedNewItems.some((newItem) => isEqual(selectedItem, newItem)),
+      (selectedItem) =>
+        !deduplicatedNormalizedNewItems.some((newItem) => isEqual(selectedItem, newItem)),
     );
-    const newSelectedItems = [...filteredSelectedItems, ...normalizedNewItems];
+    const newSelectedItems = [...filteredSelectedItems, ...deduplicatedNormalizedNewItems];
     onChange?.(newSelectedItems, downshift);
     const collectStoredItemsCb = (storedItems: DownshiftStore<T>) =>
       handleUnStoredItemCb?.(newSelectedItems, storedItems);
-    collectStoredItems(normalizedNewItems, collectStoredItemsCb);
+    collectStoredItems(deduplicatedNormalizedNewItems, collectStoredItemsCb);
   };
 
   const addSelectedItem = (newItemData: T, downshift: ControllerStateAndHelpers<T>) => {
