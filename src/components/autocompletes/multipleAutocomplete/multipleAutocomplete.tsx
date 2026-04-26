@@ -79,7 +79,7 @@ export interface MultipleAutocompleteProps<T> {
   dataAutomationId?: string;
   existingItemsMap: Record<string | number, boolean>;
   optionVariant: ComponentProps<typeof AutocompleteMenu>['optionVariant'];
-  customizeNewSelectedValue: (value: T) => T;
+  customizeNewSelectedValue: (value: T) => T | T[];
   renderCustomSelectedItem?: (item: T) => ReactNode;
   getUniqKey?: (item: T) => string;
   customEmptyListMessage?: string;

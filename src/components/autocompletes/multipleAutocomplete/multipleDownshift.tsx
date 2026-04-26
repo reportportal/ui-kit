@@ -36,7 +36,7 @@ export interface MultipleDownshiftProps<T> extends Partial<DownshiftProps<T>> {
     | ((newSelectedItems: DownshiftStore<T>, prevSelectedItems: DownshiftStore<T>) => void)
     | null;
   existingItemsMap: { [key: string]: boolean };
-  customizeNewSelectedValue: (value: T) => T;
+  customizeNewSelectedValue: (value: T) => T | T[];
   getOptionUniqKey?: (option: T) => keyof T;
   getOptionUniqKeyValue?: (option: T) => string;
   onChange: (selectedItems: T | T[] | null, downshift: ControllerStateAndHelpers<T> | null) => void;
