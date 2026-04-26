@@ -44,6 +44,7 @@ export interface MultipleDownshiftProps<T> extends Partial<DownshiftProps<T>> {
 
 export type GetStateAndHelpersT<T> = ControllerStateAndHelpers<T> & {
   removeItem: (removedItem: T, downshift: ControllerStateAndHelpers<T> | null) => void;
+  bulkSelectItems: (newItems: T[], downshift: ControllerStateAndHelpers<T> | null) => void;
   editItem: (oldItem: T, newValue: string) => void;
   handleChange: MultipleDownshiftProps<T>['onChange'];
   getOptionUniqKeyValue?: (option: T) => string;
@@ -97,17 +98,26 @@ export const MultipleDownshift = <T,>({
     }
   };
 
-  const addSelectedItem = (newItemData: T, downshift: ControllerStateAndHelpers<T>) => {
-    const customizedNewItemData = customizeNewSelectedValue(newItemData);
-    const newItem = Array.isArray(customizedNewItemData)
-      ? customizedNewItemData
-      : [customizedNewItemData];
-    const filteredSelectedItems = selectedItems.filter((item) => newItem.indexOf(item) < 0);
-    const newSelectedItems = [...filteredSelectedItems, ...newItem];
+  const bulkSelectItems = (newItems: T[], downshift: ControllerStateAndHelpers<T> | null) => {
+    if (!newItems.length) return;
+
+    const normalizedNewItems = newItems.flatMap((item) => {
+      const customizedNewItemData = customizeNewSelectedValue(item);
+      return Array.isArray(customizedNewItemData) ? customizedNewItemData : [customizedNewItemData];
+    });
+
+    const filteredSelectedItems = selectedItems.filter(
+      (selectedItem) => !normalizedNewItems.some((newItem) => isEqual(selectedItem, newItem)),
+    );
+    const newSelectedItems = [...filteredSelectedItems, ...normalizedNewItems];
     onChange?.(newSelectedItems, downshift);
     const collectStoredItemsCb = (storedItems: DownshiftStore<T>) =>
       handleUnStoredItemCb?.(newSelectedItems, storedItems);
-    collectStoredItems(newItem, collectStoredItemsCb);
+    collectStoredItems(normalizedNewItems, collectStoredItemsCb);
+  };
+
+  const addSelectedItem = (newItemData: T, downshift: ControllerStateAndHelpers<T>) => {
+    bulkSelectItems([newItemData], downshift);
   };
 
   const editItem = (oldItem: T, newItem: T) => {
@@ -132,6 +142,7 @@ export const MultipleDownshift = <T,>({
 
   const getStateAndHelpers = (downshift: ControllerStateAndHelpers<T>): GetStateAndHelpersT<T> => ({
     removeItem,
+    bulkSelectItems,
     editItem: editItem as (oldItem: T, newItem: string) => void,
     handleChange: onChange,
     getOptionUniqKeyValue,

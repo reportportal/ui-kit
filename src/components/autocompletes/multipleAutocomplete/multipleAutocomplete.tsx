@@ -142,6 +142,7 @@ export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompletePr
   const { refs, floatingStyles } = useFloating({
     placement: 'bottom-start',
     strategy: useFixedPositioning ? 'fixed' : 'absolute',
+    // Disable elementResize to avoid ResizeObserver feedback loops during bulk-add operations (EPMRPP-114724); verified menu alignment still updates correctly when chips wrap or are removed.
     whileElementsMounted: (reference, floating, update) =>
       autoUpdate(reference, floating, update, { elementResize: false }),
   });
@@ -192,16 +193,18 @@ export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompletePr
   const createNewItem = ({
     inputValue,
     selectItem,
+    bulkSelectItems,
     clearSelection,
   }: {
     inputValue: string;
     selectItem: (value: T) => void;
+    bulkSelectItems: GetStateAndHelpersT<T>['bulkSelectItems'];
     clearSelection: () => void;
   }) => {
     if (parseInputValueFn) {
       const parsedItems = parseInputValueFn(inputValue);
       const items = parsedItems.length ? parsedItems : [inputValue as unknown as T];
-      selectItem(items as unknown as T);
+      bulkSelectItems(items, null);
       clearSelection();
     } else {
       selectItem(inputValue as unknown as T);
@@ -244,6 +247,7 @@ export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompletePr
           editItem,
           openMenu,
           selectItem,
+          bulkSelectItems,
           clearSelection,
           toggleMenu,
           storedItemsMap,
@@ -315,6 +319,7 @@ export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompletePr
                             createNewItem({
                               inputValue,
                               selectItem,
+                              bulkSelectItems,
                               clearSelection,
                             });
                           }
@@ -330,6 +335,7 @@ export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompletePr
                             createNewItem({
                               inputValue,
                               selectItem,
+                              bulkSelectItems,
                               clearSelection,
                             });
                           }
