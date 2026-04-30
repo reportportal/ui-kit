@@ -756,6 +756,9 @@ export const Table: FC<TableComponentProps> = ({
       checkbox
     );
   };
+  const selectAllCheckboxClassnames = cx('checkbox-cell', 'select-all-checkbox', {
+    'select-all-checkbox-selected': isAnyRowSelected,
+  });
 
   const renderCheckboxColumn = () => (
     <div className={cx('checkbox-column')} ref={checkboxColumnRef}>
@@ -773,7 +776,7 @@ export const Table: FC<TableComponentProps> = ({
             value={isAllRowsSelected}
             partiallyChecked={isAnyRowSelected}
             onChange={handleSelectAllRows}
-            className={cx('checkbox-cell')}
+            className={selectAllCheckboxClassnames}
           />
         )}
       </div>
@@ -830,7 +833,7 @@ export const Table: FC<TableComponentProps> = ({
                 value={isAllRowsSelected}
                 partiallyChecked={isAnyRowSelected}
                 onChange={handleSelectAllRows}
-                className={cx('checkbox-cell')}
+                className={selectAllCheckboxClassnames}
               />
             )}
           </div>
