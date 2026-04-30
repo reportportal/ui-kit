@@ -105,12 +105,18 @@ export const MultipleDownshift = <T,>({
 
     const flattenedItems = customizedItems.flatMap((item) => (Array.isArray(item) ? item : [item]));
 
-    const filteredSelectedItems = selectedItems.filter((item) => flattenedItems.indexOf(item) < 0);
-    const newSelectedItems = [...filteredSelectedItems, ...flattenedItems];
+    const dedupedFlattenedItems = flattenedItems.filter(
+      (item, index, arr) => arr.findIndex((candidate) => isEqual(candidate, item)) === index,
+    );
+
+    const filteredSelectedItems = selectedItems.filter(
+      (item) => !dedupedFlattenedItems.some((candidate) => isEqual(candidate, item)),
+    );
+    const newSelectedItems = [...filteredSelectedItems, ...dedupedFlattenedItems];
     onChange?.(newSelectedItems, downshift);
     const collectStoredItemsCb = (storedItems: DownshiftStore<T>) =>
       handleUnStoredItemCb?.(newSelectedItems, storedItems);
-    collectStoredItems(flattenedItems, collectStoredItemsCb);
+    collectStoredItems(dedupedFlattenedItems, collectStoredItemsCb);
   };
 
   const editItem = (oldItem: T, newItem: T) => {
