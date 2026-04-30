@@ -18,7 +18,6 @@ import {
   ComponentProps,
   FocusEvent,
   KeyboardEvent,
-  MutableRefObject,
   ReactNode,
   Ref,
   useState,
@@ -176,24 +175,6 @@ export const SingleAutocomplete = <T,>(componentProps: SingleAutocompleteProps<T
     middleware,
   });
 
-  const setInputReference = useCallback(
-    (node: HTMLInputElement | null) => {
-      refs.setReference(node);
-
-      if (!refFunction) {
-        return;
-      }
-
-      if (typeof refFunction === 'function') {
-        refFunction(node);
-        return;
-      }
-
-      (refFunction as MutableRefObject<HTMLInputElement | null>).current = node;
-    },
-    [refs, refFunction],
-  );
-
   usePreventInitialScroll({ skip: shouldSkipPortalActions });
   useResizeClose({ skip: shouldSkipPortalActions, reference: refs.reference });
   useScrollClose({
@@ -264,6 +245,10 @@ export const SingleAutocomplete = <T,>(componentProps: SingleAutocompleteProps<T
         const rootProps = getRootProps(undefined, { suppressRefError: true });
         const modifiedRootProps = {
           ...rootProps,
+          ref: (node: HTMLDivElement | null) => {
+            refs.setReference(node);
+            return rootProps.ref(node);
+          },
         };
 
         if (!closeMenuRef.current) {
@@ -316,7 +301,7 @@ export const SingleAutocomplete = <T,>(componentProps: SingleAutocompleteProps<T
                     }
                     onFocus();
                   },
-                  ref: setInputReference,
+                  ref: refFunction,
                   onKeyDown: (event) => {
                     if (event.key === ENTER_KEY_NAME) {
                       event.preventDefault();
