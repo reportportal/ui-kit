@@ -96,6 +96,17 @@ $EXPANDABLE_CHECKBOX_Z_INDEX: 10;
       padding: 0 3px 0 0;
     }
   }
+
+  .select-all-checkbox {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  &:hover .select-all-checkbox,
+  & .select-all-checkbox-selected {
+    opacity: 1;
+    pointer-events: auto;
+  }
 }
 
 .table-row {
