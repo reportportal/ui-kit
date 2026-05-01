@@ -21,5 +21,6 @@ export type GetStateAndHelpersT<T> = ControllerStateAndHelpers<T> & {
     handleChange: MultipleDownshiftProps<T>['onChange'];
     getOptionUniqKeyValue?: (option: T) => string;
     storedItemsMap: MultipleDownshiftProps<T>['existingItemsMap'];
+    batchAddItems: (items: T[]) => void;
 };
 export declare const MultipleDownshift: <T>({ options, onChange, selectedItems, handleUnStoredItemCb, existingItemsMap, children, customizeNewSelectedValue, getOptionUniqKey, getOptionUniqKeyValue, ...props }: MultipleDownshiftProps<T>) => import("react/jsx-runtime").JSX.Element;
