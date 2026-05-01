@@ -109,6 +109,10 @@ export const MultipleDownshift = <T,>({
       (item, index, arr) => arr.findIndex((candidate) => isEqual(candidate, item)) === index,
     );
 
+    if (!dedupedFlattenedItems || dedupedFlattenedItems.length === 0) {
+      return;
+    }
+
     const filteredSelectedItems = selectedItems.filter(
       (item) => !dedupedFlattenedItems.some((candidate) => isEqual(candidate, item)),
     );
