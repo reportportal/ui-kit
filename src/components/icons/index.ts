@@ -46,6 +46,7 @@ export { default as MaximizeIcon } from './svg/maximize.svg';
 export { default as MeatballMenuIcon } from './svg/meatballMenu.svg';
 export { default as MinusIcon } from './svg/minus.svg';
 export { default as MoveToFolderIcon } from './svg/moveToFolder.svg';
+export { default as OkIcon } from './svg/ok.svg';
 export { default as OpenEyeIcon } from './svg/openEye.svg';
 export { default as PdfIcon } from './svg/pdf.svg';
 export { default as PinFilledIcon } from './svg/pinFilled.svg';
