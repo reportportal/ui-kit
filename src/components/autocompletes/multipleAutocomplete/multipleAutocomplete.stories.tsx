@@ -225,3 +225,82 @@ export const WithSingleLineMode: Story<(typeof LONG_OPTIONS_STRINGS)[number]> = 
     );
   },
 };
+
+export const WithMultiTokenParseInputValueFn: Story<string> = {
+  args: {
+    options: OPTIONS_STRINGS,
+    loading: false,
+    async: false,
+    createWithoutConfirmation: true,
+    creatable: true,
+    editable: true,
+    existingItemsMap: {},
+    parseValueToString: (value) => {
+      return value ? String(value) : '';
+    },
+    highlightUnStoredItem: false,
+    value: [],
+    error: '',
+    touched: false,
+    inputProps: {
+      clearable: true,
+    },
+    minLength: 1,
+    isDropdownMode: false,
+    placeholder: 'Enter comma, semicolon, or newline-separated items',
+    disabled: false,
+    mobileDisabled: false,
+    maxLength: null,
+    customClass: '',
+    menuClassName: '',
+    dataAutomationId: 'multi-token-parse-demo',
+    // Multi-token parser: splits by comma, semicolon, or newline
+    parseInputValueFn: (inputValue: string) => {
+      return inputValue
+        .split(/[,;\n]+/)
+        .map((item) => item.trim())
+        .filter((item) => item.length > 0);
+    },
+  },
+  render: (args) => {
+    const [state, setState] = useState<string[]>(args.value || []);
+
+    const modifiedArgs = {
+      ...args,
+      inputProps: { ...args.inputProps, onClear: () => setState([]) },
+    };
+
+    const onChange: ComponentProps<typeof MultipleAutocomplete<string>>['onChange'] = (
+      newState,
+    ) => {
+      setState(newState as string[]);
+    };
+
+    return (
+      <div>
+        <div style={{ marginBottom: '20px', fontSize: '14px', color: '#666' }}>
+          <p>
+            Try entering multiple items in one action:
+            <br />• Comma-separated: <code>alpha, beta, gamma</code>
+            <br />• Semicolon-separated: <code>alpha; beta; gamma</code>
+            <br />
+            • Newline-separated (paste multiple lines)
+            <br />
+            Then press Enter or click outside the field to confirm.
+            <br />
+            All valid items parsed from the input should be added as separate chips.
+          </p>
+        </div>
+        <div style={{ width: '500px', height: '400px', display: 'flex', alignItems: 'center' }}>
+          <MultipleAutocomplete<string> {...modifiedArgs} onChange={onChange} value={state} />
+        </div>
+        <div style={{ marginTop: '20px', fontSize: '14px', color: '#666' }}>
+          <p>Current selected items ({state.length}):</p>
+          <pre style={{ backgroundColor: '#f5f5f5', padding: '10px', borderRadius: '4px' }}>
+            {JSON.stringify(state, null, 2)}
+          </pre>
+        </div>
+      </div>
+    );
+  },
+};

@@ -48,6 +48,7 @@ export type GetStateAndHelpersT<T> = ControllerStateAndHelpers<T> & {
   handleChange: MultipleDownshiftProps<T>['onChange'];
   getOptionUniqKeyValue?: (option: T) => string;
   storedItemsMap: MultipleDownshiftProps<T>['existingItemsMap'];
+  batchAddItems: (items: T[]) => void;
 };
 
 export const MultipleDownshift = <T,>({
@@ -97,17 +98,29 @@ export const MultipleDownshift = <T,>({
     }
   };
 
-  const addSelectedItem = (newItemData: T, downshift: ControllerStateAndHelpers<T>) => {
-    const customizedNewItemData = customizeNewSelectedValue(newItemData);
-    const newItem = Array.isArray(customizedNewItemData)
-      ? customizedNewItemData
-      : [customizedNewItemData];
-    const filteredSelectedItems = selectedItems.filter((item) => newItem.indexOf(item) < 0);
-    const newSelectedItems = [...filteredSelectedItems, ...newItem];
+  const addSelectedItem = (newItemData: T | T[], downshift: ControllerStateAndHelpers<T>) => {
+    // Handle both single items and arrays (for batch additions from parseInputValueFn)
+    const itemsToAdd = Array.isArray(newItemData) ? newItemData : [newItemData];
+    const customizedItems = itemsToAdd.map((item) => customizeNewSelectedValue(item));
+
+    const flattenedItems = customizedItems.flatMap((item) => (Array.isArray(item) ? item : [item]));
+
+    const dedupedFlattenedItems = flattenedItems.filter(
+      (item, index, arr) => arr.findIndex((candidate) => isEqual(candidate, item)) === index,
+    );
+
+    if (!dedupedFlattenedItems || dedupedFlattenedItems.length === 0) {
+      return;
+    }
+
+    const filteredSelectedItems = selectedItems.filter(
+      (item) => !dedupedFlattenedItems.some((candidate) => isEqual(candidate, item)),
+    );
+    const newSelectedItems = [...filteredSelectedItems, ...dedupedFlattenedItems];
     onChange?.(newSelectedItems, downshift);
     const collectStoredItemsCb = (storedItems: DownshiftStore<T>) =>
       handleUnStoredItemCb?.(newSelectedItems, storedItems);
-    collectStoredItems(newItem, collectStoredItemsCb);
+    collectStoredItems(dedupedFlattenedItems, collectStoredItemsCb);
   };
 
   const editItem = (oldItem: T, newItem: T) => {
@@ -125,19 +138,29 @@ export const MultipleDownshift = <T,>({
     filterStoredItems(removedItem, filterStoredItemsCb);
   };
 
-  const handleSelection = (selectedItem: T | null, downshift: ControllerStateAndHelpers<T>) => {
+  const handleSelection = (
+    selectedItem: T | T[] | null,
+    downshift: ControllerStateAndHelpers<T>,
+  ) => {
     if (!selectedItem) return;
     addSelectedItem(selectedItem, downshift);
   };
 
-  const getStateAndHelpers = (downshift: ControllerStateAndHelpers<T>): GetStateAndHelpersT<T> => ({
-    removeItem,
-    editItem: editItem as (oldItem: T, newItem: string) => void,
-    handleChange: onChange,
-    getOptionUniqKeyValue,
-    storedItemsMap,
-    ...downshift,
-  });
+  const getStateAndHelpers = (downshift: ControllerStateAndHelpers<T>): GetStateAndHelpersT<T> => {
+    const batchAddItems = (items: T[]) => {
+      addSelectedItem(items, downshift);
+    };
+
+    return {
+      removeItem,
+      editItem: editItem as (oldItem: T, newItem: string) => void,
+      handleChange: onChange,
+      getOptionUniqKeyValue,
+      storedItemsMap,
+      batchAddItems,
+      ...downshift,
+    };
+  };
 
   const stateReducer: (
     state: DownshiftState<T>,

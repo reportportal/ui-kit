@@ -192,15 +192,16 @@ export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompletePr
     inputValue,
     selectItem,
     clearSelection,
+    batchAddItems,
   }: {
     inputValue: string;
     selectItem: (value: T) => void;
     clearSelection: () => void;
+    batchAddItems: (items: T[]) => void;
   }) => {
     if (parseInputValueFn) {
       const parsedItems = parseInputValueFn(inputValue);
-      const items = parsedItems.length ? parsedItems : [inputValue as unknown as T];
-      items.forEach((item) => selectItem(item));
+      batchAddItems(parsedItems.length ? parsedItems : [inputValue as unknown as T]);
       clearSelection();
     } else {
       selectItem(inputValue as unknown as T);
@@ -247,6 +248,7 @@ export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompletePr
           toggleMenu,
           storedItemsMap,
           getRootProps,
+          batchAddItems,
         }: GetStateAndHelpersT<T>) => {
           const rootProps = getRootProps(undefined, { suppressRefError: true });
           const modifiedRootProps = {
@@ -315,6 +317,7 @@ export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompletePr
                               inputValue,
                               selectItem,
                               clearSelection,
+                              batchAddItems,
                             });
                           }
                           removeItemByBackspace({ event, removeItem, inputValue });
@@ -330,6 +333,7 @@ export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompletePr
                               inputValue,
                               selectItem,
                               clearSelection,
+                              batchAddItems,
                             });
                           }
                         },
