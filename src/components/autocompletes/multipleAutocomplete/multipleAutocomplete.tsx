@@ -201,10 +201,8 @@ export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompletePr
   }) => {
     if (parseInputValueFn) {
       const parsedItems = parseInputValueFn(inputValue);
-      if (parsedItems.length) {
-        // Add parsed tokens in one merge operation to avoid stale selectedItems snapshots.
-        batchAddItems(parsedItems);
-      }
+      // Preserve legacy fallback: when parser returns no tokens, create from raw input.
+      batchAddItems(parsedItems.length ? parsedItems : [inputValue as unknown as T]);
       clearSelection();
     } else {
       selectItem(inputValue as unknown as T);
