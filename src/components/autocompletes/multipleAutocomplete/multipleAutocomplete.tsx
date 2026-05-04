@@ -251,20 +251,14 @@ export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompletePr
           batchAddItems,
         }: GetStateAndHelpersT<T>) => {
           const rootProps = getRootProps(undefined, { suppressRefError: true });
-          const modifiedRootProps = {
-            ...rootProps,
-            ref: (node: HTMLDivElement | null) => {
-              refs.setReference(node);
-              return rootProps.ref(node);
-            },
-          };
 
           const downshiftValue = inputValue ?? '';
 
           return (
-            <div {...modifiedRootProps} className={cx('autocomplete-wrapper')}>
+            <div {...rootProps} className={cx('autocomplete-wrapper')}>
               <>
                 <div
+                  ref={refs.setReference}
                   className={cx('autocomplete', customClass, {
                     'mobile-disabled': mobileDisabled,
                     error,
