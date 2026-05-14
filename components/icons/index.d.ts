@@ -70,6 +70,7 @@ export { default as SuccessIcon } from './svg/success.svg';
 export { default as TreeIcon } from './svg/tree.svg';
 export { default as WarningIcon } from './svg/warning.svg';
 export { default as XlsIcon } from './svg/xls.svg';
+export { default as TestCaseIcon } from './svg/testCase.svg';
 export { default as TestPlanIcon } from './svg/testPlan.svg';
 export { default as UserIcon } from './svg/userIcon.svg';
 export { default as LaunchTypeIcon } from './svg/launchType.svg';
