@@ -1,5 +1,6 @@
 import { ComponentProps, FocusEvent, ReactNode, Ref } from '../../../../node_modules/react';
 import { default as Downshift, DownshiftState, StateChangeOptions } from 'downshift';
+import { Placement } from '@floating-ui/react';
 import { default as FieldText } from '../../fieldText';
 import { AutocompleteMenu } from '../common/autocompleteMenu';
 import { GetItemPropsT } from '../types';
@@ -36,6 +37,7 @@ export interface SingleAutocompleteProps<T> {
     useFixedPositioning: boolean;
     dropdownMatchInputWidth?: boolean;
     withMenuFlip?: boolean;
+    placement?: Placement;
     getUniqKey?: (item: T) => string;
     customEmptyListMessage?: string;
     customNoMatchesMessage?: string;
