@@ -29,7 +29,7 @@ import { createPortal } from 'react-dom';
 import classNames from 'classnames/bind';
 import { isEmpty } from 'es-toolkit/compat';
 import Downshift, { DownshiftState, StateChangeOptions } from 'downshift';
-import { autoUpdate, useFloating, size, flip } from '@floating-ui/react';
+import { autoUpdate, useFloating, size, flip, Placement } from '@floating-ui/react';
 
 import { default as FieldText } from '@/components/fieldText';
 import { DropdownIcon } from '@/components/icons';
@@ -101,6 +101,7 @@ export interface SingleAutocompleteProps<T> {
   useFixedPositioning: boolean;
   dropdownMatchInputWidth?: boolean;
   withMenuFlip?: boolean;
+  placement?: Placement;
   getUniqKey?: (item: T) => string;
   customEmptyListMessage?: string;
   customNoMatchesMessage?: string;
@@ -147,6 +148,7 @@ export const SingleAutocomplete = <T,>(componentProps: SingleAutocompleteProps<T
     useFixedPositioning,
     dropdownMatchInputWidth = false,
     withMenuFlip = false,
+    placement: menuPlacement = 'bottom-start',
     newItemButtonText = '',
     menuPortalRoot,
     ...props
@@ -169,7 +171,7 @@ export const SingleAutocomplete = <T,>(componentProps: SingleAutocompleteProps<T
   );
 
   const { refs, floatingStyles } = useFloating({
-    placement: 'bottom-start',
+    placement: menuPlacement,
     whileElementsMounted: autoUpdate,
     strategy,
     middleware,
