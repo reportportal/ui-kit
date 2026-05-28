@@ -49,8 +49,12 @@
   }
 
   &.selected:not(.multi-select) {
-    background: var(--rp-ui-base-topaz-100);
-    color: var(--rp-ui-base-topaz);
+    background: var(--rp-ui-dropdown-selected-bg);
+    color: var(--rp-ui-color-primary-text);
+
+    &:hover:not(:active) {
+      background: var(--rp-ui-dropdown-selected-hover-bg);
+    }
   }
 }
 
