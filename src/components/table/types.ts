@@ -54,6 +54,7 @@ export interface TableComponentProps {
   headerClassName?: string;
   bodyClassName?: string;
   rowClassName?: string;
+  checkboxColumnClassName?: string;
   selectedRowIds?: (string | number)[];
   sortingDirection?: SortingDirection;
   sortingColumn?: Column;
