@@ -107,6 +107,7 @@ export const Table: FC<TableComponentProps> = ({
   rowClassName = '',
   headerClassName = '',
   bodyClassName = '',
+  checkboxColumnClassName = '',
   selectable = false,
   selectedRowIds = [],
   sortingDirection = ASC,
@@ -761,7 +762,7 @@ export const Table: FC<TableComponentProps> = ({
   });
 
   const renderCheckboxColumn = () => (
-    <div className={cx('checkbox-column')} ref={checkboxColumnRef}>
+    <div className={cx('checkbox-column', checkboxColumnClassName)} ref={checkboxColumnRef}>
       <div
         ref={checkboxHeaderRef}
         className={cx(
