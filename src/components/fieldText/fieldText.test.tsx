@@ -5,9 +5,13 @@ import { userEvent } from '@testing-library/user-event';
 import DefaultExport, { FieldText as NamedExport } from './index';
 import { FieldText } from './fieldText';
 
-vi.mock('@components/icons', () => ({
-  ClearIcon: () => <div data-testid="mock-clear-icon">×</div>,
-}));
+vi.mock('@components/icons', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@components/icons')>();
+  return {
+    ...actual,
+    ClearIcon: () => <div data-testid="mock-clear-icon">×</div>,
+  };
+});
 
 vi.mock('@components/spinLoader', () => ({
   SpinLoader: () => <div data-testid="mock-spinner">Loading...</div>,
