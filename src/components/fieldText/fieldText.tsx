@@ -13,7 +13,7 @@ import {
   useId,
 } from 'react';
 import classNames from 'classnames/bind';
-import { ClearIcon, CloseEyeIcon, OpenEyeIcon } from '@components/icons';
+import { ClearIcon, OpenEyeIcon, ClosedEyeIcon } from '@components/icons';
 import { BaseIconButton } from '../baseIconButton';
 import { SpinLoader } from '@components/spinLoader';
 import { MaxValueDisplay } from '@components/maxValueDisplay';
@@ -188,7 +188,7 @@ export const FieldText = forwardRef<HTMLInputElement, FieldTextProps>(
                 onTouchEnd={hidePassword}
                 onTouchCancel={hidePassword}
               >
-                {passwordVisible ? <OpenEyeIcon /> : <CloseEyeIcon />}
+                {passwordVisible ? <OpenEyeIcon /> : <ClosedEyeIcon />}
               </BaseIconButton>
             )}
             {placeholder && !value && (

@@ -13,6 +13,7 @@ export { default as ChevronDownDropdownIcon } from './svg/chevronDownDropdown.sv
 export { default as ChevronRightBreadcrumbsIcon } from './svg/chevronRightBreadcrumbs.svg';
 export { default as ClearIcon } from './svg/clear.svg';
 export { default as CloseEyeIcon } from './svg/closeEye.svg';
+export { default as ClosedEyeIcon } from './svg/closedEye.svg';
 export { default as CloseIcon } from './svg/close.svg';
 export { default as ConfigurationIcon } from './svg/configuration.svg';
 export { default as CopyIcon } from './svg/copy.svg';
