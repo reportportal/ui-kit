@@ -13,6 +13,7 @@ export { default as ChevronDownDropdownIcon } from './svg/chevronDownDropdown.sv
 export { default as ChevronRightBreadcrumbsIcon } from './svg/chevronRightBreadcrumbs.svg';
 export { default as ClearIcon } from './svg/clear.svg';
 export { default as CloseEyeIcon } from './svg/closeEye.svg';
+export { default as ClosedEyeIcon } from './svg/closedEye.svg';
 export { default as CloseIcon } from './svg/close.svg';
 export { default as ConfigurationIcon } from './svg/configuration.svg';
 export { default as CopyIcon } from './svg/copy.svg';
@@ -48,6 +49,7 @@ export { default as MinusIcon } from './svg/minus.svg';
 export { default as MoveToFolderIcon } from './svg/moveToFolder.svg';
 export { default as OkIcon } from './svg/ok.svg';
 export { default as OpenEyeIcon } from './svg/openEye.svg';
+export { default as OpenedEyeIcon } from './svg/openedEye.svg';
 export { default as PdfIcon } from './svg/pdf.svg';
 export { default as PinFilledIcon } from './svg/pinFilled.svg';
 export { default as PinOutlineIcon } from './svg/pinOutline.svg';
