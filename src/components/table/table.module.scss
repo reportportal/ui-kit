@@ -450,6 +450,16 @@ $EXPANDABLE_CHECKBOX_Z_INDEX: 10;
 
   &.sortable-cell > .label {
     cursor: pointer;
+
+    &.sort-disabled {
+      cursor: default;
+    }
+  }
+
+  .sort-disabled-tooltip-wrapper {
+    display: flex;
+    min-width: 0;
+    overflow: hidden;
   }
 
   &.align-right {

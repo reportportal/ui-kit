@@ -26,6 +26,7 @@ A flexible table component with support for:
 - **Expandable rows**: Enable with \`isRowsExpandable\` prop
 - **Pinned columns**: Use \`pinnedColumnKeys\` to pin columns to the left
 - **Sorting**: Configure with \`sortableColumns\`, \`sortingColumn\`, \`sortingDirection\`
+- **Disabled sort tooltips**: Use \`sortDisabledColumnTooltips\` to show a tooltip and block sorting for specific columns
 - **Selection**: Enable with \`selectable\` prop
 - **Custom cell content**: Use \`DetailedCellData\` with \`content\` and \`component\` properties
         `,
@@ -84,6 +85,13 @@ A flexible table component with support for:
       description: 'Tooltip text for the expand all button.',
       table: {
         type: { summary: 'ReactNode' },
+      },
+    },
+    sortDisabledColumnTooltips: {
+      description:
+        'Tooltips for sortable column headers where sorting is disabled. Sort clicks are ignored for matching column keys.',
+      table: {
+        type: { summary: 'Record<string, ReactNode>' },
       },
     },
     pinnedColumnKeys: {
@@ -316,6 +324,32 @@ export const Default: Story = {
     fixedColumns,
     renderRowActions,
     selectable: true,
+  },
+};
+
+export const SortDisabledColumnTooltips: Story = {
+  render: () => {
+    const ageColumn = fixedColumns[0];
+    const sortDisabledTooltip = "Sorting is unavailable in 'Latest executions only' view.";
+
+    return (
+      <div style={{ minWidth: '500px' }}>
+        <p style={{ margin: '0 0 12px', fontSize: '13px', color: '#8d95a1' }}>
+          Only the <strong>Age</strong> column shows a sort icon (DESC). Hover it for the tooltip;
+          clicking does not change sorting. Other columns have no sort affordance.
+        </p>
+        <Table
+          primaryColumn={primaryColumns}
+          fixedColumns={fixedColumns}
+          data={data}
+          sortableColumns={[ageColumn.key]}
+          sortDisabledColumnTooltips={{ [ageColumn.key]: sortDisabledTooltip }}
+          sortingColumn={ageColumn}
+          sortingDirection="DESC"
+          onChangeSorting={() => {}}
+        />
+      </div>
+    );
   },
 };
 

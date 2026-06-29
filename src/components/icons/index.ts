@@ -77,6 +77,7 @@ export { default as TestCaseIcon } from './svg/testCase.svg';
 export { default as TestPlanIcon } from './svg/testPlan.svg';
 export { default as UserIcon } from './svg/userIcon.svg';
 export { default as LaunchTypeIcon } from './svg/launchType.svg';
+export { default as LatestExecutionsIcon } from './svg/latestExecutions.svg';
 export { default as RunManualIcon } from './svg/runManual.svg';
 export { default as CoverageFullIcon } from './svg/coverageFull.svg';
 export { default as CoveragePartialIcon } from './svg/coveragePartially.svg';
