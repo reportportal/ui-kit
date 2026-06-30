@@ -109,3 +109,44 @@ export const WithWarning: Story = {
     );
   },
 };
+
+export const WithAccentTotalTooltip: Story = {
+  args: {
+    activePage: 1,
+    totalItems: 10000,
+    pageSize: 50,
+    totalPages: 200,
+  },
+  render: (args) => {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const [pageSize, setPageSize] = useState(args.pageSize);
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const [page, setPage] = useState(args.activePage);
+
+    const totalPages = Math.ceil(args.totalItems / pageSize);
+    const accentTotalTooltip =
+      'The results exceed the allowed 10,000 items limit and cannot be fully displayed. Please refine your filters.';
+
+    return (
+      <div style={{ width: '900px' }}>
+        <p style={{ margin: '0 0 12px', fontSize: '13px', color: '#8d95a1' }}>
+          Latest executions only at the display cap: total is shown as an accent value with a
+          tooltip. The standard limit-exceeded warning icon is not used.
+        </p>
+        <Pagination
+          {...args}
+          pageSize={pageSize}
+          activePage={page}
+          totalPages={totalPages}
+          accentTotalTooltip={accentTotalTooltip}
+          changePage={(newPage) => {
+            setPage(newPage);
+          }}
+          changePageSize={(size) => {
+            setPageSize(size);
+          }}
+        />
+      </div>
+    );
+  },
+};

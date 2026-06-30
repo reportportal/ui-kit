@@ -8,3 +8,12 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+.accent-total {
+  color: var(--rp-ui-color-error);
+  cursor: default;
+}
+
+.accent-total-tooltip-wrapper {
+  margin: 0 4px;
+}

@@ -120,6 +120,7 @@ export const Table: FC<TableComponentProps> = ({
   expandedRowIds = [],
   isAllExpandedByDefault,
   expandAllTooltip,
+  sortDisabledColumnTooltips,
   isResizable = false,
   minColumnWidth = 50,
   maxColumnWidth = 500,
@@ -298,7 +299,51 @@ export const Table: FC<TableComponentProps> = ({
 
   const handleSort = (key: string) => {
     if (!defaultSortableColumns.includes(key)) return;
+    if (sortDisabledColumnTooltips?.[key]) return;
     onChangeSorting({ key, direction: sortingDirection });
+  };
+
+  const getSortIcon = (columnKey: string) => {
+    if (!defaultSortableColumns.includes(columnKey)) return null;
+
+    if (defaultSortingColumn?.key === columnKey) {
+      return isAsc(sortingDirection) ? <ArrowUpIcon /> : <ArrowDownIcon />;
+    }
+
+    return <ArrowUpIcon />;
+  };
+
+  const renderColumnSortLabel = (column: PrimaryColumn | FixedColumn, columnKey: string) => {
+    const sortDisabledTooltip = sortDisabledColumnTooltips?.[columnKey];
+    const label = (
+      <div
+        className={cx('label', { 'sort-disabled': !!sortDisabledTooltip })}
+        onClick={() => handleSort(columnKey)}
+        onMouseEnter={() => handleColumnMouseEnter(columnKey)}
+        onMouseLeave={handleColumnMouseLeave}
+      >
+        <ColumnHeaderText column={column} />
+        {(hoveredColumn === columnKey || defaultSortingColumn?.key === columnKey) &&
+          getSortIcon(columnKey)}
+      </div>
+    );
+
+    if (!sortDisabledTooltip) {
+      return label;
+    }
+
+    return (
+      <Tooltip
+        content={sortDisabledTooltip}
+        placement="top"
+        dynamicWidth
+        portalRoot={portalContainer ?? undefined}
+        wrapperClassName={cx('sort-disabled-tooltip-wrapper')}
+        wrapperTabIndex={-1}
+      >
+        {label}
+      </Tooltip>
+    );
   };
 
   const handleSingleRowSelection = (id: number | string) => {
@@ -311,16 +356,6 @@ export const Table: FC<TableComponentProps> = ({
 
   const handleToggleAllRowsExpansion = () => {
     onToggleAllRowsExpansion();
-  };
-
-  const getSortIcon = (columnKey: string) => {
-    if (!defaultSortableColumns.includes(columnKey)) return null;
-
-    if (defaultSortingColumn?.key === columnKey) {
-      return isAsc(sortingDirection) ? <ArrowUpIcon /> : <ArrowDownIcon />;
-    }
-
-    return <ArrowUpIcon />;
   };
 
   const isRowDisabled = (id: string | number) => disabledRowIds?.includes(id) ?? false;
@@ -864,6 +899,7 @@ export const Table: FC<TableComponentProps> = ({
               key={column.key}
               data-column-key={column.key}
               data-pinned-index={index}
+              aria-disabled={!!sortDisabledColumnTooltips?.[column.key]}
               className={cx('table-header-cell', 'pinned-column', {
                 [`align-${(column as FixedColumn).align}`]: 'align' in column,
                 'primary-cell': isPrimaryColumn(column),
@@ -881,16 +917,7 @@ export const Table: FC<TableComponentProps> = ({
                 isCheckboxOutside,
               )}
             >
-              <div
-                className={cx('label')}
-                onClick={() => handleSort(column.key)}
-                onMouseEnter={() => handleColumnMouseEnter(column.key)}
-                onMouseLeave={handleColumnMouseLeave}
-              >
-                <ColumnHeaderText column={column} />
-                {(hoveredColumn === column.key || defaultSortingColumn?.key === column.key) &&
-                  getSortIcon(column.key)}
-              </div>
+              {renderColumnSortLabel(column, column.key)}
             </button>
           );
 
@@ -900,6 +927,7 @@ export const Table: FC<TableComponentProps> = ({
           const headerCell = (
             <button
               key={column.key}
+              aria-disabled={!!sortDisabledColumnTooltips?.[column.key]}
               className={cx('table-header-cell', {
                 [`align-${(column as FixedColumn).align}`]: 'align' in column,
                 'primary-cell': isPrimaryColumn(column),
@@ -917,16 +945,7 @@ export const Table: FC<TableComponentProps> = ({
                 isCheckboxOutside,
               )}
             >
-              <div
-                className={cx('label')}
-                onClick={() => handleSort(column.key)}
-                onMouseEnter={() => handleColumnMouseEnter(column.key)}
-                onMouseLeave={handleColumnMouseLeave}
-              >
-                <ColumnHeaderText column={column} />
-                {(hoveredColumn === column.key || defaultSortingColumn?.key === column.key) &&
-                  getSortIcon(column.key)}
-              </div>
+              {renderColumnSortLabel(column, column.key)}
             </button>
           );
 

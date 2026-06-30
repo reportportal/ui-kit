@@ -29,6 +29,7 @@ export interface PaginationProps {
   className?: string;
   warningContent?: ReactNode;
   limitExceeded?: boolean;
+  accentTotalTooltip?: ReactNode;
 }
 
 export const Pagination = ({
@@ -43,6 +44,7 @@ export const Pagination = ({
   className,
   warningContent,
   limitExceeded = false,
+  accentTotalTooltip,
 }: PaginationProps): ReactElement => {
   const ofText = captions?.of || 'of';
   const pageText = captions?.page || 'Page';
@@ -57,6 +59,7 @@ export const Pagination = ({
         itemsText={captions?.items || 'items'}
         limitExceeded={limitExceeded}
         warningContent={warningContent}
+        accentTotalTooltip={accentTotalTooltip}
       />
       {totalPages > 1 && (
         <PageControls

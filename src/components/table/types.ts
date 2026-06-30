@@ -69,6 +69,7 @@ export interface TableComponentProps {
   setExpandedRowIds?: Dispatch<SetStateAction<Set<string | number>>>;
   isAllExpandedByDefault?: boolean;
   expandAllTooltip?: ReactNode;
+  sortDisabledColumnTooltips?: Record<string, ReactNode>;
   isResizable?: boolean;
   minColumnWidth?: number;
   maxColumnWidth?: number;
