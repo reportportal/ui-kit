@@ -339,6 +339,7 @@ export const Table: FC<TableComponentProps> = ({
         dynamicWidth
         portalRoot={portalContainer ?? undefined}
         wrapperClassName={cx('sort-disabled-tooltip-wrapper')}
+        wrapperTabIndex={-1}
       >
         {label}
       </Tooltip>
@@ -898,6 +899,7 @@ export const Table: FC<TableComponentProps> = ({
               key={column.key}
               data-column-key={column.key}
               data-pinned-index={index}
+              aria-disabled={!!sortDisabledColumnTooltips?.[column.key]}
               className={cx('table-header-cell', 'pinned-column', {
                 [`align-${(column as FixedColumn).align}`]: 'align' in column,
                 'primary-cell': isPrimaryColumn(column),
@@ -925,6 +927,7 @@ export const Table: FC<TableComponentProps> = ({
           const headerCell = (
             <button
               key={column.key}
+              aria-disabled={!!sortDisabledColumnTooltips?.[column.key]}
               className={cx('table-header-cell', {
                 [`align-${(column as FixedColumn).align}`]: 'align' in column,
                 'primary-cell': isPrimaryColumn(column),

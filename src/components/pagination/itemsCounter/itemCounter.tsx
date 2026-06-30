@@ -33,13 +33,17 @@ export const ItemCounter = ({
       {`${startIndex + 1} - ${endIndex < totalItems ? endIndex : totalItems}`}
       {` ${ofText} `}
       {accentTotalTooltip ? (
-        <Tooltip
-          content={accentTotalTooltip}
-          placement="top"
-          wrapperClassName={cx('accent-total-tooltip-wrapper')}
-        >
+        typeof window !== 'undefined' ? (
+          <Tooltip
+            content={accentTotalTooltip}
+            placement="top"
+            wrapperClassName={cx('accent-total-tooltip-wrapper')}
+          >
+            <span className={cx('accent-total')}>{totalItems}</span>
+          </Tooltip>
+        ) : (
           <span className={cx('accent-total')}>{totalItems}</span>
-        </Tooltip>
+        )
       ) : (
         `${totalItems}${limitExceeded ? '+' : ''}`
       )}
