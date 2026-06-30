@@ -13,11 +13,11 @@ import {
   useId,
 } from 'react';
 import classNames from 'classnames/bind';
-import { ClearIcon, OpenedEyeIcon, ClosedEyeIcon } from '@components/icons';
-import { BaseIconButton } from '@/components';
-import { SpinLoader } from '@components/spinLoader';
-import { MaxValueDisplay } from '@components/maxValueDisplay';
-import { FieldLabel } from '@components/fieldLabel';
+import { ClearIcon, OpenedEyeIcon, ClosedEyeIcon } from '../icons';
+import { BaseIconButton } from '../baseIconButton';
+import { SpinLoader } from '../spinLoader';
+import { MaxValueDisplay } from '../maxValueDisplay';
+import { FieldLabel } from '../fieldLabel';
 import styles from './fieldText.module.scss';
 
 const cx = classNames.bind(styles);
