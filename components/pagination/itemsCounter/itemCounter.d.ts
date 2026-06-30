@@ -8,5 +8,6 @@ export interface ItemCounterProps {
     itemsText: string;
     limitExceeded?: boolean;
     warningContent?: ReactNode;
+    accentTotalTooltip?: ReactNode;
 }
-export declare const ItemCounter: ({ activePage, pageSize, totalItems, ofText, itemsText, limitExceeded, warningContent, }: ItemCounterProps) => ReactElement;
+export declare const ItemCounter: ({ activePage, pageSize, totalItems, ofText, itemsText, limitExceeded, warningContent, accentTotalTooltip, }: ItemCounterProps) => ReactElement;

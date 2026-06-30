@@ -21,6 +21,7 @@ export interface PaginationProps {
     className?: string;
     warningContent?: ReactNode;
     limitExceeded?: boolean;
+    accentTotalTooltip?: ReactNode;
 }
-export declare const Pagination: ({ activePage, totalPages, pageSize, totalItems, pageSizeOptions, changePage, changePageSize, captions, className, warningContent, limitExceeded, }: PaginationProps) => ReactElement;
+export declare const Pagination: ({ activePage, totalPages, pageSize, totalItems, pageSizeOptions, changePage, changePageSize, captions, className, warningContent, limitExceeded, accentTotalTooltip, }: PaginationProps) => ReactElement;
 export {};
