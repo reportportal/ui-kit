@@ -37,7 +37,9 @@ export const ItemCounter = ({
           <Tooltip
             content={accentTotalTooltip}
             placement="top"
+            dynamicWidth
             wrapperClassName={cx('accent-total-tooltip-wrapper')}
+            tooltipClassName={cx('accent-total-tooltip')}
           >
             <span className={cx('accent-total')}>{totalItems}</span>
           </Tooltip>
