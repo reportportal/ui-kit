@@ -162,6 +162,11 @@ export const Modal: FC<ModalProps> = ({
                   autoHeight
                   autoHeightMax={getContentMaxHeight()}
                   hideTracksWhenNotNeeded
+                  classes={{
+                    view: cx('scrollbars-scroll-view'),
+                    trackHorizontal: cx('scrollbars-scroll-track'),
+                    trackVertical: cx('scrollbars-scroll-track'),
+                  }}
                 >
                   <div className={cx('scrollable-content')}>
                     {description && <span className={cx('description')}>{description}</span>}
