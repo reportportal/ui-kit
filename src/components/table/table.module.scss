@@ -450,9 +450,13 @@ $EXPANDABLE_CHECKBOX_Z_INDEX: 10;
 
   &.sortable-cell > .label {
     cursor: pointer;
+  }
 
-    &.sort-disabled {
-      cursor: default;
+  .label.sort-disabled {
+    cursor: default;
+
+    svg {
+      opacity: 40%;
     }
   }
 
