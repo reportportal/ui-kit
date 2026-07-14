@@ -103,6 +103,36 @@
       width: calc(100% - 30px);
       text-overflow: unset;
     }
+
+    &.with-caps-lock .input {
+      width: calc(100% - 50px);
+    }
+
+    .caps-lock-tooltip-wrapper {
+      position: absolute;
+      z-index: 2;
+      top: 4px;
+      right: 16px;
+      height: 16px;
+      width: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 12px;
+    }
+
+    .caps-lock-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 16px;
+      height: 16px;
+
+      svg path {
+        fill: var(--rp-ui-base-a-yellow-600);
+      }
+    }
+
     .eye-icon {
       position: absolute;
       z-index: 2;

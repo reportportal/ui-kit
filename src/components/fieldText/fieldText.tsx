@@ -13,11 +13,13 @@ import {
   useId,
 } from 'react';
 import classNames from 'classnames/bind';
-import { ClearIcon, OpenedEyeIcon, ClosedEyeIcon } from '../icons';
+import { ClearIcon, OpenedEyeIcon, ClosedEyeIcon, CapsLockIcon } from '../icons';
 import { BaseIconButton } from '../baseIconButton';
 import { SpinLoader } from '../spinLoader';
 import { MaxValueDisplay } from '../maxValueDisplay';
 import { FieldLabel } from '../fieldLabel';
+import { Tooltip } from '../tooltip';
+import { useCapsLock } from '../../common/hooks/useCapsLock';
 import styles from './fieldText.module.scss';
 
 const cx = classNames.bind(styles);
@@ -50,6 +52,7 @@ export interface FieldTextProps extends InputHTMLAttributes<HTMLInputElement> {
   maxLengthDisplay?: number;
   collapsible?: boolean;
   loading?: boolean;
+  capsLockMessage?: string;
 }
 
 export const FieldText = forwardRef<HTMLInputElement, FieldTextProps>(
@@ -78,6 +81,7 @@ export const FieldText = forwardRef<HTMLInputElement, FieldTextProps>(
       collapsible = false,
       loading = false,
       maxLengthDisplay,
+      capsLockMessage,
       onFocus = () => {},
       onBlur = () => {},
       ...rest
@@ -89,6 +93,9 @@ export const FieldText = forwardRef<HTMLInputElement, FieldTextProps>(
     const inputId = useId();
     const [focused, setFocused] = useState(false);
     const [passwordVisible, setPasswordVisible] = useState(false);
+    const { capsLockOn } = useCapsLock();
+
+    const showCapsLock = !!capsLockMessage && capsLockOn && value.length >= 1 && !disabled;
 
     const onFocusHandler = (event: FocusEvent<HTMLInputElement>) => {
       setFocused(true);
@@ -165,7 +172,9 @@ export const FieldText = forwardRef<HTMLInputElement, FieldTextProps>(
               </span>
             )
           )}
-          <span className={cx('input-container', `type-${type}`)}>
+          <span
+            className={cx('input-container', `type-${type}`, { 'with-caps-lock': showCapsLock })}
+          >
             <input
               ref={inputRef}
               type={getInputType()}
@@ -178,6 +187,13 @@ export const FieldText = forwardRef<HTMLInputElement, FieldTextProps>(
               onBlur={onBlurHandler}
               {...rest}
             />
+            {showCapsLock && (
+              <Tooltip content={capsLockMessage} wrapperClassName={cx('caps-lock-tooltip-wrapper')}>
+                <span className={cx('caps-lock-icon')}>
+                  <CapsLockIcon />
+                </span>
+              </Tooltip>
+            )}
             {type === 'password' && value && (
               <BaseIconButton
                 className={cx('eye-icon')}
