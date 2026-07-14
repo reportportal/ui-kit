@@ -83,3 +83,4 @@ export { default as CoveragePartialIcon } from './svg/coveragePartially.svg';
 export { default as DownloadIcon } from './svg/download.svg';
 export { default as ArrowRightIcon } from './svg/arrowRight.svg';
 export { default as ArrowLeftIcon } from './svg/arrowLeft.svg';
+export { default as CapsLockIcon } from './svg/capslockIcon.svg';

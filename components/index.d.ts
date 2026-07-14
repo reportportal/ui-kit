@@ -14,6 +14,7 @@ export { Dropdown } from './dropdown';
 export { FieldLabel } from './fieldLabel';
 export { FieldNumber } from './fieldNumber';
 export { FieldText } from './fieldText';
+export type { FieldTextProps } from './fieldText';
 export { FieldTextFlex } from './fieldTextFlex';
 export { FileDropArea } from './fileDropArea';
 export { FiltersButton } from './filtersButton';

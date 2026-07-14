@@ -1,4 +1,4 @@
-import { ChangeEventHandler, ReactElement, ReactNode, InputHTMLAttributes } from '../../../node_modules/react';
+import { ChangeEventHandler, InputHTMLAttributes, ReactElement, ReactNode } from '../../../node_modules/react';
 
 type InputType = 'password' | 'text' | 'email';
 export interface FieldTextProps extends InputHTMLAttributes<HTMLInputElement> {
@@ -27,6 +27,7 @@ export interface FieldTextProps extends InputHTMLAttributes<HTMLInputElement> {
     maxLengthDisplay?: number;
     collapsible?: boolean;
     loading?: boolean;
+    capsLockMessage?: string;
 }
 export declare const FieldText: (props: FieldTextProps & import('../../../node_modules/react').RefAttributes<HTMLInputElement>) => ReactElement<any, string | import('../../../node_modules/react').JSXElementConstructor<any>> | null;
 export {};
