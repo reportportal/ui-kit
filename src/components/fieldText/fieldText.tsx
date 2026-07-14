@@ -3,7 +3,6 @@ import {
   FocusEvent,
   forwardRef,
   InputHTMLAttributes,
-  MouseEventHandler,
   MutableRefObject,
   ReactElement,
   ReactNode,
@@ -128,8 +127,7 @@ export const FieldText = forwardRef<HTMLInputElement, FieldTextProps>(
       return passwordVisible ? 'text' : 'password';
     };
 
-    const togglePasswordVisibility: MouseEventHandler<HTMLButtonElement> = (event) => {
-      event.preventDefault();
+    const togglePasswordVisibility = () => {
       setPasswordVisible((prev) => !prev);
     };
 
@@ -192,7 +190,11 @@ export const FieldText = forwardRef<HTMLInputElement, FieldTextProps>(
               </Tooltip>
             )}
             {type === 'password' && value && (
-              <BaseIconButton className={cx('eye-icon')} onClick={togglePasswordVisibility}>
+              <BaseIconButton
+                className={cx('eye-icon')}
+                onClick={togglePasswordVisibility}
+                onPointerDown={(e) => e.preventDefault()}
+              >
                 {passwordVisible ? <OpenedEyeIcon /> : <ClosedEyeIcon />}
               </BaseIconButton>
             )}
