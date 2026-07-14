@@ -7,7 +7,6 @@ import {
   MutableRefObject,
   ReactElement,
   ReactNode,
-  TouchEventHandler,
   useId,
   useRef,
   useState,
@@ -129,16 +128,9 @@ export const FieldText = forwardRef<HTMLInputElement, FieldTextProps>(
       return passwordVisible ? 'text' : 'password';
     };
 
-    const showPassword: MouseEventHandler<HTMLButtonElement> &
-      TouchEventHandler<HTMLButtonElement> = (event) => {
+    const togglePasswordVisibility: MouseEventHandler<HTMLButtonElement> = (event) => {
       event.preventDefault();
-      setPasswordVisible(true);
-    };
-
-    const hidePassword: MouseEventHandler<HTMLButtonElement> &
-      TouchEventHandler<HTMLButtonElement> = (event) => {
-      event.preventDefault();
-      setPasswordVisible(false);
+      setPasswordVisible((prev) => !prev);
     };
 
     return (
@@ -200,15 +192,7 @@ export const FieldText = forwardRef<HTMLInputElement, FieldTextProps>(
               </Tooltip>
             )}
             {type === 'password' && value && (
-              <BaseIconButton
-                className={cx('eye-icon')}
-                onMouseDown={showPassword}
-                onMouseLeave={hidePassword}
-                onMouseUp={hidePassword}
-                onTouchStart={showPassword}
-                onTouchEnd={hidePassword}
-                onTouchCancel={hidePassword}
-              >
+              <BaseIconButton className={cx('eye-icon')} onClick={togglePasswordVisibility}>
                 {passwordVisible ? <OpenedEyeIcon /> : <ClosedEyeIcon />}
               </BaseIconButton>
             )}
