@@ -121,6 +121,18 @@
       margin-right: 12px;
     }
 
+    .caps-lock-tooltip-content {
+      width: 112px;
+      height: 48px;
+      line-height: 16px;
+      font-weight: var(--rp-ui-base-fw-regular);
+      font-family: var(--rp-ui-base-font-family);
+      font-size: 11px;
+      letter-spacing: 0;
+      padding: 16px;
+      border-radius: 8px;
+    }
+
     .caps-lock-icon {
       display: flex;
       align-items: center;

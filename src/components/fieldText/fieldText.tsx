@@ -188,7 +188,11 @@ export const FieldText = forwardRef<HTMLInputElement, FieldTextProps>(
               {...rest}
             />
             {showCapsLock && (
-              <Tooltip content={capsLockMessage} wrapperClassName={cx('caps-lock-tooltip-wrapper')}>
+              <Tooltip
+                content={capsLockMessage}
+                wrapperClassName={cx('caps-lock-tooltip-wrapper')}
+                contentClassName={cx('caps-lock-tooltip-content')}
+              >
                 <span className={cx('caps-lock-icon')}>
                   <CapsLockIcon />
                 </span>
