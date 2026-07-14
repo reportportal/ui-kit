@@ -1,6 +1,5 @@
 import { FC } from '../../../node_modules/react';
-import { RadioProps } from './index';
-import { RadioOption } from './radio';
+import { RadioProps, RadioOption } from './radio';
 
 export interface RadioGroupProps extends Omit<RadioProps, 'option'> {
     options: RadioOption[];
