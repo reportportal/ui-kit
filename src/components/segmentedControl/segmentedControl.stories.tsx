@@ -16,7 +16,7 @@
 
 import type { Meta, StoryObj } from '@storybook/react';
 import { SegmentedControl } from './segmentedControl';
-import { PlusIcon } from '../icons';
+import { PlusIcon } from '@components/icons';
 
 const meta: Meta<typeof SegmentedControl> = {
   title: 'Components/SegmentedControl',

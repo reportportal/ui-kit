@@ -16,7 +16,7 @@
 
 import { PropsWithChildren, MouseEvent } from 'react';
 
-import { Button, ButtonProps } from '../../button';
+import { Button, ButtonProps } from '@components/button';
 import { useFileDropAreaContext } from '../fileDropAreaProvider/useFileDropAreaContext';
 
 type BrowseButtonProps = Omit<ButtonProps, 'onClick' | 'disabled' | 'children'> & {

@@ -17,8 +17,8 @@
 import { useEffect, useRef, useState, useCallback, ReactNode } from 'react';
 import classNames from 'classnames/bind';
 import { isEmpty } from 'es-toolkit/compat';
-import { Chip } from '../chip';
-import { Tooltip } from '../tooltip';
+import { Chip } from '@components/chip';
+import { Tooltip } from '@components/tooltip';
 import {
   FONT_LOADING_DELAY,
   GAP,

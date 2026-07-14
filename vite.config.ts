@@ -4,6 +4,7 @@ import { defineConfig, LibraryFormats } from 'vite';
 import dts from 'vite-plugin-dts';
 import svgr from 'vite-plugin-svgr';
 import tsConfigPaths from 'vite-tsconfig-paths';
+import circleDependency from 'vite-plugin-circular-dependency';
 import fs from 'fs';
 import * as packageJson from './package.json';
 
@@ -35,6 +36,7 @@ export default defineConfig(() => ({
     react(),
     svgr({ exportAsDefault: true }),
     tsConfigPaths(),
+    circleDependency(),
     dts({
       exclude: ['**/*.test.{ts,tsx}', '**/test/**', '**/*.stories.{ts,tsx}', '**/stories/**'],
     }),

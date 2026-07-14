@@ -18,8 +18,8 @@ import { useEffect, useRef, useState, useMemo, useCallback, MouseEvent } from 'r
 import classNames from 'classnames/bind';
 import { isEmpty } from 'es-toolkit/compat';
 
-import { Button } from '../button';
-import { CloseIcon } from '../icons';
+import { Button } from '@components/button';
+import { CloseIcon } from '@components/icons';
 import {
   DEFAULT_VISIBLE_LINES,
   TAG_LINE_HEIGHT,

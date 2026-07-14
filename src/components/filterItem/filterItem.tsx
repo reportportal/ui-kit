@@ -17,7 +17,7 @@
 import { ReactElement, useCallback, MouseEvent, KeyboardEvent, useRef } from 'react';
 import classNames from 'classnames/bind';
 import { useEllipsisTitle } from '@common/hooks';
-import { ActionMenu, ActionItem } from '../actionMenu';
+import { ActionMenu, ActionItem } from '@components/actionMenu';
 import styles from './filterItem.module.scss';
 
 const cx = classNames.bind(styles);

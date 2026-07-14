@@ -1,26 +1,27 @@
 import {
   ChangeEventHandler,
+  FocusEvent,
   forwardRef,
+  InputHTMLAttributes,
+  MouseEventHandler,
+  MutableRefObject,
   ReactElement,
   ReactNode,
-  useState,
-  useRef,
-  InputHTMLAttributes,
-  MutableRefObject,
-  FocusEvent,
-  MouseEventHandler,
   TouchEventHandler,
   useId,
+  useRef,
+  useState,
 } from 'react';
 import classNames from 'classnames/bind';
-import { ClearIcon, OpenedEyeIcon, ClosedEyeIcon, CapsLockIcon } from '../icons';
-import { BaseIconButton } from '../baseIconButton';
-import { SpinLoader } from '../spinLoader';
-import { MaxValueDisplay } from '../maxValueDisplay';
-import { FieldLabel } from '../fieldLabel';
-import { Tooltip } from '../tooltip';
-import { useCapsLock } from '../../common/hooks/useCapsLock';
+import { ClearIcon, OpenedEyeIcon, ClosedEyeIcon, CapsLockIcon } from '@components/icons';
+import { BaseIconButton } from '@components/baseIconButton';
+import { SpinLoader } from '@components/spinLoader';
+import { MaxValueDisplay } from '@components/maxValueDisplay';
+import { FieldLabel } from '@components/fieldLabel';
+
 import styles from './fieldText.module.scss';
+import { useCapsLock } from '@common/hooks';
+import { Tooltip } from '@components/tooltip';
 
 const cx = classNames.bind(styles);
 

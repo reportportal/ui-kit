@@ -17,7 +17,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { ActionMenu, ActionMenuItem } from './actionMenu';
 import { ACTION_MENU_DIVIDER } from './constants';
-import { RerunIcon, UserIcon } from '../icons';
+import { RerunIcon, UserIcon } from '@components/icons';
 
 const meta: Meta<typeof ActionMenu> = {
   title: 'Components/ActionMenu',

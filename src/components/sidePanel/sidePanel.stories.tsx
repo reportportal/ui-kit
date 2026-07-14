@@ -2,12 +2,12 @@ import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 
 import { SidePanel } from './sidePanel';
-import { Button } from '../button';
-import { Breadcrumbs } from '../breadcrumbs';
-import { Dropdown } from '../dropdown';
-import { FieldText } from '../fieldText';
-import { FieldLabel } from '../fieldLabel';
-import { InfoIcon, CopyIcon, PlusIcon, ChevronDownDropdownIcon } from '../icons';
+import { Button } from '@components/button';
+import { Breadcrumbs } from '@components/breadcrumbs';
+import { Dropdown } from '@components/dropdown';
+import { FieldText } from '@components/fieldText';
+import { FieldLabel } from '@components/fieldLabel';
+import { InfoIcon, CopyIcon, PlusIcon, ChevronDownDropdownIcon } from '@components/icons';
 import './sidePanel.stories.scss';
 
 const meta: Meta<typeof SidePanel> = {

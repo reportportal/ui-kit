@@ -17,7 +17,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { useState } from 'react';
 import { FilterItem } from './filterItem';
-import { ActionItem } from '../actionMenu';
+import { ActionItem } from '@components/actionMenu';
 
 const mockActions: ActionItem[] = [
   {
