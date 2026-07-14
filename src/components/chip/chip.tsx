@@ -16,7 +16,7 @@
 
 import { ReactNode, MouseEvent, KeyboardEvent } from 'react';
 import classNames from 'classnames/bind';
-import { CloseIcon } from '../icons';
+import { CloseIcon } from '@components/icons';
 import styles from './chip.module.scss';
 
 const cx = classNames.bind(styles);

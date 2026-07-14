@@ -26,10 +26,10 @@ import {
   KeyboardEvent,
   ReactElement,
 } from 'react';
-import { DetailsIcon } from '../icons';
-import { BaseIconButton } from '../baseIconButton';
-import { Popover } from '../popover';
-import { PopoverProps } from '../popover/popover';
+import { DetailsIcon } from '@components/icons';
+import { BaseIconButton } from '@components/baseIconButton';
+import { Popover } from '@components/popover';
+import { PopoverProps } from '@components/popover/popover';
 import classNames from 'classnames/bind';
 
 import styles from './actionMenu.module.scss';

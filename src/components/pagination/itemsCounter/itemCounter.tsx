@@ -1,6 +1,6 @@
 import { ReactElement, ReactNode } from 'react';
 import classNames from 'classnames/bind';
-import { Tooltip } from '../../tooltip';
+import { Tooltip } from '@components/tooltip';
 import styles from './itemCounter.module.scss';
 
 const cx = classNames.bind(styles);

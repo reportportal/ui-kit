@@ -17,7 +17,7 @@
 import { ComponentPropsWithRef, forwardRef } from 'react';
 import classNames from 'classnames/bind';
 
-import { FilterFilledIcon, FilterOutlineIcon, ClearIcon } from '../icons';
+import { FilterFilledIcon, FilterOutlineIcon, ClearIcon } from '@components/icons';
 import { useEllipsisTitle } from '@common/hooks';
 import styles from './filtersButton.module.scss';
 

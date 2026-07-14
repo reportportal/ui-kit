@@ -1,8 +1,8 @@
-import { CloseIcon } from '../icons';
+import { CloseIcon } from '@components/icons';
 import { ClearSelection } from './types';
 import styles from './selection.module.scss';
 import classNames from 'classnames/bind';
-import Button from '../button';
+import { Button } from '@components/button';
 
 export interface SelectionProps {
   selectedCount: number;
