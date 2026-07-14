@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 
-import { Tooltip } from '../tooltip';
-import { WarningIcon } from '../icons';
+import { Tooltip } from '@components/tooltip';
+import { WarningIcon } from '@components/icons';
 import { Pagination } from './pagination';
 
 const meta: Meta<typeof Pagination> = {

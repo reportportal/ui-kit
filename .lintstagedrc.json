@@ -1,5 +1,6 @@
 {
   "*.{js,jsx,ts,tsx}": [
-    "npm run format"
+    "npm run format",
+    "madge --circular"
   ]
 }
