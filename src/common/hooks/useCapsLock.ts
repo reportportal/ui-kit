@@ -17,25 +17,43 @@
 import { useEffect, useState } from 'react';
 
 /**
- * Tracks the OS-level Caps Lock state by listening to `keydown` on `window`.
- * Because Caps Lock is a global OS toggle, the listener is attached at window
- * level so every consumer updates simultaneously — even fields that are not
- * currently focused.
+ * Tracks Caps Lock via `getModifierState('CapsLock')` on keyboard events.
+ * Never toggles state manually — always reads the real OS modifier state.
+ * Resets to false when the browser tab becomes visible again.
  */
 export const useCapsLock = () => {
   const [capsLockOn, setCapsLockOn] = useState(false);
 
   useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
+    const syncCapsLock = (event: KeyboardEvent) => {
+      setCapsLockOn(event.getModifierState?.('CapsLock') ?? false);
+    };
+
+    const handleKeyUp = (event: KeyboardEvent) => {
+      // CapsLock keydown fires before the OS toggles the modifier; keyup reads the real state.
       if (event.key === 'CapsLock') {
-        setCapsLockOn((prev) => !prev);
-      } else {
-        setCapsLockOn(event.getModifierState?.('CapsLock') ?? false);
+        syncCapsLock(event);
       }
     };
 
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    // Caps Lock may be toggled in another browser tab where this page receives no
+    // keyboard events. Reset on tab return; the real state is re-detected on the
+    // next keydown while a password field is focused.
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        setCapsLockOn(false);
+      }
+    };
+
+    window.addEventListener('keydown', syncCapsLock);
+    window.addEventListener('keyup', handleKeyUp);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      window.removeEventListener('keydown', syncCapsLock);
+      window.removeEventListener('keyup', handleKeyUp);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
   }, []);
 
   return { capsLockOn };
