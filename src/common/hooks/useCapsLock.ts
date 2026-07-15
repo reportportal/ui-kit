@@ -17,19 +17,22 @@
 import { useEffect, useState } from 'react';
 
 /**
- * Tracks the OS-level Caps Lock state by listening to `keydown` on `window`.
- * Resets to false when the browser tab becomes visible again, so a Caps Lock
- * toggle in another tab does not leave a stale icon on this page.
+ * Tracks Caps Lock via `getModifierState('CapsLock')` on keyboard events.
+ * Never toggles state manually — always reads the real OS modifier state.
+ * Resets to false when the browser tab becomes visible again.
  */
 export const useCapsLock = () => {
   const [capsLockOn, setCapsLockOn] = useState(false);
 
   useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
+    const syncCapsLock = (event: KeyboardEvent) => {
+      setCapsLockOn(event.getModifierState?.('CapsLock') ?? false);
+    };
+
+    const handleKeyUp = (event: KeyboardEvent) => {
+      // CapsLock keydown fires before the OS toggles the modifier; keyup reads the real state.
       if (event.key === 'CapsLock') {
-        setCapsLockOn((prev) => !prev);
-      } else {
-        setCapsLockOn(event.getModifierState?.('CapsLock') ?? false);
+        syncCapsLock(event);
       }
     };
 
@@ -42,11 +45,13 @@ export const useCapsLock = () => {
       }
     };
 
-    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keydown', syncCapsLock);
+    window.addEventListener('keyup', handleKeyUp);
     document.addEventListener('visibilitychange', handleVisibilityChange);
 
     return () => {
-      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keydown', syncCapsLock);
+      window.removeEventListener('keyup', handleKeyUp);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
   }, []);
