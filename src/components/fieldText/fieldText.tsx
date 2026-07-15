@@ -94,7 +94,8 @@ export const FieldText = forwardRef<HTMLInputElement, FieldTextProps>(
     const [passwordVisible, setPasswordVisible] = useState(false);
     const { capsLockOn } = useCapsLock();
 
-    const showCapsLock = !!capsLockMessage && capsLockOn && value.length >= 1 && !disabled;
+    const showCapsLock =
+      !!capsLockMessage && focused && capsLockOn && value.length >= 1 && !disabled;
 
     const onFocusHandler = (event: FocusEvent<HTMLInputElement>) => {
       setFocused(true);
