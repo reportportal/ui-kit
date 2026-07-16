@@ -83,6 +83,7 @@ export const FieldText = forwardRef<HTMLInputElement, FieldTextProps>(
       capsLockMessage,
       onFocus = () => {},
       onBlur = () => {},
+      onMouseDown,
       ...rest
     },
     ref,
@@ -179,6 +180,7 @@ export const FieldText = forwardRef<HTMLInputElement, FieldTextProps>(
               onBlur={onBlurHandler}
               onMouseDown={(e) => {
                 if (capsLockMessage) syncFromMouseEvent(e.nativeEvent);
+                onMouseDown?.(e);
               }}
               {...rest}
             />
