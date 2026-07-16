@@ -14,47 +14,52 @@
  * limitations under the License.
  */
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 /**
- * Tracks Caps Lock via `getModifierState('CapsLock')` on keyboard events.
- * Never toggles state manually — always reads the real OS modifier state.
- * Resets to false when the browser tab becomes visible again.
+ * Tracks Caps Lock state via window-level keyboard events.
+ * Also exposes syncFromMouseEvent so callers can re-read the real OS state
+ * from a MouseEvent (e.g. onMouseDown on the input) — MouseEvent.getModifierState
+ * is reliable even after tab switches, unlike FocusEvent which lacks it.
  */
 export const useCapsLock = () => {
   const [capsLockOn, setCapsLockOn] = useState(false);
 
+  const syncFromMouseEvent = useCallback((event: MouseEvent) => {
+    setCapsLockOn(event.getModifierState('CapsLock'));
+  }, []);
+
   useEffect(() => {
-    const syncCapsLock = (event: KeyboardEvent) => {
-      setCapsLockOn(event.getModifierState?.('CapsLock') ?? false);
+    const handleKeyDown = (event: KeyboardEvent) => {
+      setCapsLockOn(event.getModifierState('CapsLock'));
     };
 
+    // keydown fires before the OS flips the CapsLock modifier; keyup reads the new state.
     const handleKeyUp = (event: KeyboardEvent) => {
-      // CapsLock keydown fires before the OS toggles the modifier; keyup reads the real state.
       if (event.key === 'CapsLock') {
-        syncCapsLock(event);
+        setCapsLockOn(event.getModifierState('CapsLock'));
       }
     };
 
-    // Caps Lock may be toggled in another browser tab where this page receives no
-    // keyboard events. Reset on tab return; the real state is re-detected on the
-    // next keydown while a password field is focused.
+    // Caps Lock may be toggled in another browser tab. Reset on tab return so a
+    // stale icon clears immediately. The real state is re-read on the next
+    // mousedown or keydown on the field.
     const handleVisibilityChange = () => {
       if (document.visibilityState === 'visible') {
         setCapsLockOn(false);
       }
     };
 
-    window.addEventListener('keydown', syncCapsLock);
+    window.addEventListener('keydown', handleKeyDown);
     window.addEventListener('keyup', handleKeyUp);
     document.addEventListener('visibilitychange', handleVisibilityChange);
 
     return () => {
-      window.removeEventListener('keydown', syncCapsLock);
+      window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('keyup', handleKeyUp);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
   }, []);
 
-  return { capsLockOn };
+  return { capsLockOn, syncFromMouseEvent };
 };
