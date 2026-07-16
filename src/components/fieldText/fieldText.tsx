@@ -83,6 +83,7 @@ export const FieldText = forwardRef<HTMLInputElement, FieldTextProps>(
       capsLockMessage,
       onFocus = () => {},
       onBlur = () => {},
+      onMouseDown,
       ...rest
     },
     ref,
@@ -92,7 +93,7 @@ export const FieldText = forwardRef<HTMLInputElement, FieldTextProps>(
     const inputId = useId();
     const [focused, setFocused] = useState(false);
     const [passwordVisible, setPasswordVisible] = useState(false);
-    const { capsLockOn } = useCapsLock();
+    const { capsLockOn, syncFromMouseEvent } = useCapsLock();
 
     const showCapsLock =
       !!capsLockMessage && focused && capsLockOn && value.length >= 1 && !disabled;
@@ -177,6 +178,10 @@ export const FieldText = forwardRef<HTMLInputElement, FieldTextProps>(
               onChange={onChange}
               onFocus={onFocusHandler}
               onBlur={onBlurHandler}
+              onMouseDown={(e) => {
+                if (capsLockMessage) syncFromMouseEvent(e.nativeEvent);
+                onMouseDown?.(e);
+              }}
               {...rest}
             />
             {showCapsLock && (
