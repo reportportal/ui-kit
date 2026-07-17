@@ -176,21 +176,24 @@ export const FieldText = forwardRef<HTMLInputElement, FieldTextProps>(
               disabled={disabled}
               id={inputId}
               onChange={onChange}
+              {...rest}
               onFocus={onFocusHandler}
               onBlur={onBlurHandler}
               onMouseDown={(e) => {
-                if (capsLockMessage) syncFromMouseEvent(e.nativeEvent);
+                if (capsLockMessage) {
+                  syncFromMouseEvent(e.nativeEvent ?? e);
+                }
                 onMouseDown?.(e);
               }}
-              {...rest}
             />
             {showCapsLock && (
               <Tooltip
                 content={capsLockMessage}
                 wrapperClassName={cx('caps-lock-tooltip-wrapper')}
                 contentClassName={cx('caps-lock-tooltip-content')}
+                wrapperTabIndex={-1}
               >
-                <span className={cx('caps-lock-icon')}>
+                <span className={cx('caps-lock-icon')} onMouseDown={(e) => e.preventDefault()}>
                   <CapsLockIcon />
                 </span>
               </Tooltip>

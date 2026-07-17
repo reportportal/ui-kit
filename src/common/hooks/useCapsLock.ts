@@ -16,28 +16,41 @@
 
 import { useCallback, useEffect, useState } from 'react';
 
+type CapsLockEvent = {
+  getModifierState?: (key: string) => boolean;
+  nativeEvent?: { getModifierState?: (key: string) => boolean };
+  key?: string;
+};
+
+const getCapsLockState = (event?: CapsLockEvent | null): boolean =>
+  event?.getModifierState?.('CapsLock') ??
+  event?.nativeEvent?.getModifierState?.('CapsLock') ??
+  false;
+
 /**
  * Tracks Caps Lock state via window-level keyboard events.
  * Also exposes syncFromMouseEvent so callers can re-read the real OS state
- * from a MouseEvent (e.g. onMouseDown on the input) — MouseEvent.getModifierState
- * is reliable even after tab switches, unlike FocusEvent which lacks it.
+ * from a MouseEvent (e.g. onMouseDown on the input).
+ *
+ * Optional-chained: autofill, password managers, and some browser/extension
+ * events fire keydown/mousedown without getModifierState — calling it raw throws.
  */
 export const useCapsLock = () => {
   const [capsLockOn, setCapsLockOn] = useState(false);
 
-  const syncFromMouseEvent = useCallback((event: MouseEvent) => {
-    setCapsLockOn(event.getModifierState('CapsLock'));
+  const syncFromMouseEvent = useCallback((event: CapsLockEvent) => {
+    setCapsLockOn(getCapsLockState(event));
   }, []);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      setCapsLockOn(event.getModifierState('CapsLock'));
+      setCapsLockOn(getCapsLockState(event));
     };
 
     // keydown fires before the OS flips the CapsLock modifier; keyup reads the new state.
     const handleKeyUp = (event: KeyboardEvent) => {
       if (event.key === 'CapsLock') {
-        setCapsLockOn(event.getModifierState('CapsLock'));
+        setCapsLockOn(getCapsLockState(event));
       }
     };
 
