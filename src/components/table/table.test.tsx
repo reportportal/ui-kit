@@ -511,6 +511,21 @@ describe('Table Component', () => {
       expect(screen.getAllByLabelText('Expand row')).toHaveLength(1);
     });
 
+    it('passes only the expandable row ids to onToggleAllRowsExpansion', async () => {
+      const onToggleAllRowsExpansion = vi.fn();
+      render(
+        <Table
+          {...defaultProps}
+          isRowsExpandable
+          canExpandRow={(row) => row.id === 1}
+          onToggleAllRowsExpansion={onToggleAllRowsExpansion}
+        />,
+      );
+
+      await userEvent.click(screen.getByLabelText('Toggle all rows expansion'));
+      expect(onToggleAllRowsExpansion).toHaveBeenCalledWith([1]);
+    });
+
     it('renders detail content only for an expanded parent row', async () => {
       const onToggleRowExpansion = vi.fn();
       const { rerender } = render(

@@ -82,7 +82,7 @@ export interface TableComponentProps {
   onToggleRowSelection?: (id: string | number) => void;
   onToggleAllRowsSelection?: () => void;
   onToggleRowExpansion?: (id: string | number) => void;
-  onToggleAllRowsExpansion?: () => void;
+  onToggleAllRowsExpansion?: (expandableRowIds: (string | number)[]) => void;
   onColumnResize?: (columnKey: string, width: number) => void;
   getRowCheckboxTooltip?: (rowId: string | number) => ReactNode;
   externalScrollContainerRef?: RefObject<HTMLElement> | RefObject<Element> | null | undefined;

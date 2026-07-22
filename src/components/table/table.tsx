@@ -360,8 +360,11 @@ export const Table: FC<TableComponentProps> = ({
     onToggleAllRowsSelection();
   };
 
+  const expandableRows = isRowsExpandable ? data.filter(canExpandRow) : [];
+  const hasExpandableRows = expandableRows.length > 0;
+
   const handleToggleAllRowsExpansion = () => {
-    onToggleAllRowsExpansion();
+    onToggleAllRowsExpansion(expandableRows.map((row) => row.id));
   };
 
   const isRowDisabled = (id: string | number) => disabledRowIds?.includes(id) ?? false;
@@ -377,8 +380,6 @@ export const Table: FC<TableComponentProps> = ({
     (isSelectAllCheckboxAlwaysVisible && hasRows) || hasSelectedRows;
 
   const isDetailExpansionMode = rowExpansionMode === 'detail';
-  const expandableRows = isRowsExpandable ? data.filter(canExpandRow) : [];
-  const hasExpandableRows = expandableRows.length > 0;
   const isAllRowsExpanded: boolean =
     hasExpandableRows && expandableRows.every((row) => expandedRowIds.includes(row.id));
   const expandAllIconState =

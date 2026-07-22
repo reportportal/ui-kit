@@ -195,9 +195,10 @@ A flexible table component with support for:
       },
     },
     onToggleAllRowsExpansion: {
-      description: 'Callback when all rows are expanded/collapsed.',
+      description:
+        'Callback when the expand-all control is toggled. Receives the ids of the currently expandable rows (respecting canExpandRow), so a controlled parent can toggle exactly the eligible set.',
       table: {
-        type: { summary: '() => void' },
+        type: { summary: '(expandableRowIds: (string | number)[]) => void' },
       },
     },
     onToggleRowSelection: {
@@ -856,13 +857,9 @@ export const ExpandableRows: Story = {
             }
             setExpandedRows(newExpandedRows);
           }}
-          onToggleAllRowsExpansion={() => {
-            if (expandedRows.size === expandableData.length) {
-              setExpandedRows(new Set());
-            } else {
-              const allRows = new Set(expandableData.map((item) => item.id));
-              setExpandedRows(allRows);
-            }
+          onToggleAllRowsExpansion={(expandableRowIds) => {
+            const allExpanded = expandableRowIds.every((id) => expandedRows.has(id));
+            setExpandedRows(allExpanded ? new Set() : new Set(expandableRowIds));
           }}
           selectedRowIds={[...checkedRows]}
           onToggleRowSelection={(id) => {
