@@ -495,4 +495,54 @@ describe('Table Component', () => {
       expect(afterHoverCheckboxes.length).toBeGreaterThanOrEqual(initialCount);
     });
   });
+
+  describe('Expanded row content', () => {
+    it('hides the expand-all control while keeping individual row controls', () => {
+      render(
+        <Table
+          {...defaultProps}
+          isRowsExpandable
+          showExpandAll={false}
+          canExpandRow={(row) => row.id === 1}
+        />,
+      );
+
+      expect(screen.queryByLabelText('Toggle all rows expansion')).not.toBeInTheDocument();
+      expect(screen.getAllByLabelText('Expand row')).toHaveLength(1);
+    });
+
+    it('renders detail content only for an expanded parent row', async () => {
+      const onToggleRowExpansion = vi.fn();
+      const { rerender } = render(
+        <Table
+          {...defaultProps}
+          isRowsExpandable
+          expandedRowIds={[]}
+          canExpandRow={(row) => row.id === 1}
+          renderExpandedRow={(row) => <div>Details for {row.name}</div>}
+          onToggleRowExpansion={onToggleRowExpansion}
+        />,
+      );
+
+      expect(screen.getAllByLabelText('Expand row')).toHaveLength(1);
+      expect(screen.queryByText('Details for John Doe')).not.toBeInTheDocument();
+
+      await userEvent.click(screen.getByLabelText('Expand row'));
+      expect(onToggleRowExpansion).toHaveBeenCalledWith(1);
+
+      rerender(
+        <Table
+          {...defaultProps}
+          isRowsExpandable
+          expandedRowIds={[1]}
+          canExpandRow={(row) => row.id === 1}
+          renderExpandedRow={(row) => <div>Details for {row.name}</div>}
+          onToggleRowExpansion={onToggleRowExpansion}
+        />,
+      );
+
+      expect(screen.getByLabelText('Collapse row')).toBeInTheDocument();
+      expect(screen.getByText('Details for John Doe')).toBeInTheDocument();
+    });
+  });
 });

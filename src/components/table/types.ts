@@ -55,6 +55,7 @@ export interface TableComponentProps {
   bodyClassName?: string;
   rowClassName?: string;
   checkboxColumnClassName?: string;
+  expandColumnClassName?: string;
   selectedRowIds?: (string | number)[];
   sortingDirection?: SortingDirection;
   sortingColumn?: Column;
@@ -63,7 +64,10 @@ export interface TableComponentProps {
   isHorizontallyScrollable?: boolean;
   pinnedColumnKeys?: string[];
   isRowsExpandable?: boolean;
+  showExpandAll?: boolean;
   expandedRowIds?: (string | number)[];
+  canExpandRow?: (row: RowData) => boolean;
+  renderExpandedRow?: (row: RowData) => ReactNode;
   isSelectAllCheckboxAlwaysVisible?: boolean;
   disabledRowIds?: (string | number)[];
   setExpandedRowIds?: Dispatch<SetStateAction<Set<string | number>>>;

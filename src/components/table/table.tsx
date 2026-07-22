@@ -7,6 +7,7 @@ import {
   useCallback,
   useLayoutEffect,
   ReactNode,
+  Fragment,
 } from 'react';
 import { Resizable } from 'react-resizable';
 import { isEmpty } from 'es-toolkit/compat';
@@ -108,6 +109,7 @@ export const Table: FC<TableComponentProps> = ({
   headerClassName = '',
   bodyClassName = '',
   checkboxColumnClassName = '',
+  expandColumnClassName = '',
   selectable = false,
   selectedRowIds = [],
   sortingDirection = ASC,
@@ -117,7 +119,10 @@ export const Table: FC<TableComponentProps> = ({
   isHorizontallyScrollable = false,
   pinnedColumnKeys = [],
   isRowsExpandable = false,
+  showExpandAll = true,
   expandedRowIds = [],
+  canExpandRow = () => true,
+  renderExpandedRow,
   isAllExpandedByDefault,
   expandAllTooltip,
   sortDisabledColumnTooltips,
@@ -370,7 +375,10 @@ export const Table: FC<TableComponentProps> = ({
   const isSelectAllCheckboxVisible =
     (isSelectAllCheckboxAlwaysVisible && hasRows) || hasSelectedRows;
 
-  const isAllRowsExpanded: boolean = data.every((row) => expandedRowIds.includes(row.id));
+  const expandableRows = isRowsExpandable ? data.filter(canExpandRow) : [];
+  const hasExpandableRows = expandableRows.length > 0;
+  const isAllRowsExpanded: boolean =
+    hasExpandableRows && expandableRows.every((row) => expandedRowIds.includes(row.id));
   const expandAllIconState =
     isAllExpandedByDefault !== undefined ? isAllExpandedByDefault : isAllRowsExpanded;
 
@@ -876,21 +884,28 @@ export const Table: FC<TableComponentProps> = ({
         )}
         {isRowsExpandable && (
           <div
-            className={cx('table-header-cell', 'expand-cell', 'left-border-accent')}
+            className={cx(
+              'table-header-cell',
+              'expand-cell',
+              'left-border-accent',
+              expandColumnClassName,
+            )}
             data-base-left="0"
           >
-            {expandAllTooltip ? (
-              <Tooltip
-                content={expandAllTooltip}
-                placement="top"
-                wrapperClassName={cx('expand-all-tooltip-wrapper')}
-                contentClassName={cx('expand-all-tooltip-content')}
-              >
-                {expandAllButton}
-              </Tooltip>
-            ) : (
-              expandAllButton
-            )}
+            {showExpandAll &&
+              hasExpandableRows &&
+              (expandAllTooltip ? (
+                <Tooltip
+                  content={expandAllTooltip}
+                  placement="top"
+                  wrapperClassName={cx('expand-all-tooltip-wrapper')}
+                  contentClassName={cx('expand-all-tooltip-content')}
+                >
+                  {expandAllButton}
+                </Tooltip>
+              ) : (
+                expandAllButton
+              ))}
           </div>
         )}
         {pinnedColumns.map((column, index) => {
@@ -966,115 +981,133 @@ export const Table: FC<TableComponentProps> = ({
           bodyClassName,
         )}
       >
-        {data.map((item, index) => (
-          <div
-            key={item.id}
-            data-row-index={index}
-            data-row-id={item.id}
-            ref={setTableRowRef(item.id)}
-            className={cx('table-row', getRowSizeClassName(item), rowClassName, {
-              selectable: selectable && !isCheckboxOutside,
-            })}
-            onMouseEnter={() => handleRowMouseEnter(index)}
-            onMouseLeave={handleRowMouseLeave}
-          >
-            {selectable && !isCheckboxOutside && (
+        {data.map((item, index) => {
+          const isRowExpandable = isRowsExpandable && canExpandRow(item);
+          const isRowExpanded = isRowExpandable && expandedRowIds.includes(item.id);
+
+          return (
+            <Fragment key={item.id}>
               <div
-                className={cx('table-cell', 'checkbox-cell')}
-                data-base-left={isRowsExpandable ? EXPANDABLE_CHECKBOX_COLUMN_WIDTH : 0}
+                data-row-index={index}
+                data-row-id={item.id}
+                ref={setTableRowRef(item.id)}
+                className={cx('table-row', getRowSizeClassName(item), rowClassName, {
+                  selectable: selectable && !isCheckboxOutside,
+                })}
+                onMouseEnter={() => handleRowMouseEnter(index)}
+                onMouseLeave={handleRowMouseLeave}
               >
-                {(hasSelectedRows || hoveredRow === index) && renderRowCheckbox(item)}
-              </div>
-            )}
-            <div className={cx('row-content-wrapper')}>
-              <div className={cx('table-row-content')} style={{ gridTemplateColumns }}>
-                {isRowsExpandable && (
+                {selectable && !isCheckboxOutside && (
                   <div
-                    className={cx('table-cell', 'expand-cell', 'left-border-accent')}
-                    data-base-left="0"
-                    data-row-id={item.id}
+                    className={cx('table-cell', 'checkbox-cell')}
+                    data-base-left={isRowsExpandable ? EXPANDABLE_CHECKBOX_COLUMN_WIDTH : 0}
                   >
-                    <button
-                      onClick={() => handleToggleRowExpansion(item.id)}
-                      aria-label={expandedRowIds.includes(item.id) ? 'Collapse row' : 'Expand row'}
-                      aria-expanded={expandedRowIds.includes(item.id)}
-                    >
-                      <span
-                        className={cx('expand-icon', {
-                          expanded: expandedRowIds.includes(item.id),
-                        })}
+                    {(hasSelectedRows || hoveredRow === index) && renderRowCheckbox(item)}
+                  </div>
+                )}
+                <div className={cx('row-content-wrapper')}>
+                  <div className={cx('table-row-content')} style={{ gridTemplateColumns }}>
+                    {isRowsExpandable && (
+                      <div
+                        className={cx(
+                          'table-cell',
+                          'expand-cell',
+                          'left-border-accent',
+                          expandColumnClassName,
+                        )}
+                        data-base-left="0"
+                        data-row-id={item.id}
                       >
-                        <ChevronDownDropdownIcon />
-                      </span>
-                    </button>
+                        {isRowExpandable && (
+                          <button
+                            onClick={() => handleToggleRowExpansion(item.id)}
+                            aria-label={isRowExpanded ? 'Collapse row' : 'Expand row'}
+                            aria-expanded={isRowExpanded}
+                          >
+                            <span className={cx('expand-icon', { expanded: isRowExpanded })}>
+                              <ChevronDownDropdownIcon />
+                            </span>
+                          </button>
+                        )}
+                      </div>
+                    )}
+                    {pinnedColumns.map((column, colIndex) => {
+                      const isExpanded = !renderExpandedRow && isCellExpanded(item.id, column.key);
+                      const isPrimary = isPrimaryColumn(column);
+
+                      return (
+                        <div
+                          key={column.key}
+                          data-column-key={column.key}
+                          data-pinned-index={colIndex}
+                          ref={isPrimary ? setCellRef(column.key) : undefined}
+                          className={cx('table-cell', 'pinned-column', {
+                            'primary-cell': isPrimary,
+                            'expanded-cell': isExpanded,
+                          })}
+                          style={getCellStyle(
+                            column,
+                            true,
+                            colIndex,
+                            pinnedColumns,
+                            columnWidthsRef,
+                            isRowsExpandable,
+                            selectable,
+                            isCheckboxOutside,
+                          )}
+                        >
+                          {renderTableBodyCellContent(item[column.key], isExpanded)}
+                        </div>
+                      );
+                    })}
+                    {scrollableColumns.map((column) => {
+                      const isExpanded = !renderExpandedRow && isCellExpanded(item.id, column.key);
+                      const isPrimary = isPrimaryColumn(column);
+
+                      return (
+                        <div
+                          key={column.key}
+                          ref={isPrimary ? setCellRef(column.key) : undefined}
+                          className={cx('table-cell', {
+                            'primary-cell': isPrimary,
+                            'expanded-cell': isExpanded,
+                          })}
+                          style={getCellStyle(
+                            column,
+                            false,
+                            undefined,
+                            pinnedColumns,
+                            columnWidthsRef,
+                            isRowsExpandable,
+                            selectable,
+                            isCheckboxOutside,
+                          )}
+                        >
+                          {renderTableBodyCellContent(item[column.key], isExpanded)}
+                        </div>
+                      );
+                    })}
+
+                    {renderRowActions && (
+                      <div className={cx('table-cell', 'action-menu-cell')}>
+                        {renderRowActions(item.metaData)}
+                      </div>
+                    )}
                   </div>
-                )}
-                {pinnedColumns.map((column, colIndex) => {
-                  const isExpanded = isCellExpanded(item.id, column.key);
-                  const isPrimary = isPrimaryColumn(column);
-
-                  return (
-                    <div
-                      key={column.key}
-                      data-column-key={column.key}
-                      data-pinned-index={colIndex}
-                      ref={isPrimary ? setCellRef(column.key) : undefined}
-                      className={cx('table-cell', 'pinned-column', {
-                        'primary-cell': isPrimary,
-                        'expanded-cell': isExpanded,
-                      })}
-                      style={getCellStyle(
-                        column,
-                        true,
-                        colIndex,
-                        pinnedColumns,
-                        columnWidthsRef,
-                        isRowsExpandable,
-                        selectable,
-                        isCheckboxOutside,
-                      )}
-                    >
-                      {renderTableBodyCellContent(item[column.key], isExpanded)}
-                    </div>
-                  );
-                })}
-                {scrollableColumns.map((column) => {
-                  const isExpanded = isCellExpanded(item.id, column.key);
-                  const isPrimary = isPrimaryColumn(column);
-
-                  return (
-                    <div
-                      key={column.key}
-                      ref={isPrimary ? setCellRef(column.key) : undefined}
-                      className={cx('table-cell', {
-                        'primary-cell': isPrimary,
-                        'expanded-cell': isExpanded,
-                      })}
-                      style={getCellStyle(
-                        column,
-                        false,
-                        undefined,
-                        pinnedColumns,
-                        columnWidthsRef,
-                        isRowsExpandable,
-                        selectable,
-                        isCheckboxOutside,
-                      )}
-                    >
-                      {renderTableBodyCellContent(item[column.key], isExpanded)}
-                    </div>
-                  );
-                })}
-
-                {renderRowActions && (
-                  <div className={cx('table-cell', 'action-menu-cell')}>
-                    {renderRowActions(item.metaData)}
-                  </div>
-                )}
+                </div>
               </div>
-            </div>
-          </div>
-        ))}
+              {isRowExpanded && renderExpandedRow && (
+                <div
+                  className={cx('expanded-content-row')}
+                  data-expanded-row-for={item.id}
+                  style={{ gridTemplateColumns }}
+                >
+                  <div className={cx('expanded-content-cell')}>{renderExpandedRow(item)}</div>
+                </div>
+              )}
+            </Fragment>
+          );
+        })}
       </div>
       {isHorizontallyScrollable && (
         <>

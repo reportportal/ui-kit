@@ -62,10 +62,29 @@ A flexible table component with support for:
       },
     },
     isRowsExpandable: {
-      description: 'Enable expand/collapse functionality for rows with long content.',
+      description: 'Enable expand/collapse functionality for row cells or detail content.',
       control: 'boolean',
       table: {
         defaultValue: { summary: 'false' },
+      },
+    },
+    showExpandAll: {
+      description: 'Show the expand-all control in the table header.',
+      control: 'boolean',
+      table: {
+        defaultValue: { summary: 'true' },
+      },
+    },
+    canExpandRow: {
+      description: 'Determine whether an individual row can be expanded.',
+      table: {
+        type: { summary: '(row: RowData) => boolean' },
+      },
+    },
+    renderExpandedRow: {
+      description: 'Render full-width detail content below an expanded row.',
+      table: {
+        type: { summary: '(row: RowData) => ReactNode' },
       },
     },
     expandedRowIds: {
@@ -807,6 +826,17 @@ export const ExpandableRows: Story = {
           selectable={true}
           expandedRowIds={[...expandedRows]}
           setExpandedRowIds={setExpandedRows}
+          renderExpandedRow={(row) => (
+            <div
+              style={{
+                padding: '16px',
+                borderRadius: '4px',
+                background: 'var(--rp-ui-base-bg-100)',
+              }}
+            >
+              Contact: {row.email}
+            </div>
+          )}
           onToggleRowExpansion={(id) => {
             const newExpandedRows = new Set(expandedRows);
             if (newExpandedRows.has(id)) {
