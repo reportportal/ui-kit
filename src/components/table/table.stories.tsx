@@ -68,11 +68,20 @@ A flexible table component with support for:
         defaultValue: { summary: 'false' },
       },
     },
-    showExpandAll: {
+    isExpandAllVisible: {
       description: 'Show the expand-all control in the table header.',
       control: 'boolean',
       table: {
         defaultValue: { summary: 'true' },
+      },
+    },
+    rowExpansionMode: {
+      description:
+        'Which expansion behavior a row uses: "cellContent" un-truncates long cell text, "detail" renders full-width content below the row via renderExpandedRow.',
+      control: 'radio',
+      options: ['cellContent', 'detail'],
+      table: {
+        defaultValue: { summary: 'cellContent' },
       },
     },
     canExpandRow: {
@@ -82,7 +91,7 @@ A flexible table component with support for:
       },
     },
     renderExpandedRow: {
-      description: 'Render full-width detail content below an expanded row.',
+      description: 'Render full-width detail content below an expanded row (mode "detail" only).',
       table: {
         type: { summary: '(row: RowData) => ReactNode' },
       },
@@ -824,6 +833,7 @@ export const ExpandableRows: Story = {
           fixedColumns={expandableFixedColumns}
           isRowsExpandable={true}
           selectable={true}
+          rowExpansionMode="detail"
           expandedRowIds={[...expandedRows]}
           setExpandedRowIds={setExpandedRows}
           renderExpandedRow={(row) => (

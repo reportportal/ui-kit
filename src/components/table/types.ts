@@ -64,9 +64,10 @@ export interface TableComponentProps {
   isHorizontallyScrollable?: boolean;
   pinnedColumnKeys?: string[];
   isRowsExpandable?: boolean;
-  showExpandAll?: boolean;
+  isExpandAllVisible?: boolean;
   expandedRowIds?: (string | number)[];
   canExpandRow?: (row: RowData) => boolean;
+  rowExpansionMode?: 'cellContent' | 'detail';
   renderExpandedRow?: (row: RowData) => ReactNode;
   isSelectAllCheckboxAlwaysVisible?: boolean;
   disabledRowIds?: (string | number)[];

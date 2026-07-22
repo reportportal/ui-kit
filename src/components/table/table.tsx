@@ -119,9 +119,10 @@ export const Table: FC<TableComponentProps> = ({
   isHorizontallyScrollable = false,
   pinnedColumnKeys = [],
   isRowsExpandable = false,
-  showExpandAll = true,
+  isExpandAllVisible = true,
   expandedRowIds = [],
   canExpandRow = () => true,
+  rowExpansionMode = 'cellContent',
   renderExpandedRow,
   isAllExpandedByDefault,
   expandAllTooltip,
@@ -375,6 +376,7 @@ export const Table: FC<TableComponentProps> = ({
   const isSelectAllCheckboxVisible =
     (isSelectAllCheckboxAlwaysVisible && hasRows) || hasSelectedRows;
 
+  const isDetailExpansionMode = rowExpansionMode === 'detail';
   const expandableRows = isRowsExpandable ? data.filter(canExpandRow) : [];
   const hasExpandableRows = expandableRows.length > 0;
   const isAllRowsExpanded: boolean =
@@ -899,7 +901,7 @@ export const Table: FC<TableComponentProps> = ({
             )}
             data-base-left="0"
           >
-            {showExpandAll &&
+            {isExpandAllVisible &&
               hasExpandableRows &&
               (expandAllTooltip ? (
                 <Tooltip
@@ -1039,7 +1041,8 @@ export const Table: FC<TableComponentProps> = ({
                       </div>
                     )}
                     {pinnedColumns.map((column, colIndex) => {
-                      const isExpanded = !renderExpandedRow && isCellExpanded(item.id, column.key);
+                      const isExpanded =
+                        !isDetailExpansionMode && isCellExpanded(item.id, column.key);
                       const isPrimary = isPrimaryColumn(column);
 
                       return (
@@ -1068,7 +1071,8 @@ export const Table: FC<TableComponentProps> = ({
                       );
                     })}
                     {scrollableColumns.map((column) => {
-                      const isExpanded = !renderExpandedRow && isCellExpanded(item.id, column.key);
+                      const isExpanded =
+                        !isDetailExpansionMode && isCellExpanded(item.id, column.key);
                       const isPrimary = isPrimaryColumn(column);
 
                       return (
@@ -1103,7 +1107,7 @@ export const Table: FC<TableComponentProps> = ({
                   </div>
                 </div>
               </div>
-              {isRowExpanded && renderExpandedRow && (
+              {isRowExpanded && isDetailExpansionMode && renderExpandedRow && (
                 <div
                   className={cx('expanded-content-row', {
                     'with-checkbox-track': hasCheckboxTrack,

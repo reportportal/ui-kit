@@ -502,7 +502,7 @@ describe('Table Component', () => {
         <Table
           {...defaultProps}
           isRowsExpandable
-          showExpandAll={false}
+          isExpandAllVisible={false}
           canExpandRow={(row) => row.id === 1}
         />,
       );
@@ -519,6 +519,7 @@ describe('Table Component', () => {
           isRowsExpandable
           expandedRowIds={[]}
           canExpandRow={(row) => row.id === 1}
+          rowExpansionMode="detail"
           renderExpandedRow={(row) => <div>Details for {row.name}</div>}
           onToggleRowExpansion={onToggleRowExpansion}
         />,
@@ -536,6 +537,7 @@ describe('Table Component', () => {
           isRowsExpandable
           expandedRowIds={[1]}
           canExpandRow={(row) => row.id === 1}
+          rowExpansionMode="detail"
           renderExpandedRow={(row) => <div>Details for {row.name}</div>}
           onToggleRowExpansion={onToggleRowExpansion}
         />,
@@ -552,6 +554,7 @@ describe('Table Component', () => {
           selectable
           isRowsExpandable
           expandedRowIds={[1]}
+          rowExpansionMode="detail"
           renderExpandedRow={(row) => <div>Details for {row.name}</div>}
         />,
       );
@@ -568,6 +571,7 @@ describe('Table Component', () => {
           {...defaultProps}
           isRowsExpandable
           expandedRowIds={[1]}
+          rowExpansionMode="detail"
           renderExpandedRow={(row) => <div>Details for {row.name}</div>}
         />,
       );
@@ -575,6 +579,21 @@ describe('Table Component', () => {
       const expandedRow = container.querySelector('[data-expanded-row-for="1"]');
       expect(expandedRow).toBeInTheDocument();
       expect(expandedRow?.className).not.toContain('with-checkbox-track');
+    });
+
+    it('ignores renderExpandedRow when rowExpansionMode is not "detail"', () => {
+      const { container } = render(
+        <Table
+          {...defaultProps}
+          isRowsExpandable
+          expandedRowIds={[1]}
+          rowExpansionMode="cellContent"
+          renderExpandedRow={(row) => <div>Details for {row.name}</div>}
+        />,
+      );
+
+      expect(container.querySelector('[data-expanded-row-for="1"]')).not.toBeInTheDocument();
+      expect(screen.queryByText('Details for John Doe')).not.toBeInTheDocument();
     });
   });
 });
