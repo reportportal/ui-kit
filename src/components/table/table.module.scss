@@ -309,6 +309,16 @@ $EXPANDABLE_CHECKBOX_Z_INDEX: 10;
     border-left: 1px solid rgba(var(--rp-ui-shadow-rgb), .15);
     pointer-events: none;
   }
+
+  &.with-checkbox-track {
+    &::before {
+      left: $EXPANDABLE_CHECKBOX_COLUMN_WIDTH;
+    }
+
+    .expanded-content-cell {
+      grid-column: 3 / -1;
+    }
+  }
 }
 
 .expanded-content-cell {

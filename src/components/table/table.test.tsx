@@ -544,5 +544,37 @@ describe('Table Component', () => {
       expect(screen.getByLabelText('Collapse row')).toBeInTheDocument();
       expect(screen.getByText('Details for John Doe')).toBeInTheDocument();
     });
+
+    it('aligns the expanded detail row with the checkbox track when selectable', () => {
+      const { container } = render(
+        <Table
+          {...defaultProps}
+          selectable
+          isRowsExpandable
+          expandedRowIds={[1]}
+          renderExpandedRow={(row) => <div>Details for {row.name}</div>}
+        />,
+      );
+
+      const expandedRow = container.querySelector('[data-expanded-row-for="1"]');
+      expect(expandedRow).toBeInTheDocument();
+      expect(expandedRow?.className).toContain('with-checkbox-track');
+      expect((expandedRow as HTMLElement).style.gridTemplateColumns).toMatch(/^32px /);
+    });
+
+    it('does not offset the expanded detail row when not selectable', () => {
+      const { container } = render(
+        <Table
+          {...defaultProps}
+          isRowsExpandable
+          expandedRowIds={[1]}
+          renderExpandedRow={(row) => <div>Details for {row.name}</div>}
+        />,
+      );
+
+      const expandedRow = container.querySelector('[data-expanded-row-for="1"]');
+      expect(expandedRow).toBeInTheDocument();
+      expect(expandedRow?.className).not.toContain('with-checkbox-track');
+    });
   });
 });

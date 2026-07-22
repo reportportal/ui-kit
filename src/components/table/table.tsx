@@ -406,6 +406,13 @@ export const Table: FC<TableComponentProps> = ({
     isCheckboxOutside,
   );
 
+  // The main row prepends a checkbox track when selectable, so the expanded
+  // detail row must do the same to keep its content aligned with the data columns.
+  const hasCheckboxTrack = selectable && !isCheckboxOutside;
+  const expandedRowGridTemplateColumns = hasCheckboxTrack
+    ? `${EXPANDABLE_CHECKBOX_COLUMN_WIDTH}px ${gridTemplateColumns}`
+    : gridTemplateColumns;
+
   const expandAllButton = (
     <button onClick={handleToggleAllRowsExpansion} aria-label="Toggle all rows expansion">
       <span className={cx('expand-icon', { expanded: expandAllIconState })}>
@@ -1098,9 +1105,11 @@ export const Table: FC<TableComponentProps> = ({
               </div>
               {isRowExpanded && renderExpandedRow && (
                 <div
-                  className={cx('expanded-content-row')}
+                  className={cx('expanded-content-row', {
+                    'with-checkbox-track': hasCheckboxTrack,
+                  })}
                   data-expanded-row-for={item.id}
-                  style={{ gridTemplateColumns }}
+                  style={{ gridTemplateColumns: expandedRowGridTemplateColumns }}
                 >
                   <div className={cx('expanded-content-cell')}>{renderExpandedRow(item)}</div>
                 </div>
