@@ -210,7 +210,7 @@ export const FieldText = forwardRef<HTMLInputElement, FieldTextProps>(
             {placeholder && !value && (
               <span className={cx('placeholder')}>
                 {placeholder}
-                {isRequired && !label && <span className={cx('asterisk')} />}
+                {isRequired && !label && <span className={cx('asterisk')}>*</span>}
               </span>
             )}
           </span>
