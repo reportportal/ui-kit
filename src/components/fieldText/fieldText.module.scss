@@ -196,6 +196,7 @@
 
   .asterisk {
     @include field-asterisk();
+
     right: -7px;
   }
 }
