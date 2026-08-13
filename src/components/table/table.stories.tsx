@@ -62,10 +62,38 @@ A flexible table component with support for:
       },
     },
     isRowsExpandable: {
-      description: 'Enable expand/collapse functionality for rows with long content.',
+      description: 'Enable expand/collapse functionality for row cells or detail content.',
       control: 'boolean',
       table: {
         defaultValue: { summary: 'false' },
+      },
+    },
+    isExpandAllVisible: {
+      description: 'Show the expand-all control in the table header.',
+      control: 'boolean',
+      table: {
+        defaultValue: { summary: 'true' },
+      },
+    },
+    rowExpansionMode: {
+      description:
+        'Which expansion behavior a row uses: "cellContent" un-truncates long cell text, "detail" renders full-width content below the row via renderExpandedRow.',
+      control: 'radio',
+      options: ['cellContent', 'detail'],
+      table: {
+        defaultValue: { summary: 'cellContent' },
+      },
+    },
+    canExpandRow: {
+      description: 'Determine whether an individual row can be expanded.',
+      table: {
+        type: { summary: '(row: RowData) => boolean' },
+      },
+    },
+    renderExpandedRow: {
+      description: 'Render full-width detail content below an expanded row (mode "detail" only).',
+      table: {
+        type: { summary: '(row: RowData) => ReactNode' },
       },
     },
     expandedRowIds: {
@@ -167,9 +195,10 @@ A flexible table component with support for:
       },
     },
     onToggleAllRowsExpansion: {
-      description: 'Callback when all rows are expanded/collapsed.',
+      description:
+        'Callback when the expand-all control is toggled. Receives the ids of the currently expandable rows (respecting canExpandRow), so a controlled parent can toggle exactly the eligible set.',
       table: {
-        type: { summary: '() => void' },
+        type: { summary: '(expandableRowIds: (string | number)[]) => void' },
       },
     },
     onToggleRowSelection: {
@@ -805,8 +834,20 @@ export const ExpandableRows: Story = {
           fixedColumns={expandableFixedColumns}
           isRowsExpandable={true}
           selectable={true}
+          rowExpansionMode="detail"
           expandedRowIds={[...expandedRows]}
           setExpandedRowIds={setExpandedRows}
+          renderExpandedRow={(row) => (
+            <div
+              style={{
+                padding: '16px',
+                borderRadius: '4px',
+                background: 'var(--rp-ui-base-bg-100)',
+              }}
+            >
+              Contact: {row.email}
+            </div>
+          )}
           onToggleRowExpansion={(id) => {
             const newExpandedRows = new Set(expandedRows);
             if (newExpandedRows.has(id)) {
@@ -816,13 +857,9 @@ export const ExpandableRows: Story = {
             }
             setExpandedRows(newExpandedRows);
           }}
-          onToggleAllRowsExpansion={() => {
-            if (expandedRows.size === expandableData.length) {
-              setExpandedRows(new Set());
-            } else {
-              const allRows = new Set(expandableData.map((item) => item.id));
-              setExpandedRows(allRows);
-            }
+          onToggleAllRowsExpansion={(expandableRowIds) => {
+            const allExpanded = expandableRowIds.every((id) => expandedRows.has(id));
+            setExpandedRows(allExpanded ? new Set() : new Set(expandableRowIds));
           }}
           selectedRowIds={[...checkedRows]}
           onToggleRowSelection={(id) => {

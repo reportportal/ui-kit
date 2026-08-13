@@ -495,4 +495,120 @@ describe('Table Component', () => {
       expect(afterHoverCheckboxes.length).toBeGreaterThanOrEqual(initialCount);
     });
   });
+
+  describe('Expanded row content', () => {
+    it('hides the expand-all control while keeping individual row controls', () => {
+      render(
+        <Table
+          {...defaultProps}
+          isRowsExpandable
+          isExpandAllVisible={false}
+          canExpandRow={(row) => row.id === 1}
+        />,
+      );
+
+      expect(screen.queryByLabelText('Toggle all rows expansion')).not.toBeInTheDocument();
+      expect(screen.getAllByLabelText('Expand row')).toHaveLength(1);
+    });
+
+    it('passes only the expandable row ids to onToggleAllRowsExpansion', async () => {
+      const onToggleAllRowsExpansion = vi.fn();
+      render(
+        <Table
+          {...defaultProps}
+          isRowsExpandable
+          canExpandRow={(row) => row.id === 1}
+          onToggleAllRowsExpansion={onToggleAllRowsExpansion}
+        />,
+      );
+
+      await userEvent.click(screen.getByLabelText('Toggle all rows expansion'));
+      expect(onToggleAllRowsExpansion).toHaveBeenCalledWith([1]);
+    });
+
+    it('renders detail content only for an expanded parent row', async () => {
+      const onToggleRowExpansion = vi.fn();
+      const { rerender } = render(
+        <Table
+          {...defaultProps}
+          isRowsExpandable
+          expandedRowIds={[]}
+          canExpandRow={(row) => row.id === 1}
+          rowExpansionMode="detail"
+          renderExpandedRow={(row) => <div>Details for {row.name}</div>}
+          onToggleRowExpansion={onToggleRowExpansion}
+        />,
+      );
+
+      expect(screen.getAllByLabelText('Expand row')).toHaveLength(1);
+      expect(screen.queryByText('Details for John Doe')).not.toBeInTheDocument();
+
+      await userEvent.click(screen.getByLabelText('Expand row'));
+      expect(onToggleRowExpansion).toHaveBeenCalledWith(1);
+
+      rerender(
+        <Table
+          {...defaultProps}
+          isRowsExpandable
+          expandedRowIds={[1]}
+          canExpandRow={(row) => row.id === 1}
+          rowExpansionMode="detail"
+          renderExpandedRow={(row) => <div>Details for {row.name}</div>}
+          onToggleRowExpansion={onToggleRowExpansion}
+        />,
+      );
+
+      expect(screen.getByLabelText('Collapse row')).toBeInTheDocument();
+      expect(screen.getByText('Details for John Doe')).toBeInTheDocument();
+    });
+
+    it('aligns the expanded detail row with the checkbox track when selectable', () => {
+      const { container } = render(
+        <Table
+          {...defaultProps}
+          selectable
+          isRowsExpandable
+          expandedRowIds={[1]}
+          rowExpansionMode="detail"
+          renderExpandedRow={(row) => <div>Details for {row.name}</div>}
+        />,
+      );
+
+      const expandedRow = container.querySelector('[data-expanded-row-for="1"]');
+      expect(expandedRow).toBeInTheDocument();
+      expect(expandedRow?.className).toContain('with-checkbox-track');
+      expect((expandedRow as HTMLElement).style.gridTemplateColumns).toMatch(/^32px /);
+    });
+
+    it('does not offset the expanded detail row when not selectable', () => {
+      const { container } = render(
+        <Table
+          {...defaultProps}
+          isRowsExpandable
+          expandedRowIds={[1]}
+          rowExpansionMode="detail"
+          renderExpandedRow={(row) => <div>Details for {row.name}</div>}
+        />,
+      );
+
+      const expandedRow = container.querySelector('[data-expanded-row-for="1"]');
+      expect(expandedRow).toBeInTheDocument();
+      expect(expandedRow?.className).not.toContain('with-checkbox-track');
+    });
+
+    it('ignores renderExpandedRow when rowExpansionMode is not "detail"', () => {
+      const { container } = render(
+        <Table
+          {...defaultProps}
+          isRowsExpandable
+          expandedRowIds={[1]}
+          rowExpansionMode="cellContent"
+          renderExpandedRow={(row) => <div>Details for {row.name}</div>}
+        />,
+      );
+
+      expect(container.querySelector('[data-expanded-row-for="1"]')).not.toBeInTheDocument();
+      expect(screen.queryByText('Details for John Doe')).not.toBeInTheDocument();
+    });
+  });
 });
