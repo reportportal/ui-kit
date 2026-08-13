@@ -55,6 +55,7 @@ export interface TableComponentProps {
     bodyClassName?: string;
     rowClassName?: string;
     checkboxColumnClassName?: string;
+    expandColumnClassName?: string;
     selectedRowIds?: (string | number)[];
     sortingDirection?: SortingDirection;
     sortingColumn?: Column;
@@ -63,7 +64,11 @@ export interface TableComponentProps {
     isHorizontallyScrollable?: boolean;
     pinnedColumnKeys?: string[];
     isRowsExpandable?: boolean;
+    isExpandAllVisible?: boolean;
     expandedRowIds?: (string | number)[];
+    canExpandRow?: (row: RowData) => boolean;
+    rowExpansionMode?: 'cellContent' | 'detail';
+    renderExpandedRow?: (row: RowData) => ReactNode;
     isSelectAllCheckboxAlwaysVisible?: boolean;
     disabledRowIds?: (string | number)[];
     setExpandedRowIds?: Dispatch<SetStateAction<Set<string | number>>>;
@@ -77,7 +82,7 @@ export interface TableComponentProps {
     onToggleRowSelection?: (id: string | number) => void;
     onToggleAllRowsSelection?: () => void;
     onToggleRowExpansion?: (id: string | number) => void;
-    onToggleAllRowsExpansion?: () => void;
+    onToggleAllRowsExpansion?: (expandableRowIds: (string | number)[]) => void;
     onColumnResize?: (columnKey: string, width: number) => void;
     getRowCheckboxTooltip?: (rowId: string | number) => ReactNode;
     externalScrollContainerRef?: RefObject<HTMLElement> | RefObject<Element> | null | undefined;
