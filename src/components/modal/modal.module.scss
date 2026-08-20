@@ -78,14 +78,6 @@ $SCROLLBAR-WIDTH: 12px;
   padding-right: $SCROLLBAR-WIDTH;
 }
 
-.scrollbars-scroll-view {
-  z-index: 101;
-}
-
-.scrollbars-scroll-track {
-  z-index: 100;
-}
-
 .size-default {
   @include modalWidth($WIDTH-DEFAULT);
 }
