@@ -1,4 +1,13 @@
-import { ReactNode, useCallback, useEffect, useMemo, useRef, useState, FC } from 'react';
+import {
+  ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  FC,
+  HTMLAttributes,
+} from 'react';
 import { Scrollbars } from 'rc-scrollbars';
 import { motion, AnimatePresence } from 'framer-motion';
 import classNames from 'classnames/bind';
@@ -20,6 +29,11 @@ const MODAL_HEADER_HEIGHT = 32 + 24;
 const MODAL_HEADER_WITH_DESCRIPTION_HEIGHT = 32 + 8;
 const MODAL_FOOTER_HEIGHT = 36 + 16;
 const MODAL_LAYOUT_PADDING = 32 * 2;
+const SCROLLBAR_TRACK_Z_INDEX = 'auto';
+
+const renderScrollTrack = ({ style, ...props }: HTMLAttributes<HTMLDivElement>) => (
+  <div {...props} style={{ ...style, zIndex: SCROLLBAR_TRACK_Z_INDEX }} />
+);
 
 type ModalOverlay = 'default' | 'light-cyan';
 
@@ -162,11 +176,8 @@ export const Modal: FC<ModalProps> = ({
                   autoHeight
                   autoHeightMax={getContentMaxHeight()}
                   hideTracksWhenNotNeeded
-                  classes={{
-                    view: cx('scrollbars-scroll-view'),
-                    trackHorizontal: cx('scrollbars-scroll-track'),
-                    trackVertical: cx('scrollbars-scroll-track'),
-                  }}
+                  renderTrackHorizontal={renderScrollTrack}
+                  renderTrackVertical={renderScrollTrack}
                 >
                   <div className={cx('scrollable-content')}>
                     {description && <span className={cx('description')}>{description}</span>}
