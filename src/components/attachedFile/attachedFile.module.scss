@@ -43,6 +43,10 @@
     .attached-file__file-name {
       color: var(--rp-ui-base-topaz-hover);
     }
+
+    .attached-file__download-icon {
+      opacity: 1;
+    }
   }
 
   &--bottom-placed {
@@ -167,13 +171,20 @@
   }
 
   &__download-icon {
+    margin-left: 4px;
     display: flex;
     align-items: center;
     justify-content: center;
+    opacity: 0;
+    transition: opacity 0.15s ease-in-out;
 
     svg {
       width: 16px;
       height: 16px;
+
+      path {
+        fill: #a2aab5;
+      }
     }
   }
 
