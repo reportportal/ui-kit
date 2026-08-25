@@ -20,6 +20,7 @@ import classNames from 'classnames/bind';
 import {
   CloseIcon,
   CsvIcon,
+  DownloadIcon,
   ExternalLinkIcon,
   ImageIcon,
   JarIcon,
@@ -84,6 +85,7 @@ export const AttachedFile = ({
   const upperCaseExtension = fileExtension.toUpperCase();
 
   const FileIcon = useMemo(() => getFileIconByExtension(fileExtension), [fileExtension]);
+  const ActionIcon = onDownload ? DownloadIcon : ExternalLinkIcon;
 
   const handleRemove = useCallback(
     (event: MouseEvent<HTMLButtonElement>) => {
@@ -132,7 +134,7 @@ export const AttachedFile = ({
             <span className={cx('attached-file__name-text')}>{fileName}</span>
             {!isUploading && !isUploadFailed && (
               <span className={cx('attached-file__download-icon')}>
-                <ExternalLinkIcon />
+                <ActionIcon />
               </span>
             )}
           </button>
