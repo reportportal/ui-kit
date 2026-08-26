@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import classNames from 'classnames/bind';
 import { Popover } from '@components/popover';
 import { MeatballMenuIcon } from '@components/icons';
@@ -22,12 +23,19 @@ const HiddenBreadcrumbsContent = ({ descriptors }: HiddenBreadcrumbsProps) => (
 );
 
 export const HiddenBreadcrumbs = ({ descriptors }: HiddenBreadcrumbsProps) => {
+  const [isOpen, setIsOpen] = useState(false);
+
   return (
     <Popover
       content={<HiddenBreadcrumbsContent descriptors={descriptors} />}
       placement="bottom-start"
+      isOpened={isOpen}
+      setIsOpened={setIsOpen}
     >
-      <div className={cx('hidden-breadcrumbs-trigger')} data-testid="hidden-breadcrumbs-trigger">
+      <div
+        className={cx('hidden-breadcrumbs-trigger', { active: isOpen })}
+        data-testid="hidden-breadcrumbs-trigger"
+      >
         <MeatballMenuIcon />
       </div>
     </Popover>
