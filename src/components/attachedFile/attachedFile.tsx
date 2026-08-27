@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { useMemo, MouseEvent, useCallback } from 'react';
+import { useMemo, MouseEvent, KeyboardEvent, useCallback } from 'react';
 import classNames from 'classnames/bind';
 
 import {
@@ -97,18 +97,28 @@ export const AttachedFile = ({
     [isUploading, onRemove],
   );
 
-  const downloadFile = useCallback(
-    (event: MouseEvent<HTMLButtonElement>) => {
-      event.stopPropagation();
+  const isBottomTextPosition = textPosition === 'bottom';
+  const isDownloadable = !isBottomTextPosition && !isUploadFailed && !isUploading && !!onDownload;
 
-      if (!isUploadFailed && !isUploading && onDownload) {
-        onDownload();
+  const downloadFile = useCallback(() => {
+    if (isDownloadable) {
+      onDownload?.();
+    }
+  }, [isDownloadable, onDownload]);
+
+  const handleCardClick = useCallback(() => {
+    downloadFile();
+  }, [downloadFile]);
+
+  const handleCardKeyDown = useCallback(
+    (event: KeyboardEvent<HTMLDivElement>) => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        downloadFile();
       }
     },
-    [isUploadFailed, isUploading, onDownload],
+    [downloadFile],
   );
-
-  const isBottomTextPosition = textPosition === 'bottom';
 
   return (
     <div
@@ -117,6 +127,12 @@ export const AttachedFile = ({
         'attached-file--uploading': isUploading,
         'attached-file--full-width': isFullWidth,
         'attached-file--bottom-placed': isBottomTextPosition,
+      })}
+      {...(isDownloadable && {
+        role: 'button',
+        tabIndex: 0,
+        onClick: handleCardClick,
+        onKeyDown: handleCardKeyDown,
       })}
     >
       <div className={cx('attached-file__icon')}>
@@ -130,14 +146,14 @@ export const AttachedFile = ({
       </div>
       <div className={cx('attached-file__info')}>
         {!isBottomTextPosition && onDownload ? (
-          <button type="button" className={cx('attached-file__file-name')} onClick={downloadFile}>
+          <div className={cx('attached-file__file-name')}>
             <span className={cx('attached-file__name-text')}>{fileName}</span>
             {!isUploading && !isUploadFailed && (
               <span className={cx('attached-file__download-icon')}>
                 <ActionIcon />
               </span>
             )}
-          </button>
+          </div>
         ) : (
           <div
             className={cx('attached-file__file-name', {

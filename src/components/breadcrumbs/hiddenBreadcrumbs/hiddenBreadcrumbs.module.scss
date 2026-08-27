@@ -4,6 +4,12 @@
   svg {
     vertical-align: middle;
   }
+
+  &.active {
+    svg path {
+      fill: var(--rp-ui-base-topaz-pressed);
+    }
+  }
 }
 
 .hidden-breadcrumbs-content {
