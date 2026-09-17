@@ -20,7 +20,7 @@ export { FileDropArea } from './fileDropArea';
 export { FiltersButton } from './filtersButton';
 export { FilterItem } from './filterItem';
 export { IssueList } from './issueList';
-export { Modal } from './modal';
+export { Modal, NOTIFICATION_PORTAL_ATTR } from './modal';
 export { MultipleAutocomplete } from './autocompletes/multipleAutocomplete';
 export { Pagination } from './pagination';
 export { Popover } from './popover';
