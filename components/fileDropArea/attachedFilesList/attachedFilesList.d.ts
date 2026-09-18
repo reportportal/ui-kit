@@ -14,7 +14,7 @@ export interface AttachmentFile {
 interface AttachedFilesListProps {
     files: AttachmentFile[];
     className?: string;
-    onRemoveFile: (fileId: string) => void;
+    onRemoveFile?: (fileId: string) => void;
     onDownloadFile?: (file: AttachmentFile) => void;
 }
 export declare const AttachedFilesList: ({ files, className, onRemoveFile, onDownloadFile, }: AttachedFilesListProps) => import("react/jsx-runtime").JSX.Element | null;
