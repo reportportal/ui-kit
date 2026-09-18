@@ -43,7 +43,7 @@ export interface AttachmentFile {
 interface AttachedFilesListProps {
   files: AttachmentFile[];
   className?: string;
-  onRemoveFile: (fileId: string) => void;
+  onRemoveFile?: (fileId: string) => void;
   onDownloadFile?: (file: AttachmentFile) => void;
 }
 
@@ -64,7 +64,7 @@ export const AttachedFilesList = ({
   }, [files, clearError]);
 
   const handleFileRemoval = useCallback(
-    (file: AttachmentFile) => () => onRemoveFile(file.id),
+    (file: AttachmentFile) => () => onRemoveFile?.(file.id),
     [onRemoveFile],
   );
 
@@ -94,7 +94,7 @@ export const AttachedFilesList = ({
             uploadingProgress={file.uploadingProgress}
             isUploadFailed={file.isUploadFailed || Boolean(validationErrorMessage)}
             isUploading={file.isUploading}
-            onRemove={handleFileRemoval(file)}
+            {...(onRemoveFile && { onRemove: handleFileRemoval(file) })}
             {...(validationErrorMessage && { uploadFailedMessage: validationErrorMessage })}
             {...(onDownloadFile && { onDownload: handleFileDownload(file) })}
           />
