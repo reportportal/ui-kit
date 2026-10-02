@@ -454,6 +454,7 @@ export const Table: FC<TableComponentProps> = ({
         if (isHorizontallyScrollable) {
           header.style.overflow = 'hidden';
           header.style.overflowX = 'hidden';
+          header.scrollLeft = table.scrollLeft;
         }
         header.style.left = `${tableLeft}px`;
         header.style.top = `${topOffset}px`;
@@ -870,6 +871,7 @@ export const Table: FC<TableComponentProps> = ({
           'table-header',
           {
             'sticky-header': isHeaderFixed && !isHeaderPinned,
+            'pinned-header': isHeaderPinned,
             'horizontally-scrollable': isHorizontallyScrollable,
             resizable: isResizable,
           },
