@@ -51,7 +51,6 @@ $EXPANDABLE_CHECKBOX_Z_INDEX: 10;
     position: sticky;
     padding: 0 3px 0 0;
     top: 0;
-    left: 0;
     z-index: $EXPANDABLE_CHECKBOX_Z_INDEX + 1;
     border-bottom: 1px solid var(--rp-ui-base-e-100);
     flex-shrink: 0;
