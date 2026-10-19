@@ -10,6 +10,7 @@ export interface ChipProps {
     className?: string;
     maxWidth?: number;
     title?: string;
+    showTitleOnOverflow?: boolean;
     disabled?: boolean;
 }
-export declare const Chip: ({ children, variant, link, onClick, onRemove, className, maxWidth, title, disabled, }: ChipProps) => import("react/jsx-runtime").JSX.Element;
+export declare const Chip: ({ children, variant, link, onClick, onRemove, className, maxWidth, title, showTitleOnOverflow, disabled, }: ChipProps) => import("react/jsx-runtime").JSX.Element;
