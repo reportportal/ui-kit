@@ -16,6 +16,7 @@
 
 import { ReactNode, MouseEvent, KeyboardEvent } from 'react';
 import classNames from 'classnames/bind';
+import { useEllipsisTitle } from '@common/hooks';
 import { CloseIcon } from '@components/icons';
 import styles from './chip.module.scss';
 
@@ -32,6 +33,7 @@ export interface ChipProps {
   className?: string;
   maxWidth?: number;
   title?: string;
+  showTitleOnOverflow?: boolean;
   disabled?: boolean;
 }
 
@@ -44,8 +46,12 @@ export const Chip = ({
   className,
   maxWidth,
   title,
+  showTitleOnOverflow = false,
   disabled = false,
 }: ChipProps) => {
+  const { ref: labelRef, title: ellipsisTitle } = useEllipsisTitle<HTMLSpanElement>(
+    showTitleOnOverflow ? title : undefined,
+  );
   const isClickable = !!onClick && !disabled;
   const role = isClickable ? 'button' : undefined;
   const tabIndex = isClickable ? 0 : undefined;
@@ -76,7 +82,12 @@ export const Chip = ({
 
   const content = (
     <>
-      <span className={cx('label')} style={maxWidth ? { maxWidth } : undefined} title={title}>
+      <span
+        ref={labelRef}
+        className={cx('label')}
+        style={maxWidth ? { maxWidth } : undefined}
+        title={showTitleOnOverflow ? ellipsisTitle : title}
+      >
         {children}
       </span>
       {onRemove && !disabled && (
