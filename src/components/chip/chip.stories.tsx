@@ -100,6 +100,16 @@ export const WithMaxWidth: Story = {
   },
 };
 
+export const WithTitleOnOverflow: Story = {
+  args: {
+    children: 'Very long chip text that should be truncated',
+    variant: 'default',
+    maxWidth: 150,
+    title: 'Very long chip text that should be truncated',
+    showTitleOnOverflow: true,
+  },
+};
+
 export const Disabled: Story = {
   args: {
     children: 'Disabled Chip',
