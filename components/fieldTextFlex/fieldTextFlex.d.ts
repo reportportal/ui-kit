@@ -1,7 +1,7 @@
 import { ChangeEventHandler, ComponentPropsWithRef, FocusEventHandler, KeyboardEventHandler } from '../../../node_modules/react';
 
 export interface FieldTextFlexProps extends ComponentPropsWithRef<'textarea'> {
-    value: string;
+    value?: string;
     readonly?: boolean;
     error?: string;
     touched?: boolean;
