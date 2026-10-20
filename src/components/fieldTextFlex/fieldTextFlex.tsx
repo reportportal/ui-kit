@@ -18,7 +18,7 @@ const HEIGHT = 72;
 const BORDER = 2;
 
 export interface FieldTextFlexProps extends ComponentPropsWithRef<'textarea'> {
-  value: string;
+  value?: string;
   readonly?: boolean;
   error?: string;
   touched?: boolean;
