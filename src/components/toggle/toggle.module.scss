@@ -92,7 +92,7 @@
   }
 
   &:hover:not(:disabled) + .slider {
-    background-color: var(--rp-ui-base-e-400);
+    background-color: var(--rp-ui-base-grey-700); // EPMRPP-107671 toggle off hover change
   }
 
   &:checked:hover + .slider {
