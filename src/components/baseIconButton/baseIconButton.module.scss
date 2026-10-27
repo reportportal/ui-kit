@@ -14,7 +14,7 @@
   border: none;
   cursor: pointer;
 
-  @include fill-svg(var(--rp-ui-base-e-300));
+  @include fill-svg(var(--rp-ui-base-grey-700));
 
   &.disabled {
     opacity: 40%;
@@ -22,7 +22,7 @@
   }
 
   &:hover:not(.disabled) {
-    @include fill-svg(var(--rp-ui-base-e-400));
+    @include fill-svg(var(--rp-ui-base-topaz-700));
   }
   &:active:not(.disabled) {
     @include fill-svg(var(--rp-ui-base-topaz-pressed));
