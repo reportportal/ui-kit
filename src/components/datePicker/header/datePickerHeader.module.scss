@@ -40,7 +40,7 @@
     all: unset;
 
     @include setArrowDefaultProps();
-    @include arrowHoverState(var(--rp-ui-base-e-400));
+    @include arrowHoverState(var(--rp-ui-base-topaz-700));
     &.disabled {
       @include disabledState;
     }
