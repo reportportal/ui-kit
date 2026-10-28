@@ -1,6 +1,6 @@
 import {
   ChangeEventHandler,
-  HTMLAttributes,
+  InputHTMLAttributes,
   ReactNode,
   useRef,
   FC,
@@ -18,11 +18,12 @@ export type RadioValue = string | number;
 
 export type RadioOption = {
   value: RadioValue;
-  label: string;
+  label: string | ReactNode;
   disabled: boolean;
 };
 
-export interface RadioProps extends HTMLAttributes<HTMLInputElement> {
+export interface RadioProps
+  extends Omit<InputHTMLAttributes<HTMLInputElement>, 'checked' | 'type'> {
   option: RadioOption;
   value?: RadioValue;
   children?: ReactNode;
