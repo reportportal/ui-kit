@@ -22,7 +22,8 @@ export type RadioOption = {
   disabled: boolean;
 };
 
-export interface RadioProps extends InputHTMLAttributes<HTMLInputElement> {
+export interface RadioProps
+  extends Omit<InputHTMLAttributes<HTMLInputElement>, 'checked' | 'type'> {
   option: RadioOption;
   value?: RadioValue;
   children?: ReactNode;
