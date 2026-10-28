@@ -18,13 +18,13 @@
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
-  color: var(--rp-ui-base-e-300);
+  color: var(--rp-ui-base-grey-700);
   text-decoration: none;
   user-select: none;
   -webkit-user-select: none;
 
   .link & {
-    color: var(--rp-ui-base-e-400);
+    color: var(--rp-ui-base-grey-800);
 
     &:hover {
       color: var(--rp-ui-base-topaz-hover);
