@@ -236,6 +236,63 @@ export const SingleSelectWithMenuPortal: Story<string> = {
   },
 };
 
+export const SingleSelectWithMenuFooter: Story<string> = {
+  args: {
+    ...TEST_DATA_STRINGS,
+    minLength: 0,
+    menuFooter: 'Too many results. Please refine your search.',
+  },
+  render: (args) => {
+    const [state, setState] = useState(args.value || '');
+
+    const modifiedArgs = {
+      ...args,
+      inputProps: { ...args.inputProps, onClear: () => setState('') },
+    };
+
+    const handleStateChange: ComponentProps<
+      typeof SingleAutocomplete<(typeof OPTIONS_STRINGS)[number]>
+    >['stateReducer'] = (prevState, changes) => {
+      switch (changes.type) {
+        case Downshift.stateChangeTypes.keyDownEnter:
+        case Downshift.stateChangeTypes.clickItem:
+          return {
+            ...changes,
+            highlightedIndex: prevState.highlightedIndex,
+            inputValue: '',
+          };
+        default:
+          return changes;
+      }
+    };
+
+    const onChange: ComponentProps<
+      typeof SingleAutocomplete<(typeof OPTIONS_STRINGS)[number]>
+    >['onChange'] = (newState) => {
+      setState(newState as (typeof OPTIONS_STRINGS)[number]);
+    };
+
+    return (
+      <div
+        style={{
+          width: '600px',
+          height: '400px',
+          display: 'flex',
+          alignItems: 'center',
+          position: 'relative',
+        }}
+      >
+        <SingleAutocomplete
+          {...modifiedArgs}
+          onChange={onChange}
+          stateReducer={handleStateChange}
+          value={state}
+        />
+      </div>
+    );
+  },
+};
+
 export const SingleSelectWithHideByScroll: Story<string> = {
   args: {
     ...TEST_DATA_STRINGS,

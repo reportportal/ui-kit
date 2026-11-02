@@ -90,8 +90,7 @@ export interface MultipleAutocompleteProps<T> {
   selectedItemSingleLine?: boolean;
   selectedItemClassName?: string;
   selectedItemTextClassName?: string;
-  optionsLimit?: number;
-  limitationText?: string;
+  menuFooter?: string | ReactNode;
   shouldShowEmptyListMessage?: boolean;
 }
 

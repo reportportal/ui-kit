@@ -26,16 +26,24 @@
   text-align: center;
 }
 
-.limitation-item {
-  pointer-events: none;
-  min-height: 36px;
-  padding: 4px 12px;
-  cursor: pointer;
-  box-sizing: border-box;
-  color: var(--rp-ui-color-text-secondary);
+.menu-footer-divider {
+  height: 1px;
+  margin: 8px 12px;
+  background: var(--rp-ui-base-e-100);
+}
+
+.menu-footer {
+  display: flex;
   align-items: center;
-  text-align: center;
+  justify-content: center;
+  box-sizing: border-box;
   width: 100%;
-  font-family: var(--rp-ui-base-font-family);
+  padding: 8px 12px;
   font-size: 13px;
+  line-height: 20px;
+  font-family: var(--rp-ui-base-font-family);
+  font-weight: var(--rp-ui-base-fw-regular);
+  color: var(--rp-ui-color-text-secondary);
+  text-align: center;
+  pointer-events: none;
 }
