@@ -42,8 +42,7 @@ export interface SingleAutocompleteProps<T> {
     customEmptyListMessage?: string;
     customNoMatchesMessage?: string;
     newItemButtonText?: string;
-    optionsLimit?: number;
-    limitationText?: string;
+    menuFooter?: string | ReactNode;
     shouldShowEmptyListMessage?: boolean;
     /**
      * Portal root element for autocomplete menu rendering.

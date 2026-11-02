@@ -15,8 +15,7 @@ export interface AutocompleteOptionsProps<T> {
     customNoMatchesMessage?: string;
     getUniqKey?: (item: T) => string;
     newItemButtonText: string;
-    limitationText?: string;
-    optionsLimit?: number;
+    menuFooter?: string | ReactNode;
     shouldShowEmptyListMessage?: boolean;
 }
 export declare const AutocompleteOptions: <T>(props: AutocompleteOptionsProps<T>) => import("react/jsx-runtime").JSX.Element | null;
