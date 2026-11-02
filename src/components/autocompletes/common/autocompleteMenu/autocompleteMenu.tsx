@@ -33,8 +33,6 @@ type AutocompleteMenuProps<T> = {
   minLength?: number | null;
   inputValue?: string;
   className?: string;
-  optionsLimit?: number;
-  limitationText?: string;
   portalMenuAttribute?: string | null;
 } & AutocompleteOptionsProps<T>;
 

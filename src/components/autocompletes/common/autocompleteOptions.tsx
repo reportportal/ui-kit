@@ -48,8 +48,7 @@ export interface AutocompleteOptionsProps<T> {
   customNoMatchesMessage?: string;
   getUniqKey?: (item: T) => string;
   newItemButtonText: string;
-  limitationText?: string;
-  optionsLimit?: number;
+  menuFooter?: string | ReactNode;
   shouldShowEmptyListMessage?: boolean;
 }
 
@@ -68,8 +67,7 @@ export const AutocompleteOptions = <T,>(props: AutocompleteOptionsProps<T>) => {
     getUniqKey,
     getItemProps,
     parseValueToString,
-    limitationText = 'Too many results. Type to search',
-    optionsLimit = 0,
+    menuFooter,
     shouldShowEmptyListMessage = true,
   } = props;
 
@@ -171,10 +169,13 @@ export const AutocompleteOptions = <T,>(props: AutocompleteOptionsProps<T>) => {
         {areAvailableOptionsEmpty
           ? shouldShowEmptyListMessage && renderEmptyList()
           : renderItems(availableOptions)}
-        {availableOptions?.length > optionsLimit && optionsLimit > 0 && limitationText ? (
-          <li className={cx('limitation-item')} aria-hidden="true">
-            {limitationText}
-          </li>
+        {menuFooter ? (
+          <>
+            <div className={cx('menu-footer-divider')} aria-hidden="true" />
+            <div className={cx('menu-footer')} aria-hidden="true">
+              {menuFooter}
+            </div>
+          </>
         ) : null}
       </Scrollbars>
       {!createWithoutConfirmation && renderNewItem(availableOptions)}
