@@ -9,7 +9,7 @@ export interface AutocompleteOptionsProps<T> {
     getItemProps: GetItemPropsT<T>;
     renderOption?: (item: T, index: number, isNew: boolean, getItemProps: GetItemPropsT<T>) => ReactNode;
     async?: boolean;
-    optionVariant: 'key-variant' | 'value-variant' | '';
+    optionVariant?: 'key-variant' | 'value-variant' | '';
     createWithoutConfirmation: boolean;
     customEmptyListMessage?: string;
     customNoMatchesMessage?: string;
