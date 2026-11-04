@@ -17,6 +17,7 @@
 import { describe, expect, it } from 'vitest';
 import { AUTOCOMPLETE_PORTAL_MENU_ATTR } from '@components/autocompletes/constants';
 import { DROPDOWN_PORTAL_MENU_ATTR } from '@components/dropdown';
+import { POPOVER_PORTAL_ATTR } from '@components/popover';
 import { MODAL_CLICK_OUTSIDE_IGNORE_SELECTORS, NOTIFICATION_PORTAL_ATTR } from './constants';
 
 describe('Modal click-outside ignore selectors', () => {
@@ -24,10 +25,11 @@ describe('Modal click-outside ignore selectors', () => {
     expect(NOTIFICATION_PORTAL_ATTR).toBe('data-notification-portal');
   });
 
-  it('ignores dropdown, autocomplete and notification portals', () => {
+  it('ignores dropdown, autocomplete, popover and notification portals', () => {
     expect(MODAL_CLICK_OUTSIDE_IGNORE_SELECTORS).toEqual([
       `[${DROPDOWN_PORTAL_MENU_ATTR}]`,
       `[${AUTOCOMPLETE_PORTAL_MENU_ATTR}]`,
+      `[${POPOVER_PORTAL_ATTR}]`,
       `[${NOTIFICATION_PORTAL_ATTR}]`,
     ]);
   });

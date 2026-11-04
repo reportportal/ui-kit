@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-import { ComponentProps, KeyboardEvent, ReactNode, useEffect, useRef } from 'react';
+import { ComponentProps, KeyboardEvent, ReactNode, useEffect, useMemo, useRef } from 'react';
 import classNames from 'classnames/bind';
 import { isEmpty } from 'es-toolkit/compat';
 import { ControllerStateAndHelpers } from 'downshift';
 
 import { ClearIcon, DropdownIcon } from '@/components/icons';
 import { default as FieldText } from '@/components/fieldText';
-import { useFloating, autoUpdate } from '@floating-ui/react';
+import { useFloating, autoUpdate, size } from '@floating-ui/react';
 
 import { AutocompleteMenu } from '../common/autocompleteMenu';
 import { SelectedItems } from './selectedItems';
@@ -39,52 +39,64 @@ import styles from './multipleAutocomplete.module.scss';
 
 const cx = classNames.bind(styles);
 
+const sizeMiddleware = size({
+  apply({ rects, elements }) {
+    Object.assign(elements.floating.style, {
+      width: `${rects.reference.width}px`,
+    });
+  },
+});
+
 export interface MultipleAutocompleteProps<T> {
-  options: T[];
-  loading: boolean;
-  onStateChange: MultipleDownshiftProps<T>['onStateChange'];
-  value: T[];
-  placeholder: string;
-  error: string | boolean;
-  touched: boolean;
-  creatable: boolean;
-  editable: boolean;
+  options?: T[];
+  loading?: boolean;
+  onStateChange?: MultipleDownshiftProps<T>['onStateChange'];
+  value?: T[];
+  placeholder?: string;
+  error?: string | boolean;
+  touched?: boolean;
+  creatable?: boolean;
+  editable?: boolean;
   renderOption?: (
     value: T,
     index: number,
     isNew: boolean,
     getItemProps: GetItemPropsT<T>,
   ) => ReactNode;
-  onChange: (selectedItems: T | T[] | null, downshift: ControllerStateAndHelpers<T> | null) => void;
-  onFocus: () => void;
-  onBlur: () => void;
-  disabled: boolean;
-  mobileDisabled: boolean;
-  inputProps: ComponentProps<typeof FieldText>;
-  parseValueToString: (value: T | null) => string;
+  onChange?: (
+    selectedItems: T | T[] | null,
+    downshift: ControllerStateAndHelpers<T> | null,
+  ) => void;
+  onFocus?: () => void;
+  onBlur?: () => void;
+  disabled?: boolean;
+  mobileDisabled?: boolean;
+  inputProps?: ComponentProps<typeof FieldText>;
+  parseValueToString?: (value: T | null) => string;
   minLength?: number | null;
   maxLength?: number | null;
   async?: boolean;
-  customClass: string;
-  createWithoutConfirmation: boolean;
+  customClass?: string;
+  createWithoutConfirmation?: boolean;
   getItemValidationErrorType?: (item: T) => string;
-  clearItemsError: () => void;
+  clearItemsError?: () => void;
   isDropdownMode?: boolean;
-  getAdditionalCreationCondition: (value: string) => boolean;
-  highlightUnStoredItem: boolean;
-  parseInputValueFn: ((value: string) => T[]) | null;
-  handleUnStoredItemCb:
+  getAdditionalCreationCondition?: (value: string) => boolean;
+  highlightUnStoredItem?: boolean;
+  parseInputValueFn?: ((value: string) => T[]) | null;
+  handleUnStoredItemCb?:
     | ((newSelectedItems: DownshiftStore<T>, prevSelectedItems: DownshiftStore<T>) => void)
     | null;
   dataAutomationId?: string;
-  existingItemsMap: Record<string | number, boolean>;
-  optionVariant: ComponentProps<typeof AutocompleteMenu>['optionVariant'];
-  customizeNewSelectedValue: (value: T) => T;
+  existingItemsMap?: Record<string | number, boolean>;
+  optionVariant?: ComponentProps<typeof AutocompleteMenu>['optionVariant'];
+  customizeNewSelectedValue?: (value: T) => T;
   renderCustomSelectedItem?: (item: T) => ReactNode;
   getUniqKey?: (item: T) => string;
   customEmptyListMessage?: string;
   customNoMatchesMessage?: string;
   useFixedPositioning?: boolean;
+  dropdownMatchInputWidth?: boolean;
   newItemButtonText?: string;
   menuClassName?: string;
   selectedItemSingleLine?: boolean;
@@ -112,16 +124,14 @@ export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompletePr
     isDropdownMode = false,
     mobileDisabled = false,
     inputProps = {},
-    parseValueToString = ((item: T) =>
-      item == null ? '' : String(item)) as MultipleAutocompleteProps<T>['parseValueToString'],
+    parseValueToString = (item: T | null) => (item == null ? '' : String(item)),
     maxLength = null,
     async = false,
     customClass = '',
     createWithoutConfirmation = false,
     getItemValidationErrorType = null,
     clearItemsError = () => {},
-    getAdditionalCreationCondition = (() =>
-      true) as MultipleAutocompleteProps<T>['getAdditionalCreationCondition'],
+    getAdditionalCreationCondition = () => true,
     highlightUnStoredItem = false,
     parseInputValueFn = null,
     handleUnStoredItemCb = null,
@@ -130,6 +140,7 @@ export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompletePr
     customizeNewSelectedValue = (newValue) => newValue,
     renderCustomSelectedItem,
     useFixedPositioning,
+    dropdownMatchInputWidth = false,
     newItemButtonText = '',
     menuClassName = '',
     selectedItemSingleLine,
@@ -138,10 +149,16 @@ export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompletePr
     ...props
   } = componentsProps;
 
+  const middleware = useMemo(
+    () => (dropdownMatchInputWidth ? [sizeMiddleware] : []),
+    [dropdownMatchInputWidth],
+  );
+
   const { refs, floatingStyles } = useFloating({
     placement: 'bottom-start',
     strategy: useFixedPositioning ? 'fixed' : 'absolute',
     whileElementsMounted: autoUpdate,
+    middleware,
   });
 
   const placeholderIfEmptyField = value.length === 0 && !disabled ? placeholder : '';

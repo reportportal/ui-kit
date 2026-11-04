@@ -3,6 +3,7 @@ import classNames from 'classnames/bind';
 import { KeyCodes } from '@common/constants/keyCodes';
 import { useOnClickOutside } from '@common/hooks';
 import { DROPDOWN_PORTAL_MENU_ATTR } from '@components/dropdown';
+import { POPOVER_PORTAL_ATTR } from '@components/popover';
 import { NOTIFICATION_PORTAL_ATTR } from '@components/modal/constants';
 import { CloseIcon } from '@components/icons';
 import { BaseIconButton } from '@components/baseIconButton';
@@ -56,7 +57,11 @@ export const SidePanel = ({
 
   const clickOutsideOptions = useMemo(
     () => ({
-      ignoreSelectors: [`[${DROPDOWN_PORTAL_MENU_ATTR}]`, `[${NOTIFICATION_PORTAL_ATTR}]`],
+      ignoreSelectors: [
+        `[${DROPDOWN_PORTAL_MENU_ATTR}]`,
+        `[${POPOVER_PORTAL_ATTR}]`,
+        `[${NOTIFICATION_PORTAL_ATTR}]`,
+      ],
     }),
     [],
   );

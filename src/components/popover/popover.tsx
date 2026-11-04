@@ -42,6 +42,7 @@ import {
   ARROW_OFFSET,
 } from '@common/constants/floatingUi';
 import { getAlignmentAxisOffset } from '@common/utils';
+import { POPOVER_PORTAL_ATTR } from './constants';
 import styles from './popover.module.scss';
 
 const cx = classNames.bind(styles);
@@ -155,6 +156,7 @@ export const Popover: FC<PopoverProps> = ({
             pointerEvents: isPopoverOpen ? 'auto' : 'none',
           }}
           {...getFloatingProps()}
+          {...(shouldUsePortal && { [POPOVER_PORTAL_ATTR]: '' })}
         >
           <FloatingArrow
             ref={arrowRef}
