@@ -42,7 +42,7 @@ export interface AutocompleteOptionsProps<T> {
     getItemProps: GetItemPropsT<T>,
   ) => ReactNode;
   async?: boolean;
-  optionVariant: 'key-variant' | 'value-variant' | '';
+  optionVariant?: 'key-variant' | 'value-variant' | '';
   createWithoutConfirmation: boolean;
   customEmptyListMessage?: string;
   customNoMatchesMessage?: string;
@@ -61,7 +61,7 @@ export const AutocompleteOptions = <T,>(props: AutocompleteOptionsProps<T>) => {
     createWithoutConfirmation,
     customEmptyListMessage,
     customNoMatchesMessage,
-    optionVariant,
+    optionVariant = '',
     newItemButtonText,
     renderOption,
     getUniqKey,
