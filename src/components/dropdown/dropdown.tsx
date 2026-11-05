@@ -18,7 +18,7 @@ import {
 import { isEmpty } from 'es-toolkit/compat';
 import { createPortal } from 'react-dom';
 import classNames from 'classnames/bind';
-import { useFloating, offset, flip, size, autoUpdate } from '@floating-ui/react-dom';
+import { useFloating, offset, flip, size, autoUpdate, Placement } from '@floating-ui/react-dom';
 import { useSelect } from 'downshift';
 import { Scrollbars } from 'rc-scrollbars';
 import { KeyCodes } from '@common/constants/keyCodes';
@@ -50,6 +50,9 @@ import styles from './dropdown.module.scss';
 
 const cx = classNames.bind(styles);
 
+const DEFAULT_PLACEMENT: Placement = 'bottom-start';
+const DEFAULT_FALLBACK_PLACEMENTS: Placement[] = ['bottom-start', 'top-start', 'bottom', 'top'];
+
 export interface DropdownProps
   extends Omit<ComponentPropsWithRef<'div'>, 'onChange' | 'onFocus' | 'onBlur' | 'title'> {
   // TODO: make value and options optional
@@ -80,6 +83,8 @@ export interface DropdownProps
   formatDisplayedValue?: (value: string | undefined) => string;
   notScrollable?: boolean;
   footer?: ReactNode | ((closeHandler: () => void) => ReactNode);
+  placement?: Placement;
+  fallbackPlacements?: Placement[];
   /**
    * For nested options: whether to include parent group values in the onChange callback
    * when all children are selected. Default: false (only leaf values are included)
@@ -98,6 +103,7 @@ export interface DropdownProps
    * @example menuPortalRoot={document.body}
    */
   menuPortalRoot?: Element;
+  menuMatchTriggerWidth?: boolean;
   /**
    * Portal root for the Tooltip shown on disabled options that have an explicit `title`.
    * When omitted, defaults to `document.body` in the browser (guarded for SSR).
@@ -138,11 +144,14 @@ export const Dropdown: FC<DropdownProps> = ({
   formatDisplayedValue,
   notScrollable = false,
   footer,
+  placement = DEFAULT_PLACEMENT,
+  fallbackPlacements = DEFAULT_FALLBACK_PLACEMENTS,
   includeGroupValue = false,
   clearable = false,
   onClear = () => {},
   clearButtonAriaLabel = 'Clear selection',
   menuPortalRoot,
+  menuMatchTriggerWidth = true,
   disabledOptionTooltipPortalRoot,
   isMultiSelectWithTags = false,
   noMatchesMessage = 'No matches found',
@@ -251,17 +260,17 @@ export const Dropdown: FC<DropdownProps> = ({
   }, [opened, notScrollable, value, multiSelect]);
 
   const { refs, floatingStyles } = useFloating({
-    placement: 'bottom-start',
+    placement,
     middleware: [
       offset(5),
       flip({
-        fallbackPlacements: ['bottom-start', 'top-start', 'bottom', 'top'],
+        fallbackPlacements,
         ...(menuPortalRoot && {
           boundary: document.documentElement,
           rootBoundary: 'viewport',
         }),
       }),
-      menuPortalRoot
+      menuPortalRoot && menuMatchTriggerWidth
         ? size({
             apply({ rects, elements }) {
               const referenceWidth = rects.reference.width;
@@ -932,7 +941,7 @@ export const Dropdown: FC<DropdownProps> = ({
         (() => {
           const referenceWidth = refs.reference.current?.getBoundingClientRect().width;
           const menuStyle =
-            menuPortalRoot && referenceWidth
+            menuPortalRoot && menuMatchTriggerWidth && referenceWidth
               ? {
                   ...floatingStyles,
                   width: `${referenceWidth}px`,
