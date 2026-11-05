@@ -1,4 +1,5 @@
 import { ReactNode, FC, ComponentPropsWithRef } from '../../../node_modules/react';
+import { Placement } from '@floating-ui/react-dom';
 import { DropdownVariant, RenderDropdownOption, DropdownOptionType, DropdownValue } from './types';
 
 export interface DropdownProps extends Omit<ComponentPropsWithRef<'div'>, 'onChange' | 'onFocus' | 'onBlur' | 'title'> {
@@ -29,6 +30,8 @@ export interface DropdownProps extends Omit<ComponentPropsWithRef<'div'>, 'onCha
     formatDisplayedValue?: (value: string | undefined) => string;
     notScrollable?: boolean;
     footer?: ReactNode | ((closeHandler: () => void) => ReactNode);
+    placement?: Placement;
+    fallbackPlacements?: Placement[];
     /**
      * For nested options: whether to include parent group values in the onChange callback
      * when all children are selected. Default: false (only leaf values are included)
@@ -47,6 +50,7 @@ export interface DropdownProps extends Omit<ComponentPropsWithRef<'div'>, 'onCha
      * @example menuPortalRoot={document.body}
      */
     menuPortalRoot?: Element;
+    menuMatchTriggerWidth?: boolean;
     /**
      * Portal root for the Tooltip shown on disabled options that have an explicit `title`.
      * When omitted, defaults to `document.body` in the browser (guarded for SSR).
