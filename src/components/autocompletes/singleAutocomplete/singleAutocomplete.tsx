@@ -107,6 +107,7 @@ export interface SingleAutocompleteProps<T> {
   customNoMatchesMessage?: string;
   newItemButtonText?: string;
   menuFooter?: string | ReactNode;
+  beforeSearchPrompt?: string | ReactNode;
   shouldShowEmptyListMessage?: boolean;
   /**
    * Portal root element for autocomplete menu rendering.
@@ -318,10 +319,14 @@ export const SingleAutocomplete = <T,>(componentProps: SingleAutocompleteProps<T
                     const matched = hasValue
                       ? options.find((v) => parseValueToString(v) === trimmed)
                       : undefined;
+                    const isCurrentValue =
+                      hasValue && value !== null && parseValueToString(value) === trimmed;
                     if (matched) {
                       selectItem(matched);
                     } else if (!skipOptionCreation && createWithoutConfirmation && hasValue) {
                       selectItem(trimmed as unknown as T);
+                    } else if (!skipOptionCreation && isCurrentValue) {
+                      selectItem(value);
                     } else {
                       selectItem(null as T);
                     }

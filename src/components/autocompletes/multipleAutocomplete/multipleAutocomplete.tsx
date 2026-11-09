@@ -21,6 +21,7 @@ import { ControllerStateAndHelpers } from 'downshift';
 
 import { ClearIcon, DropdownIcon } from '@/components/icons';
 import { default as FieldText } from '@/components/fieldText';
+import { FieldLabel } from '@/components/fieldLabel';
 import { useFloating, autoUpdate, size } from '@floating-ui/react';
 
 import { AutocompleteMenu } from '../common/autocompleteMenu';
@@ -103,6 +104,7 @@ export interface MultipleAutocompleteProps<T> {
   selectedItemClassName?: string;
   selectedItemTextClassName?: string;
   menuFooter?: string | ReactNode;
+  beforeSearchPrompt?: string | ReactNode;
   shouldShowEmptyListMessage?: boolean;
 }
 
@@ -264,6 +266,7 @@ export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompletePr
           toggleMenu,
           storedItemsMap,
           getRootProps,
+          getLabelProps,
           batchAddItems,
         }: GetStateAndHelpersT<T>) => {
           const rootProps = getRootProps(undefined, { suppressRefError: true });
@@ -272,6 +275,11 @@ export const MultipleAutocomplete = <T,>(componentsProps: MultipleAutocompletePr
 
           return (
             <div {...rootProps} className={cx('autocomplete-wrapper')}>
+              {inputProps.label && (
+                <FieldLabel {...getLabelProps()} isRequired={!!inputProps.isRequired}>
+                  {inputProps.label}
+                </FieldLabel>
+              )}
               <>
                 <div
                   ref={refs.setReference}

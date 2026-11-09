@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { ForwardedRef, forwardRef } from 'react';
+import { ForwardedRef, forwardRef, ReactNode } from 'react';
 import classNames from 'classnames/bind';
 
 import { AutocompleteOptions, AutocompleteOptionsProps } from '../autocompleteOptions';
@@ -34,6 +34,7 @@ type AutocompleteMenuProps<T> = {
   inputValue?: string;
   className?: string;
   portalMenuAttribute?: string | null;
+  beforeSearchPrompt?: string | ReactNode;
 } & AutocompleteOptionsProps<T>;
 
 export const AutocompleteMenu = forwardRef(
@@ -46,22 +47,31 @@ export const AutocompleteMenu = forwardRef(
       inputValue = '',
       className = '',
       portalMenuAttribute = null,
+      beforeSearchPrompt,
       ...props
     }: AutocompleteMenuProps<T>,
     ref: ForwardedRef<HTMLUListElement>,
   ) => {
+    const isReady = isReadyForSearch(minLength, inputValue);
+    const showPrompt =
+      !isDropdownMode && !isReady && Boolean(beforeSearchPrompt) && inputValue.length > 0;
+
     return (
       <ul
         ref={ref}
         className={cx(
           'menu',
-          { opened: isOpen && (isDropdownMode || isReadyForSearch(minLength, inputValue)) },
+          { opened: isOpen && (isDropdownMode || isReady || showPrompt) },
           className,
         )}
         style={style}
         {...(portalMenuAttribute ? { [portalMenuAttribute]: '' } : {})}
       >
-        <AutocompleteOptions inputValue={inputValue} {...props} />
+        {showPrompt ? (
+          <div className={cx('before-search-prompt')}>{beforeSearchPrompt}</div>
+        ) : (
+          <AutocompleteOptions inputValue={inputValue} {...props} />
+        )}
       </ul>
     );
   },
