@@ -236,6 +236,36 @@ export const SingleSelectWithMenuPortal: Story<string> = {
   },
 };
 
+export const SingleSelectWithBeforeSearchPrompt: Story<string> = {
+  args: {
+    ...TEST_DATA_STRINGS,
+    value: '',
+    isDropdownMode: false,
+    minLength: 3,
+    beforeSearchPrompt: 'At least 3 symbols required.',
+  },
+  render: (args) => {
+    const [state, setState] = useState(args.value || '');
+
+    const modifiedArgs = {
+      ...args,
+      inputProps: { ...args.inputProps, onClear: () => setState('') },
+    };
+
+    const onChange: ComponentProps<
+      typeof SingleAutocomplete<(typeof OPTIONS_STRINGS)[number]>
+    >['onChange'] = (newState) => {
+      setState(newState as (typeof OPTIONS_STRINGS)[number]);
+    };
+
+    return (
+      <div style={{ width: '400px', height: '200px', display: 'flex', alignItems: 'center' }}>
+        <SingleAutocomplete {...modifiedArgs} onChange={onChange} value={state} />
+      </div>
+    );
+  },
+};
+
 export const SingleSelectWithMenuFooter: Story<string> = {
   args: {
     ...TEST_DATA_STRINGS,

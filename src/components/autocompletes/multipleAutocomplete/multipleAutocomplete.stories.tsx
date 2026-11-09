@@ -55,6 +55,7 @@ const TEST_DATA_OBJECTS: Partial<
   disabled: false,
   mobileDisabled: false,
   inputProps: {
+    label: 'Attributes',
     clearable: true,
   },
   maxLength: null,
@@ -87,6 +88,7 @@ const TEST_DATA_STRINGS: Partial<
   error: '',
   touched: false,
   inputProps: {
+    label: 'Launch names',
     clearable: true,
   },
   minLength: 1,
@@ -217,6 +219,40 @@ export const WithSingleLineMode: Story<(typeof LONG_OPTIONS_STRINGS)[number]> = 
     return (
       <div style={{ width: '300px', height: '400px', display: 'flex', alignItems: 'center' }}>
         <MultipleAutocomplete<(typeof LONG_OPTIONS_STRINGS)[number]>
+          {...modifiedArgs}
+          onChange={onChange}
+          value={state}
+        />
+      </div>
+    );
+  },
+};
+
+export const WithBeforeSearchPrompt: Story<string> = {
+  args: {
+    ...TEST_DATA_STRINGS,
+    value: [],
+    isDropdownMode: false,
+    minLength: 3,
+    beforeSearchPrompt: 'At least 3 symbols required.',
+  },
+  render: (args) => {
+    const [state, setState] = useState(args.value || []);
+
+    const modifiedArgs = {
+      ...args,
+      inputProps: { ...args.inputProps, onClear: () => setState([]) },
+    };
+
+    const onChange: ComponentProps<
+      typeof MultipleAutocomplete<(typeof OPTIONS_STRINGS)[number]>
+    >['onChange'] = (newState) => {
+      setState(newState as typeof OPTIONS_STRINGS);
+    };
+
+    return (
+      <div style={{ width: '400px', height: '200px', display: 'flex', alignItems: 'center' }}>
+        <MultipleAutocomplete<(typeof OPTIONS_STRINGS)[number]>
           {...modifiedArgs}
           onChange={onChange}
           value={state}
