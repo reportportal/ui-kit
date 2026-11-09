@@ -1,3 +1,4 @@
+import { ReactNode } from '../../../../../node_modules/react';
 import { AutocompleteOptionsProps } from '../autocompleteOptions';
 
 export declare const AutocompleteMenu: <T>(props: {
@@ -8,4 +9,5 @@ export declare const AutocompleteMenu: <T>(props: {
     inputValue?: string | undefined;
     className?: string | undefined;
     portalMenuAttribute?: string | null | undefined;
+    beforeSearchPrompt?: string | ReactNode;
 } & AutocompleteOptionsProps<T> & import('../../../../../node_modules/react').RefAttributes<HTMLUListElement>) => import('../../../../../node_modules/react').ReactElement<any, string | import('../../../../../node_modules/react').JSXElementConstructor<any>> | null;

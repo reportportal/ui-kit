@@ -51,6 +51,7 @@ export interface MultipleAutocompleteProps<T> {
     selectedItemClassName?: string;
     selectedItemTextClassName?: string;
     menuFooter?: string | ReactNode;
+    beforeSearchPrompt?: string | ReactNode;
     shouldShowEmptyListMessage?: boolean;
 }
 export declare const MultipleAutocomplete: <T>(componentsProps: MultipleAutocompleteProps<T>) => import("react/jsx-runtime").JSX.Element;

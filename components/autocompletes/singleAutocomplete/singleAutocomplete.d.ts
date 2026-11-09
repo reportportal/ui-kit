@@ -43,6 +43,7 @@ export interface SingleAutocompleteProps<T> {
     customNoMatchesMessage?: string;
     newItemButtonText?: string;
     menuFooter?: string | ReactNode;
+    beforeSearchPrompt?: string | ReactNode;
     shouldShowEmptyListMessage?: boolean;
     /**
      * Portal root element for autocomplete menu rendering.
